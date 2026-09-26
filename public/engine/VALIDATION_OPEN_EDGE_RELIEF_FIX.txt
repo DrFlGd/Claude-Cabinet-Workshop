@@ -1,0 +1,52 @@
+Open-edge CNC relief fix validation
+===================================
+
+Issue
+-----
+Dogbone / T-bone corner relief was being generated at slot corners that lie on
+an open panel perimeter. Those corners already have cutter access, so relief
+there creates an unwanted scallop in the finished outside edge.
+
+Core geometry change
+--------------------
+- slot_corner_relief_2d(), slot_shape_2d(), slot_cut_x_3d(), and
+  slot_cut_z_3d() now accept open-edge flags for the slot's left/right/bottom/top
+  walls.
+- A dogbone/T-bone circle is emitted only when BOTH walls forming that corner
+  are closed/internal.
+- Existing callers remain backward compatible because all flags default false.
+
+Open-edge cases now handled
+---------------------------
+- Stackable cabinet bottom-tab receivers located entirely in the raised front
+  or rear stacking pads: bottom corners are open, so no bottom dogbone/T-bone.
+- Cabinet top receiver slots: top corners are open at the panel perimeter.
+- Stackable base front/rear receiver slots: relief is suppressed on the outward
+  front/rear edge.
+- Toe-kick receiver slots when toe_kick_setback == 0: front edge is open.
+- Rear stretcher receiver slots when back_stretcher_inset == 0: rear edge is open.
+- Ordinary fully enclosed slots still retain all required relief corners.
+
+Stackable-specific behavior
+---------------------------
+The stack-safe bottom tab placement remains unchanged. For a bottom slot, the
+bottom edge is treated as open only when the nominal tab lies wholly inside the
+front or rear high stacking pad. The center bottom slot over the lower tongue is
+still treated as an internal slot and keeps its CNC relief.
+
+Compile validation
+------------------
+Successfully compiled to CSG with:
+  joinery_style = "tab_slot"
+  slot_corner_relief = "dogbone"
+
+Frontends checked:
+- modular_storage_benchtop_v32.scad
+- modular_storage_drawer_v32.scad
+- modular_storage_kitchen_v32.scad
+- modular_storage_shop_cart_v32.scad
+- modular_storage_stackable_v32.scad
+- modular_storage_utility_v32.scad
+
+OpenSCAD compilation completed without syntax or module-signature errors for all
+six frontends.

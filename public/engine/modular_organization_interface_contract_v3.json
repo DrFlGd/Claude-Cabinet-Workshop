@@ -1,0 +1,270 @@
+{
+  "contract_id": "MOI-3",
+  "engine_family": "modular_organization",
+  "engine_version": 3,
+  "forked_from": {
+    "package": "modular_storage_v35",
+    "engine_version": 35
+  },
+  "units": "mm",
+  "coordinate_system": {
+    "origin": "cabinet front-left-bottom unless an INTERFACE datum says otherwise",
+    "x": "left to right",
+    "y": "front to rear",
+    "z": "bottom to top"
+  },
+  "model": [
+    "project",
+    "modules",
+    "relationships",
+    "parts",
+    "interfaces",
+    "interface_frames",
+    "features",
+    "keepouts"
+  ],
+  "record_prefixes": {
+    "system": "SYSTEM|",
+    "compatibility": "COMPAT|",
+    "interface": "INTERFACE|",
+    "keepout": "KEEPOUT|",
+    "feature_owner": "FEATURE_OWNER|",
+    "feature": "FEATURE|",
+    "validation": "CHECK|",
+    "coverage": "COVERAGE|",
+    "export_frame": "EXPORT_FRAME|",
+    "module": "MODULE|",
+    "interface_frame": "INTERFACE_FRAME|"
+  },
+  "records": {
+    "interface": {
+      "required_fields": [
+        "ID",
+        "STANDARD",
+        "KIND",
+        "ROLE",
+        "OWNER",
+        "FACE",
+        "MATE",
+        "DATUM",
+        "KEY"
+      ],
+      "notes": "External interfaces mate when their standards are compatible and their KEY values match. Internal interfaces use KEY as a reproducible geometry signature."
+    },
+    "keepout": {
+      "required_fields": [
+        "ID",
+        "OWNER",
+        "SCOPE",
+        "X0",
+        "X1",
+        "Y0",
+        "Y1",
+        "Z0",
+        "Z1",
+        "REASON"
+      ],
+      "shape": "axis_aligned_bounding_box",
+      "notes": "A keepout reserves space for its OWNER interface. Features owned by other interfaces should not intersect it."
+    },
+    "feature": {
+      "required_fields": [
+        "ID",
+        "PART",
+        "KIND",
+        "INTERFACE",
+        "X0",
+        "X1",
+        "Y0",
+        "Y1",
+        "Z0",
+        "Z1",
+        "SHAPE",
+        "OP",
+        "SOURCE"
+      ],
+      "shape": "axis_aligned_bounding_box plus exact circle/rectangle face primitive",
+      "notes": "V2 emits every active hole, blind pocket, and carcass joint on both outer cabinet side panels in verbose mode. Circle features include CY/CZ/R for exact collision tests; rectangular features use their Y/Z bounds."
+    },
+    "coverage": {
+      "required_fields": [
+        "DOMAIN",
+        "STATUS"
+      ],
+      "notes": "A clean report must be interpreted with these scope records. The Python geometry audit completes final CUT/POCKET contour coverage; neither layer claims structural/load or CAM verification."
+    },
+    "module": {
+      "required_fields": [
+        "KIND",
+        "W",
+        "D",
+        "H",
+        "COORD"
+      ],
+      "notes": "Module-local envelope metadata used by the MORG-1 resolver and conservative project collision checks."
+    },
+    "interface_frame": {
+      "required_fields": [
+        "ID",
+        "OX",
+        "OY",
+        "OZ",
+        "UX",
+        "UY",
+        "UZ",
+        "VX",
+        "VY",
+        "VZ",
+        "NX",
+        "NY",
+        "NZ"
+      ],
+      "notes": "Module-local mating frame: O is origin, U/V are in-plane reference axes, N is outward normal."
+    }
+  },
+  "standards": {
+    "MOI-STACK-1": {
+      "kind": "stack",
+      "roles": [
+        "male",
+        "female"
+      ],
+      "key_fields": [
+        "key_schema",
+        "cabinet_width",
+        "cabinet_depth",
+        "material_thickness",
+        "interface_depth",
+        "front_margin",
+        "back_margin",
+        "corner_radius",
+        "clearance"
+      ],
+      "compatibility": "male and female interfaces require the same generated KEY",
+      "owns_keepouts": true
+    },
+    "MOI-GANG-1": {
+      "kind": "side_gang",
+      "roles": [
+        "peer"
+      ],
+      "key_fields": [
+        "key_schema",
+        "cabinet_height",
+        "cabinet_depth",
+        "material_thickness",
+        "ganging_style",
+        "dowel_diameter",
+        "dowel_depth",
+        "connector_hole_diameter",
+        "pair_vertical_spacing",
+        "column_count",
+        "station_count",
+        "column_y",
+        "dowel_z",
+        "connector_z"
+      ],
+      "compatibility": "left/right peer interfaces require the same generated KEY",
+      "owns_keepouts": true,
+      "geometry_note": "V2 signs both placement and machining dimensions. Different dowel diameters/depths or connector diameters are incompatible even when centers match."
+    },
+    "MOI-JOINT-1": {
+      "kind": "part_joint",
+      "roles": [
+        "paired"
+      ],
+      "key_fields": [
+        "joinery_style",
+        "material_thickness",
+        "fit",
+        "span",
+        "resolved_feature_pattern"
+      ],
+      "compatibility": "mating part features within one assembly use the same semantic location resolver and generated KEY"
+    },
+    "MOI-DRAWER-1": {
+      "kind": "part_joint",
+      "roles": [
+        "paired"
+      ],
+      "key_fields": [
+        "key_schema",
+        "drawer_joinery_style",
+        "drawer_material_thickness",
+        "joint_fit",
+        "dado_fit",
+        "dado_depth",
+        "bottom_joinery_style",
+        "bottom_thickness",
+        "bottom_dado_depth",
+        "bottom_inset"
+      ],
+      "compatibility": "drawer corner parts in one assembly use the same generated KEY"
+    }
+  },
+  "keepout_policy": {
+    "enforce": "conflicts emitted by the common feature-vs-keepout validator are CHECK|ERROR records",
+    "warn_only": "the same conflicts are CHECK|WARN records",
+    "off": "interface-owned keepout validation is disabled; geometry is not altered"
+  },
+  "scope_v2": {
+    "implemented": [
+      "stack top/bottom external interfaces with complete geometry signatures",
+      "left/right side-ganging external interfaces with diameter/depth/placement signatures",
+      "bottom/top/fixed-shelf/separator carcass joint interfaces",
+      "drawer corner joint interface",
+      "stack transition keepout AABBs",
+      "depth-aware ganging-point keepout AABBs",
+      "exhaustive outer-side feature ledger for all current holes, blind pockets, and carcass joints",
+      "exact circle/rectangle feature collision tests in 3D panel depth",
+      "final CUT plus all POCKET contour audit via modular_organization_validate.py",
+      "coverage records that prevent a clean report from implying structural/CAM validation",
+      "manufacturing package system_contract.json and exhaustive_validation.json"
+    ],
+    "limitations": [
+      "structural/load ratings are not analyzed",
+      "material defects/anisotropy are not analyzed",
+      "CAM cutter compensation, lead-ins, feeds/speeds, and machine travel are not analyzed",
+      "engraving collisions are not treated as structural machining conflicts",
+      "arbitrary non-axis-aligned keepout volumes remain a future extension"
+    ]
+  },
+  "supersedes": {
+    "package": "modular_organization_v2",
+    "contract": "MOI-2",
+    "reason": "adds project composition graph and explicit interface frames while retaining v2 validation coverage"
+  },
+  "project_composition": {
+    "project_format": "MORG-1",
+    "schema_file": "modular_organization_project_schema_v3.json",
+    "resolver": "modular_organization_project.py",
+    "relationship_types": {
+      "mate": "Requires compatible external STANDARD/ROLE/KEY and aligns INTERFACE_FRAME records.",
+      "contains": "Places a child at a parent-local offset; overlap is intentional and exempt from module-envelope collision errors."
+    },
+    "derived_module_types": {
+      "span_worktop": "Computes a worktop envelope across already-resolved support modules with explicit overhangs and support-height validation."
+    },
+    "placement_scope_v3": "translation plus orthogonal Z rotations (0/90/180/270); arbitrary 3-D rotation is not claimed",
+    "project_collision_scope_v3": "conservative module AABB overlap check; manufacturing geometry remains validated per OpenSCAD module and exhaustive validator"
+  },
+  "scope_v3": {
+    "implemented": [
+      "all MOI-2 exhaustive interface signatures and machining validation",
+      "MODULE envelope records for cabinet and standalone drawer frontends",
+      "INTERFACE_FRAME records for stack and side-gang external interfaces",
+      "versioned MORG-1 project graph",
+      "rigid mate resolution from OpenSCAD-authored interface frames",
+      "contains relationships with parent-local transforms",
+      "derived worktop spanning multiple resolved supports",
+      "conservative project-level module envelope collision validation",
+      "optional true-geometry assembly preview generated from per-module OpenSCAD STL renders"
+    ],
+    "limitations": [
+      "automatic mating is limited to translation and orthogonal Z rotation in v3",
+      "project-level collision is envelope-based rather than final mesh boolean intersection",
+      "motion envelopes and structural/load analysis are not yet implemented",
+      "general linear/nonlinear constraint solving is not yet implemented"
+    ]
+  }
+}

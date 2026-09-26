@@ -1,0 +1,35 @@
+Modular Organization v3 validation
+==================================
+Date: 2026-09-16
+
+Validated release scope
+-----------------------
+1. Python sources compile successfully with py_compile.
+2. All JSON files and the example .morg parse successfully.
+3. examples/workbench_pair_v3.morg validates against modular_organization_project_schema_v3.json.
+4. All six OpenSCAD frontends compile to CSG with OpenSCAD 2021.01 and no WARNING/ERROR diagnostics:
+   - utility
+   - shop_cart
+   - benchtop
+   - stackable
+   - kitchen
+   - drawer
+5. MORG-1 composition resolver successfully resolves examples/workbench_pair_v3.morg:
+   - two stackable cabinets are rigidly mated through side_gang interfaces
+   - one drawer is placed through a contains relationship
+   - one derived span_worktop is generated across both cabinets
+   - result status: PASS, 0 errors, 0 warnings
+6. MOI-2 compatibility hardening remains active in MOI-3. Regression test changing only the right cabinet ganging dowel from 8 mm to 10 mm is rejected with INTERFACE_INCOMPATIBLE.
+7. Project outputs generated successfully:
+   - resolved_project.json
+   - project_health.json
+   - assembly_preview.scad (envelope preview mode)
+
+Validation/coverage boundaries
+------------------------------
+- OpenSCAD remains the authority for module geometry, interface records, semantic checks, and manufacturing features.
+- modular_organization_validate.py / manufacturing export remains the exhaustive CUT/POCKET contour audit per OpenSCAD module.
+- Project-level collision in v3 is conservative AABB-envelope checking, not mesh boolean collision.
+- Automatic mating supports translation and orthogonal Z rotation only (0/90/180/270).
+- General constraint solving, motion-envelope analysis, arbitrary 3-D mating, and structural/load analysis are not claimed in v3.
+- Full STL rendering of the example assembly is intentionally optional and can be computationally slow under OpenSCAD 2021.01; it is not required for graph resolution or manufacturing validation.

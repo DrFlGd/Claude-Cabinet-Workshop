@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"modular_storage_hardware_schema_v2.json",
+  "title":"Modular Storage Hardware Catalog V2",
+  "type":"object",
+  "required":["catalog_version","units","profiles"],
+  "properties":{
+    "catalog_version":{"const":2},
+    "units":{"const":"mm"},
+    "semantics":{"type":"string"},
+    "profiles":{"type":"array","items":{"type":"object","required":["id"],"properties":{
+      "id":{"type":"string","pattern":"^[a-z0-9_]+$"},"extends":{"type":"string"},"category":{"enum":["drawer_slide","hinge"]},
+      "manufacturer":{"type":"string"},"family":{"type":"string"},"model":{"type":"string"},"label":{"type":"string"},
+      "targets":{"type":"array","items":{"enum":["utility","shop_cart","benchtop","stackable","kitchen","drawer"]},"uniqueItems":true},
+      "verification":{"type":"object"},"apply":{"type":"object","minProperties":1},"source":{"type":"object"}
+    },"additionalProperties":true}}
+  },"additionalProperties":true
+}

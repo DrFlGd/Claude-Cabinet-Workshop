@@ -1,0 +1,74 @@
+{
+  "fileFormatVersion": "1",
+  "parameterSets": {
+    "Freestanding Single Printer Stand": {},
+    "Wall Mounted Pull-Out Printer Stand": {
+      "mount_mode": "wall_mount_french_cleat",
+      "side_style": "solid"
+    },
+    "Stacked Dual-Bay Printer Tower": {
+      "tray_count": "2",
+      "upper_bay_enabled": "true"
+    },
+    "Skeletonized Wall Stand": {
+      "mount_mode": "wall_mount_french_cleat"
+    },
+    "Solid-Side Utility Stand": {
+      "side_style": "solid",
+      "top_style": "frame"
+    },
+    "Compact Desktop Printer": {
+      "device_width": "300",
+      "device_depth": "320",
+      "device_height": "350",
+      "metal_slide_length": "300",
+      "slide_supported_travel": "300",
+      "tray_extension": "300",
+      "metal_slide_cabinet_holes_x": "[37,133,229]",
+      "metal_slide_drawer_holes_x": "[37,133,229]"
+    },
+    "Medium Enclosed Printer": {
+      "device_width": "450",
+      "device_depth": "500",
+      "device_height": "550",
+      "metal_slide_length": "500",
+      "slide_supported_travel": "500",
+      "tray_extension": "500"
+    },
+    "Fixed Runner Service Shelf": {
+      "slide_type": "fixed_runner",
+      "tray_extension": "0",
+      "include_metal_slide_holes": "false",
+      "device_height": "200",
+      "top_clearance": "80"
+    },
+    "Wall Printer Tower": {
+      "tray_count": "2",
+      "mount_mode": "wall_mount_french_cleat",
+      "cleat_rail_count": "2"
+    },
+    "Housed Joint Printer Stand": {
+      "joinery_style": "dado"
+    },
+    "Tab-Slot Full Back Stand": {
+      "back_style": "structural_panel",
+      "joinery_style": "tab_slot"
+    },
+    "Applied Panel Back Stand": {
+      "back_style": "panel",
+      "custom_back_thickness": "6.35"
+    },
+    "Three Stretcher Stand": {
+      "back_style": "stretchers",
+      "back_stretcher_count": "3",
+      "back_stretcher_height": "90",
+      "joinery_style": "tab_slot"
+    },
+    "Fractional Stock Stand": {
+      "material_thickness": "18.35",
+      "tray_thickness": "12.70",
+      "back_style": "structural_panel",
+      "joinery_style": "tab_slot"
+    }
+  }
+}

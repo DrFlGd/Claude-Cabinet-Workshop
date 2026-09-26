@@ -1,0 +1,142 @@
+{
+  "parameterSets": {
+    "Micro 2 Drawer": {
+      "design_name": "Micro 2 Drawer",
+      "cabinet_width": "240",
+      "cabinet_height": "180",
+      "cabinet_depth": "200",
+      "drawer_count": "2"
+    },
+    "Mini 3 Drawer": {
+      "design_name": "Mini 3 Drawer",
+      "cabinet_width": "280",
+      "cabinet_height": "240",
+      "cabinet_depth": "230",
+      "drawer_count": "3"
+    },
+    "Compact 4 Drawer": {
+      "design_name": "Compact 4 Drawer",
+      "cabinet_width": "320",
+      "cabinet_height": "320",
+      "cabinet_depth": "280",
+      "drawer_count": "4"
+    },
+    "Parts 5 Drawer": {
+      "design_name": "Parts 5 Drawer",
+      "cabinet_width": "400",
+      "cabinet_height": "400",
+      "cabinet_depth": "300",
+      "drawer_count": "5"
+    },
+    "Shallow Parts 6 Drawer": {
+      "design_name": "Shallow Parts 6 Drawer",
+      "cabinet_width": "480",
+      "cabinet_height": "300",
+      "cabinet_depth": "230",
+      "drawer_count": "6"
+    },
+    "Wide 6 Drawer": {
+      "design_name": "Wide 6 Drawer",
+      "cabinet_width": "600",
+      "cabinet_height": "420",
+      "cabinet_depth": "350",
+      "drawer_count": "6"
+    },
+    "Wide 8 Drawer": {
+      "design_name": "Wide 8 Drawer",
+      "cabinet_width": "800",
+      "cabinet_height": "520",
+      "cabinet_depth": "350",
+      "drawer_count": "8"
+    },
+    "Slide \u2014 Generic side-mount 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "3",
+      "metal_slide_envelope_height": "45",
+      "include_metal_slide_holes": "true",
+      "metal_slide_hole_pattern_mode": "explicit_array",
+      "hardware_drilling_mode": "recommended",
+      "metal_slide_cabinet_holes_x": "[37,133,229,325]",
+      "metal_slide_drawer_holes_x": "[37,133,229,325]",
+      "metal_slide_cabinet_hole_diameter": "5",
+      "metal_slide_drawer_hole_diameter": "5",
+      "metal_slide_hole_rear_margin": "20",
+      "metal_slide_cabinet_hole_z_from_drawer_bottom": "22.5",
+      "metal_slide_drawer_hole_z_from_drawer_bottom": "22.5"
+    },
+    "Slide \u2014 Generic side-mount 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "3",
+      "metal_slide_envelope_height": "45",
+      "include_metal_slide_holes": "true",
+      "metal_slide_hole_pattern_mode": "explicit_array",
+      "hardware_drilling_mode": "recommended",
+      "metal_slide_cabinet_holes_x": "[37,133,229,325,421]",
+      "metal_slide_drawer_holes_x": "[37,133,229,325,421]",
+      "metal_slide_cabinet_hole_diameter": "5",
+      "metal_slide_drawer_hole_diameter": "5",
+      "metal_slide_hole_rear_margin": "20",
+      "metal_slide_cabinet_hole_z_from_drawer_bottom": "22.5",
+      "metal_slide_drawer_hole_z_from_drawer_bottom": "22.5"
+    },
+    "Slide \u2014 Accuride 3832E 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "45.7",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Accuride 3832E 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "45.7",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 KV 8400 18 in (457.2 mm)": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "457.2",
+      "metal_slide_front_setback": "2",
+      "metal_slide_envelope_height": "45.5",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 KV 8400 20 in (508 mm)": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "508",
+      "metal_slide_front_setback": "2",
+      "metal_slide_envelope_height": "45.5",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Hettich KA 5632 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "46",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Hettich KA 5632 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "46",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    }
+  },
+  "fileFormatVersion": "1"
+}

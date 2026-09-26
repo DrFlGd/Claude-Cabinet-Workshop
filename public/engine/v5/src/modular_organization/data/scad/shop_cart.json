@@ -1,0 +1,65 @@
+{
+  "parameterSets": {
+    "Compact Mixed Cart": {
+      "design_name": "Compact Mixed Shop Cart",
+      "cabinet_width": "650",
+      "cabinet_height": "700",
+      "cabinet_depth": "500",
+      "cabinet_layout_mode": "mixed_bays",
+      "mixed_bay_count": "2",
+      "mixed_bay_types": "[\"drawers\",\"open\",\"door\",\"open\"]",
+      "mixed_bay_width_weights": "[1.2,1,1,1]",
+      "mixed_bay_drawer_counts": "[4,0,0,0]",
+      "mixed_bay_shelf_styles": "[\"adjustable\",\"fixed\",\"adjustable\",\"adjustable\"]",
+      "mixed_bay_shelf_counts": "[0,2,0,0]"
+    },
+    "3-Section Drawer Workbench": {
+      "design_name": "3-Section Drawer Workbench",
+      "cabinet_width": "1500",
+      "cabinet_height": "720",
+      "cabinet_depth": "600",
+      "cabinet_layout_mode": "mixed_bays",
+      "mixed_bay_count": "3",
+      "mixed_bay_types": "[\"drawers\",\"drawers\",\"drawers\",\"open\"]",
+      "mixed_bay_width_weights": "[1,1,1,1]",
+      "mixed_bay_drawer_counts": "[4,4,4,4]"
+    },
+    "4-Section Drawer Workbench": {
+      "design_name": "4-Section Drawer Workbench",
+      "cabinet_width": "1800",
+      "cabinet_height": "720",
+      "cabinet_depth": "600",
+      "cabinet_layout_mode": "mixed_bays",
+      "mixed_bay_count": "4",
+      "mixed_bay_types": "[\"drawers\",\"drawers\",\"drawers\",\"drawers\"]",
+      "mixed_bay_width_weights": "[1,1,1,1]",
+      "mixed_bay_drawer_counts": "[4,4,4,4]"
+    },
+    "Machine Stand": {
+      "design_name": "Machine Stand",
+      "cabinet_width": "800",
+      "cabinet_height": "650",
+      "cabinet_depth": "600",
+      "cabinet_layout_mode": "mixed_bays",
+      "mixed_bay_count": "2",
+      "mixed_bay_types": "[\"drawers\",\"open\",\"open\",\"open\"]",
+      "mixed_bay_width_weights": "[1,1.2,1,1]",
+      "mixed_bay_drawer_counts": "[3,0,0,0]",
+      "mixed_bay_shelf_styles": "[\"adjustable\",\"fixed\",\"adjustable\",\"adjustable\"]",
+      "mixed_bay_shelf_counts": "[0,1,0,0]"
+    },
+    "Open Service Cart": {
+      "design_name": "Open Service Cart",
+      "cabinet_width": "1000",
+      "cabinet_height": "750",
+      "cabinet_depth": "500",
+      "cabinet_layout_mode": "mixed_bays",
+      "mixed_bay_count": "2",
+      "mixed_bay_types": "[\"open\",\"open\",\"open\",\"open\"]",
+      "mixed_bay_width_weights": "[1,1,1,1]",
+      "mixed_bay_shelf_styles": "[\"fixed\",\"fixed\",\"adjustable\",\"adjustable\"]",
+      "mixed_bay_shelf_counts": "[2,2,0,0]"
+    }
+  },
+  "fileFormatVersion": "1"
+}

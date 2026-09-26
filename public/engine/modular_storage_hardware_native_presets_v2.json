@@ -1,0 +1,122 @@
+{
+  "catalog_version": 2,
+  "semantics": "one-time editable hardware patches",
+  "frontends": {
+    "utility": {
+      "scad": "modular_storage_utility_v32.scad",
+      "preset_file": "modular_storage_utility_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500",
+        "Hinge \u2014 Generic Euro 35 mm / overlay": "generic_euro_35_110_overlay",
+        "Hinge \u2014 Generic Euro 35 mm / inset": "generic_euro_35_110_inset",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / overlay reference": "blum_clip_top_blumotion_110_overlay_reference",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / inset reference": "blum_clip_top_blumotion_110_inset_reference",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / overlay screw-on": "hettich_sensys_8645i_overlay_screw",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / inset screw-on": "hettich_sensys_8645i_inset_screw",
+        "Hinge \u2014 Salice Silentia+ Series 100 105\u00b0 / full overlay": "salice_silentia_plus_105_overlay",
+        "Hinge \u2014 GRASS Tiomos 110\u00b0 / overlay reference": "grass_tiomos_110_overlay_reference"
+      }
+    },
+    "shop_cart": {
+      "scad": "modular_storage_shop_cart_v32.scad",
+      "preset_file": "modular_storage_shop_cart_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500",
+        "Hinge \u2014 Generic Euro 35 mm / overlay": "generic_euro_35_110_overlay",
+        "Hinge \u2014 Generic Euro 35 mm / inset": "generic_euro_35_110_inset",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / overlay reference": "blum_clip_top_blumotion_110_overlay_reference",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / inset reference": "blum_clip_top_blumotion_110_inset_reference",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / overlay screw-on": "hettich_sensys_8645i_overlay_screw",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / inset screw-on": "hettich_sensys_8645i_inset_screw",
+        "Hinge \u2014 Salice Silentia+ Series 100 105\u00b0 / full overlay": "salice_silentia_plus_105_overlay",
+        "Hinge \u2014 GRASS Tiomos 110\u00b0 / overlay reference": "grass_tiomos_110_overlay_reference"
+      }
+    },
+    "benchtop": {
+      "scad": "modular_storage_benchtop_v32.scad",
+      "preset_file": "modular_storage_benchtop_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500"
+      }
+    },
+    "stackable": {
+      "scad": "modular_storage_stackable_v32.scad",
+      "preset_file": "modular_storage_stackable_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500",
+        "Hinge \u2014 Generic Euro 35 mm / overlay": "generic_euro_35_110_overlay",
+        "Hinge \u2014 Generic Euro 35 mm / inset": "generic_euro_35_110_inset",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / overlay reference": "blum_clip_top_blumotion_110_overlay_reference",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / inset reference": "blum_clip_top_blumotion_110_inset_reference",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / overlay screw-on": "hettich_sensys_8645i_overlay_screw",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / inset screw-on": "hettich_sensys_8645i_inset_screw",
+        "Hinge \u2014 Salice Silentia+ Series 100 105\u00b0 / full overlay": "salice_silentia_plus_105_overlay",
+        "Hinge \u2014 GRASS Tiomos 110\u00b0 / overlay reference": "grass_tiomos_110_overlay_reference"
+      }
+    },
+    "kitchen": {
+      "scad": "modular_storage_kitchen_v32.scad",
+      "preset_file": "modular_storage_kitchen_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500",
+        "Hinge \u2014 Generic Euro 35 mm / overlay": "generic_euro_35_110_overlay",
+        "Hinge \u2014 Generic Euro 35 mm / inset": "generic_euro_35_110_inset",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / overlay reference": "blum_clip_top_blumotion_110_overlay_reference",
+        "Hinge \u2014 Blum CLIP top BLUMOTION 110\u00b0 / inset reference": "blum_clip_top_blumotion_110_inset_reference",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / overlay screw-on": "hettich_sensys_8645i_overlay_screw",
+        "Hinge \u2014 Hettich Sensys 8645i 110\u00b0 / inset screw-on": "hettich_sensys_8645i_inset_screw",
+        "Hinge \u2014 Salice Silentia+ Series 100 105\u00b0 / full overlay": "salice_silentia_plus_105_overlay",
+        "Hinge \u2014 GRASS Tiomos 110\u00b0 / overlay reference": "grass_tiomos_110_overlay_reference"
+      }
+    },
+    "drawer": {
+      "scad": "modular_storage_drawer_v32.scad",
+      "preset_file": "modular_storage_drawer_v32.json",
+      "hardware_sets": {
+        "Slide \u2014 Generic side-mount 450 mm": "generic_side_mount_12_7_450",
+        "Slide \u2014 Generic side-mount 500 mm": "generic_side_mount_12_7_500",
+        "Slide \u2014 Accuride 3832E 450 mm": "accuride_3832e_450",
+        "Slide \u2014 Accuride 3832E 500 mm": "accuride_3832e_500",
+        "Slide \u2014 KV 8400 18 in (457.2 mm)": "kv_8400_18in",
+        "Slide \u2014 KV 8400 20 in (508 mm)": "kv_8400_20in",
+        "Slide \u2014 Hettich KA 5632 450 mm": "hettich_ka5632_450",
+        "Slide \u2014 Hettich KA 5632 500 mm": "hettich_ka5632_500"
+      }
+    }
+  }
+}

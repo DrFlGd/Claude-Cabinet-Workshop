@@ -1,0 +1,33 @@
+Stackable Bottom Tab Placement Fix Validation
+=============================================
+
+Default frontend compile checks (CSG):
+- PASS: modular_storage_utility_v32.scad
+- PASS: modular_storage_shop_cart_v32.scad
+- PASS: modular_storage_benchtop_v32.scad
+- PASS: modular_storage_stackable_v32.scad
+- PASS: modular_storage_kitchen_v32.scad
+- PASS: modular_storage_drawer_v32.scad
+
+Stack-safe default:
+ECHO: "  bottom tab placement = ", "stack_safe"
+ECHO: "  bottom tab centers from front = ", [40, 250, 460], " mm"
+
+Legacy automatic mode:
+ECHO: "  bottom tab placement = ", "automatic"
+ECHO: "  bottom tab centers from front = ", [93.3333, 250, 406.667], " mm"
+
+Custom centers:
+ECHO: "  bottom tab placement = ", "custom"
+ECHO: "  bottom tab centers from front = ", [30, 250, 470], " mm"
+
+Too-small pads fallback:
+ECHO: "  bottom tab placement = ", "stack_safe"
+ECHO: "  bottom tab centers from front = ", [93.3333, 250, 406.667], " mm"
+ECHO: "WARN|Stack-safe bottom tab placement cannot fit inside the current front/rear stacking pads; using the normal automatic pattern. Increase stack_interface_front_margin/back_margin, reduce joint_tab_width, or use custom bottom tab centers."
+
+JSON syntax checks:
+- PASS: all package JSON files parse with jq.
+
+Rendered geometry check:
+- PASS: stackable tab-slot carcass rendered successfully to STL with CGAL.

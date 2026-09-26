@@ -1,0 +1,3 @@
+import type {Part} from './cabinet';
+export function partSection(p:Part){if(p.id.startsWith('DOOR')||p.id.startsWith('PULL'))return 'Doors';return ({carcass:'Structure',back:'Structure',front:'Drawers',drawer:'Drawers',shelf:'Shelves',worktop:'Structure',hardware:'Hardware',frame:'Structure',tray:'Trays'} as Record<string,string>)[p.group]??'Structure'}
+export function partAtPoint(parts:Part[],point:{x:number;y:number;z:number}){return parts.filter(p=>point.x>=p.x-1&&point.x<=p.x+p.w+1&&point.y>=p.y-1&&point.y<=p.y+p.d+1&&point.z>=p.z-1&&point.z<=p.z+p.h+1).sort((a,b)=>a.w*a.d*a.h-b.w*b.d*b.h)[0]??null}

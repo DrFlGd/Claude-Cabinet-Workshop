@@ -1,0 +1,9 @@
+{
+  "frontend": "equipment_stand",
+  "preset": "Freestanding Single Printer Stand",
+  "common": {
+    "material_thickness": 18.35,
+    "tray_thickness": 15.25,
+    "joinery": "tab_slot"
+  }
+}

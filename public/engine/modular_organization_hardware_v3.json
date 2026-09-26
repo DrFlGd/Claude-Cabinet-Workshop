@@ -1,0 +1,4837 @@
+{
+  "catalog_version": 2,
+  "units": "mm",
+  "semantics": "one-time editable hardware patches plus manufacturer mounting-spec metadata",
+  "profiles": [
+    {
+      "id": "generic_side_mount_12_7_450",
+      "category": "drawer_slide",
+      "manufacturer": "Generic",
+      "family": "Side-mount ball-bearing",
+      "model": "450 mm / 12.7 mm clearance",
+      "label": "Generic side-mount 450 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "verification": {
+        "status": "reference",
+        "verified": false,
+        "notes": "Project reference profile; verify actual hardware before machining."
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 3,
+        "metal_slide_envelope_height": 45,
+        "include_metal_slide_holes": true,
+        "metal_slide_hole_pattern_mode": "explicit_array",
+        "hardware_drilling_mode": "recommended",
+        "metal_slide_cabinet_holes_x": [
+          37,
+          133,
+          229,
+          325
+        ],
+        "metal_slide_drawer_holes_x": [
+          37,
+          133,
+          229,
+          325
+        ],
+        "metal_slide_cabinet_hole_diameter": 5,
+        "metal_slide_drawer_hole_diameter": 5,
+        "metal_slide_hole_rear_margin": 20,
+        "metal_slide_cabinet_hole_z_from_drawer_bottom": 22.5,
+        "metal_slide_drawer_hole_z_from_drawer_bottom": 22.5
+      },
+      "source": {
+        "type": "project_reference",
+        "title": "Modular Storage generic side-mount baseline"
+      },
+      "geometry_support": {
+        "status": "native",
+        "notes": "Project reference profile; all apply keys map directly to current V35 geometry."
+      }
+    },
+    {
+      "id": "generic_side_mount_12_7_500",
+      "extends": "generic_side_mount_12_7_450",
+      "label": "Generic side-mount 500 mm",
+      "model": "500 mm / 12.7 mm clearance",
+      "apply": {
+        "metal_slide_length": 500,
+        "metal_slide_cabinet_holes_x": [
+          37,
+          133,
+          229,
+          325,
+          421
+        ],
+        "metal_slide_drawer_holes_x": [
+          37,
+          133,
+          229,
+          325,
+          421
+        ]
+      }
+    },
+    {
+      "id": "accuride_3832e_450",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E18",
+      "label": "Accuride 3832E 450 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer-verified length, 12.7 mm side space and 45.7 mm height. Automatic drilling is intentionally disabled because the rail offers multiple mounting-hole/slot choices."
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "manufacturer_length_range_in": [
+          6,
+          28
+        ],
+        "load_rating_lb": 100,
+        "drilling_note": "Multiple slots/holes are provided; automatic drilling is intentionally disabled."
+      }
+    },
+    {
+      "id": "accuride_3832e_500",
+      "extends": "accuride_3832e_450",
+      "label": "Accuride 3832E 500 mm",
+      "model": "3832-E20",
+      "apply": {
+        "metal_slide_length": 500
+      },
+      "mounting_specs": {
+        "nominal_length_mm": 500,
+        "note": "Legacy metric convenience preset; manufacturer family is sold in inch lengths."
+      }
+    },
+    {
+      "id": "kv_8400_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 18 in",
+      "label": "KV 8400 18 in (457.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer documents verify 12.7 mm minimum side clearance, 45.5 mm slide height, 32 mm system compatibility and 18 in length. Drilling remains disabled because the slide exposes multiple direct-access mounting choices."
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 2,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide / installation instructions",
+        "url": "https://knapeandvogt.com/sites/default/files/300834-0708-8400Installation%20sheet.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "available_lengths_in": [
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28
+        ],
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      }
+    },
+    {
+      "id": "kv_8400_20in",
+      "extends": "kv_8400_18in",
+      "label": "KV 8400 20 in (508 mm)",
+      "model": "8400 20 in",
+      "apply": {
+        "metal_slide_length": 508
+      },
+      "mounting_specs": {
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508
+      }
+    },
+    {
+      "id": "hettich_ka5632_450",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "1073724",
+      "label": "Hettich KA 5632 450 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer product data verifies 450 mm length and 46 x 12.7 mm section. Drilling is disabled until a specific mounting-hole choice is encoded."
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner 450 mm",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-450-mm%2C-black/p/1073724",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      }
+    },
+    {
+      "id": "hettich_ka5632_500",
+      "extends": "hettich_ka5632_450",
+      "label": "Hettich KA 5632 500 mm",
+      "model": "1073725",
+      "apply": {
+        "metal_slide_length": 500
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner 500 mm",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-black/p/1073725",
+        "retrieved": "2026-09-15"
+      },
+      "mounting_specs": {
+        "nominal_length_mm": 500
+      }
+    },
+    {
+      "id": "generic_euro_35_110_overlay",
+      "category": "hinge",
+      "manufacturer": "Generic",
+      "family": "35 mm concealed hinge",
+      "model": "110 degree overlay",
+      "label": "Generic Euro 35 mm / overlay",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "stackable",
+        "kitchen"
+      ],
+      "verification": {
+        "status": "reference",
+        "verified": false,
+        "notes": "Generic baseline; verify exact hinge and plate."
+      },
+      "apply": {
+        "hinge_style": "euro_35mm",
+        "front_mount_style": "overlay",
+        "hinge_cup_diameter": 35,
+        "hinge_cup_depth": 12,
+        "hinge_cup_center_from_door_edge": 22.5,
+        "hinge_door_fixing_hole_diameter": 3,
+        "hinge_door_fixing_hole_spacing": 45,
+        "hinge_plate_hole_diameter": 5,
+        "hinge_plate_center_from_front": 37,
+        "hinge_plate_hole_spacing": 32,
+        "hinge_door_fixing_enabled": true,
+        "hinge_plate_holes_enabled": true
+      },
+      "source": {
+        "type": "project_reference",
+        "title": "Modular Storage generic Euro-hinge baseline"
+      },
+      "geometry_support": {
+        "status": "native",
+        "notes": "Project reference profile; all apply keys map directly to current V35 geometry."
+      }
+    },
+    {
+      "id": "generic_euro_35_110_inset",
+      "extends": "generic_euro_35_110_overlay",
+      "label": "Generic Euro 35 mm / inset",
+      "model": "110 degree inset",
+      "apply": {
+        "front_mount_style": "inset_flush"
+      }
+    },
+    {
+      "id": "blum_clip_top_blumotion_110_overlay_reference",
+      "category": "hinge",
+      "manufacturer": "Blum",
+      "family": "CLIP top BLUMOTION",
+      "model": "71B3550",
+      "label": "Blum CLIP top BLUMOTION 110\u00b0 / overlay screw-on",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "stackable",
+        "kitchen"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "35 mm cup, 13 mm boring depth and 37/32 mounting-plate reference are manufacturer-based. Door fixing is disabled because attachment variants differ; cup center uses a 5 mm K reference and should be checked for the chosen application."
+      },
+      "apply": {
+        "hinge_style": "euro_35mm",
+        "front_mount_style": "overlay",
+        "hinge_cup_diameter": 35,
+        "hinge_cup_depth": 13,
+        "hinge_cup_center_from_door_edge": 22.5,
+        "hinge_door_fixing_enabled": false,
+        "hinge_plate_hole_diameter": 5,
+        "hinge_plate_center_from_front": 37,
+        "hinge_plate_hole_spacing": 32,
+        "hinge_plate_holes_enabled": true
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "Blum",
+        "title": "Catalogue 2027/2028 \u2014 CLIP top BLUMOTION 110\u00b0 standard application",
+        "url": "https://publications.blum.com/2026/catalogue/en/70/",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "application": "overlay",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 13,
+        "attachment": "screw_on",
+        "part_number": "71B3550",
+        "plate_system_line_mm": 37,
+        "plate_hole_pitch_mm": 32,
+        "note": "Cup edge distance K/application setup varies; V35 uses K=5 mm as a neutral reference and does not auto-drill cup fixing wings."
+      }
+    },
+    {
+      "id": "blum_clip_top_blumotion_110_inset_reference",
+      "extends": "blum_clip_top_blumotion_110_overlay_reference",
+      "label": "Blum CLIP top BLUMOTION 110\u00b0 / inset screw-on",
+      "apply": {
+        "front_mount_style": "inset_flush"
+      },
+      "model": "71B3750",
+      "mounting_specs": {
+        "application": "inset",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 13,
+        "attachment": "screw_on",
+        "part_number": "71B3750",
+        "plate_system_line_mm": 37,
+        "plate_hole_pitch_mm": 32
+      }
+    },
+    {
+      "id": "hettich_sensys_8645i_overlay_screw",
+      "category": "hinge",
+      "manufacturer": "Hettich",
+      "family": "Sensys 8645i",
+      "model": "9073605",
+      "label": "Hettich Sensys 8645i 110\u00b0 / overlay screw-on",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "stackable",
+        "kitchen"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Product data verifies 35 mm cup, 12.8 mm cup depth, overlay application and TH 52 x 5.5 drilling family. Door fixing and mounting-plate through drilling are disabled because the current engine does not yet model the product's blind screw/dowel operations."
+      },
+      "apply": {
+        "hinge_style": "euro_35mm",
+        "front_mount_style": "overlay",
+        "hinge_cup_diameter": 35,
+        "hinge_cup_depth": 12.8,
+        "hinge_cup_center_from_door_edge": 23,
+        "hinge_door_fixing_hole_spacing": 52,
+        "hinge_door_fixing_enabled": false,
+        "hinge_plate_holes_enabled": false
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "Sensys 8645i overlay 9073605",
+        "url": "https://shop.hettich.com/hn_EN/Hinges/Sensys-hinge-series/Hinges/Sensys-110%C2%B0-hinge-with-integrated-silent-system-%28Sensys-8645i%29%2C-nickel-plated%2C-overlay%2C-Opening-angle-110%C2%B0%2C-TH-drilling-pattern-52-x-5-5-mm%2C-for-screwing-on-%28-%29/p/9073605",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "application": "overlay",
+        "opening_angle_deg": 110,
+        "door_thickness_mm": [
+          15,
+          24
+        ],
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12.8,
+        "drilling_pattern": "TH 52 x 5.5 mm",
+        "fixing_hole_spacing_mm": 52,
+        "fixing_hole_offset_from_cup_centerline_mm": 5.5,
+        "base_mm": 12.5,
+        "part_number": "9073605"
+      }
+    },
+    {
+      "id": "hettich_sensys_8645i_inset_screw",
+      "extends": "hettich_sensys_8645i_overlay_screw",
+      "label": "Hettich Sensys 8645i 110\u00b0 / inset screw-on",
+      "model": "9073607",
+      "apply": {
+        "front_mount_style": "inset_flush"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "Sensys 8645i inset 9073607",
+        "url": "https://shop.hettich.com/us_EN/Hinges/Sensys-hinge-series/Hinges/Sensys-110%C2%B0-hinge-with-integrated-silent-system-%28Sensys-8645i%29%2C-nickel-plated%2C-inset%2C-Opening-angle-110%C2%B0%2C-TH-drilling-pattern-52-x-5-5-mm%2C-for-screwing-on-%28-%29/p/9073607",
+        "retrieved": "2026-09-15"
+      },
+      "mounting_specs": {
+        "application": "inset",
+        "opening_angle_deg": 110,
+        "door_thickness_mm": [
+          15,
+          24
+        ],
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12.8,
+        "drilling_pattern": "TH 52 x 5.5 mm",
+        "fixing_hole_spacing_mm": 52,
+        "fixing_hole_offset_from_cup_centerline_mm": 5.5,
+        "base_mm": -4,
+        "part_number": "9073607"
+      }
+    },
+    {
+      "id": "salice_silentia_plus_105_overlay",
+      "category": "hinge",
+      "manufacturer": "Salice",
+      "family": "Silentia+ Series 100",
+      "model": "C1_6AE_",
+      "label": "Salice Silentia+ Series 100 105\u00b0 / full overlay",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "stackable",
+        "kitchen"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer data verifies 35 mm cup, 12 mm cup depth and K range 3-6 mm. This patch uses K=5 mm as a neutral reference and disables door/plate through drilling."
+      },
+      "apply": {
+        "hinge_style": "euro_35mm",
+        "front_mount_style": "overlay",
+        "hinge_cup_diameter": 35,
+        "hinge_cup_depth": 12,
+        "hinge_cup_center_from_door_edge": 22.5,
+        "hinge_door_fixing_enabled": false,
+        "hinge_plate_holes_enabled": false
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Salice",
+        "title": "Silentia+ Series 100 - 105\u00b0 opening - Standard application",
+        "url": "https://www.salice.com/us/en/products/hinges/integrated-soft-close-mechanism/silentia-plus-series-100-105-opening-standard-application",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "application": "full_overlay",
+        "opening_angle_deg": 105,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12,
+        "cup_edge_distance_k_mm": [
+          3,
+          6
+        ],
+        "arm_crank_mm": 0,
+        "model_pattern": "C1_6AE_"
+      }
+    },
+    {
+      "id": "grass_tiomos_110_overlay_reference",
+      "category": "hinge",
+      "manufacturer": "GRASS",
+      "family": "Tiomos",
+      "model": "Tiomos 110",
+      "label": "GRASS Tiomos 110\u00b0 / overlay reference",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "stackable",
+        "kitchen"
+      ],
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "GRASS technical information verifies 35 mm cup, minimum 12.6 mm cup depth and 45/9.5 drilling family. This patch uses the GRASS 22 mm drilling edge-distance reference (K=4.5) and disables door/plate through drilling."
+      },
+      "apply": {
+        "hinge_style": "euro_35mm",
+        "front_mount_style": "overlay",
+        "hinge_cup_diameter": 35,
+        "hinge_cup_depth": 12.6,
+        "hinge_cup_center_from_door_edge": 22,
+        "hinge_door_fixing_hole_spacing": 45,
+        "hinge_door_fixing_enabled": false,
+        "hinge_plate_holes_enabled": false
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "GRASS",
+        "title": "Tiomos 110 technical information / drilling patterns",
+        "url": "https://mediacenter.grass.eu/Produktkataloge/Hinges/EN/",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "application": "overlay_reference",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_min_mm": 12.6,
+        "cup_edge_distance_k_mm": [
+          3,
+          7
+        ],
+        "drilling_pattern": "45 x 9.5 mm",
+        "fixing_hole_spacing_mm": 45,
+        "fixing_hole_offset_from_cup_centerline_mm": 9.5,
+        "planning_application": "Overlay K3"
+      }
+    },
+    {
+      "id": "accuride_3832e_6in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E6",
+      "label": "Accuride 3832E 6 in (152.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 6,
+        "nominal_length_mm": 152.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 152.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_8in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E8",
+      "label": "Accuride 3832E 8 in (203.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 8,
+        "nominal_length_mm": 203.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 203.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E10",
+      "label": "Accuride 3832E 10 in (254.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E12",
+      "label": "Accuride 3832E 12 in (304.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E14",
+      "label": "Accuride 3832E 14 in (355.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E16",
+      "label": "Accuride 3832E 16 in (406.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E18",
+      "label": "Accuride 3832E 18 in (457.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E20",
+      "label": "Accuride 3832E 20 in (508.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E22",
+      "label": "Accuride 3832E 22 in (558.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E24",
+      "label": "Accuride 3832E 24 in (609.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E26",
+      "label": "Accuride 3832E 26 in (660.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3832e_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E28",
+      "label": "Accuride 3832E 28 in (711.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_8in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 8 in",
+      "label": "KV 8400 8 in (203.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 8,
+        "nominal_length_mm": 203.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 203.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 10 in",
+      "label": "KV 8400 10 in (254.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 12 in",
+      "label": "KV 8400 12 in (304.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 14 in",
+      "label": "KV 8400 14 in (355.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 16 in",
+      "label": "KV 8400 16 in (406.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 22 in",
+      "label": "KV 8400 22 in (558.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 24 in",
+      "label": "KV 8400 24 in (609.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 26 in",
+      "label": "KV 8400 26 in (660.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8400_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 28 in",
+      "label": "KV 8400 28 in (711.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_250",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 250 mm",
+      "label": "Hettich KA 5632 250 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 250,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 250,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_300",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 300 mm",
+      "label": "Hettich KA 5632 300 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 300,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 300,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_350",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 350 mm",
+      "label": "Hettich KA 5632 350 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 350,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 350,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_400",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 400 mm",
+      "label": "Hettich KA 5632 400 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 400,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 400,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_550",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 550 mm",
+      "label": "Hettich KA 5632 550 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 550,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 550,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_600",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 600 mm",
+      "label": "Hettich KA 5632 600 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 600,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 600,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_650",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 650 mm",
+      "label": "Hettich KA 5632 650 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 650,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 650,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_ka5632_700",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 700 mm",
+      "label": "Hettich KA 5632 700 mm",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 700,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 700,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 12 in",
+      "label": "KV 8450FM 12 in (304.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 14 in",
+      "label": "KV 8450FM 14 in (355.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 16 in",
+      "label": "KV 8450FM 16 in (406.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 18 in",
+      "label": "KV 8450FM 18 in (457.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 20 in",
+      "label": "KV 8450FM 20 in (508.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 22 in",
+      "label": "KV 8450FM 22 in (558.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 24 in",
+      "label": "KV 8450FM 24 in (609.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 26 in",
+      "label": "KV 8450FM 26 in (660.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "kv_8450fm_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 28 in",
+      "label": "KV 8450FM 28 in (711.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-14",
+      "label": "Accuride 3634EC 14 in (355.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-16",
+      "label": "Accuride 3634EC 16 in (406.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-18",
+      "label": "Accuride 3634EC 18 in (457.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-20",
+      "label": "Accuride 3634EC 20 in (508.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-22",
+      "label": "Accuride 3634EC 22 in (558.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-24",
+      "label": "Accuride 3634EC 24 in (609.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-26",
+      "label": "Accuride 3634EC 26 in (660.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_3634ec_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-28",
+      "label": "Accuride 3634EC 28 in (711.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-10",
+      "label": "Accuride 9301E 10 in (254.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-12",
+      "label": "Accuride 9301E 12 in (304.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-14",
+      "label": "Accuride 9301E 14 in (355.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-16",
+      "label": "Accuride 9301E 16 in (406.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-18",
+      "label": "Accuride 9301E 18 in (457.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-20",
+      "label": "Accuride 9301E 20 in (508.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-22",
+      "label": "Accuride 9301E 22 in (558.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-24",
+      "label": "Accuride 9301E 24 in (609.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-26",
+      "label": "Accuride 9301E 26 in (660.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-28",
+      "label": "Accuride 9301E 28 in (711.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_30in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-30",
+      "label": "Accuride 9301E 30 in (762.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 30,
+        "nominal_length_mm": 762.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 762.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_32in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-32",
+      "label": "Accuride 9301E 32 in (812.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 32,
+        "nominal_length_mm": 812.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 812.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_34in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-34",
+      "label": "Accuride 9301E 34 in (863.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 34,
+        "nominal_length_mm": 863.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 863.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_36in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-36",
+      "label": "Accuride 9301E 36 in (914.4 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 36,
+        "nominal_length_mm": 914.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 914.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_40in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-40",
+      "label": "Accuride 9301E 40 in (1016.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 40,
+        "nominal_length_mm": 1016.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1016.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_42in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-42",
+      "label": "Accuride 9301E 42 in (1066.8 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 42,
+        "nominal_length_mm": 1066.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1066.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_44in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-44",
+      "label": "Accuride 9301E 44 in (1117.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 44,
+        "nominal_length_mm": 1117.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1117.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_48in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-48",
+      "label": "Accuride 9301E 48 in (1219.2 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 48,
+        "nominal_length_mm": 1219.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1219.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_54in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-54",
+      "label": "Accuride 9301E 54 in (1371.6 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 54,
+        "nominal_length_mm": 1371.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1371.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "accuride_9301e_60in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-60",
+      "label": "Accuride 9301E 60 in (1524.0 mm)",
+      "targets": [
+        "utility",
+        "shop_cart",
+        "benchtop",
+        "stackable",
+        "kitchen",
+        "drawer"
+      ],
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 60,
+        "nominal_length_mm": 1524.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "apply": {
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1524.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "metal_slide_hole_pattern_mode": "legacy_spacing"
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "blum_clip_top_blumotion_110_dual_71b3650",
+      "category": "hinge",
+      "manufacturer": "Blum",
+      "family": "CLIP top BLUMOTION",
+      "model": "71B3650",
+      "label": "Blum CLIP top BLUMOTION 110\u00b0 / dual application screw-on",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 has no half/dual-overlay front_mount_style, so this is intentionally catalog-only."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "application": "dual_half_overlay",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 13,
+        "attachment": "screw_on",
+        "part_number": "71B3650"
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "Blum",
+        "title": "Catalogue 2027/2028 \u2014 CLIP top BLUMOTION 110\u00b0 standard application",
+        "url": "https://publications.blum.com/2026/catalogue/en/70/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_sensys_8645i_half_overlay_screw",
+      "category": "hinge",
+      "manufacturer": "Hettich",
+      "family": "Sensys 8645i",
+      "model": "9073606",
+      "label": "Hettich Sensys 8645i 110\u00b0 / half overlay screw-on",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 has no half-overlay front_mount_style; current hinge fixing-hole model also cannot express the 5.5 mm lateral offset safely."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "application": "half_overlay",
+        "opening_angle_deg": 110,
+        "door_thickness_mm": [
+          15,
+          24
+        ],
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12.8,
+        "drilling_pattern": "TH 52 x 5.5 mm",
+        "fixing_hole_spacing_mm": 52,
+        "fixing_hole_offset_from_cup_centerline_mm": 5.5,
+        "base_mm": 3,
+        "part_number": "9073606"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "Sensys 8645i half overlay 9073606",
+        "url": "https://shop.hettich.com/us_EN/Hinges/Sensys-hinge-series/Hinges/Sensys-110%C2%B0-hinge-with-integrated-silent-system-%28Sensys-8645i%29%2C-nickel-plated%2C-half-overlay%2C-Opening-angle-110%C2%B0%2C-TH-drilling-pattern-52-x-5-5-mm%2C-for-screwing-on-%28-%29/p/9073606",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "salice_silentia_plus_105_halfinch_overlay",
+      "category": "hinge",
+      "manufacturer": "Salice",
+      "family": "Silentia+ Series 100",
+      "model": "C1_6DE_",
+      "label": "Salice Silentia+ Series 100 105\u00b0 / 1/2 in overlay",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 does not encode hinge-specific overlay amount/crank geometry."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "application": "half_inch_overlay",
+        "opening_angle_deg": 105,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12,
+        "cup_edge_distance_k_mm": [
+          3,
+          6
+        ],
+        "arm_crank_mm": 5,
+        "model_pattern": "C1_6DE_"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Salice",
+        "title": "Silentia+ Series 100 - 105\u00b0 opening - Standard application",
+        "url": "https://www.salice.com/us/en/products/hinges/integrated-soft-close-mechanism/silentia-plus-series-100-105-opening-standard-application",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "salice_silentia_plus_105_half_overlay",
+      "category": "hinge",
+      "manufacturer": "Salice",
+      "family": "Silentia+ Series 100",
+      "model": "C1_6GE_",
+      "label": "Salice Silentia+ Series 100 105\u00b0 / half overlay",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 has no half-overlay front_mount_style."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "application": "half_overlay",
+        "opening_angle_deg": 105,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12,
+        "cup_edge_distance_k_mm": [
+          3,
+          6
+        ],
+        "arm_crank_mm": 9,
+        "model_pattern": "C1_6GE_"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Salice",
+        "title": "Silentia+ Series 100 - 105\u00b0 opening - Standard application",
+        "url": "https://www.salice.com/us/en/products/hinges/integrated-soft-close-mechanism/silentia-plus-series-100-105-opening-standard-application",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "salice_silentia_plus_105_inset",
+      "extends": "salice_silentia_plus_105_overlay",
+      "label": "Salice Silentia+ Series 100 105\u00b0 / inset",
+      "model": "C1_6PE_",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Inset front geometry and cup bore map safely; hinge fixing/plate drilling remains disabled."
+      },
+      "mounting_specs": {
+        "application": "inset",
+        "opening_angle_deg": 105,
+        "cup_diameter_mm": 35,
+        "cup_depth_mm": 12,
+        "cup_edge_distance_k_mm": [
+          3,
+          6
+        ],
+        "arm_crank_mm": 17,
+        "model_pattern": "C1_6PE_"
+      },
+      "apply": {
+        "front_mount_style": "inset_flush"
+      }
+    },
+    {
+      "id": "grass_tiomos_110_half_overlay",
+      "category": "hinge",
+      "manufacturer": "GRASS",
+      "family": "Tiomos",
+      "model": "Tiomos 110",
+      "label": "GRASS Tiomos 110\u00b0 / half overlay",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 has no half-overlay front_mount_style and cannot express the 9.5 mm fixing-hole lateral offset."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "application": "half_overlay",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_min_mm": 12.6,
+        "cup_edge_distance_k_mm": [
+          3,
+          7
+        ],
+        "drilling_pattern": "45 x 9.5 mm",
+        "planning_application": "Half overlay K9.5"
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "GRASS",
+        "title": "Hinge Systems \u2014 Tiomos 110 technical information",
+        "url": "https://mediacenter.grass.eu/Produktkataloge/Hinges/EN/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "grass_tiomos_110_inset_reference",
+      "extends": "grass_tiomos_110_overlay_reference",
+      "label": "GRASS Tiomos 110\u00b0 / inset reference",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Inset front geometry and cup bore map safely; fixing/plate drilling remains disabled."
+      },
+      "mounting_specs": {
+        "application": "inset",
+        "opening_angle_deg": 110,
+        "cup_diameter_mm": 35,
+        "cup_depth_min_mm": 12.6,
+        "cup_edge_distance_k_mm": [
+          3,
+          7
+        ],
+        "drilling_pattern": "45 x 9.5 mm",
+        "planning_application": "Inset K19"
+      },
+      "apply": {
+        "front_mount_style": "inset_flush"
+      }
+    },
+    {
+      "id": "blum_compact_blumotion_38n_partial_overlay",
+      "category": "hinge",
+      "manufacturer": "Blum",
+      "family": "COMPACT BLUMOTION",
+      "model": "38N",
+      "label": "Blum COMPACT BLUMOTION 38N / partial overlay",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "Face-frame hinge mounting is not represented by the current frameless side-panel machining model."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "cabinet_style": "face_frame",
+        "application": "partial_overlay",
+        "opening_angle_deg": 105,
+        "cup_depth_in": 0.4375,
+        "cup_depth_mm": 11.1125,
+        "model_family": "38N"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Blum",
+        "title": "COMPACT BLUMOTION product range",
+        "url": "https://www.blum.com/us/en/products/hingesystems/compact-blumotion/programme/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "blum_compact_blumotion_39c_full_overlay",
+      "category": "hinge",
+      "manufacturer": "Blum",
+      "family": "COMPACT BLUMOTION",
+      "model": "39C",
+      "label": "Blum COMPACT BLUMOTION 39C / full overlay",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "Face-frame hinge mounting is not represented by the current frameless side-panel machining model."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "cabinet_style": "face_frame",
+        "application": "full_overlay",
+        "opening_angle_deg": 110,
+        "cup_depth_in": 0.5,
+        "cup_depth_mm": 12.7,
+        "model_family": "39C"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Blum",
+        "title": "COMPACT BLUMOTION product range",
+        "url": "https://www.blum.com/us/en/products/hingesystems/compact-blumotion/programme/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "blum_movento_760h_family",
+      "category": "drawer_slide",
+      "manufacturer": "Blum",
+      "family": "MOVENTO",
+      "model": "760H",
+      "label": "Blum MOVENTO 760H concealed full-extension family",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 models side-mounted metal-slide envelopes; MOVENTO concealed runner geometry requires drawer-width and underside locking-device features not yet modeled."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "dynamic_capacity_kg": 40,
+        "available_nominal_lengths_mm": [
+          250,
+          270,
+          300,
+          320,
+          350,
+          380,
+          400,
+          420,
+          450,
+          480,
+          500,
+          520,
+          550,
+          600
+        ],
+        "internal_drawer_width_formula": "SKW = LW - 42 (+0/-1.5 mm)",
+        "drawer_length_formula": "SKL = NL - 10 mm",
+        "minimum_installation_depth_formula": "NL + 3 mm",
+        "cabinet_system_line_mm": 37,
+        "cabinet_hole_pitch_mm": 32
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "Blum",
+        "title": "Catalogue 2027/2028 \u2014 MOVENTO 760H/766H planning",
+        "url": "https://publications.blum.com/2026/catalogue/en/421/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "blum_movento_766h_family",
+      "category": "drawer_slide",
+      "manufacturer": "Blum",
+      "family": "MOVENTO",
+      "model": "766H",
+      "label": "Blum MOVENTO 766H concealed full-extension family",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "V35 side-mount slide model cannot safely derive MOVENTO drawer-box width, underside clips or runner drilling."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "dynamic_capacity_kg": [
+          60,
+          70
+        ],
+        "available_nominal_lengths_mm": [
+          450,
+          500,
+          520,
+          550,
+          580,
+          600,
+          650,
+          700,
+          750
+        ],
+        "internal_drawer_width_formula": "SKW = LW - 42 (+0/-1.5 mm)",
+        "drawer_length_formula": "SKL = NL - 10 mm",
+        "minimum_installation_depth_formula": "NL + 3 mm",
+        "cabinet_system_line_mm": 37,
+        "cabinet_hole_pitch_mm": 32
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "Blum",
+        "title": "Catalogue 2027/2028 \u2014 MOVENTO 760H/766H planning",
+        "url": "https://publications.blum.com/2026/catalogue/en/421/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "blum_tandem_563h_family",
+      "category": "drawer_slide",
+      "manufacturer": "Blum",
+      "family": "TANDEM plus BLUMOTION",
+      "model": "563H",
+      "label": "Blum TANDEM plus BLUMOTION 563H family",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "TANDEM concealed mounting requires drawer-bottom and rear-hook/locking-device geometry outside V35 side-mount slide semantics."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "available_nominal_lengths_in": [
+          9,
+          12,
+          15,
+          18,
+          21
+        ],
+        "available_nominal_lengths_mm": [
+          229,
+          305,
+          381,
+          457,
+          533
+        ],
+        "maximum_drawer_side_thickness_in": 0.625,
+        "static_capacity_lb": 100,
+        "dynamic_capacity_lb": 90,
+        "cabinet_system_line_mm": 37
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Blum",
+        "title": "TANDEM plus BLUMOTION planning",
+        "url": "https://d2.blum.com/services/BEC003/tdmbmn_ep_dok_bus_%24sen-us_%24aof_%24v14.pdf",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "hettich_quadro_v6_silent_500",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "Quadro V6 Silent System",
+      "model": "9047770/9047771",
+      "label": "Hettich Quadro V6 Silent System 500 mm",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "Quadro is a concealed runner and needs drawer-width/underside catch geometry that V35 does not yet model."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "nominal_length_mm": 500,
+        "drawer_length_skl_mm": 500,
+        "minimum_cabinet_depth_mm": 513,
+        "load_capacity_kg": 30,
+        "installed_width_eb": 20,
+        "drawer_side_thickness_max_mm": 16,
+        "hole_spacing_b1_mm": 288,
+        "hole_spacing_b2_mm": 224
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "Quadro V6 with Silent System, 500 mm",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Concealed-drawer-runners/Quadro-drawer-runners/Quadro-V6/Quadro-V6-with-Silent-System%2C-500-mm%2C-right/p/9047771",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "grass_dynapro_40kg_family",
+      "category": "drawer_slide",
+      "manufacturer": "GRASS",
+      "family": "Dynapro",
+      "model": "40 kg full extension soft-close",
+      "label": "GRASS Dynapro 40 kg concealed full-extension family",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "Dynapro concealed-runner drawer width, locking device and underside drilling are not represented by the V35 side-mount slide model."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "load_capacity_kg": 40,
+        "available_nominal_lengths_mm": [
+          270,
+          300,
+          320,
+          350,
+          380,
+          400,
+          420,
+          450,
+          480,
+          500,
+          520,
+          550,
+          600
+        ],
+        "internal_drawer_width_formula": "LWS = (LWK - 42) -1.5/+0 mm",
+        "drawer_length_formula": "SKL = NL - 10 \u00b10.5 mm",
+        "minimum_installation_depth_formula": "MET = NL + 3 mm",
+        "cabinet_system_line_mm": 37,
+        "example_500mm": {
+          "nl_mm": 500,
+          "skl_mm": 490,
+          "met_mm": 503
+        }
+      },
+      "source": {
+        "type": "manufacturer_catalog",
+        "manufacturer": "GRASS",
+        "title": "Dynapro Slide system planning",
+        "url": "https://mediacenter.grass.eu/Produktkataloge/Dynapro/EN/25/",
+        "retrieved": "2026-09-15"
+      }
+    },
+    {
+      "id": "salice_futura_a755_family",
+      "category": "drawer_slide",
+      "manufacturer": "Salice",
+      "family": "Futura",
+      "model": "A755",
+      "label": "Salice Futura A755 concealed full-extension family",
+      "geometry_support": {
+        "status": "metadata_only",
+        "notes": "Futura is a concealed runner with clip/rear-hook geometry and drawer-width formulas not represented by V35 side-mount slide controls."
+      },
+      "verification": {
+        "status": "manufacturer_verified",
+        "verified": true,
+        "notes": "Manufacturer-sourced mounting data retained for the web hardware library; no V35 machining patch is emitted."
+      },
+      "mounting_specs": {
+        "mounting": "concealed_undermount",
+        "travel": "full_extension",
+        "load_capacity_lb": {
+          "static": 100,
+          "dynamic": 75
+        },
+        "drawer_side_thickness_max_mm": 16,
+        "outside_drawer_width_for_16mm_sides": "cabinet inside width - 9 mm",
+        "minimum_top_clearance_mm": 5,
+        "clip_adjustments": [
+          "height",
+          "side",
+          "depth"
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Salice",
+        "title": "FUTURA SELF CLOSING - USA Full extension - A755",
+        "url": "https://www.salice.com/us/en/products/runners-and-space-organizers/concealed-runners/futura-self-closing-full-extension-clip-version-755",
+        "retrieved": "2026-09-15"
+      }
+    }
+  ],
+  "library_revision": "v35-expanded-2026-09-15",
+  "library_notes": "Manufacturer dimensions are source-traceable. Profiles marked metadata_only are intentionally not emitted as machining presets until matching geometry exists."
+}

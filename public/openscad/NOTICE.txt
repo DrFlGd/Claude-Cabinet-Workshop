@@ -1,0 +1,9 @@
+OpenSCAD WebAssembly engine
+Pinned distribution: OpenSCAD-2025.03.25.wasm24456-WebAssembly-web.zip
+Upstream binary: https://files.openscad.org/playground/OpenSCAD-2025.03.25.wasm24456-WebAssembly-web.zip
+Selected from the OpenSCAD Playground build configuration:
+https://github.com/openscad/openscad-playground/blob/main/libs-config.json
+OpenSCAD source and build instructions: https://github.com/openscad/openscad
+WebAssembly build integration: https://github.com/openscad/openscad-playground
+License: GNU General Public License version 2 or later; see COPYING.
+The distributed openscad.js and openscad.wasm are unmodified upstream artifacts.

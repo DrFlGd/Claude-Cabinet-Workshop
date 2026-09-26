@@ -1,0 +1,21 @@
+    # Application hardening: absent or incomplete signatures must fail closed.
+    required={
+        'MOI-STACK-1': 'KSV W D T ID F B R C'.split(),
+        'MOI-GANG-1': 'KSV H D T STYLE DOWEL_D DOWEL_DEPTH CONNECTOR_D PAIR_SPACING COL_COUNT STATION_COUNT Y DOWEL_Z CONNECTOR_Z'.split(),
+    }
+    for label,record in [('a',a),('b',b)]:
+        for field in ['standard','role','key','face']:
+            if not isinstance(record.get(field),str) or not record[field].strip():
+                reasons.append(f'{label}: missing {field}')
+        standard=record.get('standard')
+        if standard not in required:
+            reasons.append(f'{label}: unsupported external standard {standard}')
+        else:
+            key=parse_key(record.get('key'))
+            for field in required[standard]:
+                if field not in key or not key[field] or 'undef' in key[field]:
+                    reasons.append(f'{label}: incomplete geometry signature {field}')
+            if key.get('KSV')!='2':
+                reasons.append(f'{label}: unsupported key schema')
+    if a.get('standard')==b.get('standard')=='MOI-GANG-1' and {a.get('face'),b.get('face')}!={'outer-left','outer-right'}:
+        reasons.append('Side-ganging requires opposite left/right faces')

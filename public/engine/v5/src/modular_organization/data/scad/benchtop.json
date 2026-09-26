@@ -1,0 +1,54 @@
+{
+  "parameterSets": {
+    "Micro 2 Drawer": {
+      "design_name": "Micro 2 Drawer",
+      "cabinet_width": "240",
+      "cabinet_height": "180",
+      "cabinet_depth": "200",
+      "drawer_count": "2"
+    },
+    "Mini 3 Drawer": {
+      "design_name": "Mini 3 Drawer",
+      "cabinet_width": "280",
+      "cabinet_height": "240",
+      "cabinet_depth": "230",
+      "drawer_count": "3"
+    },
+    "Compact 4 Drawer": {
+      "design_name": "Compact 4 Drawer",
+      "cabinet_width": "320",
+      "cabinet_height": "320",
+      "cabinet_depth": "280",
+      "drawer_count": "4"
+    },
+    "Parts 5 Drawer": {
+      "design_name": "Parts 5 Drawer",
+      "cabinet_width": "400",
+      "cabinet_height": "400",
+      "cabinet_depth": "300",
+      "drawer_count": "5"
+    },
+    "Shallow Parts 6 Drawer": {
+      "design_name": "Shallow Parts 6 Drawer",
+      "cabinet_width": "480",
+      "cabinet_height": "300",
+      "cabinet_depth": "230",
+      "drawer_count": "6"
+    },
+    "Wide 6 Drawer": {
+      "design_name": "Wide 6 Drawer",
+      "cabinet_width": "600",
+      "cabinet_height": "420",
+      "cabinet_depth": "350",
+      "drawer_count": "6"
+    },
+    "Wide 8 Drawer": {
+      "design_name": "Wide 8 Drawer",
+      "cabinet_width": "800",
+      "cabinet_height": "520",
+      "cabinet_depth": "350",
+      "drawer_count": "8"
+    }
+  },
+  "fileFormatVersion": "1"
+}

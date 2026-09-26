@@ -1,0 +1,72 @@
+name: Build and Pages
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy the built site to GitHub Pages
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: cabinet-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --global pnpm@11.25.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit --incremental false
+      - run: pnpm run test:release
+      - run: pnpm run build:static
+        env:
+          CABINET_BASE_PATH: /Cabinet-Workshop/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web-dist
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/deploy-pages@v4
+        id: deployment
+  version:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Tag the verified application version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          test "$(cat VERSION)" = "$version"
+          if git show-ref --verify --quiet "refs/tags/v$version"; then
+            echo "Version v$version already released; preserving its tag."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git tag -a "v$version" -m "Cabinet Workshop v$version"
+          git push origin "refs/tags/v$version"

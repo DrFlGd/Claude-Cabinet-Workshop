@@ -1,0 +1,41 @@
+{
+  "project_format": "MORG-1",
+  "name": "Two bolted equipment stand modules",
+  "units": "mm",
+  "modules": [
+    {
+      "id": "lower",
+      "type": "openscad",
+      "frontend": "equipment_stand",
+      "preset": "Freestanding Single Printer Stand",
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotate_z": 0
+      }
+    },
+    {
+      "id": "upper",
+      "type": "openscad",
+      "frontend": "equipment_stand",
+      "preset": "Freestanding Single Printer Stand"
+    }
+  ],
+  "relationships": [
+    {
+      "id": "tower_joint",
+      "type": "mate",
+      "a": {
+        "module": "lower",
+        "interface": "stack.top"
+      },
+      "b": {
+        "module": "upper",
+        "interface": "stack.bottom"
+      }
+    }
+  ]
+}

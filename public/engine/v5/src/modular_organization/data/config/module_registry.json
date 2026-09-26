@@ -1,0 +1,98 @@
+{
+  "registry_version": 3,
+  "engine_family": "modular_organization",
+  "engine_version": 5,
+  "project_format": "MORG-1",
+  "interface_contract": "MOI-4",
+  "modules": {
+    "utility": {
+      "type": "openscad",
+      "frontend": "utility.scad",
+      "presets": "utility.json",
+      "kind": "cabinet"
+    },
+    "shop_cart": {
+      "type": "openscad",
+      "frontend": "shop_cart.scad",
+      "presets": "shop_cart.json",
+      "kind": "cabinet"
+    },
+    "benchtop": {
+      "type": "openscad",
+      "frontend": "benchtop.scad",
+      "presets": "benchtop.json",
+      "kind": "cabinet"
+    },
+    "stackable": {
+      "type": "openscad",
+      "frontend": "stackable.scad",
+      "presets": "stackable.json",
+      "kind": "cabinet",
+      "project_interfaces": [
+        "stack.bottom",
+        "stack.top",
+        "side_gang.left",
+        "side_gang.right"
+      ]
+    },
+    "kitchen": {
+      "type": "openscad",
+      "frontend": "kitchen.scad",
+      "presets": "kitchen.json",
+      "kind": "cabinet"
+    },
+    "drawer": {
+      "type": "openscad",
+      "frontend": "drawer.scad",
+      "presets": "drawer.json",
+      "kind": "drawer"
+    },
+    "box": {
+      "type": "box",
+      "kind": "generic",
+      "notes": "Project-layer rectangular primitive; useful for spacers, mockups, and future module adapters."
+    },
+    "span_worktop": {
+      "type": "span_worktop",
+      "kind": "worktop",
+      "notes": "Derived project module spanning the world AABBs of resolved supports with explicit overhangs and support-height validation."
+    },
+    "drawer_divider_grid": {
+      "type": "drawer_divider_grid",
+      "kind": "drawer_organizer",
+      "standard": "MOI-DIVIDER-GRID-1",
+      "rendering": "compiled_into_host",
+      "host_interface": "drawer.N.organizer",
+      "notes": "Logical child module. The v4 resolver compiles its divider settings into one OpenSCAD drawer/cabinet host so grooves and divider parts are generated and validated by the host geometry engine."
+    },
+    "equipment_stand": {
+      "type": "openscad",
+      "frontend": "equipment_stand.scad",
+      "presets": "equipment_stand.json",
+      "kind": "equipment_stand",
+      "subtype": "pullout_printer_stand",
+      "project_interfaces": [
+        "stack.top",
+        "stack.bottom",
+        "mount.wall",
+        "mount.floor"
+      ],
+      "notes": "Single or multi-bay frame; mount.wall only in cleat mode. Stack joints use through-bolts; MOI-EQUIP-STACK-1 does not mate to cabinet tab interfaces."
+    }
+  },
+  "relationship_types": {
+    "mate": {
+      "authority": "OpenSCAD MOI-4 INTERFACE + INTERFACE_FRAME records",
+      "placement": "translation and orthogonal Z rotation"
+    },
+    "contains": {
+      "authority": "project graph",
+      "placement": "parent-local offset and optional orthogonal Z rotation"
+    },
+    "mount": {
+      "authority": "project graph + host MOI-DIVIDER-GRID-1 organizer interface",
+      "placement": "logical child compiled into host manufacturing geometry",
+      "v4_scope": "drawer_divider_grid children only"
+    }
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "project_schema.json",
+  "title": "Modular Organization MORG-1 Project",
+  "type": "object",
+  "required": [
+    "project_format",
+    "name",
+    "modules",
+    "relationships"
+  ],
+  "properties": {
+    "project_format": {
+      "const": "MORG-1"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "units": {
+      "const": "mm"
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+          },
+          "type": {
+            "enum": [
+              "openscad",
+              "box",
+              "span_worktop",
+              "drawer_divider_grid"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "frontend": {
+            "enum": [
+              "utility",
+              "shop_cart",
+              "benchtop",
+              "stackable",
+              "kitchen",
+              "drawer",
+              "equipment_stand"
+            ]
+          },
+          "preset": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "size": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "transform": {
+            "type": "object",
+            "properties": {
+              "translate": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "rotate_z": {
+                "enum": [
+                  0,
+                  90,
+                  180,
+                  270
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "preferred_rotate_z": {
+            "enum": [
+              0,
+              90,
+              180,
+              270
+            ]
+          },
+          "supports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "thickness": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "gap": {
+            "type": "number",
+            "minimum": 0
+          },
+          "support_height_tolerance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "overhang": {
+            "type": "object",
+            "properties": {
+              "left": {
+                "type": "number",
+                "minimum": 0
+              },
+              "right": {
+                "type": "number",
+                "minimum": 0
+              },
+              "front": {
+                "type": "number",
+                "minimum": 0
+              },
+              "back": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "mate",
+              "contains",
+              "mount"
+            ]
+          },
+          "a": {
+            "$ref": "#/$defs/interfaceRef"
+          },
+          "b": {
+            "$ref": "#/$defs/interfaceRef"
+          },
+          "parent": {
+            "type": "string"
+          },
+          "child": {
+            "type": "string"
+          },
+          "offset": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "number"
+            }
+          },
+          "rotate_z": {
+            "enum": [
+              0,
+              90,
+              180,
+              270
+            ]
+          },
+          "host": {
+            "$ref": "#/$defs/interfaceRef"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "$defs": {
+    "interfaceRef": {
+      "type": "object",
+      "required": [
+        "module",
+        "interface"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "interface": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

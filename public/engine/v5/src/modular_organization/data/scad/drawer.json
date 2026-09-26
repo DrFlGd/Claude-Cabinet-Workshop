@@ -1,0 +1,88 @@
+{
+  "parameterSets": {
+    "450 mm Opening / Metal Slides": {
+      "design_name": "450 mm Opening Replacement",
+      "drawer_design_basis": "enclosure",
+      "enclosure_opening_width": "450",
+      "enclosure_opening_height": "160",
+      "enclosure_usable_depth": "500",
+      "enclosure_height_mode": "box_height",
+      "enclosure_target_box_height": "120",
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "drawer_face_style": "none"
+    },
+    "18 in Opening / Metal Slides": {
+      "design_name": "18 in Opening Replacement",
+      "drawer_design_basis": "enclosure",
+      "enclosure_opening_width": "457.2",
+      "enclosure_opening_height": "152.4",
+      "enclosure_usable_depth": "533.4",
+      "enclosure_height_mode": "box_height",
+      "enclosure_target_box_height": "127",
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "drawer_face_style": "none"
+    },
+    "Copy 400 x 450 x 120 Box": {
+      "design_name": "Copy Existing 400 x 450 x 120 Box",
+      "drawer_design_basis": "outside_box",
+      "target_box_outside_width": "400",
+      "target_box_outside_depth": "450",
+      "target_box_outside_height": "120",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "420 x 336 x 85 Inside Clear": {
+      "design_name": "420 x 336 x 85 Inside Clear",
+      "drawer_design_basis": "inside_clear",
+      "target_box_inside_width": "420",
+      "target_box_inside_depth": "336",
+      "target_box_inside_height": "85",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "42 mm Grid 10 x 8": {
+      "design_name": "42 mm Grid 10 x 8",
+      "drawer_design_basis": "modular_grid",
+      "drawer_module_pitch_x": "42",
+      "drawer_module_count_x": "10",
+      "drawer_module_edge_clearance_x": "1",
+      "drawer_module_pitch_y": "42",
+      "drawer_module_count_y": "8",
+      "drawer_module_edge_clearance_y": "1",
+      "drawer_module_inside_height": "85",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "450 mm Opening / 4x3 Divider Grid": {
+      "design_name": "450 mm Opening / 4x3 Divider Grid",
+      "drawer_design_basis": "enclosure",
+      "enclosure_opening_width": "450",
+      "enclosure_opening_height": "160",
+      "enclosure_usable_depth": "500",
+      "enclosure_height_mode": "box_height",
+      "enclosure_target_box_height": "120",
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "drawer_face_style": "none",
+      "include_drawer_divider_grid": "true",
+      "drawer_divider_layout_mode": "equal_count",
+      "drawer_divider_columns": "4",
+      "drawer_divider_rows": "3",
+      "drawer_divider_target_mode": "all",
+      "drawer_divider_mounting": "bottom_and_perimeter",
+      "drawer_divider_stock": "custom_mm",
+      "custom_drawer_divider_thickness": "6",
+      "drawer_divider_height": "60",
+      "drawer_divider_groove_clearance": "0.2",
+      "drawer_divider_interlock_clearance": "0.2",
+      "drawer_divider_bottom_groove_depth": "2.5",
+      "drawer_divider_perimeter_groove_depth": "3",
+      "drawer_divider_edge_margin": "8",
+      "drawer_divider_interlock_orientation": "longitudinal_top",
+      "engrave_drawer_divider_ids": "true"
+    }
+  },
+  "fileFormatVersion": "1"
+}

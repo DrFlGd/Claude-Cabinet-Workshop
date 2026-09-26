@@ -1,0 +1,88 @@
+Modular Storage V29 Validation
+==============================
+
+Default regression: V28 -> V29
+------------------------------
+Utility:
+- assembly pixel-identical
+- CUT unchanged
+
+Shop Cart:
+- assembly pixel-identical
+- CUT unchanged
+
+Benchtop:
+- assembly pixel-identical
+- CUT unchanged
+
+Stackable:
+- assembly pixel-identical
+- CUT unchanged
+
+Kitchen:
+- assembly pixel-identical
+- CUT unchanged
+
+OpenSCAD native recipes
+-----------------------
+34 / 34 V29 native Customizer parameter sets compiled successfully.
+
+Exact drawer-interior sizing
+----------------------------
+Validated in:
+- Utility
+- Shop Cart
+- Benchtop
+- Stackable
+- Kitchen face-frame cabinet
+
+Representative Utility direct target:
+- requested inside: 420 x 336 mm
+- achieved inside:  420 x 336 mm
+
+Generic modular-grid sizing
+---------------------------
+Validated:
+- pitch: 42 x 42 mm
+- modules: 10 x 8
+- edge clearance: 1 mm per side on each axis
+- requested inside: 422 x 338 mm
+- achieved inside:  422 x 338 mm
+- solved Utility cabinet: 520 x 900 x 384 mm
+
+Policy / bank handling
+----------------------
+Validated:
+- `minimum` does not shrink a cabinet already larger than target
+- `exact` may shrink or grow to target
+- selected bank 2 in a three-bank cabinet hits its target
+- selecting a non-drawer mixed-bay slot emits
+  `ERROR|DRAWER_TARGET_BANK_NOT_DRAWER`
+
+Wood-slide behavior
+-------------------
+Depth delta is applied to cabinet-relative wood fixed-rail and drawer-runner
+lengths when drawer-inside depth sizing is active.
+
+Structured reporting
+--------------------
+Validated:
+- `TARGET|DRAWER_INSIDE`
+- `INFO|MODULAR_TARGET`
+- invalid-target ERROR paths
+- `DIM|CABINET|OUTSIDE`
+- existing `DIM|DRAWER|...|INSIDE_CLEAR`
+
+Registration
+------------
+With modular sizing enabled, these SVG exports have identical page/viewBox
+metadata:
+- cut_layout
+- pocket_layout
+- engrave_layout
+
+Validated shared registration:
+2480 mm x 4990 mm
+viewBox -20 -4970 2480 4990
+
+No critical undefined / unknown-parameter warnings found.

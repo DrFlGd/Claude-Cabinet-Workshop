@@ -1,0 +1,4 @@
+# Required by modular_organization_validate.py and, therefore, by the v3
+# manufacturing-package exporter when exhaustive CUT/POCKET validation runs.
+ezdxf>=1.4,<2
+shapely>=2.1,<3

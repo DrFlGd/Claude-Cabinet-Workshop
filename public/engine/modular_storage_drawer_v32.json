@@ -1,0 +1,148 @@
+{
+  "parameterSets": {
+    "450 mm Opening / Metal Slides": {
+      "design_name": "450 mm Opening Replacement",
+      "drawer_design_basis": "enclosure",
+      "enclosure_opening_width": "450",
+      "enclosure_opening_height": "160",
+      "enclosure_usable_depth": "500",
+      "enclosure_height_mode": "box_height",
+      "enclosure_target_box_height": "120",
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "drawer_face_style": "none"
+    },
+    "18 in Opening / Metal Slides": {
+      "design_name": "18 in Opening Replacement",
+      "drawer_design_basis": "enclosure",
+      "enclosure_opening_width": "457.2",
+      "enclosure_opening_height": "152.4",
+      "enclosure_usable_depth": "533.4",
+      "enclosure_height_mode": "box_height",
+      "enclosure_target_box_height": "127",
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "drawer_face_style": "none"
+    },
+    "Copy 400 x 450 x 120 Box": {
+      "design_name": "Copy Existing 400 x 450 x 120 Box",
+      "drawer_design_basis": "outside_box",
+      "target_box_outside_width": "400",
+      "target_box_outside_depth": "450",
+      "target_box_outside_height": "120",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "420 x 336 x 85 Inside Clear": {
+      "design_name": "420 x 336 x 85 Inside Clear",
+      "drawer_design_basis": "inside_clear",
+      "target_box_inside_width": "420",
+      "target_box_inside_depth": "336",
+      "target_box_inside_height": "85",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "42 mm Grid 10 x 8": {
+      "design_name": "42 mm Grid 10 x 8",
+      "drawer_design_basis": "modular_grid",
+      "drawer_module_pitch_x": "42",
+      "drawer_module_count_x": "10",
+      "drawer_module_edge_clearance_x": "1",
+      "drawer_module_pitch_y": "42",
+      "drawer_module_count_y": "8",
+      "drawer_module_edge_clearance_y": "1",
+      "drawer_module_inside_height": "85",
+      "drawer_mount": "metal_slides",
+      "drawer_face_style": "none"
+    },
+    "Slide \u2014 Generic side-mount 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "3",
+      "metal_slide_envelope_height": "45",
+      "include_metal_slide_holes": "true",
+      "metal_slide_hole_pattern_mode": "explicit_array",
+      "hardware_drilling_mode": "recommended",
+      "metal_slide_cabinet_holes_x": "[37,133,229,325]",
+      "metal_slide_drawer_holes_x": "[37,133,229,325]",
+      "metal_slide_cabinet_hole_diameter": "5",
+      "metal_slide_drawer_hole_diameter": "5",
+      "metal_slide_hole_rear_margin": "20",
+      "metal_slide_cabinet_hole_z_from_drawer_bottom": "22.5",
+      "metal_slide_drawer_hole_z_from_drawer_bottom": "22.5"
+    },
+    "Slide \u2014 Generic side-mount 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "3",
+      "metal_slide_envelope_height": "45",
+      "include_metal_slide_holes": "true",
+      "metal_slide_hole_pattern_mode": "explicit_array",
+      "hardware_drilling_mode": "recommended",
+      "metal_slide_cabinet_holes_x": "[37,133,229,325,421]",
+      "metal_slide_drawer_holes_x": "[37,133,229,325,421]",
+      "metal_slide_cabinet_hole_diameter": "5",
+      "metal_slide_drawer_hole_diameter": "5",
+      "metal_slide_hole_rear_margin": "20",
+      "metal_slide_cabinet_hole_z_from_drawer_bottom": "22.5",
+      "metal_slide_drawer_hole_z_from_drawer_bottom": "22.5"
+    },
+    "Slide \u2014 Accuride 3832E 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "45.7",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Accuride 3832E 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "45.7",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 KV 8400 18 in (457.2 mm)": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "457.2",
+      "metal_slide_front_setback": "2",
+      "metal_slide_envelope_height": "45.5",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 KV 8400 20 in (508 mm)": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "508",
+      "metal_slide_front_setback": "2",
+      "metal_slide_envelope_height": "45.5",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Hettich KA 5632 450 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "450",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "46",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "Slide \u2014 Hettich KA 5632 500 mm": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": "12.7",
+      "metal_slide_length": "500",
+      "metal_slide_front_setback": "0",
+      "metal_slide_envelope_height": "46",
+      "include_metal_slide_holes": "false",
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    }
+  },
+  "fileFormatVersion": "1"
+}

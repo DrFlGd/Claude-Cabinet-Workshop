@@ -1,0 +1,56 @@
+Modular Storage V32 Validation
+==============================
+
+Architecture
+------------
+- Hardware catalog V2 uses `apply` patches only.
+- No persistent drawer-slide or hinge profile ID is consumed by geometry.
+- No generated hardware OpenSCAD lookup library is required at runtime.
+- Hardware generator validates every apply key against public frontend settings.
+
+Default regression: V31 -> V32
+------------------------------
+Utility, Shop Cart, Benchtop, Stackable, Kitchen, Drawer:
+- assembly pixel-identical
+- CUT SVG paths unchanged
+- CUT SVG page/viewBox metadata unchanged
+
+Recipes
+-------
+39 / 39 existing native cabinet/drawer recipes compile successfully.
+
+Hardware catalog
+----------------
+16 / 16 hardware patches validated on the Utility frontend.
+For every applicable hardware profile:
+- native OpenSCAD parameter set compiled
+- same profile compiled again from its direct `apply` values
+- CUT SVG path geometry matched exactly
+- CUT SVG page/viewBox metadata matched exactly
+
+Hardware examples in V32
+------------------------
+Drawer slides:
+- Generic side-mount 450 mm
+- Generic side-mount 500 mm
+- Accuride 3832E 450 mm
+- Accuride 3832E 500 mm
+- Knape & Vogt 8400 18 in
+- Knape & Vogt 8400 20 in
+- Hettich KA 5632 450 mm
+- Hettich KA 5632 500 mm
+
+Hinges:
+- Generic Euro 35 mm overlay
+- Generic Euro 35 mm inset
+- Blum CLIP top BLUMOTION 110 overlay reference
+- Blum CLIP top BLUMOTION 110 inset reference
+- Hettich Sensys 8645i overlay screw-on
+- Hettich Sensys 8645i inset screw-on
+- Salice Silentia+ Series 100 105 full overlay
+- GRASS Tiomos 110 overlay reference
+
+Partial manufacturer profiles intentionally disable drilling operations that
+cannot be mapped safely to the current through-hole machining semantics.
+
+No critical undefined / unknown-parameter warnings were found in validation.

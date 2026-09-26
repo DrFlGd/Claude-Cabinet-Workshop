@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hardware_schema.json",
+  "title": "Modular Storage Hardware Catalog V2",
+  "type": "object",
+  "required": [
+    "catalog_version",
+    "units",
+    "profiles"
+  ],
+  "properties": {
+    "catalog_version": {
+      "const": 2
+    },
+    "units": {
+      "const": "mm"
+    },
+    "semantics": {
+      "type": "string"
+    },
+    "library_revision": {
+      "type": "string"
+    },
+    "library_notes": {
+      "type": "string"
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "extends": {
+            "type": "string"
+          },
+          "category": {
+            "enum": [
+              "drawer_slide",
+              "hinge"
+            ]
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "utility",
+                "shop_cart",
+                "benchtop",
+                "stackable",
+                "kitchen",
+                "drawer"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "geometry_support": {
+            "type": "object",
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "native",
+                  "partial",
+                  "metadata_only"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
+          },
+          "verification": {
+            "type": "object"
+          },
+          "mounting_specs": {
+            "type": "object"
+          },
+          "native_preset": {
+            "type": "boolean"
+          },
+          "apply": {
+            "type": "object"
+          },
+          "source": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

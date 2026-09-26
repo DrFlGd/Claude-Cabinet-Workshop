@@ -1,0 +1,861 @@
+{
+  "recipe_format_version": 1,
+  "engine_version": 3,
+  "semantics": "A recipe is a one-time editable value patch. Modular Organization v3 preserves the v35 direct-configuration model and adds interface/keepout contracts.",
+  "recipes": [
+    {
+      "id": "utility_3_drawer_base",
+      "label": "Utility \u2014 3 Drawer Base",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "cabinet_width": 760,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "cabinet_layout_mode": "legacy",
+        "design_name": "3 Drawer Base",
+        "cabinet_contents": "drawers",
+        "drawer_count": 3,
+        "door_count": 0
+      }
+    },
+    {
+      "id": "utility_4_drawer_base",
+      "label": "Utility \u2014 4 Drawer Base",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "cabinet_width": 760,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "cabinet_layout_mode": "legacy",
+        "design_name": "4 Drawer Base",
+        "cabinet_contents": "drawers",
+        "drawer_count": 4,
+        "door_count": 0
+      }
+    },
+    {
+      "id": "utility_door_base",
+      "label": "Utility \u2014 Door Base",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "cabinet_width": 760,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "cabinet_layout_mode": "legacy",
+        "design_name": "Door Base",
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "shelf_style": "adjustable",
+        "door_shelf_count": 1
+      }
+    },
+    {
+      "id": "utility_2drawer_2door_combo",
+      "label": "Utility \u2014 2 Drawer / 2 Door",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "cabinet_width": 760,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "cabinet_layout_mode": "legacy",
+        "design_name": "2 Drawer / 2 Door Combo",
+        "cabinet_contents": "combo",
+        "drawer_count": 2,
+        "door_count": 2,
+        "door_shelf_count": 1
+      }
+    },
+    {
+      "id": "utility_1drawer_2door_combo",
+      "label": "Utility \u2014 1 Drawer / 2 Door",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "cabinet_width": 760,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "cabinet_layout_mode": "legacy",
+        "design_name": "1 Drawer / 2 Door Combo",
+        "cabinet_contents": "combo",
+        "drawer_count": 1,
+        "door_count": 2,
+        "door_shelf_count": 1
+      }
+    },
+    {
+      "id": "utility_wide_3_section_drawers",
+      "label": "Utility \u2014 Wide 3-Section Drawers",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "design_name": "Wide 3-Section Drawers",
+        "cabinet_width": 1200,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_contents": "drawers",
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 3,
+        "mixed_bay_types": [
+          "drawers",
+          "drawers",
+          "drawers",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "mixed_bay_shelf_counts": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "utility_wide_4_section_drawers",
+      "label": "Utility \u2014 Wide 4-Section Drawers",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "design_name": "Wide 4-Section Drawers",
+        "cabinet_width": 1600,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_contents": "drawers",
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 4,
+        "mixed_bay_types": [
+          "drawers",
+          "drawers",
+          "drawers",
+          "drawers"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          4,
+          4,
+          4
+        ]
+      }
+    },
+    {
+      "id": "utility_wide_mixed_base",
+      "label": "Utility \u2014 Wide Mixed Base",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "design_name": "Wide Mixed Base",
+        "cabinet_width": 1400,
+        "cabinet_height": 900,
+        "cabinet_depth": 610,
+        "cabinet_contents": "combo",
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 3,
+        "mixed_bay_types": [
+          "drawers",
+          "drawers",
+          "door",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1.2,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          3,
+          0,
+          0
+        ],
+        "mixed_bay_shelf_counts": [
+          0,
+          0,
+          2,
+          0
+        ]
+      }
+    },
+    {
+      "id": "utility_tall_2door_storage",
+      "label": "Utility \u2014 Tall 2-Door Storage",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "design_name": "Tall 2-Door Storage",
+        "cabinet_width": 900,
+        "cabinet_height": 1800,
+        "cabinet_depth": 500,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "cabinet_layout_mode": "legacy",
+        "shelf_style": "adjustable",
+        "door_shelf_count": 4
+      }
+    },
+    {
+      "id": "utility_2door_wall",
+      "label": "Utility \u2014 2-Door Wall",
+      "frontend": "utility",
+      "description": "",
+      "apply": {
+        "design_name": "2-Door Wall",
+        "cabinet_width": 760,
+        "cabinet_height": 760,
+        "cabinet_depth": 330,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "cabinet_layout_mode": "legacy",
+        "cabinet_mount_style": "wall",
+        "base_style": "flat",
+        "top_style": "full",
+        "shelf_style": "adjustable",
+        "door_shelf_count": 2
+      }
+    },
+    {
+      "id": "shop_compact_mixed_cart",
+      "label": "Shop \u2014 Compact Mixed Cart",
+      "frontend": "shop_cart",
+      "description": "",
+      "apply": {
+        "design_name": "Compact Mixed Shop Cart",
+        "cabinet_width": 650,
+        "cabinet_height": 700,
+        "cabinet_depth": 500,
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 2,
+        "mixed_bay_types": [
+          "drawers",
+          "open",
+          "door",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1.2,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          0,
+          0,
+          0
+        ],
+        "mixed_bay_shelf_styles": [
+          "adjustable",
+          "fixed",
+          "adjustable",
+          "adjustable"
+        ],
+        "mixed_bay_shelf_counts": [
+          0,
+          2,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "shop_3_section_drawer_workbench",
+      "label": "Shop \u2014 3-Section Drawer Workbench",
+      "frontend": "shop_cart",
+      "description": "",
+      "apply": {
+        "design_name": "3-Section Drawer Workbench",
+        "cabinet_width": 1500,
+        "cabinet_height": 720,
+        "cabinet_depth": 600,
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 3,
+        "mixed_bay_types": [
+          "drawers",
+          "drawers",
+          "drawers",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          4,
+          4,
+          4
+        ]
+      }
+    },
+    {
+      "id": "shop_4_section_drawer_workbench",
+      "label": "Shop \u2014 4-Section Drawer Workbench",
+      "frontend": "shop_cart",
+      "description": "",
+      "apply": {
+        "design_name": "4-Section Drawer Workbench",
+        "cabinet_width": 1800,
+        "cabinet_height": 720,
+        "cabinet_depth": 600,
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 4,
+        "mixed_bay_types": [
+          "drawers",
+          "drawers",
+          "drawers",
+          "drawers"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          4,
+          4,
+          4,
+          4
+        ]
+      }
+    },
+    {
+      "id": "shop_machine_stand",
+      "label": "Shop \u2014 Machine Stand",
+      "frontend": "shop_cart",
+      "description": "",
+      "apply": {
+        "design_name": "Machine Stand",
+        "cabinet_width": 800,
+        "cabinet_height": 650,
+        "cabinet_depth": 600,
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 2,
+        "mixed_bay_types": [
+          "drawers",
+          "open",
+          "open",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1.2,
+          1,
+          1
+        ],
+        "mixed_bay_drawer_counts": [
+          3,
+          0,
+          0,
+          0
+        ],
+        "mixed_bay_shelf_styles": [
+          "adjustable",
+          "fixed",
+          "adjustable",
+          "adjustable"
+        ],
+        "mixed_bay_shelf_counts": [
+          0,
+          1,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "shop_open_service_cart",
+      "label": "Shop \u2014 Open Service Cart",
+      "frontend": "shop_cart",
+      "description": "",
+      "apply": {
+        "design_name": "Open Service Cart",
+        "cabinet_width": 1000,
+        "cabinet_height": 750,
+        "cabinet_depth": 500,
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 2,
+        "mixed_bay_types": [
+          "open",
+          "open",
+          "open",
+          "open"
+        ],
+        "mixed_bay_width_weights": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "mixed_bay_shelf_styles": [
+          "fixed",
+          "fixed",
+          "adjustable",
+          "adjustable"
+        ],
+        "mixed_bay_shelf_counts": [
+          2,
+          2,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "id": "bench_micro_2",
+      "label": "Benchtop \u2014 Micro 2 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Micro 2 Drawer",
+        "cabinet_width": 240,
+        "cabinet_height": 180,
+        "cabinet_depth": 200,
+        "drawer_count": 2
+      }
+    },
+    {
+      "id": "bench_mini_3",
+      "label": "Benchtop \u2014 Mini 3 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Mini 3 Drawer",
+        "cabinet_width": 280,
+        "cabinet_height": 240,
+        "cabinet_depth": 230,
+        "drawer_count": 3
+      }
+    },
+    {
+      "id": "bench_compact_4",
+      "label": "Benchtop \u2014 Compact 4 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Compact 4 Drawer",
+        "cabinet_width": 320,
+        "cabinet_height": 320,
+        "cabinet_depth": 280,
+        "drawer_count": 4
+      }
+    },
+    {
+      "id": "bench_parts_5",
+      "label": "Benchtop \u2014 Parts 5 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Parts 5 Drawer",
+        "cabinet_width": 400,
+        "cabinet_height": 400,
+        "cabinet_depth": 300,
+        "drawer_count": 5
+      }
+    },
+    {
+      "id": "bench_shallow_parts_6",
+      "label": "Benchtop \u2014 Shallow Parts 6 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Shallow Parts 6 Drawer",
+        "cabinet_width": 480,
+        "cabinet_height": 300,
+        "cabinet_depth": 230,
+        "drawer_count": 6
+      }
+    },
+    {
+      "id": "bench_wide_6",
+      "label": "Benchtop \u2014 Wide 6 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Wide 6 Drawer",
+        "cabinet_width": 600,
+        "cabinet_height": 420,
+        "cabinet_depth": 350,
+        "drawer_count": 6
+      }
+    },
+    {
+      "id": "bench_wide_8",
+      "label": "Benchtop \u2014 Wide 8 Drawer",
+      "frontend": "benchtop",
+      "description": "",
+      "apply": {
+        "design_name": "Wide 8 Drawer",
+        "cabinet_width": 800,
+        "cabinet_height": 520,
+        "cabinet_depth": 350,
+        "drawer_count": 8
+      }
+    },
+    {
+      "id": "stack_one_deep_drawer",
+      "label": "Stackable \u2014 1 Deep Drawer",
+      "frontend": "stackable",
+      "description": "",
+      "apply": {
+        "design_name": "1 Deep Drawer",
+        "module_type": "drawers",
+        "drawer_count": 1,
+        "door_shelf_count": 0,
+        "cabinet_width": 500,
+        "cabinet_height": 260,
+        "cabinet_depth": 500
+      }
+    },
+    {
+      "id": "stack_two_drawer",
+      "label": "Stackable \u2014 2 Drawer",
+      "frontend": "stackable",
+      "description": "",
+      "apply": {
+        "design_name": "2 Drawer",
+        "module_type": "drawers",
+        "drawer_count": 2,
+        "door_shelf_count": 0,
+        "cabinet_width": 500,
+        "cabinet_height": 360,
+        "cabinet_depth": 500
+      }
+    },
+    {
+      "id": "stack_four_shallow_drawer",
+      "label": "Stackable \u2014 4 Shallow Drawer",
+      "frontend": "stackable",
+      "description": "",
+      "apply": {
+        "design_name": "4 Shallow Drawer",
+        "module_type": "drawers",
+        "drawer_count": 4,
+        "door_shelf_count": 0,
+        "cabinet_width": 500,
+        "cabinet_height": 480,
+        "cabinet_depth": 500
+      }
+    },
+    {
+      "id": "stack_open",
+      "label": "Stackable \u2014 Open Module",
+      "frontend": "stackable",
+      "description": "",
+      "apply": {
+        "design_name": "Open Module",
+        "module_type": "open",
+        "drawer_count": 0,
+        "door_shelf_count": 1,
+        "cabinet_width": 500,
+        "cabinet_height": 320,
+        "cabinet_depth": 500
+      }
+    },
+    {
+      "id": "stack_door",
+      "label": "Stackable \u2014 Door Module",
+      "frontend": "stackable",
+      "description": "",
+      "apply": {
+        "design_name": "Door Module",
+        "module_type": "door",
+        "drawer_count": 0,
+        "door_shelf_count": 1,
+        "cabinet_width": 500,
+        "cabinet_height": 420,
+        "cabinet_depth": 500
+      }
+    },
+    {
+      "id": "kitchen_B30",
+      "label": "Kitchen B30 \u2014 Drawer over Doors",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "kitchen_family": "base",
+        "cabinet_height": 876.3,
+        "cabinet_nominal_depth": 609.6,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "design_name": "B30 Drawer over Doors",
+        "kitchen_model_code": "B30",
+        "cabinet_width": 762,
+        "cabinet_contents": "combo",
+        "drawer_count": 1,
+        "door_count": 2,
+        "door_shelf_count": 1,
+        "face_frame_mid_rail_mode": "combo_auto"
+      }
+    },
+    {
+      "id": "kitchen_DB36_3",
+      "label": "Kitchen DB36-3 \u2014 3 Drawer Base",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "kitchen_family": "base",
+        "cabinet_height": 876.3,
+        "cabinet_nominal_depth": 609.6,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "design_name": "DB36-3",
+        "kitchen_model_code": "DB36-3",
+        "cabinet_width": 914.4,
+        "cabinet_contents": "drawers",
+        "drawer_count": 3,
+        "door_count": 0,
+        "door_shelf_count": 0,
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "kitchen_DB36_4",
+      "label": "Kitchen DB36-4 \u2014 4 Drawer Base",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "kitchen_family": "base",
+        "cabinet_height": 876.3,
+        "cabinet_nominal_depth": 609.6,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "design_name": "DB36-4",
+        "kitchen_model_code": "DB36-4",
+        "cabinet_width": 914.4,
+        "cabinet_contents": "drawers",
+        "drawer_count": 4,
+        "door_count": 0,
+        "door_shelf_count": 0,
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "kitchen_SB36",
+      "label": "Kitchen SB36 \u2014 Sink Base",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "kitchen_family": "base",
+        "cabinet_height": 876.3,
+        "cabinet_nominal_depth": 609.6,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "stretchers",
+        "design_name": "SB36 Sink Base",
+        "kitchen_model_code": "SB36",
+        "cabinet_width": 914.4,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "door_shelf_count": 0,
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "kitchen_W3030",
+      "label": "Kitchen W3030 \u2014 Wall Cabinet",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "design_name": "W3030",
+        "kitchen_model_code": "W3030",
+        "kitchen_family": "wall",
+        "cabinet_width": 762,
+        "cabinet_height": 762,
+        "cabinet_nominal_depth": 304.8,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "door_shelf_count": 2,
+        "cabinet_mount_style": "wall",
+        "base_style": "flat",
+        "top_style": "full",
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "kitchen_WO2424",
+      "label": "Kitchen WO2424 \u2014 Open Wall",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "design_name": "WO2424",
+        "kitchen_model_code": "WO2424",
+        "kitchen_family": "wall",
+        "cabinet_width": 609.6,
+        "cabinet_height": 609.6,
+        "cabinet_nominal_depth": 304.8,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 0,
+        "door_shelf_count": 2,
+        "cabinet_mount_style": "wall",
+        "base_style": "flat",
+        "top_style": "full",
+        "cabinet_layout_mode": "mixed_bays",
+        "mixed_bay_count": 1,
+        "mixed_bay_types": [
+          "open"
+        ],
+        "mixed_bay_shelf_counts": [
+          2
+        ],
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "kitchen_T2490",
+      "label": "Kitchen T2490 \u2014 Tall Pantry",
+      "frontend": "kitchen",
+      "description": "",
+      "apply": {
+        "design_name": "T2490",
+        "kitchen_model_code": "T2490",
+        "kitchen_family": "tall",
+        "cabinet_width": 609.6,
+        "cabinet_height": 2286,
+        "cabinet_nominal_depth": 609.6,
+        "cabinet_contents": "doors",
+        "drawer_count": 0,
+        "door_count": 2,
+        "door_shelf_count": 5,
+        "cabinet_mount_style": "floor",
+        "base_style": "toe_kick",
+        "top_style": "full",
+        "face_frame_mid_rail_mode": "none"
+      }
+    },
+    {
+      "id": "drawer_replacement_450_metal",
+      "label": "Drawer \u2014 450 mm Opening / Metal Slides",
+      "frontend": "drawer",
+      "description": "Replacement drawer for a 450 x 160 x 500 mm measured opening using 12.7 mm side-mount slide clearance.",
+      "apply": {
+        "design_name": "450 mm Opening Replacement",
+        "drawer_design_basis": "enclosure",
+        "enclosure_opening_width": 450,
+        "enclosure_opening_height": 160,
+        "enclosure_usable_depth": 500,
+        "enclosure_height_mode": "box_height",
+        "enclosure_target_box_height": 120,
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "drawer_face_style": "none"
+      }
+    },
+    {
+      "id": "drawer_replacement_18in_metal",
+      "label": "Drawer \u2014 18 in Opening / Metal Slides",
+      "frontend": "drawer",
+      "description": "Example replacement drawer for an 18 inch wide opening with a 5 inch box.",
+      "apply": {
+        "design_name": "18 in Opening Replacement",
+        "drawer_design_basis": "enclosure",
+        "enclosure_opening_width": 457.2,
+        "enclosure_opening_height": 152.4,
+        "enclosure_usable_depth": 533.4,
+        "enclosure_height_mode": "box_height",
+        "enclosure_target_box_height": 127,
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "drawer_face_style": "none"
+      }
+    },
+    {
+      "id": "drawer_copy_400x450x120",
+      "label": "Drawer \u2014 Copy 400 x 450 x 120 Box",
+      "frontend": "drawer",
+      "description": "Rebuild a drawer from its finished outside box dimensions.",
+      "apply": {
+        "design_name": "Copy Existing 400 x 450 x 120 Box",
+        "drawer_design_basis": "outside_box",
+        "target_box_outside_width": 400,
+        "target_box_outside_depth": 450,
+        "target_box_outside_height": 120,
+        "drawer_mount": "metal_slides",
+        "drawer_face_style": "none"
+      }
+    },
+    {
+      "id": "drawer_inside_420x336x85",
+      "label": "Drawer \u2014 420 x 336 x 85 Inside Clear",
+      "frontend": "drawer",
+      "description": "Design directly around a required usable drawer interior.",
+      "apply": {
+        "design_name": "420 x 336 x 85 Inside Clear",
+        "drawer_design_basis": "inside_clear",
+        "target_box_inside_width": 420,
+        "target_box_inside_depth": 336,
+        "target_box_inside_height": 85,
+        "drawer_mount": "metal_slides",
+        "drawer_face_style": "none"
+      }
+    },
+    {
+      "id": "drawer_grid_10x8_42mm",
+      "label": "Drawer \u2014 42 mm Grid 10 x 8",
+      "frontend": "drawer",
+      "description": "Generic 42 mm modular grid target: 10 x 8 modules, 1 mm edge clearance, 85 mm usable height.",
+      "apply": {
+        "design_name": "42 mm Grid 10 x 8",
+        "drawer_design_basis": "modular_grid",
+        "drawer_module_pitch_x": 42,
+        "drawer_module_count_x": 10,
+        "drawer_module_edge_clearance_x": 1,
+        "drawer_module_pitch_y": 42,
+        "drawer_module_count_y": 8,
+        "drawer_module_edge_clearance_y": 1,
+        "drawer_module_inside_height": 85,
+        "drawer_mount": "metal_slides",
+        "drawer_face_style": "none"
+      }
+    }
+  ],
+  "engine_family": "modular_organization",
+  "forked_from": "modular_storage_v35"
+}

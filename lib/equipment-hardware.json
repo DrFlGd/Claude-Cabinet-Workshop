@@ -1,0 +1,4048 @@
+{
+  "catalog_version": 1,
+  "semantics": "one-time editable patches; no live binding",
+  "profiles": [
+    {
+      "id": "generic_side_mount_12_7_450",
+      "category": "drawer_slide",
+      "manufacturer": "Generic",
+      "family": "Side-mount ball-bearing",
+      "model": "450 mm / 12.7 mm clearance",
+      "label": "Generic side-mount 450 mm",
+      "verification": {
+        "status": "reference",
+        "verified": false,
+        "notes": "Project reference profile; verify actual hardware before machining."
+      },
+      "source": {
+        "type": "project_reference",
+        "title": "Modular Storage generic side-mount baseline"
+      },
+      "geometry_support": {
+        "status": "native",
+        "notes": "Project reference profile; all apply keys map directly to current V35 geometry."
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 3,
+        "metal_slide_envelope_height": 45,
+        "include_metal_slide_holes": true,
+        "metal_slide_cabinet_holes_x": [
+          37,
+          133,
+          229,
+          325
+        ],
+        "metal_slide_drawer_holes_x": [
+          37,
+          133,
+          229,
+          325
+        ],
+        "metal_slide_cabinet_hole_diameter": 5,
+        "metal_slide_drawer_hole_diameter": 5,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "generic_side_mount_12_7_500",
+      "category": "drawer_slide",
+      "manufacturer": "Generic",
+      "family": "Side-mount ball-bearing",
+      "model": "500 mm / 12.7 mm clearance",
+      "label": "Generic side-mount 500 mm",
+      "verification": {
+        "status": "reference",
+        "verified": false,
+        "notes": "Project reference profile; verify actual hardware before machining."
+      },
+      "source": {
+        "type": "project_reference",
+        "title": "Modular Storage generic side-mount baseline"
+      },
+      "geometry_support": {
+        "status": "native",
+        "notes": "Project reference profile; all apply keys map directly to current V35 geometry."
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 500,
+        "metal_slide_front_setback": 3,
+        "metal_slide_envelope_height": 45,
+        "include_metal_slide_holes": true,
+        "metal_slide_cabinet_holes_x": [
+          37,
+          133,
+          229,
+          325,
+          421
+        ],
+        "metal_slide_drawer_holes_x": [
+          37,
+          133,
+          229,
+          325,
+          421
+        ],
+        "metal_slide_cabinet_hole_diameter": 5,
+        "metal_slide_drawer_hole_diameter": 5,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_450",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E18",
+      "label": "Accuride 3832E 450 mm",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer-verified length, 12.7 mm side space and 45.7 mm height. Automatic drilling is intentionally disabled because the rail offers multiple mounting-hole/slot choices."
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "manufacturer_length_range_in": [
+          6,
+          28
+        ],
+        "load_rating_lb": 100,
+        "drilling_note": "Multiple slots/holes are provided; automatic drilling is intentionally disabled."
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_500",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E20",
+      "label": "Accuride 3832E 500 mm",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer-verified length, 12.7 mm side space and 45.7 mm height. Automatic drilling is intentionally disabled because the rail offers multiple mounting-hole/slot choices."
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "manufacturer_length_range_in": [
+          6,
+          28
+        ],
+        "load_rating_lb": 100,
+        "drilling_note": "Multiple slots/holes are provided; automatic drilling is intentionally disabled.",
+        "nominal_length_mm": 500,
+        "note": "Legacy metric convenience preset; manufacturer family is sold in inch lengths."
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 500,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 18 in",
+      "label": "KV 8400 18 in (457.2 mm)",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer documents verify 12.7 mm minimum side clearance, 45.5 mm slide height, 32 mm system compatibility and 18 in length. Drilling remains disabled because the slide exposes multiple direct-access mounting choices."
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide / installation instructions",
+        "url": "https://knapeandvogt.com/sites/default/files/300834-0708-8400Installation%20sheet.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "available_lengths_in": [
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28
+        ],
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 2,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 20 in",
+      "label": "KV 8400 20 in (508 mm)",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer documents verify 12.7 mm minimum side clearance, 45.5 mm slide height, 32 mm system compatibility and 18 in length. Drilling remains disabled because the slide exposes multiple direct-access mounting choices."
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide / installation instructions",
+        "url": "https://knapeandvogt.com/sites/default/files/300834-0708-8400Installation%20sheet.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "available_lengths_in": [
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28
+        ],
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 508,
+        "metal_slide_front_setback": 2,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_450",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "1073724",
+      "label": "Hettich KA 5632 450 mm",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer product data verifies 450 mm length and 46 x 12.7 mm section. Drilling is disabled until a specific mounting-hole choice is encoded."
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner 450 mm",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-450-mm%2C-black/p/1073724",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 450,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_500",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "1073725",
+      "label": "Hettich KA 5632 500 mm",
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Manufacturer product data verifies 450 mm length and 46 x 12.7 mm section. Drilling is disabled until a specific mounting-hole choice is encoded."
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner 500 mm",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-black/p/1073725",
+        "retrieved": "2026-09-15"
+      },
+      "geometry_support": {
+        "status": "partial",
+        "notes": "Safe mounting-envelope/cup parameters map to V35; automatic drilling is only enabled where represented safely."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ],
+        "nominal_length_mm": 500
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 500,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_6in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E6",
+      "label": "Accuride 3832E 6 in (152.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 6,
+        "nominal_length_mm": 152.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 152.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_8in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E8",
+      "label": "Accuride 3832E 8 in (203.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 8,
+        "nominal_length_mm": 203.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 203.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E10",
+      "label": "Accuride 3832E 10 in (254.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E12",
+      "label": "Accuride 3832E 12 in (304.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E14",
+      "label": "Accuride 3832E 14 in (355.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E16",
+      "label": "Accuride 3832E 16 in (406.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E18",
+      "label": "Accuride 3832E 18 in (457.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E20",
+      "label": "Accuride 3832E 20 in (508.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E22",
+      "label": "Accuride 3832E 22 in (558.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E24",
+      "label": "Accuride 3832E 24 in (609.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E26",
+      "label": "Accuride 3832E 26 in (660.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3832e_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3832E",
+      "model": "3832-E28",
+      "label": "Accuride 3832E 28 in (711.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.7,
+        "load_rating_lb": 100
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 3832E, 3834E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/516dd0135bf3d6a5f7d76cafd3f74da0.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.7,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_8in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 8 in",
+      "label": "KV 8400 8 in (203.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 8,
+        "nominal_length_mm": 203.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 203.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 10 in",
+      "label": "KV 8400 10 in (254.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 12 in",
+      "label": "KV 8400 12 in (304.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 14 in",
+      "label": "KV 8400 14 in (355.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 16 in",
+      "label": "KV 8400 16 in (406.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 22 in",
+      "label": "KV 8400 22 in (558.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 24 in",
+      "label": "KV 8400 24 in (609.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 26 in",
+      "label": "KV 8400 26 in (660.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8400_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8400",
+      "model": "8400 28 in",
+      "label": "KV 8400 28 in (711.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "traditional_and_32mm"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8400 Full Extension Box or File Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8400-full-extension-box-or-file-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_250",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 250 mm",
+      "label": "Hettich KA 5632 250 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 250,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 250,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_300",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 300 mm",
+      "label": "Hettich KA 5632 300 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 300,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 300,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_350",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 350 mm",
+      "label": "Hettich KA 5632 350 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 350,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 350,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_400",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 400 mm",
+      "label": "Hettich KA 5632 400 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 400,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 400,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_550",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 550 mm",
+      "label": "Hettich KA 5632 550 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 550,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 550,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_600",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 600 mm",
+      "label": "Hettich KA 5632 600 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 600,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 600,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_650",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 650 mm",
+      "label": "Hettich KA 5632 650 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 650,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 650,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "hettich_ka5632_700",
+      "category": "drawer_slide",
+      "manufacturer": "Hettich",
+      "family": "KA 5632",
+      "model": "KA 5632 700 mm",
+      "label": "Hettich KA 5632 700 mm",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "nominal_length_mm": 700,
+        "cross_section_h_mm": 46,
+        "cross_section_w_mm": 12.7,
+        "load_capacity_kg": 45,
+        "available_lengths_mm": [
+          250,
+          300,
+          350,
+          400,
+          450,
+          500,
+          550,
+          600,
+          650,
+          700
+        ]
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Hettich",
+        "title": "KA 5632 ball bearing runner, side installation",
+        "url": "https://shop.hettich.com/us_EN/Runner-systems/Ball-bearing-runners/Side-installation/KA-5632-ball-bearing-runner%2C-side-installation%2C-dimensions-%28H-x-W%29-46-x-12-7-mm%2C-500-mm%2C-blue-passivated%2C-galvanised/p/73281",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 700,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 46,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 12 in",
+      "label": "KV 8450FM 12 in (304.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 14 in",
+      "label": "KV 8450FM 14 in (355.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 16 in",
+      "label": "KV 8450FM 16 in (406.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 18 in",
+      "label": "KV 8450FM 18 in (457.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 20 in",
+      "label": "KV 8450FM 20 in (508.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 22 in",
+      "label": "KV 8450FM 22 in (558.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 24 in",
+      "label": "KV 8450FM 24 in (609.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 26 in",
+      "label": "KV 8450FM 26 in (660.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "kv_8450fm_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Knape & Vogt",
+      "family": "8450FM",
+      "model": "8450FM 28 in",
+      "label": "KV 8450FM 28 in (711.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side",
+        "travel": "full_extension",
+        "close_action": "soft_close",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 12.7,
+        "side_space_tolerance_plus_mm": 0.8,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 45.5,
+        "load_class_lb": 100,
+        "hole_pattern": "32mm_with_direct_access"
+      },
+      "source": {
+        "type": "manufacturer_web",
+        "manufacturer": "Knape & Vogt",
+        "title": "8450FM Full Extension Soft-Close Force Management Drawer Slide",
+        "url": "https://knapeandvogt.com/products/8450fm-full-extension-soft-close-force-management-drawer-slide",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 12.7,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 45.5,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 70
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-14",
+      "label": "Accuride 3634EC 14 in (355.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-16",
+      "label": "Accuride 3634EC 16 in (406.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-18",
+      "label": "Accuride 3634EC 18 in (457.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-20",
+      "label": "Accuride 3634EC 20 in (508.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-22",
+      "label": "Accuride 3634EC 22 in (558.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-24",
+      "label": "Accuride 3634EC 24 in (609.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-26",
+      "label": "Accuride 3634EC 26 in (660.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_3634ec_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "3634EC",
+      "model": "3634EC-28",
+      "label": "Accuride 3634EC 28 in (711.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_only",
+        "travel": "over_travel_25_4mm",
+        "close_action": "easy_close",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 19.8,
+        "side_space_tolerance_plus_mm": 0,
+        "side_space_tolerance_minus_mm": 0.5,
+        "slide_height_mm": 53.1,
+        "load_rating_lb": 175,
+        "recommended_drawer_width_less_than_opening_mm": 39.69
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "3634 & 3634EC Tech Sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/eb56617574c60ac8f96ef125ffd073c2.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.8,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 53.1,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 73.1
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_10in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-10",
+      "label": "Accuride 9301E 10 in (254.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 10,
+        "nominal_length_mm": 254.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 254.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_12in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-12",
+      "label": "Accuride 9301E 12 in (304.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 12,
+        "nominal_length_mm": 304.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 304.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_14in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-14",
+      "label": "Accuride 9301E 14 in (355.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 14,
+        "nominal_length_mm": 355.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 355.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_16in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-16",
+      "label": "Accuride 9301E 16 in (406.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 16,
+        "nominal_length_mm": 406.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 406.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_18in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-18",
+      "label": "Accuride 9301E 18 in (457.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 18,
+        "nominal_length_mm": 457.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 457.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_20in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-20",
+      "label": "Accuride 9301E 20 in (508.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 20,
+        "nominal_length_mm": 508.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 508.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_22in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-22",
+      "label": "Accuride 9301E 22 in (558.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 22,
+        "nominal_length_mm": 558.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 558.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_24in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-24",
+      "label": "Accuride 9301E 24 in (609.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 24,
+        "nominal_length_mm": 609.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 609.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_26in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-26",
+      "label": "Accuride 9301E 26 in (660.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 26,
+        "nominal_length_mm": 660.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 660.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_28in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-28",
+      "label": "Accuride 9301E 28 in (711.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 28,
+        "nominal_length_mm": 711.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 711.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_30in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-30",
+      "label": "Accuride 9301E 30 in (762.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 30,
+        "nominal_length_mm": 762.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 762.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_32in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-32",
+      "label": "Accuride 9301E 32 in (812.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 32,
+        "nominal_length_mm": 812.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 812.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_34in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-34",
+      "label": "Accuride 9301E 34 in (863.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 34,
+        "nominal_length_mm": 863.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 863.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_36in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-36",
+      "label": "Accuride 9301E 36 in (914.4 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 36,
+        "nominal_length_mm": 914.4,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 914.4,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_40in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-40",
+      "label": "Accuride 9301E 40 in (1016.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 40,
+        "nominal_length_mm": 1016.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1016.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_42in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-42",
+      "label": "Accuride 9301E 42 in (1066.8 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 42,
+        "nominal_length_mm": 1066.8,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1066.8,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_44in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-44",
+      "label": "Accuride 9301E 44 in (1117.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 44,
+        "nominal_length_mm": 1117.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1117.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_48in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-48",
+      "label": "Accuride 9301E 48 in (1219.2 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 48,
+        "nominal_length_mm": 1219.2,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1219.2,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_54in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-54",
+      "label": "Accuride 9301E 54 in (1371.6 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 54,
+        "nominal_length_mm": 1371.6,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1371.6,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    },
+    {
+      "id": "accuride_9301e_60in",
+      "category": "drawer_slide",
+      "manufacturer": "Accuride",
+      "family": "9301E",
+      "model": "9301E-60",
+      "label": "Accuride 9301E 60 in (1524.0 mm)",
+      "geometry_support": {
+        "status": "partial",
+        "notes": "V35 safely maps slide length, side clearance and envelope height. Manufacturer rails provide multiple mounting-hole choices, so automatic drilling is disabled."
+      },
+      "verification": {
+        "status": "manufacturer_partial",
+        "verified": true,
+        "notes": "Dimensions are manufacturer-sourced. Automatic drilling is disabled rather than selecting one of several valid rail holes."
+      },
+      "mounting_specs": {
+        "mounting": "side_or_flat",
+        "travel": "full_extension",
+        "nominal_length_in": 60,
+        "nominal_length_mm": 1524.0,
+        "side_space_per_side_mm": 19.1,
+        "side_space_tolerance_plus_mm": 0.79,
+        "side_space_tolerance_minus_mm": 0,
+        "slide_height_mm": 76.2,
+        "load_rating_lb": {
+          "moderate_use": 600,
+          "frequent_use": 480,
+          "mobile": 360,
+          "flat_mount": 180
+        }
+      },
+      "source": {
+        "type": "manufacturer_pdf",
+        "manufacturer": "Accuride",
+        "title": "MODEL 9301E technical sheet",
+        "url": "https://www.accuride.com/media/amasty/amfile/attach/e9e9a5ce17cb74d4e4f1616a4aa32c9b.pdf",
+        "retrieved": "2026-09-15"
+      },
+      "targets": [
+        "equipment_stand"
+      ],
+      "apply": {
+        "metal_slide_clearance_per_side": 19.1,
+        "metal_slide_length": 1524.0,
+        "metal_slide_front_setback": 0,
+        "metal_slide_envelope_height": 76.2,
+        "include_metal_slide_holes": false,
+        "slide_type": "side_mount",
+        "slide_supported_travel": 0,
+        "tray_extension": 0,
+        "slide_load_rating_kg": 0,
+        "tray_cheek_height": 96.2
+      },
+      "equipment_note": "Reuses shipped v4 reference data, not newly verified specifications. Travel and rating reset to zero until checked. Drilling disabled without explicit hole arrays. Centered slide rows; verify vertical placement on purchased hardware."
+    }
+  ]
+}

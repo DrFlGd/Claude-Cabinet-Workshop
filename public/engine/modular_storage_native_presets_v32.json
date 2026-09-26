@@ -1,0 +1,81 @@
+{
+  "engine_version": 32,
+  "description": "Index of OpenSCAD-native Customizer parameter sets.",
+  "frontends": {
+    "utility": {
+      "scad": "modular_storage_utility_v32.scad",
+      "preset_file": "modular_storage_utility_v32.json",
+      "sets": {
+        "3 Drawer Base": "utility_3_drawer_base",
+        "4 Drawer Base": "utility_4_drawer_base",
+        "Door Base": "utility_door_base",
+        "2 Drawer / 2 Door": "utility_2drawer_2door_combo",
+        "1 Drawer / 2 Door": "utility_1drawer_2door_combo",
+        "Wide 3-Section Drawers": "utility_wide_3_section_drawers",
+        "Wide 4-Section Drawers": "utility_wide_4_section_drawers",
+        "Wide Mixed Base": "utility_wide_mixed_base",
+        "Tall 2-Door Storage": "utility_tall_2door_storage",
+        "2-Door Wall": "utility_2door_wall"
+      }
+    },
+    "shop_cart": {
+      "scad": "modular_storage_shop_cart_v32.scad",
+      "preset_file": "modular_storage_shop_cart_v32.json",
+      "sets": {
+        "Compact Mixed Cart": "shop_compact_mixed_cart",
+        "3-Section Drawer Workbench": "shop_3_section_drawer_workbench",
+        "4-Section Drawer Workbench": "shop_4_section_drawer_workbench",
+        "Machine Stand": "shop_machine_stand",
+        "Open Service Cart": "shop_open_service_cart"
+      }
+    },
+    "benchtop": {
+      "scad": "modular_storage_benchtop_v32.scad",
+      "preset_file": "modular_storage_benchtop_v32.json",
+      "sets": {
+        "Micro 2 Drawer": "bench_micro_2",
+        "Mini 3 Drawer": "bench_mini_3",
+        "Compact 4 Drawer": "bench_compact_4",
+        "Parts 5 Drawer": "bench_parts_5",
+        "Shallow Parts 6 Drawer": "bench_shallow_parts_6",
+        "Wide 6 Drawer": "bench_wide_6",
+        "Wide 8 Drawer": "bench_wide_8"
+      }
+    },
+    "stackable": {
+      "scad": "modular_storage_stackable_v32.scad",
+      "preset_file": "modular_storage_stackable_v32.json",
+      "sets": {
+        "1 Deep Drawer": "stack_one_deep_drawer",
+        "2 Drawer": "stack_two_drawer",
+        "4 Shallow Drawer": "stack_four_shallow_drawer",
+        "Open Module": "stack_open",
+        "Door Module": "stack_door"
+      }
+    },
+    "kitchen": {
+      "scad": "modular_storage_kitchen_v32.scad",
+      "preset_file": "modular_storage_kitchen_v32.json",
+      "sets": {
+        "B30 \u2014 Drawer over Doors": "kitchen_B30",
+        "DB36-3 \u2014 3 Drawer Base": "kitchen_DB36_3",
+        "DB36-4 \u2014 4 Drawer Base": "kitchen_DB36_4",
+        "SB36 \u2014 Sink Base": "kitchen_SB36",
+        "W3030 \u2014 Wall Cabinet": "kitchen_W3030",
+        "WO2424 \u2014 Open Wall": "kitchen_WO2424",
+        "T2490 \u2014 Tall Pantry": "kitchen_T2490"
+      }
+    },
+    "drawer": {
+      "scad": "modular_storage_drawer_v32.scad",
+      "preset_file": "modular_storage_drawer_v32.json",
+      "sets": {
+        "450 mm Opening / Metal Slides": "drawer_replacement_450_metal",
+        "18 in Opening / Metal Slides": "drawer_replacement_18in_metal",
+        "Copy 400 x 450 x 120 Box": "drawer_copy_400x450x120",
+        "420 x 336 x 85 Inside Clear": "drawer_inside_420x336x85",
+        "42 mm Grid 10 x 8": "drawer_grid_10x8_42mm"
+      }
+    }
+  }
+}

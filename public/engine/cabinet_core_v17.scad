@@ -1,0 +1,7285 @@
+// Shared cabinet geometry / derived calculations — V10 mixed-bay core.
+// Included by utility_cabinet.scad and benchtop_drawer_cabinet.scad.
+// User-facing Customizer settings belong in the entry files, not here.
+
+/* [Hidden] */
+
+combo_door_height_units = 3;
+
+// Compatibility helper for OpenSCAD versions without built-in sum().
+function vec_sum(v, i=0) = i >= len(v) ? 0 : v[i] + vec_sum(v, i+1);
+
+// ---------------------------
+// GENERALIZED MIXED-BAY MODE
+// ---------------------------
+
+mixed_bay_mode = cabinet_layout_mode == "mixed_bays";
+
+function mixed_bay_type(b=0) =
+    b < len(mixed_bay_types)
+        ? mixed_bay_types[b]
+        : "open";
+
+// Accept the natural singular/plural spellings for drawer and door bays.
+function mixed_bay_type_normalized(b=0) =
+    mixed_bay_type(b) == "doors" ? "door" :
+    mixed_bay_type(b) == "drawer" ? "drawers" :
+    mixed_bay_type(b) == "shelf" ? "open" :
+    mixed_bay_type(b) == "shelves" ? "open" :
+    mixed_bay_type(b);
+
+function mixed_bay_is_type(b,type) =
+    b >= 0
+    && b < mixed_bay_count
+    && mixed_bay_type_normalized(b) == type;
+
+function mixed_bay_has_type(type,i=0) =
+    i >= mixed_bay_count
+        ? false
+        : mixed_bay_type_normalized(i) == type
+            ? true
+            : mixed_bay_has_type(type,i+1);
+
+function mixed_bay_type_count(type,i=0) =
+    i >= mixed_bay_count
+        ? 0
+        : (mixed_bay_type_normalized(i) == type ? 1 : 0)
+          + mixed_bay_type_count(type,i+1);
+
+// Mixed door bays may contain one door or an equal paired set.
+function mixed_bay_door_count(b=0) =
+    mixed_bay_is_type(b,"door")
+        ? min(
+            2,
+            max(
+                1,
+                b < len(mixed_bay_door_counts)
+                    ? round(mixed_bay_door_counts[b])
+                    : 1
+            )
+          )
+        : 0;
+
+function mixed_bay_door_count_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : mixed_bay_door_count(j)
+          + mixed_bay_door_count_prefix(b,j+1);
+
+function mixed_bay_total_door_count() =
+    mixed_bay_door_count_prefix(mixed_bay_count);
+
+function mixed_bay_door_part_index(b,leaf=0) =
+    mixed_bay_door_count_prefix(b)+leaf;
+
+has_drawers =
+    mixed_bay_mode
+        ? mixed_bay_has_type("drawers")
+        : cabinet_contents == "drawers" || cabinet_contents == "combo";
+
+has_doors =
+    mixed_bay_mode
+        ? mixed_bay_has_type("door")
+        : cabinet_contents == "doors" || cabinet_contents == "combo";
+
+active_door_count =
+    has_doors
+        ? (mixed_bay_mode ? mixed_bay_total_door_count() : door_count)
+        : 0;
+
+inner_width = cabinet_width - 2*material_thickness;
+
+function mixed_bay_width_weight(b=0) =
+    b < len(mixed_bay_width_weights)
+        ? max(0.05,mixed_bay_width_weights[b])
+        : 1;
+
+function mixed_bay_width_weight_sum(i=0) =
+    i >= mixed_bay_count
+        ? 0
+        : mixed_bay_width_weight(i)
+          + mixed_bay_width_weight_sum(i+1);
+
+mixed_bay_width_weight_total =
+    max(0.05,mixed_bay_width_weight_sum());
+
+mixed_bay_partition_thickness =
+    mixed_bay_mode && include_mixed_bay_partitions
+        ? material_thickness
+        : 0;
+
+mixed_bay_available_opening_width =
+    max(
+        1,
+        inner_width
+        - max(0,mixed_bay_count-1)*mixed_bay_partition_thickness
+    );
+
+function mixed_bay_opening_width(b=0) =
+    max(
+        1,
+        mixed_bay_available_opening_width
+        *mixed_bay_width_weight(b)
+        /mixed_bay_width_weight_total
+    );
+
+function mixed_bay_opening_width_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : mixed_bay_opening_width(j)
+          + mixed_bay_opening_width_prefix(b,j+1);
+
+function mixed_bay_opening_x(b=0) =
+    material_thickness
+    + mixed_bay_opening_width_prefix(b)
+    + b*mixed_bay_partition_thickness;
+
+function mixed_bay_partition_x(p) =
+    mixed_bay_opening_x(p)
+    + mixed_bay_opening_width(p);
+
+function mixed_bay_partition_center_x(p) =
+    mixed_bay_partition_x(p) + mixed_bay_partition_thickness/2;
+
+function mixed_bay_partition_count() =
+    mixed_bay_mode && include_mixed_bay_partitions
+        ? max(0,mixed_bay_count-1)
+        : 0;
+// A thin applied back sits behind the carcass and does not consume interior
+// depth. A structural back is carcass-thickness material captured flush with
+// the rear edge, so drawer/partition/shelf depth stops at its front face.
+structural_back_active = back_style == "structural_panel";
+
+structural_back_y =
+    cabinet_depth-material_thickness;
+
+usable_depth =
+    structural_back_active
+        ? structural_back_y
+        : cabinet_depth;
+
+front_opening_bottom_z = bottom_above_toe + material_thickness;
+front_opening_top_z = cabinet_height - material_thickness;
+
+// Internal usable opening. Drawer boxes, shelves, etc. stay inside this region.
+content_bottom_z = front_opening_bottom_z + front_edge_reveal;
+content_top_z = front_opening_top_z - front_edge_reveal;
+content_height = max(0, content_top_z - content_bottom_z);
+
+// Visible fronts can optionally extend downward across the front edge of the
+// raised bottom panel.
+front_panel_bottom_z =
+    fronts_cover_bottom_lip
+        ? bottom_above_toe + front_edge_reveal
+        : content_bottom_z;
+
+bottom_lip_overlay =
+    max(0, content_bottom_z - front_panel_bottom_z);
+
+drawer_stack_bottom_z =
+    include_drawer_faces ? front_panel_bottom_z : content_bottom_z;
+
+drawer_only_front_height =
+    max(0, content_top_z - drawer_stack_bottom_z);
+
+
+// ---------------------------
+// DRAWER BANK CONFIGURATION
+// ---------------------------
+
+// Legacy drawer-bank settings remain available, while mixed-bay mode maps the
+// existing drawer geometry engine onto the generalized bay indices.
+function active_drawer_bank_count() =
+    mixed_bay_mode ? mixed_bay_count : drawer_bank_count;
+
+function drawer_bank_drawer_count(b=0) =
+    mixed_bay_mode
+        ? mixed_bay_is_type(b,"drawers")
+            ? (b < len(mixed_bay_drawer_counts)
+                ? max(1,round(mixed_bay_drawer_counts[b]))
+                : max(1,drawer_count))
+            : 0
+        : drawer_bank_layout_mode == "independent"
+          && b < len(drawer_bank_drawer_counts)
+            ? max(1,round(drawer_bank_drawer_counts[b]))
+            : max(1,drawer_count);
+
+function drawer_bank_height_mode_for(b=0) =
+    mixed_bay_mode
+        ? (b < len(mixed_bay_drawer_height_modes)
+            ? mixed_bay_drawer_height_modes[b]
+            : drawer_height_mode)
+        : drawer_bank_layout_mode == "independent"
+          && b < len(drawer_bank_height_modes)
+            ? drawer_bank_height_modes[b]
+            : drawer_height_mode;
+
+function drawer_bank_graduated_step_for(b=0) =
+    mixed_bay_mode
+        ? (b < len(mixed_bay_drawer_graduated_steps)
+            ? mixed_bay_drawer_graduated_steps[b]
+            : drawer_graduated_step)
+        : drawer_bank_layout_mode == "independent"
+          && b < len(drawer_bank_graduated_steps)
+            ? drawer_bank_graduated_steps[b]
+            : drawer_graduated_step;
+
+function drawer_bank_custom_weight(b,i) =
+    mixed_bay_mode
+        ? (b < len(mixed_bay_drawer_height_weights)
+           && i < len(mixed_bay_drawer_height_weights[b])
+            ? max(0.05,mixed_bay_drawer_height_weights[b][i])
+            : i < len(drawer_height_weights)
+                ? max(0.05,drawer_height_weights[i])
+                : 1)
+        : drawer_bank_layout_mode == "independent"
+          && b < len(drawer_bank_height_weights)
+          && i < len(drawer_bank_height_weights[b])
+            ? max(0.05,drawer_bank_height_weights[b][i])
+            : i < len(drawer_height_weights)
+                ? max(0.05,drawer_height_weights[i])
+                : 1;
+
+// i=0 is the TOP drawer. Graduated mode therefore grows toward the bottom.
+function drawer_height_weight(i,b=0) =
+    drawer_bank_height_mode_for(b) == "graduated"
+        ? max(
+            0.05,
+            1 + i*drawer_bank_graduated_step_for(b)
+          )
+        : drawer_bank_height_mode_for(b) == "custom_weights"
+            ? drawer_bank_custom_weight(b,i)
+            : 1;
+
+function drawer_height_weight_sum(b=0,i=0) =
+    i >= drawer_bank_drawer_count(b)
+        ? 0
+        : drawer_height_weight(i,b)
+          + drawer_height_weight_sum(b,i+1);
+
+function drawer_bank_weight_total(b=0) =
+    max(0.05,drawer_height_weight_sum(b));
+
+function drawer_bank_drawer_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : drawer_bank_drawer_count(j)
+          + drawer_bank_drawer_prefix(b,j+1);
+
+function drawer_total_count() =
+    drawer_bank_drawer_prefix(active_drawer_bank_count());
+
+function drawer_part_index(b,i) =
+    drawer_bank_drawer_prefix(b)+i;
+
+active_drawer_count =
+    has_drawers ? drawer_total_count() : 0;
+
+// Legacy combo cabinets keep their historic vertical divider behavior. Mixed
+// bays are full-height columns, so each drawer bay independently fills the
+// full drawer region instead.
+combo_reference_drawer_unit =
+    !mixed_bay_mode && cabinet_contents == "combo"
+        ? max(
+            0,
+            (
+                content_height
+                - drawer_gap*drawer_bank_drawer_count(0)
+            )
+            / (
+                drawer_bank_weight_total(0)
+                + combo_door_height_units
+            )
+          )
+        : 0;
+
+combo_reference_door_height =
+    !mixed_bay_mode && cabinet_contents == "combo"
+        ? combo_door_height_units*combo_reference_drawer_unit
+        : 0;
+
+function drawer_height_unit_for_bank(b=0) =
+    mixed_bay_mode
+        ? max(
+            0,
+            (
+                drawer_only_front_height
+                - drawer_gap*max(0,drawer_bank_drawer_count(b)-1)
+            )
+            / drawer_bank_weight_total(b)
+          )
+        : cabinet_contents == "drawers"
+            ? max(
+                0,
+                (
+                    drawer_only_front_height
+                    - drawer_gap*max(0,drawer_bank_drawer_count(b)-1)
+                )
+                / drawer_bank_weight_total(b)
+              )
+            : cabinet_contents == "combo"
+                ? max(
+                    0,
+                    (
+                        content_height
+                        - combo_reference_door_height
+                        - drawer_gap*drawer_bank_drawer_count(b)
+                    )
+                    / drawer_bank_weight_total(b)
+                  )
+                : 0;
+
+function drawer_face_nominal_height(i,b=0) =
+    max(
+        0,
+        drawer_height_unit_for_bank(b)
+        *drawer_height_weight(i,b)
+    );
+
+// Compatibility scalar retained for older validation/echo helpers.
+drawer_height_unit = drawer_height_unit_for_bank(0);
+drawer_height_weight_total = drawer_bank_weight_total(0);
+drawer_face_height = drawer_face_nominal_height(0,0);
+
+
+door_region_height =
+    mixed_bay_mode
+        ? (has_doors ? content_height : 0)
+        : cabinet_contents == "doors"
+            ? content_height
+            : cabinet_contents == "combo"
+                ? combo_reference_door_height
+                : 0;
+
+// The internal door compartment still starts above the bottom panel.
+door_region_bottom_z = content_bottom_z;
+door_region_top_z = door_region_bottom_z + door_region_height;
+
+// The visible door front may overlap the bottom-panel lip.
+door_face_bottom_z =
+    has_doors ? front_panel_bottom_z : door_region_bottom_z;
+
+// Doors-only wall cabinets can overlay the top-panel front edge all the way
+// to the cabinet top. Combo cabinets intentionally keep the normal region top
+// so the doors cannot overlap the drawer fronts above them.
+door_face_top_z =
+    has_doors
+    && active_mount_style == "wall"
+    && (mixed_bay_mode || cabinet_contents == "doors")
+    && wall_doors_flush_top
+        ? cabinet_height
+        : door_region_top_z;
+
+door_face_height =
+    has_doors
+        ? max(0, door_face_top_z - door_face_bottom_z)
+        : 0;
+
+combo_divider_top_z = door_region_top_z;
+combo_divider_bottom_z = combo_divider_top_z - material_thickness;
+
+drawer_box_depth = usable_depth - front_setback - drawer_back_clearance;
+
+front_panel_x =
+    front_width_style == "full_overlay"
+        ? front_edge_reveal
+        : material_thickness + front_edge_reveal;
+
+front_panel_width =
+    front_width_style == "full_overlay"
+        ? cabinet_width - 2*front_edge_reveal
+        : inner_width - 2*front_edge_reveal;
+
+// Mixed-bay decorative front boundaries are centered over the structural
+// partitions, just like the weighted drawer-bank front logic.
+function mixed_bay_front_left_x(b=0) =
+    b <= 0
+        ? front_panel_x
+        : mixed_bay_partition_center_x(b-1)
+          + mixed_bay_front_gap/2;
+
+function mixed_bay_front_right_x(b=0) =
+    b >= mixed_bay_count-1
+        ? front_panel_x+front_panel_width
+        : mixed_bay_partition_center_x(b)
+          - mixed_bay_front_gap/2;
+
+function mixed_bay_front_width(b=0) =
+    max(1,mixed_bay_front_right_x(b)-mixed_bay_front_left_x(b));
+
+function mixed_bay_front_x(b=0) = mixed_bay_front_left_x(b);
+
+function mixed_bay_door_hinge_side(b=0) =
+    b < len(mixed_bay_door_hinge_sides)
+        ? mixed_bay_door_hinge_sides[b]
+        : "left";
+
+function mixed_bay_door_leaf_width(b=0) =
+    max(
+        1,
+        (
+            mixed_bay_front_width(b)
+            - door_gap*max(0,mixed_bay_door_count(b)-1)
+        ) / max(1,mixed_bay_door_count(b))
+    );
+
+function mixed_bay_door_leaf_x(b=0,leaf=0) =
+    mixed_bay_front_x(b)
+    + leaf*(mixed_bay_door_leaf_width(b)+door_gap);
+
+function mixed_bay_door_leaf_hinge_side(b=0,leaf=0) =
+    mixed_bay_door_count(b) >= 2
+        ? (leaf == 0 ? "left" : "right")
+        : mixed_bay_door_hinge_side(b);
+
+function mixed_bay_door_leaf_handle_side(b=0,leaf=0) =
+    mixed_bay_door_leaf_hinge_side(b,leaf) == "left"
+        ? "right"
+        : "left";
+
+function mixed_bay_door_hinge_local_x(b=0,leaf=0) =
+    mixed_bay_door_leaf_hinge_side(b,leaf) == "left"
+        ? hinge_cup_center_from_door_edge
+        : mixed_bay_door_leaf_width(b)-hinge_cup_center_from_door_edge;
+
+function mixed_bay_door_handle_local_x(b=0,leaf=0) =
+    mixed_bay_door_leaf_handle_side(b,leaf) == "left"
+        ? door_handle_from_open_edge
+        : mixed_bay_door_leaf_width(b)-door_handle_from_open_edge;
+
+function mixed_bay_door_uses_left_boundary(b=0) =
+    mixed_bay_is_type(b,"door")
+    && (
+        mixed_bay_door_count(b) >= 2
+        || mixed_bay_door_hinge_side(b) == "left"
+    );
+
+function mixed_bay_door_uses_right_boundary(b=0) =
+    mixed_bay_is_type(b,"door")
+    && (
+        mixed_bay_door_count(b) >= 2
+        || mixed_bay_door_hinge_side(b) == "right"
+    );
+
+function mixed_bay_hinge_z(j) =
+    hinge_count <= 1
+        ? door_face_bottom_z + door_face_height/2
+        : door_face_bottom_z
+          + hinge_end_offset
+          + j*(door_face_height-2*hinge_end_offset)/(hinge_count-1);
+
+function mixed_bay_shelf_count(b=0) =
+    b < len(mixed_bay_shelf_counts)
+        ? max(0,round(mixed_bay_shelf_counts[b]))
+        : 0;
+
+function mixed_bay_shelf_style(b=0) =
+    b < len(mixed_bay_shelf_styles)
+        ? mixed_bay_shelf_styles[b]
+        : "adjustable";
+
+function mixed_bay_is_shelfable(b=0) =
+    mixed_bay_is_type(b,"door") || mixed_bay_is_type(b,"open");
+
+function mixed_bay_has_fixed_shelves(b=0) =
+    mixed_bay_is_shelfable(b)
+    && mixed_bay_shelf_count(b) > 0
+    && mixed_bay_shelf_style(b) == "fixed";
+
+function mixed_bay_has_adjustable_shelves(b=0) =
+    mixed_bay_is_shelfable(b)
+    && mixed_bay_shelf_count(b) > 0
+    && mixed_bay_shelf_style(b) != "fixed";
+
+function mixed_bay_any_fixed_shelves(i=0) =
+    i >= mixed_bay_count
+        ? false
+        : mixed_bay_has_fixed_shelves(i)
+            ? true
+            : mixed_bay_any_fixed_shelves(i+1);
+
+function mixed_bay_any_adjustable_shelves(i=0) =
+    i >= mixed_bay_count
+        ? false
+        : mixed_bay_has_adjustable_shelves(i)
+            ? true
+            : mixed_bay_any_adjustable_shelves(i+1);
+
+function mixed_bay_shelf_z(b,s) =
+    content_bottom_z
+    + s*(content_height/(mixed_bay_shelf_count(b)+1))
+    - material_thickness/2;
+
+function mixed_bay_adjustable_shelf_width(b=0) =
+    max(
+        10,
+        mixed_bay_opening_width(b)
+        - 2*adjustable_shelf_side_clearance
+    );
+
+function mixed_bay_adjustable_shelf_x(b=0) =
+    mixed_bay_opening_x(b)+adjustable_shelf_side_clearance;
+
+function mixed_bay_fixed_shelf_dado_depth() = effective_dado_depth();
+
+function mixed_bay_fixed_shelf_cut_width(b=0) =
+    joinery_style == "dado"
+        ? mixed_bay_opening_width(b)+2*mixed_bay_fixed_shelf_dado_depth()
+        : joinery_style == "tab_slot"
+            ? mixed_bay_opening_width(b)+2*material_thickness
+            : mixed_bay_opening_width(b);
+
+function mixed_bay_fixed_shelf_cut_body_offset() =
+    joinery_style == "dado"
+        ? mixed_bay_fixed_shelf_dado_depth()
+        : joinery_style == "tab_slot"
+            ? material_thickness
+            : 0;
+
+function mixed_bay_side_fixed_bay(side) =
+    side == "left" ? 0 : mixed_bay_count-1;
+
+function mixed_bay_side_has_fixed_shelves(side) =
+    mixed_bay_mode
+    && mixed_bay_has_fixed_shelves(mixed_bay_side_fixed_bay(side));
+
+function mixed_bay_shelf_pin_count() =
+    content_top_z-adjustable_shelf_hole_top_margin
+        < content_bottom_z+adjustable_shelf_hole_bottom_margin
+        ? 0
+        : floor(
+            (
+                content_top_z-adjustable_shelf_hole_top_margin
+                - (content_bottom_z+adjustable_shelf_hole_bottom_margin)
+            ) / max(1,adjustable_shelf_hole_spacing)
+          ) + 1;
+
+function mixed_bay_shelf_pin_z(i) =
+    content_bottom_z
+    + adjustable_shelf_hole_bottom_margin
+    + i*adjustable_shelf_hole_spacing;
+
+function door_width_weight(i=0) =
+    i < len(door_width_weights)
+        ? max(0.05,door_width_weights[i])
+        : 1;
+
+function door_width_weight_sum(i=0) =
+    i >= door_count
+        ? 0
+        : door_width_weight(i)
+          + door_width_weight_sum(i+1);
+
+door_width_weight_total =
+    max(0.05,door_width_weight_sum());
+
+door_available_front_width =
+    max(
+        1,
+        front_panel_width
+        - door_gap*max(0,door_count-1)
+    );
+
+function door_each_width(i=0) =
+    max(
+        1,
+        door_available_front_width
+        *door_width_weight(i)
+        /door_width_weight_total
+    );
+
+function door_width_prefix(i,j=0) =
+    j >= i
+        ? 0
+        : door_each_width(j)
+          + door_width_prefix(i,j+1);
+
+function door_local_x(i) =
+    door_width_prefix(i)
+    + i*door_gap;
+
+function door_layout_part_x(i,j=0) =
+    j >= i
+        ? 0
+        : door_each_width(j)
+          + layout_gap
+          + door_layout_part_x(i,j+1);
+
+function door_hinge_side(i) =
+    door_count == 1
+        ? single_door_hinge_side
+        : i == 0
+            ? "left"
+            : i == door_count-1
+                ? "right"
+                : (i % 2 == 0 ? "left" : "right");
+
+function door_handle_side(i) =
+    door_hinge_side(i) == "left" ? "right" : "left";
+
+function hinge_z(j) =
+    hinge_count <= 1
+        ? door_face_bottom_z + door_face_height/2
+        : door_face_bottom_z
+          + hinge_end_offset
+          + j*(door_face_height-2*hinge_end_offset)/(hinge_count-1);
+
+function hinge_local_z(j) =
+    hinge_z(j)-door_face_bottom_z;
+
+function hinge_local_x(door_w,i) =
+    door_hinge_side(i) == "left"
+        ? hinge_cup_center_from_door_edge
+        : door_w-hinge_cup_center_from_door_edge;
+
+function cabinet_side_has_door_hinges(side) =
+    !mixed_bay_mode
+    && has_doors
+    && hinge_style != "none"
+    && (
+        (door_count == 1 && single_door_hinge_side == side)
+        || (door_count >= 2 && (side == "left" || side == "right"))
+    );
+
+function door_handle_local_x(door_w,i) =
+    door_handle_side(i) == "left"
+        ? door_handle_from_open_edge
+        : door_w-door_handle_from_open_edge;
+
+function door_handle_local_z() =
+    door_face_height-door_handle_from_top;
+
+
+// ---------------------------
+// MULTI-DOOR FULL-DEPTH PARTITIONS
+// ---------------------------
+
+// More than two side-by-side doors receive one vertical partition behind each
+// inter-door gap. The partition is structural and runs from the cabinet front
+// to the rear construction, so each door has a true compartment.
+//
+// Partitions reach the full cabinet depth. If structural rear stretchers are
+// selected, open rear notches let those stretchers pass through the partition
+// plane without shortening the partition.
+active_door_hinge_partitions =
+    !mixed_bay_mode
+    && has_doors
+    && include_door_hinge_partitions
+    && door_count > 2;
+
+function door_hinge_partition_count() =
+    active_door_hinge_partitions ? door_count-1 : 0;
+
+function door_gap_center_x(p) =
+    front_panel_x
+    + door_local_x(p)
+    + door_each_width(p)
+    + door_gap/2;
+
+function door_hinge_partition_x(p) =
+    min(
+        cabinet_width-2*material_thickness,
+        max(
+            material_thickness,
+            door_gap_center_x(p)-material_thickness/2
+        )
+    );
+
+function door_hinge_partition_bottom_z() =
+    front_opening_bottom_z;
+
+function door_hinge_partition_top_z() =
+    cabinet_contents == "combo"
+        ? combo_divider_bottom_z
+        : front_opening_top_z;
+
+function door_hinge_partition_body_height() =
+    max(
+        1,
+        door_hinge_partition_top_z()
+        - door_hinge_partition_bottom_z()
+    );
+
+door_hinge_partition_actual_depth = usable_depth;
+
+function door_hinge_partition_dado_depth() =
+    min(effective_dado_depth(),material_thickness-0.2);
+
+function door_hinge_partition_cut_height() =
+    joinery_style == "dado"
+        ? door_hinge_partition_body_height()
+          + 2*door_hinge_partition_dado_depth()
+        : joinery_style == "tab_slot"
+            ? door_hinge_partition_body_height()+2*material_thickness
+            : door_hinge_partition_body_height();
+
+function door_hinge_partition_cut_body_offset() =
+    joinery_style == "dado"
+        ? door_hinge_partition_dado_depth()
+        : joinery_style == "tab_slot"
+            ? material_thickness
+            : 0;
+
+function door_hinge_partition_cut_global_bottom_z() =
+    door_hinge_partition_bottom_z()
+    - door_hinge_partition_cut_body_offset();
+
+function door_hinge_depth_overlap_start(panel_y0) =
+    max(0,panel_y0);
+
+function door_hinge_depth_overlap_end(panel_y0,panel_depth) =
+    min(
+        door_hinge_partition_actual_depth,
+        panel_y0+panel_depth
+    );
+
+function door_hinge_depth_overlap_length(panel_y0,panel_depth) =
+    max(
+        0,
+        door_hinge_depth_overlap_end(panel_y0,panel_depth)
+        - door_hinge_depth_overlap_start(panel_y0)
+    );
+
+// Door-bay boundaries are used for adjustable shelves. A full-depth partition
+// physically separates the shelf spaces, so loose shelves become one panel per
+// door compartment rather than one full-width panel with impossible cutouts.
+function door_bay_left_x(b) =
+    b <= 0
+        ? material_thickness
+        : door_hinge_partition_x(b-1)+material_thickness;
+
+function door_bay_right_x(b) =
+    b >= door_count-1
+        ? cabinet_width-material_thickness
+        : door_hinge_partition_x(b);
+
+function door_bay_opening_width(b) =
+    max(1,door_bay_right_x(b)-door_bay_left_x(b));
+
+function door_bay_adjustable_shelf_width(b) =
+    max(
+        10,
+        door_bay_opening_width(b)
+        - 2*adjustable_shelf_side_clearance
+    );
+
+function door_bay_adjustable_shelf_x(b) =
+    door_bay_left_x(b)+adjustable_shelf_side_clearance;
+
+function door_bay_shelf_layout_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : door_bay_adjustable_shelf_width(j)
+          + layout_gap
+          + door_bay_shelf_layout_prefix(b,j+1);
+
+function door_adjustable_shelf_piece_count() =
+    door_hinge_partition_count() > 0 ? door_count : 1;
+
+function door_adjustable_shelf_piece_width(b=0) =
+    door_hinge_partition_count() > 0
+        ? door_bay_adjustable_shelf_width(b)
+        : adjustable_shelf_width;
+
+function door_adjustable_shelf_piece_x(b=0) =
+    door_hinge_partition_count() > 0
+        ? door_bay_adjustable_shelf_x(b)
+        : material_thickness+adjustable_shelf_side_clearance;
+
+function door_adjustable_shelf_layout_x(b=0) =
+    door_hinge_partition_count() > 0
+        ? door_bay_shelf_layout_prefix(b)
+        : 0;
+
+// ---------------------------
+// GENERALIZED MIXED-BAY PARTITIONS / SHELVES
+// ---------------------------
+
+function mixed_bay_partition_bottom_z() = front_opening_bottom_z;
+function mixed_bay_partition_top_z() = front_opening_top_z;
+function mixed_bay_partition_body_height() =
+    max(1,mixed_bay_partition_top_z()-mixed_bay_partition_bottom_z());
+
+mixed_bay_partition_depth = usable_depth;
+
+function mixed_bay_partition_dado_depth() =
+    min(effective_dado_depth(),material_thickness-0.2);
+
+function mixed_bay_partition_cut_height() =
+    joinery_style == "dado"
+        ? mixed_bay_partition_body_height()
+          + 2*mixed_bay_partition_dado_depth()
+        : joinery_style == "tab_slot"
+            ? mixed_bay_partition_body_height()+2*material_thickness
+            : mixed_bay_partition_body_height();
+
+function mixed_bay_partition_cut_body_offset() =
+    joinery_style == "dado"
+        ? mixed_bay_partition_dado_depth()
+        : joinery_style == "tab_slot"
+            ? material_thickness
+            : 0;
+
+function mixed_bay_partition_cut_global_bottom_z() =
+    mixed_bay_partition_bottom_z()
+    - mixed_bay_partition_cut_body_offset();
+
+function mixed_bay_depth_overlap_start(panel_y0) = max(0,panel_y0);
+function mixed_bay_depth_overlap_end(panel_y0,panel_depth) =
+    min(mixed_bay_partition_depth,panel_y0+panel_depth);
+function mixed_bay_depth_overlap_length(panel_y0,panel_depth) =
+    max(
+        0,
+        mixed_bay_depth_overlap_end(panel_y0,panel_depth)
+        - mixed_bay_depth_overlap_start(panel_y0)
+    );
+
+function mixed_bay_partition_has_hinge_plates(p) =
+    hinge_style != "none"
+    && (
+        mixed_bay_door_uses_right_boundary(p)
+        || mixed_bay_door_uses_left_boundary(p+1)
+    );
+
+function mixed_bay_partition_has_shelf_pins(p) =
+    mixed_bay_has_adjustable_shelves(p)
+    || mixed_bay_has_adjustable_shelves(p+1);
+
+function mixed_bay_side_has_hinge_plates(side) =
+    hinge_style != "none"
+    && (
+        (side == "left" && mixed_bay_door_uses_left_boundary(0))
+        ||
+        (side == "right"
+         && mixed_bay_door_uses_right_boundary(mixed_bay_count-1))
+    );
+
+function mixed_bay_side_has_shelf_pins(side) =
+    side == "left"
+        ? mixed_bay_has_adjustable_shelves(0)
+        : mixed_bay_has_adjustable_shelves(mixed_bay_count-1);
+
+function mixed_bay_shelf_count_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : (mixed_bay_is_shelfable(j) ? mixed_bay_shelf_count(j) : 0)
+          + mixed_bay_shelf_count_prefix(b,j+1);
+
+function mixed_bay_total_shelf_count() =
+    mixed_bay_shelf_count_prefix(mixed_bay_count);
+
+function mixed_bay_shelf_part_index(b,s) =
+    mixed_bay_shelf_count_prefix(b)+s-1;
+
+function mixed_bay_door_layout_span(b=0) =
+    mixed_bay_is_type(b,"door")
+        ? mixed_bay_door_count(b)*mixed_bay_door_leaf_width(b)
+          + max(0,mixed_bay_door_count(b)-1)*layout_gap
+        : 0;
+
+function mixed_bay_door_layout_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : (mixed_bay_is_type(j,"door")
+            ? mixed_bay_door_layout_span(j)+layout_gap
+            : 0)
+          + mixed_bay_door_layout_prefix(b,j+1);
+
+function mixed_bay_door_layout_x(b=0,leaf=0) =
+    mixed_bay_door_layout_prefix(b)
+    + leaf*(mixed_bay_door_leaf_width(b)+layout_gap);
+
+// Weighted drawer banks separated by carcass-material vertical partitions.
+// Equal weights preserve the previous equal-column behavior.
+function drawer_bank_width_weight(b=0) =
+    b < len(drawer_bank_width_weights)
+        ? max(0.05,drawer_bank_width_weights[b])
+        : 1;
+
+function drawer_bank_width_weight_sum(i=0) =
+    i >= drawer_bank_count
+        ? 0
+        : drawer_bank_width_weight(i)
+          + drawer_bank_width_weight_sum(i+1);
+
+drawer_bank_width_weight_total =
+    max(0.05,drawer_bank_width_weight_sum());
+
+drawer_bank_available_opening_width =
+    max(
+        1,
+        inner_width
+        - max(0,drawer_bank_count-1)*material_thickness
+    );
+
+function drawer_bank_opening_width(b=0) =
+    mixed_bay_mode
+        ? mixed_bay_opening_width(b)
+        : max(
+            1,
+            drawer_bank_available_opening_width
+            *drawer_bank_width_weight(b)
+            /drawer_bank_width_weight_total
+          );
+
+function drawer_bank_opening_width_prefix(b,j=0) =
+    j >= b
+        ? 0
+        : drawer_bank_opening_width(j)
+          + drawer_bank_opening_width_prefix(b,j+1);
+
+function drawer_bank_opening_x(b=0) =
+    mixed_bay_mode
+        ? mixed_bay_opening_x(b)
+        : material_thickness
+          + drawer_bank_opening_width_prefix(b)
+          + b*material_thickness;
+
+function drawer_bank_partition_center_x(p) =
+    mixed_bay_mode
+        ? mixed_bay_partition_center_x(p)
+        : drawer_bank_opening_x(p)
+          + drawer_bank_opening_width(p)
+          + material_thickness/2;
+
+function drawer_outer_width(b=0) =
+    drawer_mount == "metal_slides"
+        ? drawer_bank_opening_width(b)
+          - 2*metal_slide_clearance_per_side
+        : drawer_mount == "wood_rails"
+            ? drawer_bank_opening_width(b)
+              - 2*(
+                    wood_rail_thickness
+                    + wood_rail_side_clearance
+                  )
+            : drawer_bank_opening_width(b) - 2;
+
+function drawer_box_x0(b=0) =
+    drawer_bank_opening_x(b)
+    + (
+        drawer_bank_opening_width(b)
+        - drawer_outer_width(b)
+      )/2;
+
+// Decorative bank-face gaps are centered on the structural partitions so a
+// weighted bank remains visually aligned with its actual opening.
+function drawer_face_left_x(b=0) =
+    mixed_bay_mode
+        ? mixed_bay_front_left_x(b)
+        : b <= 0
+            ? front_panel_x
+            : drawer_bank_partition_center_x(b-1)
+              + drawer_bank_face_gap/2;
+
+function drawer_face_right_x(b=0) =
+    mixed_bay_mode
+        ? mixed_bay_front_right_x(b)
+        : b >= drawer_bank_count-1
+            ? front_panel_x+front_panel_width
+            : drawer_bank_partition_center_x(b)
+              - drawer_bank_face_gap/2;
+
+function drawer_face_width(b=0) =
+    max(
+        1,
+        drawer_face_right_x(b)-drawer_face_left_x(b)
+    );
+
+function drawer_face_x(b=0) =
+    drawer_face_left_x(b);
+
+// Sum nominal face heights from drawer 0 through i (inclusive).
+function drawer_face_height_prefix(i,b=0,j=0) =
+    j > i
+        ? 0
+        : drawer_face_nominal_height(j,b)
+          + drawer_face_height_prefix(i,b,j+1);
+
+function drawer_face_z(i,b=0) =
+    content_top_z
+    - drawer_face_height_prefix(i,b)
+    - i*drawer_gap;
+
+// Optional decorative-only extension for the TOP drawer face. Every bank's
+// top face may reach the cabinet top while its box geometry stays unchanged.
+function drawer_face_top_extension(i,b=0) =
+    include_drawer_faces
+    && extend_top_drawer_face_to_top
+    && i == 0
+        ? max(0,cabinet_height-content_top_z)
+        : 0;
+
+function drawer_face_height_for(i,b=0) =
+    drawer_face_nominal_height(i,b)
+    + drawer_face_top_extension(i,b);
+
+function drawer_face_top_z(i,b=0) =
+    drawer_face_z(i,b)
+    + drawer_face_height_for(i,b);
+
+function effective_drawer_vertical_clearance_for(b=0) =
+    !mixed_bay_mode
+    && include_drawer_separators
+    && drawer_bank_layout_mode == "shared"
+    && has_drawers
+    && drawer_bank_drawer_count(b) > 1
+        ? max(
+            drawer_vertical_clearance,
+            (material_thickness-drawer_gap)/2 + 2
+          )
+        : drawer_vertical_clearance;
+
+function drawer_box_opening_bottom_z(i,b=0) =
+    max(drawer_face_z(i,b), content_bottom_z);
+
+function drawer_box_opening_top_z(i,b=0) =
+    drawer_face_z(i,b)
+    + drawer_face_nominal_height(i,b);
+
+function drawer_box_height(i=0,b=0) =
+    max(
+        40,
+        drawer_box_opening_top_z(i,b)
+        - drawer_box_opening_bottom_z(i,b)
+        - 2*effective_drawer_vertical_clearance_for(b)
+    );
+
+function drawer_box_z(i,b=0) =
+    drawer_box_opening_bottom_z(i,b)
+    + effective_drawer_vertical_clearance_for(b);
+
+// Separator i is between drawer i and drawer i+1. Full-width separators are
+// supported only in shared bank mode because independent stacks need different
+// Z boundaries.
+function drawer_separator_z(i,b=0) =
+    drawer_face_z(i,b)
+    - drawer_gap/2
+    - material_thickness/2;
+
+function drawer_runner_z(i,b=0) =
+    drawer_box_z(i,b)
+    + wood_drawer_runner_bottom_offset;
+
+
+// Fixed cabinet rail is calculated from the drawer runner so the runner's
+// underside rides directly above the rail's top surface.
+function drawer_rail_z(i,b=0) =
+    drawer_runner_z(i,b)
+    - wood_rail_vertical_clearance
+    - wood_rail_height;
+
+function active_slide_length() = min(metal_slide_length, drawer_box_depth);
+
+function slide_hole_depth(n) =
+    metal_slide_front_setback
+    + metal_slide_first_hole_from_front
+    + n*metal_slide_hole_spacing;
+
+function hole_is_valid(n, available_depth) =
+    slide_hole_depth(n) <= min(active_slide_length(), available_depth)
+        - metal_slide_hole_rear_margin;
+
+function compensated_hole_diameter(d) =
+    max(0.1, d - (apply_kerf_compensation ? kerf : 0));
+
+function effective_dado_depth() =
+    min(max(0.1,dado_depth), material_thickness);
+
+function effective_back_dado_depth() =
+    min(max(0.1,dado_depth), material_thickness);
+
+function effective_drawer_dado_depth() =
+    min(
+        max(0.1,drawer_dado_depth),
+        max(0.1,drawer_material_thickness-0.5)
+    );
+
+function effective_drawer_bottom_dado_depth() =
+    min(
+        max(0.1,drawer_bottom_dado_depth),
+        max(0.1,drawer_material_thickness-0.5)
+    );
+
+function drawer_inner_width(b=0) =
+    drawer_outer_width(b) - 2*drawer_material_thickness;
+
+function drawer_inner_depth() =
+    drawer_box_depth - 2*drawer_material_thickness;
+
+function drawer_cross_panel_width(b=0) =
+    drawer_joinery_style == "dado"
+        ? drawer_inner_width(b) + 2*effective_drawer_dado_depth()
+        : drawer_joinery_style == "tab_slot"
+            ? drawer_outer_width(b)
+            : drawer_inner_width(b);
+
+// Location of the normal inner-width body inside a flat front/back profile.
+function drawer_cross_panel_inner_x_offset() =
+    drawer_joinery_style == "dado"
+        ? effective_drawer_dado_depth()
+        : drawer_joinery_style == "tab_slot"
+            ? drawer_material_thickness
+            : 0;
+
+function drawer_bottom_width(b=0) =
+    drawer_inner_width(b)
+    + (drawer_bottom_joinery == "dado"
+        ? 2*effective_drawer_bottom_dado_depth()
+        : 0);
+
+function drawer_bottom_depth() =
+    drawer_inner_depth()
+    + (drawer_bottom_joinery == "dado"
+        ? 2*effective_drawer_bottom_dado_depth()
+        : 0);
+
+// Drawer box-front <-> decorative-face registration pattern.
+// Pattern is centered on the cabinet/drawer width so it lines up in every
+// front_width_style and every drawer joinery style.
+function drawer_face_reg_dx(n) =
+    (n-(drawer_face_registration_hole_count-1)/2)
+    * drawer_face_registration_hole_spacing;
+
+function drawer_face_reg_global_x(n,b=0) =
+    drawer_box_x0(b) + drawer_outer_width(b)/2 + drawer_face_reg_dx(n);
+
+function drawer_face_reg_box_local_x(n,b=0) =
+    drawer_cross_panel_width(b)/2 + drawer_face_reg_dx(n);
+
+function drawer_face_reg_face_local_x(n,b=0) =
+    drawer_face_reg_global_x(n,b)-drawer_face_x(b);
+
+function drawer_face_reg_global_z(i,b=0) =
+    drawer_box_z(i,b)
+    + drawer_box_height(i,b)/2
+    + drawer_face_registration_vertical_offset;
+
+function drawer_face_reg_box_local_z(i,b=0) =
+    drawer_box_height(i,b)/2
+    + drawer_face_registration_vertical_offset;
+
+function drawer_face_reg_face_local_z(i,b=0) =
+    drawer_face_reg_global_z(i,b)-drawer_face_z(i,b);
+
+function drawer_face_registration_blind_depth() =
+    drawer_front_thickness/2;
+
+active_drawer_face_registration =
+    include_drawer_faces && include_drawer_face_registration_holes;
+
+function drawer_bank_partition_joinery_mode() =
+    drawer_bank_partition_joinery == "match_carcass"
+        ? joinery_style
+        : drawer_bank_partition_joinery;
+
+function drawer_bank_partition_count() = mixed_bay_mode ? 0 : max(0,drawer_bank_count-1);
+
+function drawer_bank_partition_x(p) =
+    drawer_bank_opening_x(p)
+    + drawer_bank_opening_width(p);
+
+function drawer_bank_partition_bottom_z() =
+    cabinet_contents == "combo"
+        ? combo_divider_top_z
+        : front_opening_bottom_z;
+
+function drawer_bank_partition_top_z() = front_opening_top_z;
+
+function drawer_bank_partition_body_height() =
+    max(1,drawer_bank_partition_top_z()-drawer_bank_partition_bottom_z());
+
+drawer_bank_partition_depth =
+    max(20,usable_depth-drawer_bank_partition_rear_clearance);
+
+function drawer_bank_partition_dado_depth() =
+    min(effective_dado_depth(),material_thickness-0.2);
+
+function drawer_bank_partition_cut_height() =
+    drawer_bank_partition_joinery_mode() == "dado"
+        ? drawer_bank_partition_body_height()
+          + 2*drawer_bank_partition_dado_depth()
+        : drawer_bank_partition_joinery_mode() == "tab_slot"
+            ? drawer_bank_partition_body_height()+2*material_thickness
+            : drawer_bank_partition_body_height();
+
+function horizontal_panel_global_x0() =
+    joinery_style == "dado"
+        ? material_thickness-effective_dado_depth()
+        : joinery_style == "tab_slot"
+            ? 0
+            : material_thickness;
+
+function horizontal_panel_local_x(global_x) =
+    global_x-horizontal_panel_global_x0();
+
+function depth_overlap_start(panel_y0) = max(0,panel_y0);
+function depth_overlap_end(panel_y0,panel_depth) =
+    min(drawer_bank_partition_depth,panel_y0+panel_depth);
+function depth_overlap_length(panel_y0,panel_depth) =
+    max(0,depth_overlap_end(panel_y0,panel_depth)-depth_overlap_start(panel_y0));
+
+function drawer_bottom_cross_panel_local_x() =
+    drawer_cross_panel_inner_x_offset()
+    - (drawer_bottom_joinery == "dado"
+        ? effective_drawer_bottom_dado_depth()
+        : 0);
+
+// Automatic butt-registration pattern: long parts receive more guide holes,
+// while short stretchers naturally reduce to one.
+function butt_reg_margin(span) =
+    min(butt_registration_edge_margin, max(6,span*0.25));
+
+function butt_reg_count(span) =
+    max(1, round(span / max(1,butt_registration_target_spacing)));
+
+function butt_reg_pos(span,i) =
+    butt_reg_margin(span)
+    + (span-2*butt_reg_margin(span))*(i+0.5)/butt_reg_count(span);
+
+// Evenly spaced wood-slide registration holes, measured from the front/end of
+// the rail/runner itself.
+function wood_slide_reg_margin(span) =
+    min(wood_slide_registration_end_margin, max(5,span*0.25));
+
+function wood_slide_reg_pos(span,i) =
+    wood_slide_registration_hole_count <= 1
+        ? span/2
+        : wood_slide_reg_margin(span)
+          + i*(span-2*wood_slide_reg_margin(span))
+            /(wood_slide_registration_hole_count-1);
+
+// Drawer side starts at front_setback, while the runner's setting is in
+// cabinet-global Y coordinates.
+function wood_drawer_runner_local_front() =
+    wood_drawer_runner_front_setback - front_setback;
+
+// Drawer-runner registration holes also pass through the drawer SIDE panel.
+// With tab/slot drawer corners, an end registration hole can otherwise land
+// in the front/rear tab slot (or its CNC corner relief). Keep the hole centers inside a
+// safe depth interval while leaving the fixed CABINET rail pattern unchanged.
+function wood_drawer_runner_reg_web() =
+    max(2, wood_slide_registration_hole_diameter/2);
+
+function slot_relief_is_dogbone() =
+    slot_corner_relief == "dogbone";
+
+function slot_relief_is_tbone() =
+    slot_corner_relief == "t_bone"
+    || slot_corner_relief == "tbone"
+    || slot_corner_relief == "t-bone";
+
+function slot_relief_is_active() =
+    (slot_relief_is_dogbone() || slot_relief_is_tbone())
+    && cnc_tool_diameter > 0;
+
+function slot_relief_radius() =
+    max(0,cnc_tool_diameter/2);
+
+function slot_dogbone_inset() =
+    slot_relief_radius()/sqrt(2);
+
+// Maximum distance the relief extends OUTSIDE a nominal slot wall.
+// Conventional diagonal dogbones only project r-r/sqrt(2) past each wall.
+// A T-bone can project a full cutter radius past the relieved wall.
+function drawer_tab_slot_relief_reach() =
+    slot_relief_is_dogbone()
+        ? max(0,slot_relief_radius()-slot_dogbone_inset())
+        : slot_relief_is_tbone()
+            ? slot_relief_radius()
+            : 0;
+
+function wood_drawer_runner_side_safe_min(d) =
+    drawer_material_thickness
+    + drawer_joint_fit_clearance/2
+    + drawer_tab_slot_relief_reach()
+    + wood_slide_registration_hole_diameter/2
+    + wood_drawer_runner_reg_web();
+
+function wood_drawer_runner_side_safe_max(d) =
+    d
+    - drawer_material_thickness
+    - drawer_joint_fit_clearance/2
+    - drawer_tab_slot_relief_reach()
+    - wood_slide_registration_hole_diameter/2
+    - wood_drawer_runner_reg_web();
+
+function wood_drawer_runner_reg_min(d) =
+    drawer_joinery_style == "tab_slot"
+        ? max(
+            wood_slide_reg_margin(wood_drawer_runner_depth),
+            wood_drawer_runner_side_safe_min(d)
+                - wood_drawer_runner_local_front()
+          )
+        : wood_slide_reg_margin(wood_drawer_runner_depth);
+
+function wood_drawer_runner_reg_max(d) =
+    drawer_joinery_style == "tab_slot"
+        ? min(
+            wood_drawer_runner_depth
+                - wood_slide_reg_margin(wood_drawer_runner_depth),
+            wood_drawer_runner_side_safe_max(d)
+                - wood_drawer_runner_local_front()
+          )
+        : wood_drawer_runner_depth
+          - wood_slide_reg_margin(wood_drawer_runner_depth);
+
+function wood_drawer_runner_reg_valid(d) =
+    wood_drawer_runner_reg_max(d)
+    >= wood_drawer_runner_reg_min(d);
+
+function wood_drawer_runner_reg_pos(d,i) =
+    wood_slide_registration_hole_count <= 1
+        ? (wood_drawer_runner_reg_min(d)
+           + wood_drawer_runner_reg_max(d))/2
+        : wood_drawer_runner_reg_min(d)
+          + i*(
+                wood_drawer_runner_reg_max(d)
+                - wood_drawer_runner_reg_min(d)
+              )
+            /(wood_slide_registration_hole_count-1);
+
+function side_has_toe_cutout(side) =
+    side_toe_kick_cutout == "both"
+    || side_toe_kick_cutout == side;
+
+function tab_margin(span) =
+    min(joint_tab_edge_margin, max(2,span*0.15));
+
+// Maximum count that physically fits while preserving the requested minimum
+// solid web between joints. This uses the desired tab width; it does not
+// intentionally shrink tabs merely to cram more joints onto a short edge.
+function max_tabs_by_web(span) =
+    max(1,
+        floor(
+            (span - 2*tab_margin(span) + minimum_joint_web)
+            / max(0.1, joint_tab_width + minimum_joint_web)
+        )
+    );
+
+// Adaptive count uses BOTH an approximate spacing target and the physical
+// minimum-web constraint.
+function auto_tab_count(span) =
+    min(
+        max_auto_tab_count,
+        max_tabs_by_web(span),
+        max(1, round(span / max(1,target_tab_spacing)))
+    );
+
+function effective_tab_count(span) =
+    tab_count_mode == "fixed"
+        ? max(1,joint_tab_count)
+        : auto_tab_count(span);
+
+// In fixed mode the width may shrink if necessary to keep geometry valid.
+// In adaptive mode this normally remains joint_tab_width because the count
+// has already been reduced to preserve minimum_joint_web.
+function tab_width_for(span) =
+    min(
+        joint_tab_width,
+        max(
+            6,
+            (
+                span
+                - 2*tab_margin(span)
+                - max(0,effective_tab_count(span)-1)*minimum_joint_web
+            ) / max(1,effective_tab_count(span))
+        )
+    );
+
+function tab_center(span,i) =
+    tab_margin(span)
+    + (span-2*tab_margin(span))*(i+0.5)/effective_tab_count(span);
+
+function tab_start(span,i) =
+    tab_center(span,i) - tab_width_for(span)/2;
+
+function joined_panel_width() =
+    joinery_style == "dado"
+        ? inner_width + 2*effective_dado_depth()
+        : joinery_style == "tab_slot"
+            ? cabinet_width
+            : inner_width;
+
+// Local X offset of the inner-width body in a flat horizontal carcass part.
+function horizontal_panel_inner_x_offset() =
+    joinery_style == "dado"
+        ? effective_dado_depth()
+        : joinery_style == "tab_slot"
+            ? material_thickness
+            : 0;
+
+function door_shelf_z(s) =
+    door_region_bottom_z
+    + s*(door_region_height/(door_shelf_count+1))
+    - material_thickness/2;
+
+adjustable_shelf_width =
+    max(10, inner_width - 2*adjustable_shelf_side_clearance);
+
+shelf_pin_z_min =
+    door_region_bottom_z + adjustable_shelf_hole_bottom_margin;
+
+shelf_pin_z_max =
+    door_region_top_z - adjustable_shelf_hole_top_margin;
+
+function shelf_pin_count() =
+    !has_doors || shelf_style != "adjustable" || shelf_pin_z_max < shelf_pin_z_min
+        ? 0
+        : floor(
+            (shelf_pin_z_max-shelf_pin_z_min)
+            / max(1,adjustable_shelf_hole_spacing)
+          ) + 1;
+
+function shelf_pin_z(i) =
+    shelf_pin_z_min + i*adjustable_shelf_hole_spacing;
+
+function shelf_pin_y(row) =
+    row == 0
+        ? adjustable_shelf_front_setback
+        : cabinet_depth-adjustable_shelf_rear_setback;
+
+
+// Structural/captured-back body dimensions. The solid back fits BETWEEN the
+// bottom/top members in butt mode, then gains dado tongues or tab extensions
+// according to the active carcass joinery.
+captured_back_bottom_z =
+    bottom_above_toe + material_thickness;
+
+captured_back_top_z =
+    cabinet_height - material_thickness;
+
+captured_back_height =
+    max(
+        0,
+        captured_back_top_z-captured_back_bottom_z
+    );
+
+structural_back_dado_depth =
+    min(
+        effective_dado_depth(),
+        material_thickness-0.2
+    );
+
+function structural_back_cut_width() =
+    joinery_style == "dado"
+        ? inner_width+2*structural_back_dado_depth
+        : joinery_style == "tab_slot"
+            ? cabinet_width
+            : inner_width;
+
+function structural_back_cut_height() =
+    joinery_style == "dado"
+        ? captured_back_height+2*structural_back_dado_depth
+        : joinery_style == "tab_slot"
+            ? captured_back_height+2*material_thickness
+            : captured_back_height;
+
+// Applied back sits BEHIND the rear carcass edge. With back_inset = 0 the
+// front face of the back starts exactly at cabinet_depth.
+applied_back_y = cabinet_depth-back_inset;
+
+// The applied back spans the full cabinet width and runs from the underside
+// of the raised cabinet bottom to the cabinet top, leaving the toe-kick open.
+simple_back_bottom_z = bottom_above_toe;
+simple_back_top_z = cabinet_height;
+simple_back_height =
+    max(0,simple_back_top_z-simple_back_bottom_z);
+
+back_panel_y =
+    structural_back_active
+        ? structural_back_y
+        : applied_back_y;
+
+back_panel_bottom_z =
+    structural_back_active
+        ? captured_back_bottom_z
+        : simple_back_bottom_z;
+
+back_panel_top_z =
+    structural_back_active
+        ? captured_back_top_z
+        : simple_back_top_z;
+
+back_panel_height =
+    structural_back_active
+        ? captured_back_height
+        : simple_back_height;
+
+back_cut_width =
+    structural_back_active
+        ? structural_back_cut_width()
+        : cabinet_width;
+
+back_cut_height =
+    structural_back_active
+        ? structural_back_cut_height()
+        : simple_back_height;
+
+// Structural back-stretcher placement.
+back_stretcher_y =
+    cabinet_depth - material_thickness - back_stretcher_inset;
+
+back_stretcher_region_bottom_z =
+    bottom_above_toe + material_thickness;
+
+back_stretcher_region_top_z =
+    cabinet_height - material_thickness;
+
+back_stretcher_min_z =
+    back_stretcher_region_bottom_z
+    + back_stretcher_edge_margin;
+
+back_stretcher_max_z =
+    max(
+        back_stretcher_min_z,
+        back_stretcher_region_top_z
+        - back_stretcher_edge_margin
+        - back_stretcher_height
+    );
+
+function back_stretcher_z(i) =
+    back_stretcher_count <= 1
+        ? (back_stretcher_min_z+back_stretcher_max_z)/2
+        : back_stretcher_min_z
+          + (back_stretcher_max_z-back_stretcher_min_z)
+            * i/(back_stretcher_count-1);
+
+back_stretcher_layout_height =
+    back_style == "stretchers"
+        ? back_stretcher_count*back_stretcher_height
+          + max(0,back_stretcher_count-1)*layout_gap
+        : 0;
+
+// General interior panel depth. This intentionally stops short of the back.
+shelf_depth = usable_depth-10;
+
+// Optional separators exist only BETWEEN drawers.
+drawer_separator_count =
+    !mixed_bay_mode
+    && has_drawers
+    && include_drawer_separators
+    && drawer_bank_layout_mode == "shared"
+    && drawer_bank_drawer_count(0) > 1
+        ? drawer_bank_drawer_count(0)-1
+        : 0;
+
+drawer_separator_full_depth = shelf_depth;
+drawer_separator_stretcher_actual_depth =
+    min(drawer_separator_stretcher_depth, drawer_separator_full_depth/2);
+
+joined_w = joined_panel_width();
+
+full_width_bottom_active =
+    bottom_width_style == "full_width"
+    && bottom_above_toe <= 0.001;
+
+side_panel_bottom_z =
+    full_width_bottom_active
+        ? material_thickness
+        : 0;
+
+side_panel_cut_height =
+    max(1,cabinet_height-side_panel_bottom_z);
+
+bottom_panel_width =
+    full_width_bottom_active
+        ? cabinet_width
+        : joined_w;
+
+bottom_panel_global_x0 =
+    full_width_bottom_active
+        ? 0
+        : horizontal_panel_global_x0();
+
+bottom_receiver_x_shift =
+    full_width_bottom_active
+        ? horizontal_panel_global_x0()
+        : 0;
+
+function bottom_panel_local_x(global_x) =
+    global_x-bottom_panel_global_x0;
+
+top_layout_x = bottom_panel_width + layout_gap;
+
+// Cut-layout placement values.
+layout_y2 = cabinet_height + layout_gap;
+layout_y3 = layout_y2 + cabinet_depth + layout_gap;
+layout_y4 =
+    layout_y3
+    + max([
+        include_back ? back_cut_height : 0,
+        back_stretcher_layout_height,
+        toe_kick_height
+    ])
+    + layout_gap;
+
+door_compartment_panel_count =
+    mixed_bay_mode
+        ? 0
+        : (has_doors ? door_shelf_count : 0)
+          + (cabinet_contents == "combo" ? 1 : 0);
+
+// Mixed-bay adjustable shelves use the same shelf-depth row pitch and occupy
+// the legacy door-compartment layout area before partition parts.
+mixed_bay_shelf_layout_base_y =
+    layout_y4
+    + door_compartment_panel_count*(shelf_depth+layout_gap);
+
+function mixed_bay_shelf_layout_y(b,s) =
+    mixed_bay_shelf_layout_base_y
+    + (mixed_bay_shelf_count_prefix(b)+s-1)
+      *(shelf_depth+layout_gap);
+
+door_hinge_partition_layout_base_y =
+    mixed_bay_shelf_layout_base_y
+    + (mixed_bay_mode ? mixed_bay_total_shelf_count() : 0)
+      *(shelf_depth+layout_gap)
+    + layout_gap;
+
+door_hinge_partition_layout_row_height =
+    door_hinge_partition_cut_height()+layout_gap;
+
+mixed_bay_partition_layout_base_y =
+    door_hinge_partition_layout_base_y
+    + (
+        door_hinge_partition_count() > 0
+            ? door_hinge_partition_count()
+              *door_hinge_partition_layout_row_height
+              + layout_gap
+            : 0
+      );
+
+mixed_bay_partition_layout_row_height =
+    mixed_bay_partition_cut_height()+layout_gap;
+
+drawer_bank_partition_layout_base_y =
+    mixed_bay_partition_layout_base_y
+    + (
+        mixed_bay_partition_count() > 0
+            ? mixed_bay_partition_count()
+              *mixed_bay_partition_layout_row_height
+              + layout_gap
+            : 0
+      );
+
+drawer_bank_partition_layout_row_height =
+    drawer_bank_partition_cut_height()+layout_gap;
+
+drawer_separator_layout_base_y =
+    drawer_bank_partition_layout_base_y
+    + drawer_bank_partition_count()*drawer_bank_partition_layout_row_height
+    + layout_gap;
+
+drawer_separator_layout_row_height =
+    drawer_separator_style == "full"
+        ? drawer_separator_full_depth + layout_gap
+        : 2*drawer_separator_stretcher_actual_depth + 2*layout_gap;
+
+drawer_layout_base_y =
+    drawer_separator_layout_base_y
+    + drawer_separator_count*drawer_separator_layout_row_height
+    + layout_gap;
+
+function drawer_layout_face_height(i,b=0) =
+    include_drawer_faces ? drawer_face_height_for(i,b) : 0;
+
+// Wood rails/runners share the horizontal strip beside the drawer face in the
+// flat layouts. Shallow faces (or no applied face) used to let the second rail
+// extend downward into the drawer-side/cross-panel row. Reserve the taller of
+// the face strip or the complete two-piece slide strip before placing box parts.
+function drawer_layout_slide_strip_height() =
+    drawer_mount == "wood_rails"
+        ? max(
+            2*wood_rail_height + layout_gap,
+            2*wood_drawer_runner_height + layout_gap
+          )
+        : 0;
+
+function drawer_layout_header_height(i,b=0) =
+    max(
+        drawer_layout_face_height(i,b),
+        drawer_layout_slide_strip_height()
+    );
+
+// Canonical flat-layout Y origin for the drawer SIDE / FRONT / BACK parts.
+// CUT, PRINT, and all blind drawer-pocket overlays must use this same helper.
+// Keeping this in one place prevents pocket geometry from drifting back onto
+// the wood-rail strip when faces are shallow or disabled.
+function drawer_layout_box_parts_y(b,i) =
+    drawer_layout_row_y(b,i)
+    + drawer_layout_header_height(i,b)
+    + layout_gap;
+
+function drawer_layout_row_height_for(i,b=0) =
+    drawer_layout_header_height(i,b)
+    + max(
+        2*drawer_box_height(i,b)+layout_gap,
+        drawer_box_height(i,b)+2*layout_gap+drawer_box_depth
+      )
+    + 2*layout_gap;
+
+function drawer_layout_prefix_height(b,i,j=0) =
+    j >= i
+        ? 0
+        : drawer_layout_row_height_for(j,b)
+          + drawer_layout_prefix_height(b,i,j+1);
+
+function drawer_layout_stack_height(b=0) =
+    drawer_layout_prefix_height(
+        b,drawer_bank_drawer_count(b));
+
+function drawer_layout_bank_prefix_height(b,j=0) =
+    j >= b
+        ? 0
+        : drawer_layout_stack_height(j)
+          + layout_gap
+          + drawer_layout_bank_prefix_height(b,j+1);
+
+function drawer_layout_bank_base_y(b) =
+    drawer_layout_base_y
+    + drawer_layout_bank_prefix_height(b);
+
+function drawer_layout_row_y(b,i) =
+    drawer_layout_bank_base_y(b)
+    + drawer_layout_prefix_height(b,i);
+
+function drawer_layout_all_banks_height() =
+    drawer_layout_bank_prefix_height(active_drawer_bank_count())
+    - (active_drawer_bank_count() > 0 ? layout_gap : 0);
+
+door_layout_y =
+    drawer_layout_base_y
+    + max(0,drawer_layout_all_banks_height())
+    + layout_gap;
+
+
+// ---------------------------
+// BASE HARDWARE / WORKTOP DERIVED GEOMETRY
+// ---------------------------
+
+base_mounting_plate_x =
+    max(0,base_mounting_plate_side_inset);
+
+base_mounting_plate_y =
+    max(0,base_mounting_plate_front_inset);
+
+base_mounting_plate_width =
+    max(
+        10,
+        cabinet_width
+        - 2*max(0,base_mounting_plate_side_inset)
+    );
+
+base_mounting_plate_depth =
+    max(
+        10,
+        cabinet_depth
+        - max(0,base_mounting_plate_front_inset)
+        - max(0,base_mounting_plate_back_inset)
+    );
+
+function base_hardware_half_x() =
+    active_base_style == "casters"
+        ? caster_mount_plate_width/2
+        : leveler_foot_diameter/2;
+
+function base_hardware_half_y() =
+    active_base_style == "casters"
+        ? caster_mount_plate_depth/2
+        : leveler_foot_diameter/2;
+
+function base_hardware_center_x(side=0) =
+    side == 0
+        ? max(
+            base_hardware_inset_x,
+            base_mounting_plate_active
+                ? base_mounting_plate_x
+                  + base_hardware_half_x()
+                : material_thickness
+                  + base_hardware_half_x()
+          )
+        : min(
+            cabinet_width-base_hardware_inset_x,
+            base_mounting_plate_active
+                ? base_mounting_plate_x
+                  + base_mounting_plate_width
+                  - base_hardware_half_x()
+                : cabinet_width
+                  - material_thickness
+                  - base_hardware_half_x()
+          );
+
+function base_hardware_center_y(front=0) =
+    front == 0
+        ? max(
+            base_hardware_inset_y,
+            base_mounting_plate_active
+                ? base_mounting_plate_y
+                  + base_hardware_half_y()
+                : base_hardware_half_y()
+          )
+        : min(
+            cabinet_depth-base_hardware_inset_y,
+            base_mounting_plate_active
+                ? base_mounting_plate_y
+                  + base_mounting_plate_depth
+                  - base_hardware_half_y()
+                : cabinet_depth
+                  - base_hardware_half_y()
+          );
+
+function base_hardware_center_x_for_index(i) =
+    base_hardware_center_x(i % 2);
+
+function base_hardware_center_y_for_index(i) =
+    base_hardware_center_y(floor(i/2));
+
+function base_hardware_hole_count_per_corner() =
+    active_base_style == "casters" ? 4 : 1;
+
+function base_hardware_hole_global_x(corner,hole=0) =
+    active_base_style == "casters"
+        ? base_hardware_center_x_for_index(corner)
+          + ((hole % 2) == 0 ? -1 : 1)
+            *caster_hole_spacing_x/2
+        : base_hardware_center_x_for_index(corner);
+
+function base_hardware_hole_global_y(corner,hole=0) =
+    active_base_style == "casters"
+        ? base_hardware_center_y_for_index(corner)
+          + (floor(hole/2) == 0 ? -1 : 1)
+            *caster_hole_spacing_y/2
+        : base_hardware_center_y_for_index(corner);
+
+function base_hardware_hole_diameter() =
+    active_base_style == "casters"
+        ? caster_hole_diameter
+        : leveler_mount_hole_diameter;
+
+worktop_width =
+    cabinet_width + 2*max(0,worktop_side_overhang);
+
+worktop_depth =
+    cabinet_depth
+    + max(0,worktop_front_overhang)
+    + max(0,worktop_back_overhang);
+
+worktop_x = -max(0,worktop_side_overhang);
+worktop_y = -max(0,worktop_front_overhang);
+worktop_z = cabinet_height;
+
+active_worktop_registration =
+    worktop_active
+    && include_worktop_registration_holes
+    && worktop_registration_hole_count > 0;
+
+effective_worktop_registration_blind_depth =
+    active_worktop_registration
+        ? min(
+            max(0.5,worktop_registration_blind_depth),
+            max(0.5,worktop_thickness-0.5)
+          )
+        : 0;
+
+function worktop_registration_x_margin() =
+    min(
+        max(10,worktop_registration_end_margin),
+        max(10,inner_width/2-5)
+    );
+
+function worktop_registration_x(i) =
+    worktop_registration_hole_count <= 1
+        ? cabinet_width/2
+        : material_thickness
+          + worktop_registration_x_margin()
+          + i*(
+                inner_width
+                - 2*worktop_registration_x_margin()
+            )/(worktop_registration_hole_count-1);
+
+// Two front/rear rows. With stretcher construction these land at the center of
+// each stretcher. With a full top the same two rows are retained.
+function worktop_registration_row_y(r) =
+    r == 0
+        ? min(cabinet_depth/2,top_stretcher_depth/2)
+        : max(
+            cabinet_depth/2,
+            cabinet_depth-top_stretcher_depth/2
+          );
+
+function worktop_registration_worktop_local_x(i) =
+    worktop_registration_x(i)-worktop_x;
+
+function worktop_registration_worktop_local_y(r) =
+    worktop_registration_row_y(r)-worktop_y;
+
+accessory_layout_y =
+    door_layout_y
+    + (has_doors ? door_face_height : 0)
+    + layout_gap;
+
+base_mounting_plate_layout_y = accessory_layout_y;
+
+worktop_layout_y =
+    accessory_layout_y
+    + (base_mounting_plate_active
+        ? base_mounting_plate_depth+layout_gap
+        : 0);
+
+accessory_layout_end_y =
+    max([
+        door_layout_y
+            + (has_doors ? door_face_height : 0)
+            + layout_gap,
+        base_mounting_plate_active
+            ? base_mounting_plate_layout_y
+              + base_mounting_plate_depth
+              + layout_gap
+            : 0,
+        worktop_active
+            ? worktop_layout_y
+              + worktop_depth
+              + layout_gap
+            : 0
+    ]);
+
+
+// Conservative common export bounds for BOTH cut_layout and pocket_layout.
+// Width includes the side-panel row plus generous room for drawer components.
+// Height uses door_layout_y because it is always below all previous layout rows.
+export_layout_content_width =
+    max([
+        stock_width,
+        2*cabinet_depth + layout_gap,
+        bottom_panel_width + joined_w + layout_gap,
+        back_cut_width + layout_gap + cabinet_width,
+        3*max(cabinet_width,cabinet_depth) + 4*layout_gap,
+        base_mounting_plate_active
+            ? base_mounting_plate_width
+            : 0,
+        worktop_active
+            ? worktop_width
+            : 0
+    ]);
+
+export_layout_content_height =
+    max([
+        stock_height,
+        accessory_layout_end_y
+    ]);
+
+
+// ---------------------------
+// BASIC HELPERS
+// ---------------------------
+
+module sheet_box(size=[10,10,10], pos=[0,0,0]) {
+    translate(pos) cube(size);
+}
+
+module cut_rect(w,h) {
+    if (apply_kerf_compensation)
+        offset(delta=kerf/2) square([w,h]);
+    else
+        square([w,h]);
+}
+
+module cut_part(w,h) {
+    if (w > 0 && h > 0)
+        cut_rect(w,h);
+}
+
+module metal_hole_2d(xpos, zpos) {
+    translate([xpos,zpos])
+        circle(d=compensated_hole_diameter(metal_slide_hole_diameter));
+}
+
+module metal_hole_x_3d(xstart, ypos, zpos, depth) {
+    translate([xstart,ypos,zpos])
+        rotate([0,90,0])
+            cylinder(h=depth, d=metal_slide_hole_diameter);
+}
+
+module round_hole_x_3d(xstart,ypos,zpos,depth,diameter) {
+    translate([xstart,ypos,zpos])
+        rotate([0,90,0])
+            cylinder(h=depth,d=diameter);
+}
+
+module round_hole_2d(xpos,ypos,diameter) {
+    translate([xpos,ypos])
+        circle(d=diameter);
+}
+
+module round_hole_y_3d(xpos,y_front,zpos,depth,diameter) {
+    translate([xpos,y_front,zpos])
+        rotate([90,0,0])
+            cylinder(h=depth,d=diameter);
+}
+
+
+// ---------------------------
+// DISPLAY COLORS
+// ---------------------------
+
+// The palette is intentionally high-contrast rather than photorealistic.
+// Names remain stable between assembly and cut-layout views.
+function part_rgb(name, index=0) =
+    color_mode == "material"
+        ? [0.86,0.72,0.48]
+        : color_mode == "monochrome"
+            ? [0.72,0.72,0.72]
+            : name == "side_left"       ? [0.26,0.53,0.86]
+            : name == "side_right"      ? [0.30,0.70,0.48]
+            : name == "bottom"          ? [0.93,0.55,0.22]
+            : name == "top_front"       ? [0.56,0.38,0.78]
+            : name == "top_rear"        ? [0.74,0.38,0.73]
+            : name == "top_full"        ? [0.62,0.42,0.80]
+            : name == "back"            ? [0.86,0.34,0.38]
+            : name == "toe_kick"        ? [0.55,0.36,0.22]
+            : name == "base_mounting_plate" ? [0.34,0.34,0.38]
+            : name == "caster"          ? [0.18,0.18,0.20]
+            : name == "leveler"         ? [0.30,0.30,0.32]
+            : name == "worktop"         ? [0.72,0.55,0.30]
+            : name == "divider"         ? [0.92,0.78,0.25]
+            : name == "drawer_separator"? [0.92,0.86,0.48]
+            : name == "drawer_bank_partition" ? [0.38,0.60,0.80]
+            : name == "mixed_bay_partition" ? [0.32,0.58,0.72]
+            : name == "door_hinge_partition" ? [0.72,0.54,0.30]
+            : name == "shelf"           ? [0.24,0.72,0.72]
+            : name == "rail"            ? [0.42,0.45,0.49]
+            : name == "drawer_runner"   ? [0.18,0.58,0.44]
+            : name == "drawer_face"     ? (index % 2 == 0 ? [0.96,0.49,0.34] : [0.93,0.64,0.30])
+            : name == "drawer_side_l"   ? [0.30,0.68,0.82]
+            : name == "drawer_side_r"   ? [0.34,0.76,0.65]
+            : name == "drawer_box_front"? [0.58,0.73,0.36]
+            : name == "drawer_box_back" ? [0.45,0.63,0.31]
+            : name == "drawer_bottom"   ? [0.80,0.82,0.42]
+            : name == "door"            ? (index % 2 == 0 ? [0.88,0.46,0.64] : [0.67,0.48,0.82])
+            : [0.80,0.80,0.80];
+
+module paint(name,index=0) {
+    color(part_rgb(name,index)) children();
+}
+
+
+// ---------------------------
+// JOINERY HELPERS
+// ---------------------------
+
+// CNC relief centers for a rectangular slot.
+// Corner indexes: ix=0 left / ix=1 right; iy=0 bottom / iy=1 top.
+//
+// DOGBONE:
+//   The cutter center moves diagonally INWARD from the nominal sharp corner
+//   by r/sqrt(2) in X and Y. The cutter circumference therefore passes exactly
+//   through the original sharp corner while minimizing extra material removal.
+//
+// T-BONE:
+//   The cutter center moves INWARD by one cutter radius along the slot's
+//   LONGEST adjacent wall. The other wall remains straight. This mirrors the
+//   common "T-bone on longest edge" CAM convention and is useful when the slot
+//   is narrow relative to cutter diameter.
+function slot_relief_center_x(w,h,ix,iy) =
+    let(
+        r = slot_relief_radius(),
+        d = slot_dogbone_inset(),
+        cx = ix == 0 ? 0 : w,
+        sx = ix == 0 ? 1 : -1
+    )
+    slot_relief_is_dogbone()
+        ? cx + sx*d
+        : slot_relief_is_tbone() && w >= h
+            ? cx + sx*r
+            : cx;
+
+function slot_relief_center_y(w,h,ix,iy) =
+    let(
+        r = slot_relief_radius(),
+        d = slot_dogbone_inset(),
+        cy = iy == 0 ? 0 : h,
+        sy = iy == 0 ? 1 : -1
+    )
+    slot_relief_is_dogbone()
+        ? cy + sy*d
+        : slot_relief_is_tbone() && h > w
+            ? cy + sy*r
+            : cy;
+
+module slot_corner_relief_2d(w,h) {
+    if (slot_relief_is_active())
+        for (ix=[0:1])
+            for (iy=[0:1])
+                translate([
+                    slot_relief_center_x(w,h,ix,iy),
+                    slot_relief_center_y(w,h,ix,iy)
+                ])
+                    circle(d=cnc_tool_diameter);
+}
+
+// 2D through-slot shape in the side-panel Y/Z plane.
+// w = slot dimension along cabinet depth (Y)
+// h = slot dimension vertically (Z)
+module slot_shape_2d(w,h) {
+    union() {
+        square([w,h]);
+        slot_corner_relief_2d(w,h);
+    }
+}
+
+// Same slot as above, cut through a cabinet side in the X direction.
+module slot_cut_x_3d(xstart,depth,y0,z0,w,h) {
+    union() {
+        translate([xstart,y0,z0])
+            cube([depth,w,h]);
+
+        if (slot_relief_is_active())
+            for (ix=[0:1])
+                for (iy=[0:1])
+                    translate([
+                        xstart,
+                        y0+slot_relief_center_x(w,h,ix,iy),
+                        z0+slot_relief_center_y(w,h,ix,iy)
+                    ])
+                        rotate([0,90,0])
+                            cylinder(
+                                h=depth,
+                                d=cnc_tool_diameter
+                            );
+    }
+}
+
+// Fixed horizontal panel used for bottoms, tops, stretchers, shelves,
+// and the combo divider.
+module joined_horizontal_panel_3d(y0,depth,z0) {
+    if (joinery_style == "butt") {
+        sheet_box([inner_width,depth,material_thickness],
+                  [material_thickness,y0,z0]);
+    }
+    else if (joinery_style == "dado") {
+        dd = effective_dado_depth();
+        sheet_box([inner_width+2*dd,depth,material_thickness],
+                  [material_thickness-dd,y0,z0]);
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            sheet_box([inner_width,depth,material_thickness],
+                      [material_thickness,y0,z0]);
+
+            for (i=[0:effective_tab_count(depth)-1]) {
+                ty = y0 + tab_start(depth,i);
+                tw = tab_width_for(depth);
+
+                // Left and right tabs extend through the cabinet sides.
+                sheet_box([material_thickness,tw,material_thickness],
+                          [0,ty,z0]);
+                sheet_box([material_thickness,tw,material_thickness],
+                          [cabinet_width-material_thickness,ty,z0]);
+            }
+        }
+    }
+}
+
+// 2D profile of the same horizontal panel.
+// Local X is cabinet width; local Y is the panel's depth.
+module joined_horizontal_panel_cut(depth) {
+    if (joinery_style == "butt") {
+        cut_part(inner_width,depth);
+    }
+    else if (joinery_style == "dado") {
+        cut_part(inner_width+2*effective_dado_depth(),depth);
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            translate([material_thickness,0])
+                cut_part(inner_width,depth);
+
+            for (i=[0:effective_tab_count(depth)-1]) {
+                ty = tab_start(depth,i);
+                tw = tab_width_for(depth);
+
+                translate([0,ty])
+                    cut_part(material_thickness,tw);
+                translate([cabinet_width-material_thickness,ty])
+                    cut_part(material_thickness,tw);
+            }
+        }
+    }
+}
+
+
+// ---------------------------
+// DRAWER-BANK VERTICAL PARTITIONS / RECEIVERS
+// ---------------------------
+
+module slot_cut_z_3d(x0,y0,zstart,depth,w,h) {
+    union() {
+        translate([x0,y0,zstart])
+            cube([w,h,depth]);
+
+        if (slot_relief_is_active())
+            for (ix=[0:1])
+                for (iy=[0:1])
+                    translate([
+                        x0+slot_relief_center_x(w,h,ix,iy),
+                        y0+slot_relief_center_y(w,h,ix,iy),
+                        zstart
+                    ])
+                        cylinder(
+                            h=depth,
+                            d=cnc_tool_diameter
+                        );
+    }
+}
+
+module drawer_bank_receiver_cuts_3d(
+    panel_y0,panel_depth,z0,receiver_face="top"
+) {
+    if (has_drawers && drawer_bank_partition_count() > 0) {
+        mode = drawer_bank_partition_joinery_mode();
+        ov = depth_overlap_length(panel_y0,panel_depth);
+        ov0 = depth_overlap_start(panel_y0);
+
+        if (ov > 0) {
+            for (p=[0:drawer_bank_partition_count()-1]) {
+                px = drawer_bank_partition_x(p);
+
+                if (mode == "dado") {
+                    c = dado_fit_clearance;
+                    dd = drawer_bank_partition_dado_depth();
+                    zcut = receiver_face == "top"
+                        ? z0 + material_thickness - dd - 0.01
+                        : z0 - 0.01;
+
+                    translate([
+                        px-c/2,
+                        ov0-c/2,
+                        zcut
+                    ])
+                        cube([
+                            material_thickness+c,
+                            ov+c,
+                            dd+0.02
+                        ]);
+                }
+                else if (mode == "tab_slot") {
+                    c = joint_fit_clearance;
+
+                    for (n=[0:effective_tab_count(ov)-1]) {
+                        yy = ov0 + tab_start(ov,n)-c/2;
+                        hh = tab_width_for(ov)+c;
+
+                        slot_cut_z_3d(
+                            px-c/2,
+                            yy,
+                            z0-1,
+                            material_thickness+2,
+                            material_thickness+c,
+                            hh
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+module drawer_bank_receiver_through_2d(panel_y0,panel_depth) {
+    if (has_drawers
+        && drawer_bank_partition_count() > 0
+        && drawer_bank_partition_joinery_mode() == "tab_slot") {
+
+        c = joint_fit_clearance;
+        ov = depth_overlap_length(panel_y0,panel_depth);
+        ov0 = depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:drawer_bank_partition_count()-1]) {
+                lx = horizontal_panel_local_x(
+                    drawer_bank_partition_x(p)) - c/2;
+                ly0 = ov0-panel_y0;
+
+                for (n=[0:effective_tab_count(ov)-1]) {
+                    yy = ly0 + tab_start(ov,n)-c/2;
+                    hh = tab_width_for(ov)+c;
+
+                    translate([lx,yy])
+                        slot_shape_2d(material_thickness+c,hh);
+                }
+            }
+    }
+}
+
+module drawer_bank_receiver_dado_pockets_2d(panel_y0,panel_depth) {
+    if (has_drawers
+        && drawer_bank_partition_count() > 0
+        && drawer_bank_partition_joinery_mode() == "dado") {
+
+        c = dado_fit_clearance;
+        ov = depth_overlap_length(panel_y0,panel_depth);
+        ov0 = depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:drawer_bank_partition_count()-1]) {
+                lx = horizontal_panel_local_x(
+                    drawer_bank_partition_x(p)) - c/2;
+                ly = ov0-panel_y0-c/2;
+
+                translate([lx,ly])
+                    square([
+                        material_thickness+c,
+                        ov+c
+                    ]);
+            }
+    }
+}
+
+
+// Receiver cuts for the automatic multi-door hinge partitions.
+module door_hinge_partition_receiver_cuts_3d(
+    panel_y0,panel_depth,z0,receiver_face="top"
+) {
+    if (door_hinge_partition_count() > 0) {
+        ov = door_hinge_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = door_hinge_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:door_hinge_partition_count()-1]) {
+                px = door_hinge_partition_x(p);
+
+                if (joinery_style == "dado") {
+                    c = dado_fit_clearance;
+                    dd = door_hinge_partition_dado_depth();
+                    zcut =
+                        receiver_face == "top"
+                            ? z0 + material_thickness-dd-0.01
+                            : z0-0.01;
+
+                    translate([
+                        px-c/2,
+                        ov0-c/2,
+                        zcut
+                    ])
+                        cube([
+                            material_thickness+c,
+                            ov+c,
+                            dd+0.02
+                        ]);
+                }
+                else if (joinery_style == "tab_slot") {
+                    c = joint_fit_clearance;
+
+                    for (n=[0:effective_tab_count(ov)-1]) {
+                        yy = ov0+tab_start(ov,n)-c/2;
+                        hh = tab_width_for(ov)+c;
+
+                        slot_cut_z_3d(
+                            px-c/2,
+                            yy,
+                            z0-1,
+                            material_thickness+2,
+                            material_thickness+c,
+                            hh
+                        );
+                    }
+                }
+            }
+    }
+}
+
+module door_hinge_partition_receiver_through_2d(
+    panel_y0,panel_depth
+) {
+    if (door_hinge_partition_count() > 0
+        && joinery_style == "tab_slot") {
+
+        c = joint_fit_clearance;
+        ov = door_hinge_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = door_hinge_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:door_hinge_partition_count()-1]) {
+                lx =
+                    horizontal_panel_local_x(
+                        door_hinge_partition_x(p))
+                    - c/2;
+                ly0 = ov0-panel_y0;
+
+                for (n=[0:effective_tab_count(ov)-1]) {
+                    yy = ly0+tab_start(ov,n)-c/2;
+                    hh = tab_width_for(ov)+c;
+
+                    translate([lx,yy])
+                        slot_shape_2d(
+                            material_thickness+c,
+                            hh
+                        );
+                }
+            }
+    }
+}
+
+module door_hinge_partition_receiver_dado_pockets_2d(
+    panel_y0,panel_depth
+) {
+    if (door_hinge_partition_count() > 0
+        && joinery_style == "dado") {
+
+        c = dado_fit_clearance;
+        ov = door_hinge_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = door_hinge_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:door_hinge_partition_count()-1]) {
+                lx =
+                    horizontal_panel_local_x(
+                        door_hinge_partition_x(p))
+                    - c/2;
+                ly = ov0-panel_y0-c/2;
+
+                translate([lx,ly])
+                    square([
+                        material_thickness+c,
+                        ov+c
+                    ]);
+            }
+    }
+}
+
+module door_hinge_partition_joinery_segment_3d(
+    x0,y0,span,z0,edge="bottom"
+) {
+    if (span > 0) {
+        if (joinery_style == "dado") {
+            dd = door_hinge_partition_dado_depth();
+            zz = edge == "bottom" ? z0-dd : z0;
+
+            sheet_box(
+                [material_thickness,span,dd],
+                [x0,y0,zz]
+            );
+        }
+        else if (joinery_style == "tab_slot") {
+            zz = edge == "bottom"
+                ? z0-material_thickness
+                : z0;
+
+            for (n=[0:effective_tab_count(span)-1]) {
+                yy = y0+tab_start(span,n);
+                th = tab_width_for(span);
+
+                sheet_box(
+                    [
+                        material_thickness,
+                        th,
+                        material_thickness
+                    ],
+                    [x0,yy,zz]
+                );
+            }
+        }
+    }
+}
+
+module door_hinge_partition_bottom_joinery_3d(x0,z0) {
+    door_hinge_partition_joinery_segment_3d(
+        x0,0,door_hinge_partition_actual_depth,z0,"bottom");
+}
+
+module door_hinge_partition_top_joinery_3d(x0,z0) {
+    if (cabinet_contents == "combo") {
+        span =
+            min(
+                door_hinge_partition_actual_depth,
+                shelf_depth
+            );
+
+        door_hinge_partition_joinery_segment_3d(
+            x0,0,span,z0,"top");
+    }
+    else if (top_style == "full") {
+        door_hinge_partition_joinery_segment_3d(
+            x0,0,door_hinge_partition_actual_depth,z0,"top");
+    }
+    else {
+        front_span =
+            min(
+                door_hinge_partition_actual_depth,
+                top_stretcher_depth
+            );
+
+        if (front_span > 0)
+            door_hinge_partition_joinery_segment_3d(
+                x0,0,front_span,z0,"top");
+
+        rear_start =
+            max(0,cabinet_depth-top_stretcher_depth);
+
+        rear_span =
+            max(
+                0,
+                min(
+                    door_hinge_partition_actual_depth,
+                    cabinet_depth
+                )-rear_start
+            );
+
+        if (rear_span > 0)
+            door_hinge_partition_joinery_segment_3d(
+                x0,rear_start,rear_span,z0,"top");
+    }
+}
+
+module door_hinge_partition_plate_holes_3d(x0) {
+    if (hinge_style != "none")
+        for (j=[0:hinge_count-1])
+            for (dz=[
+                -hinge_plate_hole_spacing/2,
+                hinge_plate_hole_spacing/2
+            ])
+                round_hole_x_3d(
+                    x0-1,
+                    hinge_plate_center_from_front,
+                    hinge_z(j)+dz,
+                    material_thickness+2,
+                    hinge_plate_hole_diameter
+                );
+}
+
+// Fixed shelves remain continuous full-width parts. They cross the partition
+// through an open-front cross-lap notch, preserving the existing shelf-to-side
+// carcass joinery while also tying the partition to each fixed shelf.
+module door_hinge_partition_fixed_shelf_notches_3d(x0) {
+    if (shelf_style == "fixed" && door_shelf_count > 0) {
+        c = max(0,door_hinge_partition_shelf_clearance);
+        notch_depth =
+            min(
+                shelf_depth,
+                door_hinge_partition_actual_depth
+            );
+
+        for (s=[1:door_shelf_count])
+            translate([
+                x0-1,
+                -0.01,
+                door_shelf_z(s)-c/2
+            ])
+                cube([
+                    material_thickness+2,
+                    notch_depth+0.02,
+                    material_thickness+c
+                ]);
+    }
+}
+
+// Internal adjustable-shelf support holes are made THROUGH the partition so
+// one drilled row supports the bays on both sides. Cabinet outer-side holes
+// still obey adjustable_shelf_hole_type (through/blind).
+module door_hinge_partition_shelf_pin_holes_3d(x0) {
+    if (shelf_style == "adjustable")
+        for (row=[0:1])
+            for (i=[0:shelf_pin_count()-1])
+                round_hole_x_3d(
+                    x0-1,
+                    shelf_pin_y(row),
+                    shelf_pin_z(i),
+                    material_thickness+2,
+                    adjustable_shelf_hole_diameter
+                );
+}
+
+// Structural rear stretchers cross the partition near the cabinet back.
+// Open rear notches let the full-depth partition reach the back plane without
+// colliding with those horizontal members.
+module door_hinge_partition_back_stretcher_notches_3d(x0) {
+    if (back_style == "stretchers") {
+        c = max(0,joint_fit_clearance);
+
+        for (b=[0:back_stretcher_count-1])
+            translate([
+                x0-1,
+                back_stretcher_y-c/2,
+                back_stretcher_z(b)-c/2
+            ])
+                cube([
+                    material_thickness+2,
+                    cabinet_depth-back_stretcher_y+c/2+1,
+                    back_stretcher_height+c
+                ]);
+    }
+}
+
+module door_hinge_partition_3d(p=0) {
+    x0 = door_hinge_partition_x(p);
+    z0 = door_hinge_partition_bottom_z();
+    z1 = door_hinge_partition_top_z();
+    bh = door_hinge_partition_body_height();
+
+    difference() {
+        union() {
+            sheet_box(
+                [
+                    material_thickness,
+                    door_hinge_partition_actual_depth,
+                    bh
+                ],
+                [x0,0,z0]
+            );
+
+            door_hinge_partition_bottom_joinery_3d(x0,z0);
+            door_hinge_partition_top_joinery_3d(x0,z1);
+        }
+
+        door_hinge_partition_plate_holes_3d(x0);
+        door_hinge_partition_fixed_shelf_notches_3d(x0);
+        door_hinge_partition_shelf_pin_holes_3d(x0);
+        door_hinge_partition_back_stretcher_notches_3d(x0);
+    }
+}
+
+module door_hinge_partition_joinery_segment_cut(
+    x0,span,y0,edge_height
+) {
+    if (span > 0) {
+        if (joinery_style == "dado") {
+            translate([x0,y0])
+                cut_part(
+                    span,
+                    door_hinge_partition_dado_depth()
+                );
+        }
+        else if (joinery_style == "tab_slot") {
+            for (n=[0:effective_tab_count(span)-1])
+                translate([
+                    x0+tab_start(span,n),
+                    y0
+                ])
+                    cut_part(
+                        tab_width_for(span),
+                        material_thickness
+                    );
+        }
+    }
+}
+
+module door_hinge_partition_bottom_joinery_cut() {
+    ext = door_hinge_partition_cut_body_offset();
+
+    if (joinery_style == "dado")
+        door_hinge_partition_joinery_segment_cut(
+            0,
+            door_hinge_partition_actual_depth,
+            0,
+            ext);
+    else if (joinery_style == "tab_slot")
+        door_hinge_partition_joinery_segment_cut(
+            0,
+            door_hinge_partition_actual_depth,
+            0,
+            ext);
+}
+
+module door_hinge_partition_top_joinery_cut(body_top_y) {
+    if (cabinet_contents == "combo") {
+        span =
+            min(
+                door_hinge_partition_actual_depth,
+                shelf_depth
+            );
+
+        door_hinge_partition_joinery_segment_cut(
+            0,span,body_top_y,0);
+    }
+    else if (top_style == "full") {
+        door_hinge_partition_joinery_segment_cut(
+            0,
+            door_hinge_partition_actual_depth,
+            body_top_y,
+            0);
+    }
+    else {
+        front_span =
+            min(
+                door_hinge_partition_actual_depth,
+                top_stretcher_depth
+            );
+
+        if (front_span > 0)
+            door_hinge_partition_joinery_segment_cut(
+                0,front_span,body_top_y,0);
+
+        rear_start =
+            max(0,cabinet_depth-top_stretcher_depth);
+
+        rear_span =
+            max(
+                0,
+                min(
+                    door_hinge_partition_actual_depth,
+                    cabinet_depth
+                )-rear_start
+            );
+
+        if (rear_span > 0)
+            door_hinge_partition_joinery_segment_cut(
+                rear_start,
+                rear_span,
+                body_top_y,
+                0);
+    }
+}
+
+module door_hinge_partition_cut() {
+    bh = door_hinge_partition_body_height();
+    body_offset = door_hinge_partition_cut_body_offset();
+    cut_z0 = door_hinge_partition_cut_global_bottom_z();
+
+    difference() {
+        union() {
+            translate([0,body_offset])
+                cut_part(
+                    door_hinge_partition_actual_depth,
+                    bh
+                );
+
+            door_hinge_partition_bottom_joinery_cut();
+            door_hinge_partition_top_joinery_cut(
+                body_offset+bh);
+        }
+
+        // Hinge mounting-plate holes.
+        if (hinge_style != "none")
+            for (j=[0:hinge_count-1])
+                for (dz=[
+                    -hinge_plate_hole_spacing/2,
+                    hinge_plate_hole_spacing/2
+                ])
+                    round_hole_2d(
+                        hinge_plate_center_from_front,
+                        hinge_z(j)+dz-cut_z0,
+                        hinge_plate_hole_diameter
+                    );
+
+        // Fixed-shelf cross-lap notches.
+        if (shelf_style == "fixed" && door_shelf_count > 0) {
+            c = max(0,door_hinge_partition_shelf_clearance);
+            notch_depth =
+                min(
+                    shelf_depth,
+                    door_hinge_partition_actual_depth
+                );
+
+            for (s=[1:door_shelf_count])
+                translate([
+                    -0.01,
+                    door_shelf_z(s)-cut_z0-c/2
+                ])
+                    square([
+                        notch_depth+0.02,
+                        material_thickness+c
+                    ]);
+        }
+
+        // Through shelf-pin holes serve both faces of an internal partition.
+        if (shelf_style == "adjustable")
+            for (row=[0:1])
+                for (i=[0:shelf_pin_count()-1])
+                    round_hole_2d(
+                        shelf_pin_y(row),
+                        shelf_pin_z(i)-cut_z0,
+                        adjustable_shelf_hole_diameter
+                    );
+
+        // Open rear notches for structural back stretchers.
+        if (back_style == "stretchers") {
+            c = max(0,joint_fit_clearance);
+
+            for (b=[0:back_stretcher_count-1])
+                translate([
+                    back_stretcher_y-c/2,
+                    back_stretcher_z(b)-cut_z0-c/2
+                ])
+                    square([
+                        door_hinge_partition_actual_depth
+                            - back_stretcher_y
+                            + c/2 + 0.02,
+                        back_stretcher_height+c
+                    ]);
+        }
+    }
+}
+
+
+// ---------------------------
+// MIXED-BAY FULL-DEPTH PARTITIONS
+// ---------------------------
+
+module mixed_bay_partition_receiver_cuts_3d(
+    panel_y0,panel_depth,z0,receiver_face="top"
+) {
+    if (mixed_bay_partition_count() > 0) {
+        ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = mixed_bay_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:mixed_bay_partition_count()-1]) {
+                px = mixed_bay_partition_x(p);
+
+                if (joinery_style == "dado") {
+                    c = dado_fit_clearance;
+                    dd = mixed_bay_partition_dado_depth();
+                    zcut =
+                        receiver_face == "top"
+                            ? z0 + material_thickness-dd-0.01
+                            : z0-0.01;
+
+                    translate([px-c/2,ov0-c/2,zcut])
+                        cube([
+                            material_thickness+c,
+                            ov+c,
+                            dd+0.02
+                        ]);
+                }
+                else if (joinery_style == "tab_slot") {
+                    c = joint_fit_clearance;
+
+                    for (n=[0:effective_tab_count(ov)-1]) {
+                        yy = ov0+tab_start(ov,n)-c/2;
+                        hh = tab_width_for(ov)+c;
+
+                        slot_cut_z_3d(
+                            px-c/2,
+                            yy,
+                            z0-1,
+                            material_thickness+2,
+                            material_thickness+c,
+                            hh
+                        );
+                    }
+                }
+            }
+    }
+}
+
+module mixed_bay_partition_receiver_through_2d(
+    panel_y0,panel_depth
+) {
+    if (mixed_bay_partition_count() > 0
+        && joinery_style == "tab_slot") {
+
+        c = joint_fit_clearance;
+        ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = mixed_bay_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:mixed_bay_partition_count()-1]) {
+                lx = horizontal_panel_local_x(mixed_bay_partition_x(p))-c/2;
+                ly0 = ov0-panel_y0;
+
+                for (n=[0:effective_tab_count(ov)-1]) {
+                    yy = ly0+tab_start(ov,n)-c/2;
+                    hh = tab_width_for(ov)+c;
+
+                    translate([lx,yy])
+                        slot_shape_2d(material_thickness+c,hh);
+                }
+            }
+    }
+}
+
+module mixed_bay_partition_receiver_dado_pockets_2d(
+    panel_y0,panel_depth
+) {
+    if (mixed_bay_partition_count() > 0
+        && joinery_style == "dado") {
+
+        c = dado_fit_clearance;
+        ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
+        ov0 = mixed_bay_depth_overlap_start(panel_y0);
+
+        if (ov > 0)
+            for (p=[0:mixed_bay_partition_count()-1]) {
+                lx = horizontal_panel_local_x(mixed_bay_partition_x(p))-c/2;
+                ly = ov0-panel_y0-c/2;
+
+                translate([lx,ly])
+                    square([material_thickness+c,ov+c]);
+            }
+    }
+}
+
+module mixed_bay_partition_bottom_joinery_3d(x0,z0) {
+    door_hinge_partition_joinery_segment_3d(
+        x0,0,mixed_bay_partition_depth,z0,"bottom");
+}
+
+module mixed_bay_partition_top_joinery_3d(x0,z0) {
+    if (top_style == "full") {
+        door_hinge_partition_joinery_segment_3d(
+            x0,0,mixed_bay_partition_depth,z0,"top");
+    }
+    else {
+        front_span = min(mixed_bay_partition_depth,top_stretcher_depth);
+
+        if (front_span > 0)
+            door_hinge_partition_joinery_segment_3d(
+                x0,0,front_span,z0,"top");
+
+        rear_start = max(0,cabinet_depth-top_stretcher_depth);
+        rear_span =
+            max(
+                0,
+                min(mixed_bay_partition_depth,cabinet_depth)-rear_start
+            );
+
+        if (rear_span > 0)
+            door_hinge_partition_joinery_segment_3d(
+                x0,rear_start,rear_span,z0,"top");
+    }
+}
+
+// Fixed shelves terminate into the vertical support on each side of a mixed
+// bay. Internal partitions can therefore receive shelf joinery from either
+// face at independently chosen shelf elevations.
+module mixed_bay_partition_fixed_shelf_cuts_3d(x0,p=0) {
+    c = joinery_style == "dado" ? dado_fit_clearance : joint_fit_clearance;
+    dd = mixed_bay_fixed_shelf_dado_depth();
+
+    for (bb=[p,p+1])
+        if (mixed_bay_has_fixed_shelves(bb))
+            for (s=[1:mixed_bay_shelf_count(bb)]) {
+                zz = mixed_bay_shelf_z(bb,s);
+
+                if (joinery_style == "dado") {
+                    // Bay p approaches this partition from the left; bay p+1
+                    // approaches it from the right.
+                    xx = bb == p
+                        ? x0-0.01
+                        : x0+material_thickness-dd-0.01;
+
+                    translate([xx,-c/2,zz-c/2])
+                        cube([
+                            dd+0.02,
+                            shelf_depth+c,
+                            material_thickness+c
+                        ]);
+                }
+                else if (joinery_style == "tab_slot") {
+                    for (n=[0:effective_tab_count(shelf_depth)-1]) {
+                        sy = tab_start(shelf_depth,n)-c/2;
+                        sw = tab_width_for(shelf_depth)+c;
+
+                        slot_cut_x_3d(
+                            x0-1,
+                            material_thickness+2,
+                            sy,
+                            zz-c/2,
+                            sw,
+                            material_thickness+c
+                        );
+                    }
+                }
+            }
+}
+
+module mixed_bay_partition_fixed_shelf_through_2d(p=0) {
+    c = joint_fit_clearance;
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+
+    if (joinery_style == "tab_slot")
+        for (bb=[p,p+1])
+            if (mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    for (n=[0:effective_tab_count(shelf_depth)-1]) {
+                        sy = tab_start(shelf_depth,n)-c/2;
+                        sw = tab_width_for(shelf_depth)+c;
+
+                        translate([
+                            sy,
+                            mixed_bay_shelf_z(bb,s)-cut_z0-c/2
+                        ])
+                            slot_shape_2d(
+                                sw,
+                                material_thickness+c
+                            );
+                    }
+}
+
+module mixed_bay_partition_fixed_shelf_butt_registration_2d(p=0) {
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+
+    if (joinery_style == "butt" && include_butt_registration_holes)
+        for (bb=[p,p+1])
+            if (mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    for (n=[0:butt_reg_count(shelf_depth)-1])
+                        round_hole_2d(
+                            butt_reg_pos(shelf_depth,n),
+                            mixed_bay_shelf_z(bb,s)
+                                + material_thickness/2
+                                - cut_z0,
+                            butt_registration_hole_diameter
+                        );
+}
+
+// face = "left" means the shelf in bay p enters the left face of partition p.
+// face = "right" means the shelf in bay p+1 enters the right face.
+module mixed_bay_partition_fixed_shelf_dado_pockets_2d(
+    p=0,face="both"
+) {
+    c = dado_fit_clearance;
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+
+    if (joinery_style == "dado")
+        for (bb=[p,p+1]) {
+            selected =
+                face == "both"
+                || (face == "left" && bb == p)
+                || (face == "right" && bb == p+1);
+
+            if (selected && mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    translate([
+                        -c/2,
+                        mixed_bay_shelf_z(bb,s)-cut_z0-c/2
+                    ])
+                        square([
+                            shelf_depth+c,
+                            material_thickness+c
+                        ]);
+        }
+}
+
+module mixed_bay_partition_fixed_shelf_butt_registration_3d(x0,p=0) {
+    if (joinery_style == "butt" && include_butt_registration_holes)
+        for (bb=[p,p+1])
+            if (mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    for (n=[0:butt_reg_count(shelf_depth)-1])
+                        round_hole_x_3d(
+                            x0-1,
+                            butt_reg_pos(shelf_depth,n),
+                            mixed_bay_shelf_z(bb,s)
+                                + material_thickness/2,
+                            material_thickness+2,
+                            butt_registration_hole_diameter
+                        );
+}
+
+module mixed_bay_partition_hardware_holes_3d(x0,p=0) {
+    if (mixed_bay_partition_has_hinge_plates(p))
+        for (j=[0:hinge_count-1])
+            for (dz=[
+                -hinge_plate_hole_spacing/2,
+                hinge_plate_hole_spacing/2
+            ])
+                round_hole_x_3d(
+                    x0-1,
+                    hinge_plate_center_from_front,
+                    mixed_bay_hinge_z(j)+dz,
+                    material_thickness+2,
+                    hinge_plate_hole_diameter
+                );
+
+    if (mixed_bay_partition_has_shelf_pins(p))
+        for (row=[0:1])
+            for (i=[0:mixed_bay_shelf_pin_count()-1])
+                round_hole_x_3d(
+                    x0-1,
+                    shelf_pin_y(row),
+                    mixed_bay_shelf_pin_z(i),
+                    material_thickness+2,
+                    adjustable_shelf_hole_diameter
+                );
+
+    // Drawer slide patterns from both neighboring bays share this partition.
+    for (bb=[p,p+1]) {
+        if (mixed_bay_is_type(bb,"drawers")
+            && drawer_mount == "wood_rails"
+            && include_wood_slide_registration_holes)
+            for (i=[0:drawer_bank_drawer_count(bb)-1])
+                for (n=[0:wood_slide_registration_hole_count-1])
+                    round_hole_x_3d(
+                        x0-1,
+                        wood_rail_front_setback
+                            + wood_slide_reg_pos(wood_rail_depth,n),
+                        drawer_rail_z(i,bb)+wood_rail_height/2,
+                        material_thickness+2,
+                        wood_slide_registration_hole_diameter
+                    );
+
+        if (mixed_bay_is_type(bb,"drawers")
+            && drawer_mount == "metal_slides"
+            && include_metal_slide_holes)
+            for (i=[0:drawer_bank_drawer_count(bb)-1]) {
+                hz = drawer_box_z(i,bb)
+                     + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+                for (n=[0:metal_slide_hole_count-1])
+                    if (hole_is_valid(n,cabinet_depth))
+                        round_hole_x_3d(
+                            x0-1,
+                            slide_hole_depth(n),
+                            hz,
+                            material_thickness+2,
+                            metal_slide_hole_diameter
+                        );
+            }
+    }
+}
+
+module mixed_bay_partition_3d(p=0) {
+    x0 = mixed_bay_partition_x(p);
+    z0 = mixed_bay_partition_bottom_z();
+    z1 = mixed_bay_partition_top_z();
+    bh = mixed_bay_partition_body_height();
+
+    difference() {
+        union() {
+            sheet_box(
+                [material_thickness,mixed_bay_partition_depth,bh],
+                [x0,0,z0]
+            );
+
+            mixed_bay_partition_bottom_joinery_3d(x0,z0);
+            mixed_bay_partition_top_joinery_3d(x0,z1);
+        }
+
+        mixed_bay_partition_hardware_holes_3d(x0,p);
+        mixed_bay_partition_fixed_shelf_cuts_3d(x0,p);
+        mixed_bay_partition_fixed_shelf_butt_registration_3d(x0,p);
+        door_hinge_partition_back_stretcher_notches_3d(x0);
+    }
+}
+
+module mixed_bay_partition_bottom_joinery_cut() {
+    ext = mixed_bay_partition_cut_body_offset();
+
+    if (joinery_style == "dado" || joinery_style == "tab_slot")
+        door_hinge_partition_joinery_segment_cut(
+            0,mixed_bay_partition_depth,0,ext);
+}
+
+module mixed_bay_partition_top_joinery_cut(body_top_y) {
+    if (top_style == "full") {
+        door_hinge_partition_joinery_segment_cut(
+            0,mixed_bay_partition_depth,body_top_y,0);
+    }
+    else {
+        front_span = min(mixed_bay_partition_depth,top_stretcher_depth);
+
+        if (front_span > 0)
+            door_hinge_partition_joinery_segment_cut(
+                0,front_span,body_top_y,0);
+
+        rear_start = max(0,cabinet_depth-top_stretcher_depth);
+        rear_span =
+            max(
+                0,
+                min(mixed_bay_partition_depth,cabinet_depth)-rear_start
+            );
+
+        if (rear_span > 0)
+            door_hinge_partition_joinery_segment_cut(
+                rear_start,rear_span,body_top_y,0);
+    }
+}
+
+module mixed_bay_partition_cut(p=0) {
+    bh = mixed_bay_partition_body_height();
+    body_offset = mixed_bay_partition_cut_body_offset();
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+
+    difference() {
+        union() {
+            translate([0,body_offset])
+                cut_part(mixed_bay_partition_depth,bh);
+
+            mixed_bay_partition_bottom_joinery_cut();
+            mixed_bay_partition_top_joinery_cut(body_offset+bh);
+        }
+
+        if (mixed_bay_partition_has_hinge_plates(p))
+            for (j=[0:hinge_count-1])
+                for (dz=[
+                    -hinge_plate_hole_spacing/2,
+                    hinge_plate_hole_spacing/2
+                ])
+                    round_hole_2d(
+                        hinge_plate_center_from_front,
+                        mixed_bay_hinge_z(j)+dz-cut_z0,
+                        hinge_plate_hole_diameter
+                    );
+
+        if (mixed_bay_partition_has_shelf_pins(p))
+            for (row=[0:1])
+                for (i=[0:mixed_bay_shelf_pin_count()-1])
+                    round_hole_2d(
+                        shelf_pin_y(row),
+                        mixed_bay_shelf_pin_z(i)-cut_z0,
+                        adjustable_shelf_hole_diameter
+                    );
+
+        mixed_bay_partition_fixed_shelf_through_2d(p);
+        mixed_bay_partition_fixed_shelf_butt_registration_2d(p);
+
+        for (bb=[p,p+1]) {
+            if (mixed_bay_is_type(bb,"drawers")
+                && drawer_mount == "wood_rails"
+                && include_wood_slide_registration_holes)
+                for (i=[0:drawer_bank_drawer_count(bb)-1])
+                    for (n=[0:wood_slide_registration_hole_count-1])
+                        round_hole_2d(
+                            wood_rail_front_setback
+                                + wood_slide_reg_pos(wood_rail_depth,n),
+                            drawer_rail_z(i,bb)+wood_rail_height/2-cut_z0,
+                            wood_slide_registration_hole_diameter
+                        );
+
+            if (mixed_bay_is_type(bb,"drawers")
+                && drawer_mount == "metal_slides"
+                && include_metal_slide_holes)
+                for (i=[0:drawer_bank_drawer_count(bb)-1]) {
+                    hz = drawer_box_z(i,bb)
+                         + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+                    for (n=[0:metal_slide_hole_count-1])
+                        if (hole_is_valid(n,cabinet_depth))
+                            round_hole_2d(
+                                slide_hole_depth(n),
+                                hz-cut_z0,
+                                metal_slide_hole_diameter
+                            );
+                }
+        }
+
+        if (back_style == "stretchers") {
+            c = max(0,joint_fit_clearance);
+
+            for (b=[0:back_stretcher_count-1])
+                translate([
+                    back_stretcher_y-c/2,
+                    back_stretcher_z(b)-cut_z0-c/2
+                ])
+                    square([
+                        mixed_bay_partition_depth-back_stretcher_y+c/2+0.02,
+                        back_stretcher_height+c
+                    ]);
+        }
+    }
+}
+
+module mixed_bay_fixed_shelf_3d(b=0,z0=0) {
+    x0 = mixed_bay_opening_x(b);
+    ww = mixed_bay_opening_width(b);
+
+    if (joinery_style == "butt") {
+        sheet_box([ww,shelf_depth,material_thickness],[x0,0,z0]);
+    }
+    else if (joinery_style == "dado") {
+        dd = mixed_bay_fixed_shelf_dado_depth();
+        sheet_box(
+            [ww+2*dd,shelf_depth,material_thickness],
+            [x0-dd,0,z0]
+        );
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            sheet_box([ww,shelf_depth,material_thickness],[x0,0,z0]);
+
+            for (n=[0:effective_tab_count(shelf_depth)-1]) {
+                yy = tab_start(shelf_depth,n);
+                tw = tab_width_for(shelf_depth);
+
+                sheet_box(
+                    [material_thickness,tw,material_thickness],
+                    [x0-material_thickness,yy,z0]
+                );
+                sheet_box(
+                    [material_thickness,tw,material_thickness],
+                    [x0+ww,yy,z0]
+                );
+            }
+        }
+    }
+}
+
+module mixed_bay_fixed_shelf_cut(b=0) {
+    ww = mixed_bay_opening_width(b);
+
+    if (joinery_style == "butt") {
+        cut_part(ww,shelf_depth);
+    }
+    else if (joinery_style == "dado") {
+        cut_part(
+            ww+2*mixed_bay_fixed_shelf_dado_depth(),
+            shelf_depth
+        );
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            translate([material_thickness,0])
+                cut_part(ww,shelf_depth);
+
+            for (n=[0:effective_tab_count(shelf_depth)-1]) {
+                yy = tab_start(shelf_depth,n);
+                tw = tab_width_for(shelf_depth);
+
+                translate([0,yy])
+                    cut_part(material_thickness,tw);
+                translate([material_thickness+ww,yy])
+                    cut_part(material_thickness,tw);
+            }
+        }
+    }
+}
+
+module mixed_bay_adjustable_shelf_3d(b=0,z0=0) {
+    sheet_box(
+        [
+            mixed_bay_adjustable_shelf_width(b),
+            shelf_depth,
+            material_thickness
+        ],
+        [mixed_bay_adjustable_shelf_x(b),0,z0]
+    );
+}
+
+module mixed_bay_adjustable_shelf_cut(b=0) {
+    cut_part(mixed_bay_adjustable_shelf_width(b),shelf_depth);
+}
+
+// Wrapper horizontal carcass member. It can receive both drawer-bank
+// partitions and door-hinge partitions. For the combo divider the two systems
+// enter opposite faces, so door_receiver_face can differ from receiver_face.
+module joined_horizontal_bank_receiver_3d(
+    y0,depth,z0,receiver_face="top",door_receiver_face="same"
+) {
+    actual_door_face =
+        door_receiver_face == "same"
+            ? receiver_face
+            : door_receiver_face;
+
+    difference() {
+        joined_horizontal_panel_3d(y0,depth,z0);
+
+        drawer_bank_receiver_cuts_3d(
+            y0,depth,z0,receiver_face);
+
+        door_hinge_partition_receiver_cuts_3d(
+            y0,depth,z0,actual_door_face);
+
+        mixed_bay_partition_receiver_cuts_3d(
+            y0,depth,z0,receiver_face);
+
+        back_horizontal_receiver_cuts_3d(
+            y0,depth,z0,receiver_face);
+    }
+}
+
+module joined_horizontal_bank_receiver_cut(panel_y0,depth) {
+    difference() {
+        joined_horizontal_panel_cut(depth);
+        drawer_bank_receiver_through_2d(panel_y0,depth);
+        door_hinge_partition_receiver_through_2d(
+            panel_y0,depth);
+        mixed_bay_partition_receiver_through_2d(
+            panel_y0,depth);
+        back_horizontal_receiver_through_2d(
+            panel_y0,depth);
+    }
+}
+
+
+// Bottom wrapper. In full-width mode the side panels sit on the top surface,
+// while internal partition joinery remains active.
+module cabinet_bottom_3d() {
+    if (full_width_bottom_active) {
+        difference() {
+            sheet_box(
+                [cabinet_width,cabinet_depth,material_thickness],
+                [0,0,bottom_above_toe]
+            );
+
+            drawer_bank_receiver_cuts_3d(
+                0,cabinet_depth,bottom_above_toe,"top");
+            door_hinge_partition_receiver_cuts_3d(
+                0,cabinet_depth,bottom_above_toe,"top");
+            mixed_bay_partition_receiver_cuts_3d(
+                0,cabinet_depth,bottom_above_toe,"top");
+            back_horizontal_receiver_cuts_3d(
+                0,cabinet_depth,bottom_above_toe,"top");
+        }
+    }
+    else
+        joined_horizontal_bank_receiver_3d(
+            0,cabinet_depth,bottom_above_toe,"top");
+}
+
+module cabinet_bottom_cut() {
+    if (full_width_bottom_active) {
+        difference() {
+            cut_part(cabinet_width,cabinet_depth);
+
+            translate([bottom_receiver_x_shift,0]) {
+                drawer_bank_receiver_through_2d(
+                    0,cabinet_depth);
+                door_hinge_partition_receiver_through_2d(
+                    0,cabinet_depth);
+                mixed_bay_partition_receiver_through_2d(
+                    0,cabinet_depth);
+            }
+
+            back_horizontal_receiver_through_2d(
+                0,
+                cabinet_depth,
+                bottom_panel_global_x0
+            );
+        }
+    }
+    else
+        joined_horizontal_bank_receiver_cut(
+            0,cabinet_depth);
+}
+
+module bottom_drawer_bank_receiver_dado_pockets_2d() {
+    translate([bottom_receiver_x_shift,0])
+        drawer_bank_receiver_dado_pockets_2d(
+            0,cabinet_depth);
+}
+
+module bottom_door_hinge_partition_receiver_dado_pockets_2d() {
+    translate([bottom_receiver_x_shift,0])
+        door_hinge_partition_receiver_dado_pockets_2d(
+            0,cabinet_depth);
+}
+
+module bottom_mixed_bay_partition_receiver_dado_pockets_2d() {
+    translate([bottom_receiver_x_shift,0])
+        mixed_bay_partition_receiver_dado_pockets_2d(
+            0,cabinet_depth);
+}
+
+module bottom_back_receiver_dado_pockets_2d() {
+    back_horizontal_dado_pocket_2d(
+        0,
+        cabinet_depth,
+        bottom_panel_global_x0
+    );
+}
+
+module drawer_bank_partition_bottom_tabs_3d(x0,z0) {
+    span = min(drawer_bank_partition_depth,
+               cabinet_contents == "combo" ? shelf_depth : cabinet_depth);
+
+    for (n=[0:effective_tab_count(span)-1]) {
+        yy = tab_start(span,n);
+        th = tab_width_for(span);
+        sheet_box(
+            [material_thickness,th,material_thickness],
+            [x0,yy,z0-material_thickness]
+        );
+    }
+}
+
+module drawer_bank_partition_top_tabs_3d(x0,z0) {
+    if (top_style == "full") {
+        span = drawer_bank_partition_depth;
+        for (n=[0:effective_tab_count(span)-1]) {
+            yy = tab_start(span,n);
+            th = tab_width_for(span);
+            sheet_box(
+                [material_thickness,th,material_thickness],
+                [x0,yy,z0]
+            );
+        }
+    } else {
+        front_span = min(drawer_bank_partition_depth,top_stretcher_depth);
+        if (front_span > 0)
+            for (n=[0:effective_tab_count(front_span)-1]) {
+                yy = tab_start(front_span,n);
+                th = tab_width_for(front_span);
+                sheet_box(
+                    [material_thickness,th,material_thickness],
+                    [x0,yy,z0]
+                );
+            }
+
+        rear_start = max(0,cabinet_depth-top_stretcher_depth);
+        rear_span = max(0,drawer_bank_partition_depth-rear_start);
+        if (rear_span > 0)
+            for (n=[0:effective_tab_count(rear_span)-1]) {
+                yy = rear_start + tab_start(rear_span,n);
+                th = tab_width_for(rear_span);
+                sheet_box(
+                    [material_thickness,th,material_thickness],
+                    [x0,yy,z0]
+                );
+            }
+    }
+}
+
+module drawer_bank_partition_slide_holes_3d(x0,z_start,p=0) {
+    // A partition borders bank p on its left and bank p+1 on its right.
+    // Registration holes are through-features, so include the union of both
+    // adjacent banks' vertical patterns when their drawer stacks differ.
+    for (bb=[p,p+1]) {
+        if (drawer_mount == "wood_rails"
+            && include_wood_slide_registration_holes) {
+            for (i=[0:drawer_bank_drawer_count(bb)-1])
+                for (n=[0:wood_slide_registration_hole_count-1])
+                    round_hole_x_3d(
+                        x0-1,
+                        wood_rail_front_setback
+                            + wood_slide_reg_pos(wood_rail_depth,n),
+                        drawer_rail_z(i,bb)+wood_rail_height/2,
+                        material_thickness+2,
+                        wood_slide_registration_hole_diameter
+                    );
+        }
+
+        if (drawer_mount == "metal_slides"
+            && include_metal_slide_holes) {
+            for (i=[0:drawer_bank_drawer_count(bb)-1]) {
+                hz = drawer_box_z(i,bb)
+                     + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+                for (n=[0:metal_slide_hole_count-1])
+                    if (hole_is_valid(n,cabinet_depth))
+                        round_hole_x_3d(
+                            x0-1,
+                            slide_hole_depth(n),
+                            hz,
+                            material_thickness+2,
+                            metal_slide_hole_diameter
+                        );
+            }
+        }
+    }
+}
+
+
+module drawer_bank_partition_3d(p=0) {
+    mode = drawer_bank_partition_joinery_mode();
+    dd = drawer_bank_partition_dado_depth();
+    x0 = drawer_bank_partition_x(p);
+    z0 = drawer_bank_partition_bottom_z();
+    z1 = drawer_bank_partition_top_z();
+    bh = drawer_bank_partition_body_height();
+
+    difference() {
+        union() {
+            if (mode == "dado") {
+                sheet_box(
+                    [material_thickness,drawer_bank_partition_depth,bh+2*dd],
+                    [x0,0,z0-dd]
+                );
+            }
+            else {
+                sheet_box(
+                    [material_thickness,drawer_bank_partition_depth,bh],
+                    [x0,0,z0]
+                );
+
+                if (mode == "tab_slot") {
+                    drawer_bank_partition_bottom_tabs_3d(x0,z0);
+                    drawer_bank_partition_top_tabs_3d(x0,z1);
+                }
+            }
+        }
+
+        drawer_bank_partition_slide_holes_3d(x0,z0,p);
+    }
+}
+
+module drawer_bank_partition_cut(p=0) {
+    mode = drawer_bank_partition_joinery_mode();
+    dd = drawer_bank_partition_dado_depth();
+    bh = drawer_bank_partition_body_height();
+    bottom_extra = mode == "tab_slot" ? material_thickness : 0;
+
+    difference() {
+        union() {
+            if (mode == "dado") {
+                cut_part(
+                    drawer_bank_partition_depth,
+                    bh+2*dd
+                );
+            }
+            else {
+                translate([0,bottom_extra])
+                    cut_part(drawer_bank_partition_depth,bh);
+
+                if (mode == "tab_slot") {
+                    bottom_span = min(
+                        drawer_bank_partition_depth,
+                        cabinet_contents == "combo" ? shelf_depth : cabinet_depth);
+
+                    for (n=[0:effective_tab_count(bottom_span)-1])
+                        translate([tab_start(bottom_span,n),0])
+                            cut_part(
+                                tab_width_for(bottom_span),
+                                material_thickness
+                            );
+
+                    top_y = bottom_extra+bh;
+                    if (top_style == "full") {
+                        span = drawer_bank_partition_depth;
+                        for (n=[0:effective_tab_count(span)-1])
+                            translate([tab_start(span,n),top_y])
+                                cut_part(
+                                    tab_width_for(span),
+                                    material_thickness
+                                );
+                    } else {
+                        front_span = min(
+                            drawer_bank_partition_depth,
+                            top_stretcher_depth);
+                        if (front_span > 0)
+                            for (n=[0:effective_tab_count(front_span)-1])
+                                translate([
+                                    tab_start(front_span,n),top_y])
+                                    cut_part(
+                                        tab_width_for(front_span),
+                                        material_thickness
+                                    );
+
+                        rear_start = max(
+                            0,cabinet_depth-top_stretcher_depth);
+                        rear_span = max(
+                            0,drawer_bank_partition_depth-rear_start);
+                        if (rear_span > 0)
+                            for (n=[0:effective_tab_count(rear_span)-1])
+                                translate([
+                                    rear_start+tab_start(rear_span,n),top_y])
+                                    cut_part(
+                                        tab_width_for(rear_span),
+                                        material_thickness
+                                    );
+                    }
+                }
+            }
+        }
+
+        // Through registration holes for both adjacent drawer banks.
+        z_local_base = mode == "dado" ? dd : bottom_extra;
+
+        for (bb=[p,p+1]) {
+            if (drawer_mount == "wood_rails"
+                && include_wood_slide_registration_holes)
+                for (i=[0:drawer_bank_drawer_count(bb)-1])
+                    for (n=[0:wood_slide_registration_hole_count-1])
+                        round_hole_2d(
+                            wood_rail_front_setback
+                                + wood_slide_reg_pos(wood_rail_depth,n),
+                            z_local_base
+                                + drawer_rail_z(i,bb)
+                                + wood_rail_height/2
+                                - drawer_bank_partition_bottom_z(),
+                            wood_slide_registration_hole_diameter
+                        );
+
+            if (drawer_mount == "metal_slides"
+                && include_metal_slide_holes)
+                for (i=[0:drawer_bank_drawer_count(bb)-1]) {
+                    hz = drawer_box_z(i,bb)
+                        + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+                    for (n=[0:metal_slide_hole_count-1])
+                        if (hole_is_valid(n,cabinet_depth))
+                            round_hole_2d(
+                                slide_hole_depth(n),
+                                z_local_base
+                                    + hz
+                                    - drawer_bank_partition_bottom_z(),
+                                metal_slide_hole_diameter
+                            );
+                }
+        }
+    }
+}
+
+// Toe-kick rail is a vertical cross-panel in the X/Z plane.
+module joined_toe_kick_3d() {
+    if (has_toe_kick && joinery_style == "butt") {
+        sheet_box([inner_width,material_thickness,toe_kick_height],
+                  [material_thickness,toe_kick_setback,0]);
+    }
+    else if (has_toe_kick && joinery_style == "dado") {
+        dd = effective_dado_depth();
+        sheet_box([inner_width+2*dd,material_thickness,toe_kick_height],
+                  [material_thickness-dd,toe_kick_setback,0]);
+    }
+    else if (has_toe_kick && joinery_style == "tab_slot") {
+        union() {
+            sheet_box([inner_width,material_thickness,toe_kick_height],
+                      [material_thickness,toe_kick_setback,0]);
+
+            for (i=[0:effective_tab_count(toe_kick_height)-1]) {
+                tz = tab_start(toe_kick_height,i);
+                tw = tab_width_for(toe_kick_height);
+
+                sheet_box([material_thickness,material_thickness,tw],
+                          [0,toe_kick_setback,tz]);
+                sheet_box([material_thickness,material_thickness,tw],
+                          [cabinet_width-material_thickness,toe_kick_setback,tz]);
+            }
+        }
+    }
+}
+
+module joined_toe_kick_cut() {
+    if (has_toe_kick && joinery_style == "butt") {
+        cut_part(inner_width,toe_kick_height);
+    }
+    else if (has_toe_kick && joinery_style == "dado") {
+        cut_part(inner_width+2*effective_dado_depth(),toe_kick_height);
+    }
+    else if (has_toe_kick && joinery_style == "tab_slot") {
+        union() {
+            translate([material_thickness,0])
+                cut_part(inner_width,toe_kick_height);
+
+            for (i=[0:effective_tab_count(toe_kick_height)-1]) {
+                tz = tab_start(toe_kick_height,i);
+                tw = tab_width_for(toe_kick_height);
+
+                translate([0,tz])
+                    cut_part(material_thickness,tw);
+                translate([cabinet_width-material_thickness,tz])
+                    cut_part(material_thickness,tw);
+            }
+        }
+    }
+}
+
+// Structural rear stretcher: vertical cross-panel in the X/Z plane.
+// It uses the same side-joinery style as the carcass.
+module joined_back_stretcher_3d(z0) {
+    if (joinery_style == "butt") {
+        sheet_box(
+            [inner_width,material_thickness,back_stretcher_height],
+            [material_thickness,back_stretcher_y,z0]
+        );
+    }
+    else if (joinery_style == "dado") {
+        dd = effective_dado_depth();
+        sheet_box(
+            [
+                inner_width+2*dd,
+                material_thickness,
+                back_stretcher_height
+            ],
+            [
+                material_thickness-dd,
+                back_stretcher_y,
+                z0
+            ]
+        );
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            sheet_box(
+                [
+                    inner_width,
+                    material_thickness,
+                    back_stretcher_height
+                ],
+                [
+                    material_thickness,
+                    back_stretcher_y,
+                    z0
+                ]
+            );
+
+            for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
+                tz = z0 + tab_start(back_stretcher_height,i);
+                tw = tab_width_for(back_stretcher_height);
+
+                sheet_box(
+                    [material_thickness,material_thickness,tw],
+                    [0,back_stretcher_y,tz]
+                );
+                sheet_box(
+                    [material_thickness,material_thickness,tw],
+                    [
+                        cabinet_width-material_thickness,
+                        back_stretcher_y,
+                        tz
+                    ]
+                );
+            }
+        }
+    }
+}
+
+module joined_back_stretcher_cut() {
+    if (joinery_style == "butt") {
+        cut_part(inner_width,back_stretcher_height);
+    }
+    else if (joinery_style == "dado") {
+        cut_part(
+            inner_width+2*effective_dado_depth(),
+            back_stretcher_height
+        );
+    }
+    else if (joinery_style == "tab_slot") {
+        union() {
+            translate([material_thickness,0])
+                cut_part(inner_width,back_stretcher_height);
+
+            for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
+                tz = tab_start(back_stretcher_height,i);
+                tw = tab_width_for(back_stretcher_height);
+
+                translate([0,tz])
+                    cut_part(material_thickness,tw);
+                translate([cabinet_width-material_thickness,tz])
+                    cut_part(material_thickness,tw);
+            }
+        }
+    }
+}
+
+// Matching back-stretcher feature in a cabinet side.
+module side_back_stretcher_joint_cut_3d(side,z0) {
+    c =
+        joinery_style == "dado"
+            ? dado_fit_clearance
+            : joint_fit_clearance;
+
+    if (joinery_style == "dado") {
+        dd = effective_dado_depth();
+
+        if (side == "left")
+            translate([
+                material_thickness-dd,
+                back_stretcher_y-c/2,
+                z0-c/2
+            ])
+                cube([
+                    dd+0.02,
+                    material_thickness+c,
+                    back_stretcher_height+c
+                ]);
+        else
+            translate([
+                cabinet_width-material_thickness-0.01,
+                back_stretcher_y-c/2,
+                z0-c/2
+            ])
+                cube([
+                    dd+0.02,
+                    material_thickness+c,
+                    back_stretcher_height+c
+                ]);
+    }
+    else if (joinery_style == "tab_slot") {
+        for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
+            sy = back_stretcher_y-c/2;
+            sw = material_thickness+c;
+            sz = z0 + tab_start(back_stretcher_height,i)-c/2;
+            sh = tab_width_for(back_stretcher_height)+c;
+
+            if (side == "left")
+                slot_cut_x_3d(
+                    -1,material_thickness+2,sy,sz,sw,sh);
+            else
+                slot_cut_x_3d(
+                    cabinet_width-material_thickness-1,
+                    material_thickness+2,sy,sz,sw,sh);
+        }
+    }
+}
+
+
+
+
+// Create one horizontal member's matching feature in a cabinet side.
+module side_horizontal_joint_cut_3d(side,y0,panel_depth,z0) {
+    c =
+        joinery_style == "dado"
+            ? dado_fit_clearance
+            : joint_fit_clearance;
+
+    if (joinery_style == "dado") {
+        dd = effective_dado_depth();
+
+        if (side == "left")
+            translate([material_thickness-dd,
+                       y0-c/2,
+                       z0-c/2])
+                cube([dd+0.02,panel_depth+c,material_thickness+c]);
+        else
+            translate([cabinet_width-material_thickness-0.01,
+                       y0-c/2,
+                       z0-c/2])
+                cube([dd+0.02,panel_depth+c,material_thickness+c]);
+    }
+    else if (joinery_style == "tab_slot") {
+        for (i=[0:effective_tab_count(panel_depth)-1]) {
+            sy = y0 + tab_start(panel_depth,i) - c/2;
+            sw = tab_width_for(panel_depth) + c;
+            sz = z0 - c/2;
+            sh = material_thickness + c;
+
+            if (side == "left")
+                slot_cut_x_3d(-1,material_thickness+2,sy,sz,sw,sh);
+            else
+                slot_cut_x_3d(cabinet_width-material_thickness-1,
+                              material_thickness+2,sy,sz,sw,sh);
+        }
+    }
+}
+
+// Matching toe-kick feature in a cabinet side.
+module side_toe_joint_cut_3d(side) {
+    c =
+        joinery_style == "dado"
+            ? dado_fit_clearance
+            : joint_fit_clearance;
+
+    if (has_toe_kick && joinery_style == "dado") {
+        dd = effective_dado_depth();
+
+        if (side == "left")
+            translate([material_thickness-dd,
+                       toe_kick_setback-c/2,
+                       -c/2])
+                cube([dd+0.02,
+                      material_thickness+c,
+                      toe_kick_height+c]);
+        else
+            translate([cabinet_width-material_thickness-0.01,
+                       toe_kick_setback-c/2,
+                       -c/2])
+                cube([dd+0.02,
+                      material_thickness+c,
+                      toe_kick_height+c]);
+    }
+    else if (has_toe_kick && joinery_style == "tab_slot") {
+        for (i=[0:effective_tab_count(toe_kick_height)-1]) {
+            sy = toe_kick_setback - c/2;
+            sw = material_thickness + c;
+            sz = tab_start(toe_kick_height,i) - c/2;
+            sh = tab_width_for(toe_kick_height) + c;
+
+            if (side == "left")
+                slot_cut_x_3d(-1,material_thickness+2,sy,sz,sw,sh);
+            else
+                slot_cut_x_3d(cabinet_width-material_thickness-1,
+                              material_thickness+2,sy,sz,sw,sh);
+        }
+    }
+}
+
+// ---------------------------
+// BUTT-JOINT REGISTRATION HOLES
+// ---------------------------
+
+// Horizontal member: hole axis passes through the cabinet side (X direction)
+// and points at the center of the mating panel edge.
+module side_horizontal_butt_registration_3d(
+    x0,y0,panel_depth,z0
+) {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(panel_depth)-1]) {
+            round_hole_x_3d(
+                x0-1,
+                y0+butt_reg_pos(panel_depth,i),
+                z0+material_thickness/2,
+                material_thickness+2,
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+module side_horizontal_butt_registration_2d(
+    y0,panel_depth,z0
+) {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(panel_depth)-1]) {
+            round_hole_2d(
+                y0+butt_reg_pos(panel_depth,i),
+                z0+material_thickness/2,
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+// Toe-kick rail is vertical, so guide holes distribute along its height.
+module side_toe_butt_registration_3d(x0) {
+    if (has_toe_kick && joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(toe_kick_height)-1]) {
+            round_hole_x_3d(
+                x0-1,
+                toe_kick_setback+material_thickness/2,
+                butt_reg_pos(toe_kick_height,i),
+                material_thickness+2,
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+module side_toe_butt_registration_2d() {
+    if (has_toe_kick && joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(toe_kick_height)-1]) {
+            round_hole_2d(
+                toe_kick_setback+material_thickness/2,
+                butt_reg_pos(toe_kick_height,i),
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+
+module side_back_stretcher_butt_registration_3d(x0,z0) {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(back_stretcher_height)-1]) {
+            round_hole_x_3d(
+                x0-1,
+                back_stretcher_y+material_thickness/2,
+                z0+butt_reg_pos(back_stretcher_height,i),
+                material_thickness+2,
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+module side_back_stretcher_butt_registration_2d(z0) {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        for (i=[0:butt_reg_count(back_stretcher_height)-1]) {
+            round_hole_2d(
+                back_stretcher_y+material_thickness/2,
+                z0+butt_reg_pos(back_stretcher_height,i),
+                butt_registration_hole_diameter
+            );
+        }
+    }
+}
+
+
+// Collect all butt-joint guide holes that belong to one cabinet side.
+module all_side_butt_registration_3d(x0) {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        // Bottom.
+        if (!full_width_bottom_active)
+            side_horizontal_butt_registration_3d(
+                x0,0,cabinet_depth,bottom_above_toe);
+
+        // Top/full or top stretchers.
+        top_z = cabinet_height-material_thickness;
+
+        if (top_style == "full") {
+            side_horizontal_butt_registration_3d(
+                x0,0,cabinet_depth,top_z);
+        } else {
+            side_horizontal_butt_registration_3d(
+                x0,0,top_stretcher_depth,top_z);
+            side_horizontal_butt_registration_3d(
+                x0,
+                cabinet_depth-top_stretcher_depth,
+                top_stretcher_depth,
+                top_z);
+        }
+
+        // Combo divider.
+        if (!mixed_bay_mode
+            && cabinet_contents == "combo"
+            && door_region_height > material_thickness)
+            side_horizontal_butt_registration_3d(
+                x0,0,shelf_depth,combo_divider_bottom_z);
+
+        // Fixed shelves.
+        if (!mixed_bay_mode
+            && has_doors
+            && shelf_style == "fixed"
+            && door_shelf_count > 0
+            && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                side_horizontal_butt_registration_3d(
+                    x0,0,shelf_depth,door_shelf_z(s));
+
+        // Optional drawer separators.
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_z = drawer_separator_z(s);
+
+                if (drawer_separator_style == "full") {
+                    side_horizontal_butt_registration_3d(
+                        x0,0,drawer_separator_full_depth,sep_z);
+                } else {
+                    side_horizontal_butt_registration_3d(
+                        x0,0,
+                        drawer_separator_stretcher_actual_depth,sep_z);
+                    side_horizontal_butt_registration_3d(
+                        x0,
+                        drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+                }
+            }
+
+        if (has_toe_kick)
+            side_toe_butt_registration_3d(x0);
+
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                side_back_stretcher_butt_registration_3d(
+                    x0,back_stretcher_z(b));
+    }
+}
+
+module all_side_butt_registration_2d() {
+    if (joinery_style == "butt" && include_butt_registration_holes) {
+        if (!full_width_bottom_active)
+            side_horizontal_butt_registration_2d(
+                0,cabinet_depth,bottom_above_toe);
+
+        top_z = cabinet_height-material_thickness;
+
+        if (top_style == "full") {
+            side_horizontal_butt_registration_2d(
+                0,cabinet_depth,top_z);
+        } else {
+            side_horizontal_butt_registration_2d(
+                0,top_stretcher_depth,top_z);
+            side_horizontal_butt_registration_2d(
+                cabinet_depth-top_stretcher_depth,
+                top_stretcher_depth,
+                top_z);
+        }
+
+        if (!mixed_bay_mode
+            && cabinet_contents == "combo"
+            && door_region_height > material_thickness)
+            side_horizontal_butt_registration_2d(
+                0,shelf_depth,combo_divider_bottom_z);
+
+        if (!mixed_bay_mode
+            && has_doors
+            && shelf_style == "fixed"
+            && door_shelf_count > 0
+            && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                side_horizontal_butt_registration_2d(
+                    0,shelf_depth,door_shelf_z(s));
+
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_z = drawer_separator_z(s);
+
+                if (drawer_separator_style == "full") {
+                    side_horizontal_butt_registration_2d(
+                        0,drawer_separator_full_depth,sep_z);
+                } else {
+                    side_horizontal_butt_registration_2d(
+                        0,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+                    side_horizontal_butt_registration_2d(
+                        drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+                }
+            }
+
+        if (has_toe_kick)
+            side_toe_butt_registration_2d();
+
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                side_back_stretcher_butt_registration_2d(
+                    back_stretcher_z(b));
+    }
+}
+
+
+// All carcass joinery features that belong in one side panel.
+module all_side_joinery_cuts_3d(side) {
+    if (joinery_style != "butt") {
+        // Bottom.
+        if (!full_width_bottom_active)
+            side_horizontal_joint_cut_3d(
+                side,0,cabinet_depth,bottom_above_toe);
+
+        // Top/full or top stretchers.
+        top_z = cabinet_height-material_thickness;
+
+        if (top_style == "full") {
+            side_horizontal_joint_cut_3d(
+                side,0,cabinet_depth,top_z);
+        } else {
+            side_horizontal_joint_cut_3d(
+                side,0,top_stretcher_depth,top_z);
+            side_horizontal_joint_cut_3d(
+                side,cabinet_depth-top_stretcher_depth,
+                top_stretcher_depth,top_z);
+        }
+
+        // Combo divider.
+        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+            side_horizontal_joint_cut_3d(
+                side,0,shelf_depth,combo_divider_bottom_z);
+
+        // Fixed door-compartment shelves.
+        if (!mixed_bay_mode && has_doors && shelf_style == "fixed" && door_shelf_count > 0 && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                side_horizontal_joint_cut_3d(
+                    side,0,shelf_depth,door_shelf_z(s));
+
+        // Optional separators between adjacent drawers.
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_z = drawer_separator_z(s);
+
+                if (drawer_separator_style == "full") {
+                    side_horizontal_joint_cut_3d(
+                        side,0,drawer_separator_full_depth,sep_z);
+                } else {
+                    side_horizontal_joint_cut_3d(
+                        side,0,
+                        drawer_separator_stretcher_actual_depth,sep_z);
+                    side_horizontal_joint_cut_3d(
+                        side,
+                        drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+                }
+            }
+
+        // Toe-kick rail.
+        if (has_toe_kick)
+            side_toe_joint_cut_3d(side);
+
+        // Structural rear stretchers.
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                side_back_stretcher_joint_cut_3d(
+                    side,back_stretcher_z(b));
+    }
+}
+
+
+// Side-panel joinery as 2D THROUGH geometry.
+// Dado pockets are intentionally NOT here because they are blind.
+module all_side_through_joinery_2d() {
+    c = joint_fit_clearance;
+
+    if (joinery_style == "tab_slot") {
+        // Bottom.
+        if (!full_width_bottom_active)
+            for (i=[0:effective_tab_count(cabinet_depth)-1]) {
+                sy = tab_start(cabinet_depth,i)-c/2;
+                sw = tab_width_for(cabinet_depth)+c;
+                translate([sy,bottom_above_toe-c/2])
+                    slot_shape_2d(sw,material_thickness+c);
+            }
+
+        // Top.
+        top_z = cabinet_height-material_thickness;
+
+        if (top_style == "full") {
+            for (i=[0:effective_tab_count(cabinet_depth)-1]) {
+                sy = tab_start(cabinet_depth,i)-c/2;
+                sw = tab_width_for(cabinet_depth)+c;
+                translate([sy,top_z-c/2])
+                    slot_shape_2d(sw,material_thickness+c);
+            }
+        } else {
+            for (i=[0:effective_tab_count(top_stretcher_depth)-1]) {
+                sw = tab_width_for(top_stretcher_depth)+c;
+
+                translate([tab_start(top_stretcher_depth,i)-c/2,
+                           top_z-c/2])
+                    slot_shape_2d(sw,material_thickness+c);
+
+                translate([cabinet_depth-top_stretcher_depth
+                           + tab_start(top_stretcher_depth,i)-c/2,
+                           top_z-c/2])
+                    slot_shape_2d(sw,material_thickness+c);
+            }
+        }
+
+        // Combo divider.
+        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+            for (i=[0:effective_tab_count(shelf_depth)-1]) {
+                sy = tab_start(shelf_depth,i)-c/2;
+                sw = tab_width_for(shelf_depth)+c;
+                translate([sy,combo_divider_bottom_z-c/2])
+                    slot_shape_2d(sw,material_thickness+c);
+            }
+
+        // Fixed shelves.
+        if (!mixed_bay_mode && has_doors && shelf_style == "fixed" && door_shelf_count > 0 && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                for (i=[0:effective_tab_count(shelf_depth)-1]) {
+                    sy = tab_start(shelf_depth,i)-c/2;
+                    sw = tab_width_for(shelf_depth)+c;
+                    translate([sy,door_shelf_z(s)-c/2])
+                        slot_shape_2d(sw,material_thickness+c);
+                }
+
+        // Optional drawer separators.
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_z = drawer_separator_z(s);
+
+                if (drawer_separator_style == "full") {
+                    for (i=[0:effective_tab_count(drawer_separator_full_depth)-1]) {
+                        sy = tab_start(drawer_separator_full_depth,i)-c/2;
+                        sw = tab_width_for(drawer_separator_full_depth)+c;
+                        translate([sy,sep_z-c/2])
+                            slot_shape_2d(sw,material_thickness+c);
+                    }
+                } else {
+                    for (i=[0:effective_tab_count(drawer_separator_stretcher_actual_depth)-1]) {
+                        sw = tab_width_for(drawer_separator_stretcher_actual_depth)+c;
+
+                        translate([
+                            tab_start(drawer_separator_stretcher_actual_depth,i)-c/2,
+                            sep_z-c/2
+                        ])
+                            slot_shape_2d(sw,material_thickness+c);
+
+                        translate([
+                            drawer_separator_full_depth
+                                - drawer_separator_stretcher_actual_depth
+                                + tab_start(drawer_separator_stretcher_actual_depth,i)
+                                - c/2,
+                            sep_z-c/2
+                        ])
+                            slot_shape_2d(sw,material_thickness+c);
+                    }
+                }
+            }
+
+        // Toe-kick slots.
+        if (has_toe_kick)
+            for (i=[0:effective_tab_count(toe_kick_height)-1]) {
+                sy = toe_kick_setback-c/2;
+                sw = material_thickness+c;
+                sz = tab_start(toe_kick_height,i)-c/2;
+                sh = tab_width_for(toe_kick_height)+c;
+
+                translate([sy,sz])
+                    slot_shape_2d(sw,sh);
+            }
+
+        // Structural rear-stretcher slots.
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
+                    sy = back_stretcher_y-c/2;
+                    sw = material_thickness+c;
+                    sz =
+                        back_stretcher_z(b)
+                        + tab_start(back_stretcher_height,i)
+                        - c/2;
+                    sh = tab_width_for(back_stretcher_height)+c;
+
+                    translate([sy,sz])
+                        slot_shape_2d(sw,sh);
+                }
+    }
+}
+
+
+// Dado pocket geometry in side-panel local Y/Z coordinates.
+// Export output_mode = "pocket_layout" as a separate CAM operation.
+module all_side_dado_pockets_2d() {
+    c = dado_fit_clearance;
+
+    if (joinery_style == "dado") {
+        // Bottom.
+        if (!full_width_bottom_active)
+            translate([-c/2,bottom_above_toe-c/2])
+                square([cabinet_depth+c,material_thickness+c]);
+
+        // Top.
+        top_z = cabinet_height-material_thickness;
+
+        if (top_style == "full") {
+            translate([-c/2,top_z-c/2])
+                square([cabinet_depth+c,material_thickness+c]);
+        } else {
+            translate([-c/2,top_z-c/2])
+                square([top_stretcher_depth+c,material_thickness+c]);
+
+            translate([cabinet_depth-top_stretcher_depth-c/2,
+                       top_z-c/2])
+                square([top_stretcher_depth+c,material_thickness+c]);
+        }
+
+        // Combo divider.
+        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+            translate([-c/2,combo_divider_bottom_z-c/2])
+                square([shelf_depth+c,material_thickness+c]);
+
+        // Fixed shelves.
+        if (!mixed_bay_mode && has_doors && shelf_style == "fixed" && door_shelf_count > 0 && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                translate([-c/2,door_shelf_z(s)-c/2])
+                    square([shelf_depth+c,material_thickness+c]);
+
+        // Optional drawer separators.
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_z = drawer_separator_z(s);
+
+                if (drawer_separator_style == "full") {
+                    translate([-c/2,sep_z-c/2])
+                        square([
+                            drawer_separator_full_depth+c,
+                            material_thickness+c
+                        ]);
+                } else {
+                    translate([-c/2,sep_z-c/2])
+                        square([
+                            drawer_separator_stretcher_actual_depth+c,
+                            material_thickness+c
+                        ]);
+
+                    translate([
+                        drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth
+                            - c/2,
+                        sep_z-c/2
+                    ])
+                        square([
+                            drawer_separator_stretcher_actual_depth+c,
+                            material_thickness+c
+                        ]);
+                }
+            }
+
+        // Toe-kick vertical dado.
+        if (has_toe_kick)
+            translate([toe_kick_setback-c/2,-c/2])
+                square([material_thickness+c,toe_kick_height+c]);
+
+        // Structural rear-stretcher dados.
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                translate([
+                    back_stretcher_y-c/2,
+                    back_stretcher_z(b)-c/2
+                ])
+                    square([
+                        material_thickness+c,
+                        back_stretcher_height+c
+                    ]);
+
+        // Solid structural-back side dado.
+        side_back_dado_pocket_2d();
+    }
+}
+
+
+
+// ---------------------------
+// BACK PANEL
+// ---------------------------
+
+// "panel" is the original thin applied sheet.
+// "structural_panel" is carcass-thickness material captured flush with the rear
+// edge and joined to BOTH cabinet sides and the rear-reaching bottom/top member
+// with the active carcass butt/dado/tab-slot style.
+
+function structural_back_panel_overlaps_horizontal(
+    panel_y0,
+    panel_depth
+) =
+    structural_back_active
+    && panel_y0 <= structural_back_y+0.001
+    && panel_y0+panel_depth
+       >= structural_back_y+material_thickness-0.001;
+
+
+module structural_back_panel_3d() {
+    if (structural_back_active) {
+        if (joinery_style == "butt") {
+            sheet_box(
+                [
+                    inner_width,
+                    material_thickness,
+                    captured_back_height
+                ],
+                [
+                    material_thickness,
+                    structural_back_y,
+                    captured_back_bottom_z
+                ]
+            );
+        }
+        else if (joinery_style == "dado") {
+            dd = structural_back_dado_depth;
+
+            union() {
+                // Main body.
+                sheet_box(
+                    [
+                        inner_width,
+                        material_thickness,
+                        captured_back_height
+                    ],
+                    [
+                        material_thickness,
+                        structural_back_y,
+                        captured_back_bottom_z
+                    ]
+                );
+
+                // Left/right tongues into cabinet-side dados.
+                sheet_box(
+                    [
+                        dd,
+                        material_thickness,
+                        captured_back_height
+                    ],
+                    [
+                        material_thickness-dd,
+                        structural_back_y,
+                        captured_back_bottom_z
+                    ]
+                );
+
+                sheet_box(
+                    [
+                        dd,
+                        material_thickness,
+                        captured_back_height
+                    ],
+                    [
+                        cabinet_width-material_thickness,
+                        structural_back_y,
+                        captured_back_bottom_z
+                    ]
+                );
+
+                // Bottom/top tongues into the horizontal receivers. The four
+                // corners are intentionally absent so the side and horizontal
+                // dados can meet without overlapping tongue material.
+                sheet_box(
+                    [
+                        inner_width,
+                        material_thickness,
+                        dd
+                    ],
+                    [
+                        material_thickness,
+                        structural_back_y,
+                        captured_back_bottom_z-dd
+                    ]
+                );
+
+                sheet_box(
+                    [
+                        inner_width,
+                        material_thickness,
+                        dd
+                    ],
+                    [
+                        material_thickness,
+                        structural_back_y,
+                        captured_back_top_z
+                    ]
+                );
+            }
+        }
+        else if (joinery_style == "tab_slot") {
+            union() {
+                sheet_box(
+                    [
+                        inner_width,
+                        material_thickness,
+                        captured_back_height
+                    ],
+                    [
+                        material_thickness,
+                        structural_back_y,
+                        captured_back_bottom_z
+                    ]
+                );
+
+                // Side tabs.
+                for (i=[0:effective_tab_count(captured_back_height)-1]) {
+                    tz =
+                        captured_back_bottom_z
+                        + tab_start(captured_back_height,i);
+                    tw = tab_width_for(captured_back_height);
+
+                    sheet_box(
+                        [material_thickness,material_thickness,tw],
+                        [0,structural_back_y,tz]
+                    );
+
+                    sheet_box(
+                        [material_thickness,material_thickness,tw],
+                        [
+                            cabinet_width-material_thickness,
+                            structural_back_y,
+                            tz
+                        ]
+                    );
+                }
+
+                // Bottom/top tabs.
+                for (i=[0:effective_tab_count(inner_width)-1]) {
+                    tx =
+                        material_thickness
+                        + tab_start(inner_width,i);
+                    tw = tab_width_for(inner_width);
+
+                    sheet_box(
+                        [tw,material_thickness,material_thickness],
+                        [
+                            tx,
+                            structural_back_y,
+                            captured_back_bottom_z-material_thickness
+                        ]
+                    );
+
+                    sheet_box(
+                        [tw,material_thickness,material_thickness],
+                        [
+                            tx,
+                            structural_back_y,
+                            captured_back_top_z
+                        ]
+                    );
+                }
+            }
+        }
+    }
+}
+
+
+module structural_back_panel_cut() {
+    if (structural_back_active) {
+        if (joinery_style == "butt") {
+            cut_part(
+                inner_width,
+                captured_back_height
+            );
+        }
+        else if (joinery_style == "dado") {
+            dd = structural_back_dado_depth;
+
+            union() {
+                translate([dd,dd])
+                    cut_part(
+                        inner_width,
+                        captured_back_height
+                    );
+
+                translate([0,dd])
+                    cut_part(
+                        dd,
+                        captured_back_height
+                    );
+
+                translate([dd+inner_width,dd])
+                    cut_part(
+                        dd,
+                        captured_back_height
+                    );
+
+                translate([dd,0])
+                    cut_part(
+                        inner_width,
+                        dd
+                    );
+
+                translate([dd,dd+captured_back_height])
+                    cut_part(
+                        inner_width,
+                        dd
+                    );
+            }
+        }
+        else if (joinery_style == "tab_slot") {
+            union() {
+                translate([
+                    material_thickness,
+                    material_thickness
+                ])
+                    cut_part(
+                        inner_width,
+                        captured_back_height
+                    );
+
+                for (i=[0:effective_tab_count(captured_back_height)-1]) {
+                    tz =
+                        material_thickness
+                        + tab_start(captured_back_height,i);
+                    tw = tab_width_for(captured_back_height);
+
+                    translate([0,tz])
+                        cut_part(
+                            material_thickness,
+                            tw
+                        );
+
+                    translate([
+                        cabinet_width-material_thickness,
+                        tz
+                    ])
+                        cut_part(
+                            material_thickness,
+                            tw
+                        );
+                }
+
+                for (i=[0:effective_tab_count(inner_width)-1]) {
+                    tx =
+                        material_thickness
+                        + tab_start(inner_width,i);
+                    tw = tab_width_for(inner_width);
+
+                    translate([tx,0])
+                        cut_part(
+                            tw,
+                            material_thickness
+                        );
+
+                    translate([
+                        tx,
+                        material_thickness+captured_back_height
+                    ])
+                        cut_part(
+                            tw,
+                            material_thickness
+                        );
+                }
+            }
+        }
+    }
+}
+
+
+module back_panel_3d() {
+    if (back_style == "panel") {
+        sheet_box(
+            [
+                cabinet_width,
+                back_thickness,
+                simple_back_height
+            ],
+            [
+                0,
+                applied_back_y,
+                simple_back_bottom_z
+            ]
+        );
+    }
+    else if (structural_back_active) {
+        structural_back_panel_3d();
+    }
+}
+
+
+module back_panel_cut() {
+    if (back_style == "panel")
+        cut_part(
+            cabinet_width,
+            simple_back_height
+        );
+    else if (structural_back_active)
+        structural_back_panel_cut();
+}
+
+
+// Matching side-panel receiver for the structural back.
+module side_back_joint_cut_3d(side) {
+    if (structural_back_active) {
+        c =
+            joinery_style == "dado"
+                ? dado_fit_clearance
+                : joint_fit_clearance;
+
+        if (joinery_style == "dado") {
+            dd = structural_back_dado_depth;
+
+            if (side == "left")
+                translate([
+                    material_thickness-dd,
+                    structural_back_y-c/2,
+                    captured_back_bottom_z-c/2
+                ])
+                    cube([
+                        dd+0.02,
+                        material_thickness+c,
+                        captured_back_height+c
+                    ]);
+            else
+                translate([
+                    cabinet_width-material_thickness-0.01,
+                    structural_back_y-c/2,
+                    captured_back_bottom_z-c/2
+                ])
+                    cube([
+                        dd+0.02,
+                        material_thickness+c,
+                        captured_back_height+c
+                    ]);
+        }
+        else if (joinery_style == "tab_slot") {
+            for (i=[0:effective_tab_count(captured_back_height)-1]) {
+                sy = structural_back_y-c/2;
+                sw = material_thickness+c;
+                sz =
+                    captured_back_bottom_z
+                    + tab_start(captured_back_height,i)
+                    - c/2;
+                sh =
+                    tab_width_for(captured_back_height)+c;
+
+                if (side == "left")
+                    slot_cut_x_3d(
+                        -1,
+                        material_thickness+2,
+                        sy,sz,sw,sh
+                    );
+                else
+                    slot_cut_x_3d(
+                        cabinet_width-material_thickness-1,
+                        material_thickness+2,
+                        sy,sz,sw,sh
+                    );
+            }
+        }
+        else if (
+            joinery_style == "butt"
+            && include_butt_registration_holes
+        ) {
+            x0 =
+                side == "left"
+                    ? -1
+                    : cabinet_width-material_thickness-1;
+
+            for (i=[0:butt_reg_count(captured_back_height)-1])
+                round_hole_x_3d(
+                    x0,
+                    structural_back_y+material_thickness/2,
+                    captured_back_bottom_z
+                        + butt_reg_pos(captured_back_height,i),
+                    material_thickness+2,
+                    butt_registration_hole_diameter
+                );
+        }
+    }
+}
+
+
+// Through geometry in cabinet-side local Y/Z coordinates.
+module side_back_joint_2d() {
+    if (structural_back_active) {
+        c =
+            joinery_style == "dado"
+                ? dado_fit_clearance
+                : joint_fit_clearance;
+
+        if (joinery_style == "tab_slot") {
+            for (i=[0:effective_tab_count(captured_back_height)-1]) {
+                sy = structural_back_y-c/2;
+                sw = material_thickness+c;
+                sz =
+                    captured_back_bottom_z
+                    + tab_start(captured_back_height,i)
+                    - c/2;
+                sh =
+                    tab_width_for(captured_back_height)+c;
+
+                translate([sy,sz])
+                    slot_shape_2d(sw,sh);
+            }
+        }
+        else if (
+            joinery_style == "butt"
+            && include_butt_registration_holes
+        ) {
+            for (i=[0:butt_reg_count(captured_back_height)-1])
+                round_hole_2d(
+                    structural_back_y+material_thickness/2,
+                    captured_back_bottom_z
+                        + butt_reg_pos(captured_back_height,i),
+                    butt_registration_hole_diameter
+                );
+        }
+    }
+}
+
+
+// Blind dado in cabinet-side local Y/Z coordinates.
+module side_back_dado_pocket_2d() {
+    if (
+        structural_back_active
+        && joinery_style == "dado"
+    ) {
+        c = dado_fit_clearance;
+
+        translate([
+            structural_back_y-c/2,
+            captured_back_bottom_z-c/2
+        ])
+            square([
+                material_thickness+c,
+                captured_back_height+c
+            ]);
+    }
+}
+
+
+// Structural-back receiver in a horizontal bottom/top member.
+module back_horizontal_receiver_cuts_3d(
+    panel_y0,
+    panel_depth,
+    z0,
+    receiver_face="top"
+) {
+    if (
+        structural_back_panel_overlaps_horizontal(
+            panel_y0,
+            panel_depth
+        )
+    ) {
+        c =
+            joinery_style == "dado"
+                ? dado_fit_clearance
+                : joint_fit_clearance;
+
+        if (joinery_style == "dado") {
+            dd = structural_back_dado_depth;
+            zcut =
+                receiver_face == "top"
+                    ? z0+material_thickness-dd-0.01
+                    : z0-0.01;
+
+            translate([
+                material_thickness-c/2,
+                structural_back_y-c/2,
+                zcut
+            ])
+                cube([
+                    inner_width+c,
+                    material_thickness+c,
+                    dd+0.02
+                ]);
+        }
+        else if (joinery_style == "tab_slot") {
+            for (i=[0:effective_tab_count(inner_width)-1]) {
+                sx =
+                    material_thickness
+                    + tab_start(inner_width,i)
+                    - c/2;
+                sw = tab_width_for(inner_width)+c;
+                sy = structural_back_y-c/2;
+                sh = material_thickness+c;
+
+                slot_cut_z_3d(
+                    sx,
+                    sy,
+                    z0-1,
+                    material_thickness+2,
+                    sw,
+                    sh
+                );
+            }
+        }
+    }
+}
+
+
+// Through slots in a horizontal part's local 2D coordinates.
+module back_horizontal_receiver_through_2d(
+    panel_y0,
+    panel_depth,
+    panel_global_x0=horizontal_panel_global_x0()
+) {
+    if (
+        structural_back_panel_overlaps_horizontal(
+            panel_y0,
+            panel_depth
+        )
+        && joinery_style == "tab_slot"
+    ) {
+        c = joint_fit_clearance;
+
+        for (i=[0:effective_tab_count(inner_width)-1]) {
+            gx =
+                material_thickness
+                + tab_start(inner_width,i)
+                - c/2;
+            lx = gx-panel_global_x0;
+            ly = structural_back_y-panel_y0-c/2;
+
+            translate([lx,ly])
+                slot_shape_2d(
+                    tab_width_for(inner_width)+c,
+                    material_thickness+c
+                );
+        }
+    }
+}
+
+
+// Blind dado pocket in a horizontal part's local 2D coordinates.
+module back_horizontal_dado_pocket_2d(
+    panel_y0,
+    panel_depth,
+    panel_global_x0=horizontal_panel_global_x0()
+) {
+    if (
+        structural_back_panel_overlaps_horizontal(
+            panel_y0,
+            panel_depth
+        )
+        && joinery_style == "dado"
+    ) {
+        c = dado_fit_clearance;
+        lx =
+            material_thickness
+            - panel_global_x0
+            - c/2;
+        ly =
+            structural_back_y
+            - panel_y0
+            - c/2;
+
+        translate([lx,ly])
+            square([
+                inner_width+c,
+                material_thickness+c
+            ]);
+    }
+}
+
+
+// Compatibility wrappers retained for callers that want a plain horizontal
+// part plus the structural-back receiver.
+module joined_horizontal_back_receiver_3d(
+    y0,
+    depth,
+    z0,
+    receiver_face="top",
+    enable_back_tabs=false
+) {
+    difference() {
+        joined_horizontal_panel_3d(y0,depth,z0);
+
+        if (enable_back_tabs || structural_back_active)
+            back_horizontal_receiver_cuts_3d(
+                y0,depth,z0,receiver_face);
+    }
+}
+
+module joined_horizontal_back_receiver_cut(
+    panel_y0,
+    depth,
+    enable_back_tabs=false
+) {
+    difference() {
+        joined_horizontal_panel_cut(depth);
+
+        if (enable_back_tabs || structural_back_active)
+            back_horizontal_receiver_through_2d(
+                panel_y0,depth);
+    }
+}
+
+
+// ---------------------------
+// WOOD SLIDE PARTS + REGISTRATION
+// ---------------------------
+
+module wood_fixed_rail_3d(x0,y0,z0) {
+    difference() {
+        sheet_box(
+            [wood_rail_thickness,wood_rail_depth,wood_rail_height],
+            [x0,y0,z0]
+        );
+
+        if (include_wood_slide_registration_holes) {
+            for (n=[0:wood_slide_registration_hole_count-1]) {
+                round_hole_x_3d(
+                    x0-1,
+                    y0+wood_slide_reg_pos(wood_rail_depth,n),
+                    z0+wood_rail_height/2,
+                    wood_rail_thickness+2,
+                    wood_slide_registration_hole_diameter
+                );
+            }
+        }
+    }
+}
+
+module wood_drawer_runner_3d(x0,y0,z0) {
+    difference() {
+        sheet_box(
+            [
+                wood_drawer_runner_thickness,
+                wood_drawer_runner_depth,
+                wood_drawer_runner_height
+            ],
+            [x0,y0,z0]
+        );
+
+        if (include_wood_slide_registration_holes
+            && wood_drawer_runner_reg_valid(drawer_box_depth)) {
+            for (n=[0:wood_slide_registration_hole_count-1]) {
+                round_hole_x_3d(
+                    x0-1,
+                    y0+wood_drawer_runner_reg_pos(drawer_box_depth,n),
+                    z0+wood_drawer_runner_height/2,
+                    wood_drawer_runner_thickness+2,
+                    wood_slide_registration_hole_diameter
+                );
+            }
+        }
+    }
+}
+
+module wood_fixed_rail_cut() {
+    difference() {
+        cut_part(wood_rail_depth,wood_rail_height);
+
+        if (include_wood_slide_registration_holes) {
+            for (n=[0:wood_slide_registration_hole_count-1])
+                round_hole_2d(
+                    wood_slide_reg_pos(wood_rail_depth,n),
+                    wood_rail_height/2,
+                    wood_slide_registration_hole_diameter
+                );
+        }
+    }
+}
+
+module wood_drawer_runner_cut() {
+    difference() {
+        cut_part(
+            wood_drawer_runner_depth,
+            wood_drawer_runner_height
+        );
+
+        if (include_wood_slide_registration_holes
+            && wood_drawer_runner_reg_valid(drawer_box_depth)) {
+            for (n=[0:wood_slide_registration_hole_count-1])
+                round_hole_2d(
+                    wood_drawer_runner_reg_pos(drawer_box_depth,n),
+                    wood_drawer_runner_height/2,
+                    wood_slide_registration_hole_diameter
+                );
+        }
+    }
+}
+
+
+// ---------------------------
+// ADJUSTABLE-SHELF PIN HOLES
+// ---------------------------
+
+// 3D holes in a cabinet side. Blind holes are drilled from the INTERIOR face.
+module adjustable_shelf_pin_holes_3d(x0,side) {
+    if (!mixed_bay_mode && has_doors && shelf_style == "adjustable") {
+        for (row=[0:1])
+            for (i=[0:shelf_pin_count()-1]) {
+                yy = shelf_pin_y(row);
+                zz = shelf_pin_z(i);
+
+                if (adjustable_shelf_hole_type == "through") {
+                    round_hole_x_3d(
+                        x0-1,yy,zz,
+                        material_thickness+2,
+                        adjustable_shelf_hole_diameter
+                    );
+                } else {
+                    dd = min(
+                        adjustable_shelf_hole_depth,
+                        material_thickness-0.5
+                    );
+
+                    if (side == "left")
+                        round_hole_x_3d(
+                            x0+material_thickness-dd,
+                            yy,zz,
+                            dd+0.02,
+                            adjustable_shelf_hole_diameter
+                        );
+                    else
+                        round_hole_x_3d(
+                            x0-0.01,
+                            yy,zz,
+                            dd+0.02,
+                            adjustable_shelf_hole_diameter
+                        );
+                }
+            }
+    }
+}
+
+// Through shelf-pin holes belong in cut_layout.
+module adjustable_shelf_pin_holes_cut_2d() {
+    if (!mixed_bay_mode
+        && has_doors
+        && shelf_style == "adjustable"
+        && adjustable_shelf_hole_type == "through") {
+
+        for (row=[0:1])
+            for (i=[0:shelf_pin_count()-1])
+                round_hole_2d(
+                    shelf_pin_y(row),
+                    shelf_pin_z(i),
+                    adjustable_shelf_hole_diameter
+                );
+    }
+}
+
+// Blind shelf-pin drilling belongs in pocket_layout.
+module adjustable_shelf_pin_holes_pocket_2d() {
+    if (!mixed_bay_mode
+        && has_doors
+        && shelf_style == "adjustable"
+        && adjustable_shelf_hole_type == "blind") {
+
+        for (row=[0:1])
+            for (i=[0:shelf_pin_count()-1])
+                round_hole_2d(
+                    shelf_pin_y(row),
+                    shelf_pin_z(i),
+                    adjustable_shelf_hole_diameter
+                );
+    }
+}
+
+
+
+// Mixed-bay shelf-pin holes on the two OUTER cabinet sides. Internal bay
+// partitions always use through holes so one drilled row serves both faces.
+module mixed_bay_side_shelf_pin_holes_3d(x0,side) {
+    if (mixed_bay_mode && mixed_bay_side_has_shelf_pins(side)) {
+        for (row=[0:1])
+            for (i=[0:mixed_bay_shelf_pin_count()-1]) {
+                yy = shelf_pin_y(row);
+                zz = mixed_bay_shelf_pin_z(i);
+
+                if (adjustable_shelf_hole_type == "through") {
+                    round_hole_x_3d(
+                        x0-1,yy,zz,
+                        material_thickness+2,
+                        adjustable_shelf_hole_diameter
+                    );
+                } else {
+                    dd = min(
+                        adjustable_shelf_hole_depth,
+                        material_thickness-0.5
+                    );
+
+                    if (side == "left")
+                        round_hole_x_3d(
+                            x0+material_thickness-dd,
+                            yy,zz,
+                            dd+0.02,
+                            adjustable_shelf_hole_diameter
+                        );
+                    else
+                        round_hole_x_3d(
+                            x0-0.01,
+                            yy,zz,
+                            dd+0.02,
+                            adjustable_shelf_hole_diameter
+                        );
+                }
+            }
+    }
+}
+
+module mixed_bay_side_shelf_pin_holes_cut_2d(side) {
+    if (mixed_bay_mode
+        && mixed_bay_side_has_shelf_pins(side)
+        && adjustable_shelf_hole_type == "through")
+        for (row=[0:1])
+            for (i=[0:mixed_bay_shelf_pin_count()-1])
+                round_hole_2d(
+                    shelf_pin_y(row),
+                    mixed_bay_shelf_pin_z(i),
+                    adjustable_shelf_hole_diameter
+                );
+}
+
+module mixed_bay_side_shelf_pin_holes_pocket_2d(side) {
+    if (mixed_bay_mode
+        && mixed_bay_side_has_shelf_pins(side)
+        && adjustable_shelf_hole_type == "blind")
+        for (row=[0:1])
+            for (i=[0:mixed_bay_shelf_pin_count()-1])
+                round_hole_2d(
+                    shelf_pin_y(row),
+                    mixed_bay_shelf_pin_z(i),
+                    adjustable_shelf_hole_diameter
+                );
+}
+
+module mixed_bay_side_hinge_plate_holes_3d(x0,side) {
+    if (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
+        for (j=[0:hinge_count-1])
+            for (dz=[
+                -hinge_plate_hole_spacing/2,
+                hinge_plate_hole_spacing/2
+            ])
+                round_hole_x_3d(
+                    x0-1,
+                    hinge_plate_center_from_front,
+                    mixed_bay_hinge_z(j)+dz,
+                    material_thickness+2,
+                    hinge_plate_hole_diameter
+                );
+}
+
+module mixed_bay_side_hinge_plate_holes_cut_2d(side) {
+    if (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
+        for (j=[0:hinge_count-1])
+            for (dz=[
+                -hinge_plate_hole_spacing/2,
+                hinge_plate_hole_spacing/2
+            ])
+                round_hole_2d(
+                    hinge_plate_center_from_front,
+                    mixed_bay_hinge_z(j)+dz,
+                    hinge_plate_hole_diameter
+                );
+}
+
+// ---------------------------
+// DOOR SHELVES WITH FULL-DEPTH PARTITIONS
+// ---------------------------
+
+// Fixed shelves remain continuous and pass through cross-lap notches cut into
+// the vertical partitions.
+module fixed_door_shelf_3d(z0) {
+    joined_horizontal_panel_3d(
+        0,shelf_depth,z0);
+}
+
+module fixed_door_shelf_cut() {
+    joined_horizontal_panel_cut(shelf_depth);
+}
+
+// Adjustable shelves cannot pass through full-depth partitions, so each door
+// bay receives its own loose shelf panel.
+module adjustable_door_shelf_3d(z0,b=0) {
+    sheet_box(
+        [
+            door_adjustable_shelf_piece_width(b),
+            shelf_depth,
+            material_thickness
+        ],
+        [
+            door_adjustable_shelf_piece_x(b),
+            0,
+            z0
+        ]
+    );
+}
+
+module adjustable_door_shelf_cut(b=0) {
+    cut_part(
+        door_adjustable_shelf_piece_width(b),
+        shelf_depth);
+}
+
+
+// ---------------------------
+// MIXED-BAY FIXED-SHELF RECEIVERS IN OUTER CABINET SIDES
+// ---------------------------
+
+module mixed_bay_side_fixed_shelf_joinery_3d(x0,side) {
+    bb = mixed_bay_side_fixed_bay(side);
+
+    if (mixed_bay_side_has_fixed_shelves(side)
+        && joinery_style != "butt")
+        for (s=[1:mixed_bay_shelf_count(bb)])
+            side_horizontal_joint_cut_3d(
+                side,
+                0,
+                shelf_depth,
+                mixed_bay_shelf_z(bb,s)
+            );
+}
+
+module mixed_bay_side_fixed_shelf_through_2d(side) {
+    bb = mixed_bay_side_fixed_bay(side);
+    c = joint_fit_clearance;
+
+    if (mixed_bay_side_has_fixed_shelves(side)
+        && joinery_style == "tab_slot")
+        for (s=[1:mixed_bay_shelf_count(bb)])
+            for (n=[0:effective_tab_count(shelf_depth)-1]) {
+                sy = tab_start(shelf_depth,n)-c/2;
+                sw = tab_width_for(shelf_depth)+c;
+
+                translate([
+                    sy,
+                    mixed_bay_shelf_z(bb,s)-c/2
+                ])
+                    slot_shape_2d(
+                        sw,
+                        material_thickness+c
+                    );
+            }
+}
+
+module mixed_bay_side_fixed_shelf_dado_pockets_2d(side) {
+    bb = mixed_bay_side_fixed_bay(side);
+    c = dado_fit_clearance;
+
+    if (mixed_bay_side_has_fixed_shelves(side)
+        && joinery_style == "dado")
+        for (s=[1:mixed_bay_shelf_count(bb)])
+            translate([
+                -c/2,
+                mixed_bay_shelf_z(bb,s)-c/2
+            ])
+                square([
+                    shelf_depth+c,
+                    material_thickness+c
+                ]);
+}
+
+module mixed_bay_side_fixed_shelf_butt_registration_3d(x0,side) {
+    bb = mixed_bay_side_fixed_bay(side);
+
+    if (mixed_bay_side_has_fixed_shelves(side)
+        && joinery_style == "butt"
+        && include_butt_registration_holes)
+        for (s=[1:mixed_bay_shelf_count(bb)])
+            side_horizontal_butt_registration_3d(
+                x0,
+                0,
+                shelf_depth,
+                mixed_bay_shelf_z(bb,s)
+            );
+}
+
+module mixed_bay_side_fixed_shelf_butt_registration_2d(side) {
+    bb = mixed_bay_side_fixed_bay(side);
+
+    if (mixed_bay_side_has_fixed_shelves(side)
+        && joinery_style == "butt"
+        && include_butt_registration_holes)
+        for (s=[1:mixed_bay_shelf_count(bb)])
+            side_horizontal_butt_registration_2d(
+                0,
+                shelf_depth,
+                mixed_bay_shelf_z(bb,s)
+            );
+}
+
+
+// ---------------------------
+// CABINET SIDE PANELS
+// ---------------------------
+
+module cabinet_side_panel_3d(x0=0,side="left") {
+    side_bank = side == "left" ? 0 : active_drawer_bank_count()-1;
+
+    difference() {
+        translate([x0,0,side_panel_bottom_z])
+            cube([
+                material_thickness,
+                cabinet_depth,
+                side_panel_cut_height
+            ]);
+
+        // Optional toe-kick notch in the lower FRONT corner.
+        if (side_has_toe_cutout(side))
+            translate([x0-1,-1,-1])
+                cube([
+                    material_thickness+2,
+                    toe_kick_setback+1,
+                    toe_kick_height+1
+                ]);
+
+        // Chosen carcass joinery.
+        all_side_joinery_cuts_3d(side);
+        mixed_bay_side_fixed_shelf_joinery_3d(x0,side);
+
+        // Adjustable-shelf pin holes. Legacy and generalized mixed-bay modes
+        // use separate placement logic.
+        adjustable_shelf_pin_holes_3d(x0,side);
+        mixed_bay_side_shelf_pin_holes_3d(x0,side);
+
+        // Optional guide holes for simple butt-jointed carcass members.
+        all_side_butt_registration_3d(x0);
+        mixed_bay_side_fixed_shelf_butt_registration_3d(x0,side);
+
+        // Matching holes for the fixed cabinet-side portions of wood slides.
+        if (has_drawers
+            && drawer_bank_drawer_count(side_bank) > 0
+            && drawer_mount == "wood_rails"
+            && include_wood_slide_registration_holes) {
+
+            for (i=[0:drawer_bank_drawer_count(side_bank)-1]) {
+                for (n=[0:wood_slide_registration_hole_count-1]) {
+                    round_hole_x_3d(
+                        x0-1,
+                        wood_rail_front_setback
+                            + wood_slide_reg_pos(wood_rail_depth,n),
+                        drawer_rail_z(i,side_bank)+wood_rail_height/2,
+                        material_thickness+2,
+                        wood_slide_registration_hole_diameter
+                    );
+                }
+            }
+        }
+
+        // Back-panel tabs receive their own through-slots.
+        side_back_joint_cut_3d(side);
+
+        // Door hinge mounting-plate holes in the cabinet side panels.
+        if (cabinet_side_has_door_hinges(side)) {
+            for (j=[0:hinge_count-1])
+                for (dz=[
+                    -hinge_plate_hole_spacing/2,
+                    hinge_plate_hole_spacing/2
+                ])
+                    round_hole_x_3d(
+                        x0-1,
+                        hinge_plate_center_from_front,
+                        hinge_z(j)+dz,
+                        material_thickness+2,
+                        hinge_plate_hole_diameter
+                    );
+        }
+
+        // Generalized mixed-bay door hinge plate holes.
+        mixed_bay_side_hinge_plate_holes_3d(x0,side);
+
+        // Optional commercial-slide holes.
+        if (has_drawers
+            && drawer_bank_drawer_count(side_bank) > 0
+            && drawer_mount == "metal_slides"
+            && include_metal_slide_holes) {
+
+            for (i=[0:drawer_bank_drawer_count(side_bank)-1]) {
+                hole_z = drawer_box_z(i,side_bank)
+                         + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+                for (n=[0:metal_slide_hole_count-1]) {
+                    if (hole_is_valid(n, cabinet_depth)) {
+                        metal_hole_x_3d(
+                            x0-1,
+                            slide_hole_depth(n),
+                            hole_z,
+                            material_thickness+2
+                        );
+                    }
+                }
+            }
+        }
+    }
+}
+
+module cabinet_side_panel_cut_features(side="left") {
+    side_bank = side == "left" ? 0 : active_drawer_bank_count()-1;
+
+    if (side_has_toe_cutout(side))
+        translate([-0.01,-0.01])
+            square([
+                toe_kick_setback+0.02,
+                toe_kick_height+0.02
+            ]);
+
+    all_side_through_joinery_2d();
+    mixed_bay_side_fixed_shelf_through_2d(side);
+
+    adjustable_shelf_pin_holes_cut_2d();
+    mixed_bay_side_shelf_pin_holes_cut_2d(side);
+
+    all_side_butt_registration_2d();
+    mixed_bay_side_fixed_shelf_butt_registration_2d(side);
+
+    if (has_drawers
+        && drawer_bank_drawer_count(side_bank) > 0
+        && drawer_mount == "wood_rails"
+        && include_wood_slide_registration_holes) {
+
+        for (i=[0:drawer_bank_drawer_count(side_bank)-1])
+            for (n=[0:wood_slide_registration_hole_count-1])
+                round_hole_2d(
+                    wood_rail_front_setback
+                        + wood_slide_reg_pos(wood_rail_depth,n),
+                    drawer_rail_z(i,side_bank)+wood_rail_height/2,
+                    wood_slide_registration_hole_diameter
+                );
+    }
+
+    side_back_joint_2d();
+
+    if (cabinet_side_has_door_hinges(side)) {
+        for (j=[0:hinge_count-1])
+            for (dz=[
+                -hinge_plate_hole_spacing/2,
+                hinge_plate_hole_spacing/2
+            ])
+                round_hole_2d(
+                    hinge_plate_center_from_front,
+                    hinge_z(j)+dz,
+                    hinge_plate_hole_diameter
+                );
+    }
+
+    mixed_bay_side_hinge_plate_holes_cut_2d(side);
+
+    if (has_drawers
+        && drawer_bank_drawer_count(side_bank) > 0
+        && drawer_mount == "metal_slides"
+        && include_metal_slide_holes) {
+
+        for (i=[0:drawer_bank_drawer_count(side_bank)-1]) {
+            hole_z = drawer_box_z(i,side_bank)
+                     + metal_slide_cabinet_hole_z_from_drawer_bottom;
+
+            for (n=[0:metal_slide_hole_count-1])
+                if (hole_is_valid(n, cabinet_depth))
+                    metal_hole_2d(
+                        slide_hole_depth(n),
+                        hole_z
+                    );
+        }
+    }
+}
+
+module cabinet_side_panel_cut(side="left") {
+    difference() {
+        cut_part(
+            cabinet_depth,
+            side_panel_cut_height
+        );
+
+        translate([0,-side_panel_bottom_z])
+            cabinet_side_panel_cut_features(side);
+    }
+}
+
+
+
+// ---------------------------
+// WORKTOP REGISTRATION
+// ---------------------------
+
+module worktop_registration_support_holes_3d(
+    panel_y0,
+    panel_depth,
+    z0
+) {
+    if (active_worktop_registration)
+        for (r=[0:1]) {
+            gy = worktop_registration_row_y(r);
+
+            if (gy >= panel_y0
+                && gy <= panel_y0+panel_depth)
+                for (i=[0:worktop_registration_hole_count-1])
+                    translate([
+                        worktop_registration_x(i),
+                        gy,
+                        z0-1
+                    ])
+                        cylinder(
+                            h=material_thickness+2,
+                            d=worktop_registration_hole_diameter
+                        );
+        }
+}
+
+module worktop_registration_support_holes_2d(
+    panel_y0,
+    panel_depth
+) {
+    if (active_worktop_registration)
+        for (r=[0:1]) {
+            gy = worktop_registration_row_y(r);
+
+            if (gy >= panel_y0
+                && gy <= panel_y0+panel_depth)
+                for (i=[0:worktop_registration_hole_count-1])
+                    round_hole_2d(
+                        horizontal_panel_local_x(
+                            worktop_registration_x(i)
+                        ),
+                        gy-panel_y0,
+                        worktop_registration_hole_diameter
+                    );
+        }
+}
+
+module worktop_registration_worktop_pockets_2d() {
+    if (active_worktop_registration)
+        for (r=[0:1])
+            for (i=[0:worktop_registration_hole_count-1])
+                round_hole_2d(
+                    worktop_registration_worktop_local_x(i),
+                    worktop_registration_worktop_local_y(r),
+                    worktop_registration_hole_diameter
+                );
+}
+
+module worktop_registration_worktop_pockets_3d() {
+    if (active_worktop_registration)
+        for (r=[0:1])
+            for (i=[0:worktop_registration_hole_count-1])
+                translate([
+                    worktop_registration_x(i),
+                    worktop_registration_row_y(r),
+                    worktop_z-0.01
+                ])
+                    cylinder(
+                        h=effective_worktop_registration_blind_depth+0.02,
+                        d=worktop_registration_hole_diameter
+                    );
+}
+
+
+// ---------------------------
+// BASE HARDWARE / WORKTOP
+// ---------------------------
+
+module base_hardware_holes_plate_2d() {
+    if (base_hardware_active
+        && include_base_hardware_drill_holes)
+        for (c=[0:3])
+            for (h=[0:base_hardware_hole_count_per_corner()-1])
+                round_hole_2d(
+                    base_hardware_hole_global_x(c,h)
+                        - base_mounting_plate_x,
+                    base_hardware_hole_global_y(c,h)
+                        - base_mounting_plate_y,
+                    base_hardware_hole_diameter()
+                );
+}
+
+module base_hardware_holes_bottom_2d() {
+    if (base_hardware_active
+        && !base_mounting_plate_active
+        && include_base_hardware_drill_holes)
+        for (c=[0:3])
+            for (h=[0:base_hardware_hole_count_per_corner()-1])
+                round_hole_2d(
+                    bottom_panel_local_x(
+                        base_hardware_hole_global_x(c,h)
+                    ),
+                    base_hardware_hole_global_y(c,h),
+                    base_hardware_hole_diameter()
+                );
+}
+
+module base_hardware_holes_plate_3d(z0) {
+    if (base_hardware_active
+        && include_base_hardware_drill_holes)
+        for (c=[0:3])
+            for (h=[0:base_hardware_hole_count_per_corner()-1])
+                translate([
+                    base_hardware_hole_global_x(c,h),
+                    base_hardware_hole_global_y(c,h),
+                    z0-1
+                ])
+                    cylinder(
+                        h=material_thickness+2,
+                        d=base_hardware_hole_diameter()
+                    );
+}
+
+module base_hardware_holes_bottom_3d(z0) {
+    if (base_hardware_active
+        && !base_mounting_plate_active
+        && include_base_hardware_drill_holes)
+        for (c=[0:3])
+            for (h=[0:base_hardware_hole_count_per_corner()-1])
+                translate([
+                    base_hardware_hole_global_x(c,h),
+                    base_hardware_hole_global_y(c,h),
+                    z0-1
+                ])
+                    cylinder(
+                        h=material_thickness+2,
+                        d=base_hardware_hole_diameter()
+                    );
+}
+
+module base_mounting_plate_3d() {
+    if (base_mounting_plate_active)
+        difference() {
+            sheet_box(
+                [
+                    base_mounting_plate_width,
+                    base_mounting_plate_depth,
+                    material_thickness
+                ],
+                [
+                    base_mounting_plate_x,
+                    base_mounting_plate_y,
+                    -material_thickness
+                ]
+            );
+
+            base_hardware_holes_plate_3d(
+                -material_thickness);
+        }
+}
+
+module base_mounting_plate_cut() {
+    if (base_mounting_plate_active)
+        cut_part(
+            base_mounting_plate_width,
+            base_mounting_plate_depth
+        );
+}
+
+module worktop_3d() {
+    if (worktop_active)
+        difference() {
+            sheet_box(
+                [
+                    worktop_width,
+                    worktop_depth,
+                    worktop_thickness
+                ],
+                [worktop_x,worktop_y,worktop_z]
+            );
+
+            worktop_registration_worktop_pockets_3d();
+        }
+}
+
+module worktop_cut() {
+    if (worktop_active)
+        cut_part(worktop_width,worktop_depth);
+}
+
+module caster_visual_3d(c=0) {
+    cx = base_hardware_center_x_for_index(c);
+    cy = base_hardware_center_y_for_index(c);
+    surface_z =
+        base_mounting_plate_active
+            ? -material_thickness
+            : 0;
+
+    // Generic mounting plate.
+    translate([
+        cx-caster_mount_plate_width/2,
+        cy-caster_mount_plate_depth/2,
+        surface_z-4
+    ])
+        cube([
+            caster_mount_plate_width,
+            caster_mount_plate_depth,
+            4
+        ]);
+
+    // Generic wheel envelope; intended for fit/clearance visualization only.
+    translate([
+        cx,
+        cy,
+        surface_z-caster_height+caster_wheel_diameter/2
+    ])
+        rotate([90,0,0])
+            cylinder(
+                h=max(12,caster_mount_plate_depth*0.35),
+                d=caster_wheel_diameter,
+                center=true
+            );
+}
+
+module leveler_visual_3d(c=0) {
+    cx = base_hardware_center_x_for_index(c);
+    cy = base_hardware_center_y_for_index(c);
+    surface_z =
+        base_mounting_plate_active
+            ? -material_thickness
+            : 0;
+
+    translate([
+        cx,cy,
+        surface_z-leveler_height
+    ])
+        cylinder(
+            h=leveler_height,
+            d=max(6,leveler_mount_hole_diameter*0.65)
+        );
+
+    translate([
+        cx,cy,
+        surface_z-leveler_height-4
+    ])
+        cylinder(
+            h=4,
+            d=leveler_foot_diameter
+        );
+}
+
+module base_hardware_visual_3d() {
+    if (base_hardware_active)
+        for (c=[0:3])
+            if (active_base_style == "casters")
+                caster_visual_3d(c);
+            else
+                leveler_visual_3d(c);
+}
+
+
+// ---------------------------
+// 3D CARCASS
+// ---------------------------
+
+module carcass() {
+    if (show_carcass_sides) {
+        paint("side_left")
+            cabinet_side_panel_3d(0,"left");
+        paint("side_right")
+            cabinet_side_panel_3d(
+                cabinet_width-material_thickness,"right");
+    }
+
+    if (show_carcass_bottom)
+        paint("bottom")
+            difference() {
+                cabinet_bottom_3d();
+
+                base_hardware_holes_bottom_3d(
+                    bottom_above_toe);
+            }
+
+    if (show_toe_kick && has_toe_kick)
+        paint("toe_kick")
+            joined_toe_kick_3d();
+
+    if (show_carcass_top) {
+        if (top_style == "full") {
+            paint("top_full")
+                difference() {
+                    joined_horizontal_bank_receiver_3d(
+                        0,cabinet_depth,
+                        cabinet_height-material_thickness,
+                        "bottom");
+
+                    worktop_registration_support_holes_3d(
+                        0,cabinet_depth,
+                        cabinet_height-material_thickness
+                    );
+                }
+        } else {
+            paint("top_front")
+                difference() {
+                    joined_horizontal_bank_receiver_3d(
+                        0,top_stretcher_depth,
+                        cabinet_height-material_thickness,
+                        "bottom");
+
+                    worktop_registration_support_holes_3d(
+                        0,top_stretcher_depth,
+                        cabinet_height-material_thickness
+                    );
+                }
+
+            paint("top_rear")
+                difference() {
+                    joined_horizontal_bank_receiver_3d(
+                        cabinet_depth-top_stretcher_depth,
+                        top_stretcher_depth,
+                        cabinet_height-material_thickness,
+                        "bottom");
+
+                    worktop_registration_support_holes_3d(
+                        cabinet_depth-top_stretcher_depth,
+                        top_stretcher_depth,
+                        cabinet_height-material_thickness
+                    );
+                }
+        }
+    }
+
+    if (show_back_construction) {
+        if (back_style == "panel"
+            || back_style == "structural_panel") {
+            paint("back")
+                back_panel_3d();
+        } else if (back_style == "stretchers") {
+            for (b=[0:back_stretcher_count-1])
+                paint("back_stretcher",b)
+                    joined_back_stretcher_3d(
+                        back_stretcher_z(b));
+        }
+    }
+
+    if (show_combo_divider
+        && !mixed_bay_mode
+        && cabinet_contents == "combo"
+        && door_region_height > material_thickness) {
+        paint("divider")
+            joined_horizontal_bank_receiver_3d(
+                0,shelf_depth,
+                combo_divider_bottom_z,
+                "top","bottom");
+    }
+
+    if (show_shelves
+        && !mixed_bay_mode
+        && has_doors
+        && door_shelf_count > 0
+        && door_region_height > 60) {
+
+        for (s=[1:door_shelf_count]) {
+            if (shelf_style == "fixed") {
+                paint("shelf",s)
+                    fixed_door_shelf_3d(
+                        door_shelf_z(s));
+            } else {
+                for (b=[0:door_adjustable_shelf_piece_count()-1])
+                    paint("shelf",s*10+b)
+                        adjustable_door_shelf_3d(
+                            door_shelf_z(s),b);
+            }
+        }
+    }
+
+    if (show_shelves && mixed_bay_mode) {
+        for (b=[0:mixed_bay_count-1])
+            if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
+                for (s=[1:mixed_bay_shelf_count(b)])
+                    paint("shelf",mixed_bay_shelf_part_index(b,s))
+                        if (mixed_bay_shelf_style(b) == "fixed")
+                            mixed_bay_fixed_shelf_3d(
+                                b,mixed_bay_shelf_z(b,s));
+                        else
+                            mixed_bay_adjustable_shelf_3d(
+                                b,mixed_bay_shelf_z(b,s));
+    }
+
+    if (show_mixed_bay_partitions
+        && mixed_bay_partition_count() > 0) {
+        for (p=[0:mixed_bay_partition_count()-1])
+            paint("mixed_bay_partition",p)
+                mixed_bay_partition_3d(p);
+    }
+
+    if (show_door_hinge_partitions
+        && door_hinge_partition_count() > 0) {
+        for (p=[0:door_hinge_partition_count()-1])
+            paint("door_hinge_partition",p)
+                door_hinge_partition_3d(p);
+    }
+
+    if (show_drawer_bank_partitions
+        && has_drawers
+        && drawer_bank_partition_count() > 0) {
+        for (p=[0:drawer_bank_partition_count()-1])
+            paint("drawer_bank_partition",p)
+                drawer_bank_partition_3d(p);
+    }
+
+    if (show_drawer_separators && drawer_separator_count > 0) {
+        for (s=[0:drawer_separator_count-1]) {
+            sep_z = drawer_separator_z(s);
+
+            if (drawer_separator_style == "full") {
+                paint("drawer_separator",s)
+                    joined_horizontal_panel_3d(
+                        0,drawer_separator_full_depth,sep_z);
+            } else {
+                paint("drawer_separator",s)
+                    joined_horizontal_panel_3d(
+                        0,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+
+                paint("drawer_separator",s)
+                    joined_horizontal_panel_3d(
+                        drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth,
+                        drawer_separator_stretcher_actual_depth,
+                        sep_z);
+            }
+        }
+    }
+
+    // Fixed cabinet-side / partition-side portions of optional drawer slides.
+    if (show_drawer_slide_parts
+        && has_drawers
+        && drawer_mount == "wood_rails") {
+
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                rz = drawer_rail_z(i,b);
+                ox = drawer_bank_opening_x(b);
+                ow = drawer_bank_opening_width(b);
+                pi = drawer_part_index(b,i);
+
+                paint("rail",pi)
+                    wood_fixed_rail_3d(
+                        ox,
+                        wood_rail_front_setback,
+                        rz
+                    );
+
+                paint("rail",pi)
+                    wood_fixed_rail_3d(
+                        ox+ow-wood_rail_thickness,
+                        wood_rail_front_setback,
+                        rz
+                    );
+            }
+    }
+
+    if (show_drawer_slide_parts
+        && has_drawers
+        && drawer_mount == "metal_slides"
+        && show_metal_slide_envelopes) {
+
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                rz = drawer_box_z(i,b);
+                ox = drawer_bank_opening_x(b);
+                ow = drawer_bank_opening_width(b);
+
+                color([0.25,0.25,0.25,0.35]) {
+                    translate([
+                        ox,
+                        metal_slide_front_setback,
+                        rz
+                    ])
+                        cube([
+                            metal_slide_clearance_per_side,
+                            active_slide_length(),
+                            metal_slide_envelope_height
+                        ]);
+
+                    translate([
+                        ox+ow-metal_slide_clearance_per_side,
+                        metal_slide_front_setback,
+                        rz
+                    ])
+                        cube([
+                            metal_slide_clearance_per_side,
+                            active_slide_length(),
+                            metal_slide_envelope_height
+                        ]);
+                }
+            }
+    }
+
+    if (show_base_hardware) {
+        if (base_mounting_plate_active)
+            paint("base_mounting_plate")
+                base_mounting_plate_3d();
+
+        if (base_hardware_active)
+            paint(
+                active_base_style == "casters"
+                    ? "caster"
+                    : "leveler"
+            )
+                base_hardware_visual_3d();
+    }
+
+    if (show_worktop && worktop_active)
+        paint("worktop")
+            worktop_3d();
+}
+
+
+// ---------------------------
+// DRAWERS
+// ---------------------------
+
+// ---------- Drawer side joinery ----------
+
+// Through tab slots in a drawer side's local depth/height plane.
+module drawer_side_tab_slots_2d(d,bh) {
+    if (drawer_joinery_style == "tab_slot") {
+        c = drawer_joint_fit_clearance;
+        st = drawer_material_thickness;
+
+        for (n=[0:effective_tab_count(bh)-1]) {
+            tz = tab_start(bh,n)-c/2;
+            th = tab_width_for(bh)+c;
+
+            // Front and rear box panels.
+            translate([-c/2,tz])
+                slot_shape_2d(st+c,th);
+
+            translate([d-st-c/2,tz])
+                slot_shape_2d(st+c,th);
+        }
+    }
+}
+
+// Blind pocket geometry in a drawer side, local depth/height coordinates.
+module drawer_side_corner_dado_pockets_2d(d,bh) {
+    if (drawer_joinery_style == "dado") {
+        c = drawer_dado_fit_clearance;
+        st = drawer_material_thickness;
+
+        translate([-c/2,-c/2])
+            square([st+c,bh+c]);
+
+        translate([d-st-c/2,-c/2])
+            square([st+c,bh+c]);
+    }
+}
+
+module drawer_side_bottom_groove_pocket_2d(d,bh) {
+    if (drawer_bottom_joinery == "dado") {
+        c = drawer_dado_fit_clearance;
+        st = drawer_material_thickness;
+        bdd = effective_drawer_bottom_dado_depth();
+
+        translate([
+            st-bdd-c/2,
+            drawer_bottom_inset-c/2
+        ])
+            square([
+                drawer_bottom_depth()+c,
+                drawer_bottom_thickness+c
+            ]);
+    }
+}
+
+module drawer_side_dado_pockets_2d(d,bh) {
+    drawer_side_corner_dado_pockets_2d(d,bh);
+    drawer_side_bottom_groove_pocket_2d(d,bh);
+}
+
+// Blind bottom groove in a drawer front/back panel, local width/height.
+module drawer_cross_panel_bottom_pocket_2d(bh,b=0) {
+    if (drawer_bottom_joinery == "dado") {
+        c = drawer_dado_fit_clearance;
+
+        translate([
+            drawer_bottom_cross_panel_local_x()-c/2,
+            drawer_bottom_inset-c/2
+        ])
+            square([
+                drawer_bottom_width(b)+c,
+                drawer_bottom_thickness+c
+            ]);
+    }
+}
+
+// 3D blind cuts in one drawer side.
+// "left"/"right" tells us which face is the drawer interior.
+module drawer_side_blind_joinery_3d(x0,y0,z0,d,bh,side) {
+    c = drawer_dado_fit_clearance;
+    st = drawer_material_thickness;
+
+    if (drawer_joinery_style == "dado") {
+        dd = effective_drawer_dado_depth();
+
+        cut_x =
+            side == "left"
+                ? x0 + st - dd
+                : x0 - 0.01;
+
+        // Front dado.
+        translate([
+            cut_x,
+            y0-c/2,
+            z0-c/2
+        ])
+            cube([
+                dd+0.02,
+                st+c,
+                bh+c
+            ]);
+
+        // Rear dado.
+        translate([
+            cut_x,
+            y0+d-st-c/2,
+            z0-c/2
+        ])
+            cube([
+                dd+0.02,
+                st+c,
+                bh+c
+            ]);
+    }
+
+    if (drawer_bottom_joinery == "dado") {
+        bdd = effective_drawer_bottom_dado_depth();
+
+        cut_x =
+            side == "left"
+                ? x0 + st - bdd
+                : x0 - 0.01;
+
+        translate([
+            cut_x,
+            y0 + st - bdd - c/2,
+            z0 + drawer_bottom_inset - c/2
+        ])
+            cube([
+                bdd+0.02,
+                drawer_bottom_depth()+c,
+                drawer_bottom_thickness+c
+            ]);
+    }
+}
+
+module drawer_side_through_joinery_3d(x0,y0,z0,d,bh) {
+    if (drawer_joinery_style == "tab_slot") {
+        c = drawer_joint_fit_clearance;
+        st = drawer_material_thickness;
+
+        for (n=[0:effective_tab_count(bh)-1]) {
+            tz = z0 + tab_start(bh,n)-c/2;
+            th = tab_width_for(bh)+c;
+
+            slot_cut_x_3d(
+                x0-1,
+                st+2,
+                y0-c/2,
+                tz,
+                st+c,
+                th
+            );
+
+            slot_cut_x_3d(
+                x0-1,
+                st+2,
+                y0+d-st-c/2,
+                tz,
+                st+c,
+                th
+            );
+        }
+    }
+}
+
+
+// ---------- Drawer side panel ----------
+
+module drawer_side_panel_3d(x0,y0,z0,d,bh,i=0,side="left") {
+    st = drawer_material_thickness;
+
+    difference() {
+        translate([x0,y0,z0]) cube([st,d,bh]);
+
+        drawer_side_through_joinery_3d(
+            x0,y0,z0,d,bh);
+
+        drawer_side_blind_joinery_3d(
+            x0,y0,z0,d,bh,side);
+
+        if (drawer_mount == "metal_slides" && include_metal_slide_holes) {
+            hole_z = z0 + metal_slide_drawer_hole_z_from_drawer_bottom;
+
+            for (n=[0:metal_slide_hole_count-1]) {
+                if (hole_is_valid(n, d)) {
+                    metal_hole_x_3d(
+                        x0-1,
+                        y0 + slide_hole_depth(n),
+                        hole_z,
+                        st+2
+                    );
+                }
+            }
+        }
+
+        if (drawer_mount == "wood_rails"
+            && include_wood_slide_registration_holes
+            && wood_drawer_runner_reg_valid(d)) {
+
+            for (n=[0:wood_slide_registration_hole_count-1]) {
+                round_hole_x_3d(
+                    x0-1,
+                    y0
+                        + wood_drawer_runner_local_front()
+                        + wood_drawer_runner_reg_pos(d,n),
+                    z0
+                        + wood_drawer_runner_bottom_offset
+                        + wood_drawer_runner_height/2,
+                    st+2,
+                    wood_slide_registration_hole_diameter
+                );
+            }
+        }
+    }
+}
+
+module drawer_side_panel_cut(d,bh,i=0) {
+    difference() {
+        cut_part(d,bh);
+
+        drawer_side_tab_slots_2d(d,bh);
+
+        if (drawer_mount == "metal_slides" && include_metal_slide_holes) {
+            for (n=[0:metal_slide_hole_count-1]) {
+                if (hole_is_valid(n, d))
+                    metal_hole_2d(
+                        slide_hole_depth(n),
+                        metal_slide_drawer_hole_z_from_drawer_bottom
+                    );
+            }
+        }
+
+        if (drawer_mount == "wood_rails"
+            && include_wood_slide_registration_holes
+            && wood_drawer_runner_reg_valid(d)) {
+
+            for (n=[0:wood_slide_registration_hole_count-1])
+                round_hole_2d(
+                    wood_drawer_runner_local_front()
+                        + wood_drawer_runner_reg_pos(d,n),
+                    wood_drawer_runner_bottom_offset
+                        + wood_drawer_runner_height/2,
+                    wood_slide_registration_hole_diameter
+                );
+        }
+    }
+}
+
+
+// ---------- Drawer front/back box panels ----------
+
+// 2D profile. Local X = drawer width; local Y = panel height.
+module drawer_cross_panel_cut(bh,is_front=false,b=0) {
+    st = drawer_material_thickness;
+    iw = drawer_inner_width(b);
+    ow = drawer_outer_width(b);
+
+    difference() {
+        if (drawer_joinery_style == "butt") {
+            cut_part(iw,bh);
+        }
+        else if (drawer_joinery_style == "dado") {
+            cut_part(
+                iw+2*effective_drawer_dado_depth(),
+                bh
+            );
+        }
+        else if (drawer_joinery_style == "tab_slot") {
+            union() {
+                translate([st,0])
+                    cut_part(iw,bh);
+
+                for (n=[0:effective_tab_count(bh)-1]) {
+                    tz = tab_start(bh,n);
+                    th = tab_width_for(bh);
+
+                    translate([0,tz])
+                        cut_part(st,th);
+
+                    translate([ow-st,tz])
+                        cut_part(st,th);
+                }
+            }
+        }
+
+        // Drawer BOX FRONT registration holes are used only with an applied face.
+        if (is_front && active_drawer_face_registration) {
+            for (n=[0:drawer_face_registration_hole_count-1])
+                round_hole_2d(
+                    drawer_face_reg_box_local_x(n,b),
+                    bh/2 + drawer_face_registration_vertical_offset,
+                    drawer_face_registration_hole_diameter
+                );
+        }
+
+        // With no decorative face, handle holes move to the structural box front.
+        if (is_front
+            && !include_drawer_faces
+            && include_drawer_handle_holes) {
+            cx = drawer_cross_panel_width(b)/2;
+            cy = bh/2 + drawer_handle_vertical_offset;
+
+            if (handle_hole_pattern == "single_hole")
+                round_hole_2d(cx,cy,handle_hole_diameter);
+            else
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(
+                        cx+dx,cy,handle_hole_diameter);
+        }
+    }
+}
+
+// Assembly geometry for either the front or rear box panel.
+// Rear/front differ only in Y placement and which face gets the bottom groove.
+module drawer_cross_panel_3d(
+    x0,y_panel,z0,bh,is_front=true,b=0
+) {
+    st = drawer_material_thickness;
+    iw = drawer_inner_width(b);
+    ow = drawer_outer_width(b);
+    dd = effective_drawer_dado_depth();
+
+    difference() {
+        union() {
+            if (drawer_joinery_style == "butt") {
+                sheet_box(
+                    [iw,st,bh],
+                    [x0+st,y_panel,z0]
+                );
+            }
+            else if (drawer_joinery_style == "dado") {
+                sheet_box(
+                    [iw+2*dd,st,bh],
+                    [x0+st-dd,y_panel,z0]
+                );
+            }
+            else if (drawer_joinery_style == "tab_slot") {
+                sheet_box(
+                    [iw,st,bh],
+                    [x0+st,y_panel,z0]
+                );
+
+                for (n=[0:effective_tab_count(bh)-1]) {
+                    tz = z0 + tab_start(bh,n);
+                    th = tab_width_for(bh);
+
+                    sheet_box(
+                        [st,st,th],
+                        [x0,y_panel,tz]
+                    );
+
+                    sheet_box(
+                        [st,st,th],
+                        [x0+ow-st,y_panel,tz]
+                    );
+                }
+            }
+        }
+
+        // Optional bottom groove, independent of the side joinery choice.
+        if (drawer_bottom_joinery == "dado") {
+            c = drawer_dado_fit_clearance;
+            bdd = effective_drawer_bottom_dado_depth();
+
+            groove_y =
+                is_front
+                    ? y_panel + st - bdd - 0.01
+                    : y_panel - 0.01;
+
+            translate([
+                x0 + st - bdd - c/2,
+                groove_y,
+                z0 + drawer_bottom_inset - c/2
+            ])
+                cube([
+                    drawer_bottom_width(b)+c,
+                    bdd+0.02,
+                    drawer_bottom_thickness+c
+                ]);
+        }
+
+        // Matching through-holes in the drawer BOX FRONT.
+        if (is_front && active_drawer_face_registration) {
+            for (n=[0:drawer_face_registration_hole_count-1])
+                round_hole_y_3d(
+                    x0 + ow/2 + drawer_face_reg_dx(n),
+                    y_panel + st + 1,
+                    z0 + bh/2
+                       + drawer_face_registration_vertical_offset,
+                    st+2,
+                    drawer_face_registration_hole_diameter
+                );
+        }
+
+        // With no decorative face, handle holes belong to the box front.
+        if (is_front
+            && !include_drawer_faces
+            && include_drawer_handle_holes) {
+            cx = x0 + ow/2;
+            cz = z0 + bh/2 + drawer_handle_vertical_offset;
+
+            if (handle_hole_pattern == "single_hole")
+                round_hole_y_3d(
+                    cx,y_panel+st+1,cz,
+                    st+2,handle_hole_diameter);
+            else
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        cx+dx,y_panel+st+1,cz,
+                        st+2,handle_hole_diameter);
+        }
+    }
+}
+
+
+// ---------- Drawer bottom ----------
+
+module drawer_bottom_3d(x0,y0,z0,b=0) {
+    bdd =
+        drawer_bottom_joinery == "dado"
+            ? effective_drawer_bottom_dado_depth()
+            : 0;
+
+    sheet_box(
+        [
+            drawer_bottom_width(b),
+            drawer_bottom_depth(),
+            drawer_bottom_thickness
+        ],
+        [
+            x0 + drawer_material_thickness - bdd,
+            y0 + drawer_material_thickness - bdd,
+            z0 + drawer_bottom_inset
+        ]
+    );
+}
+
+module drawer_bottom_cut(b=0) {
+    cut_part(
+        drawer_bottom_width(b),
+        drawer_bottom_depth()
+    );
+}
+
+
+// ---------- Flat blind-pocket helpers for CAM / print layout ----------
+
+module drawer_side_print_part(d,bh,i=0) {
+    difference() {
+        linear_extrude(height=drawer_material_thickness)
+            drawer_side_panel_cut(d,bh,i);
+
+        if (drawer_joinery_style == "dado"
+            || drawer_bottom_joinery == "dado") {
+
+            translate([
+                0,0,
+                drawer_material_thickness
+                    - max(
+                        drawer_joinery_style == "dado"
+                            ? effective_drawer_dado_depth()
+                            : 0,
+                        drawer_bottom_joinery == "dado"
+                            ? effective_drawer_bottom_dado_depth()
+                            : 0
+                    )
+            ])
+                linear_extrude(
+                    height=max(
+                        drawer_joinery_style == "dado"
+                            ? effective_drawer_dado_depth()
+                            : 0,
+                        drawer_bottom_joinery == "dado"
+                            ? effective_drawer_bottom_dado_depth()
+                            : 0
+                    ) + 0.02
+                )
+                    drawer_side_dado_pockets_2d(d,bh);
+        }
+    }
+}
+
+// Uses a single print-face orientation for the blind bottom groove.
+module drawer_cross_panel_print_part(bh,is_front=false,b=0) {
+    difference() {
+        linear_extrude(height=drawer_material_thickness)
+            drawer_cross_panel_cut(bh,is_front,b);
+
+        if (drawer_bottom_joinery == "dado") {
+            bdd = effective_drawer_bottom_dado_depth();
+
+            translate([
+                0,0,
+                drawer_material_thickness-bdd
+            ])
+                linear_extrude(height=bdd+0.02)
+                    drawer_cross_panel_bottom_pocket_2d(bh,b);
+        }
+    }
+}
+
+
+// ---------- Drawer dado pocket layout ----------
+
+module drawer_joinery_dado_pocket_layout() {
+    if (has_drawers && drawer_joinery_style == "dado") {
+        g = layout_gap;
+        d = drawer_box_depth;
+
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                bh = drawer_box_height(i,b);
+                side_y = drawer_layout_box_parts_y(b,i);
+                pi = drawer_part_index(b,i);
+
+                paint("drawer_side_l",pi)
+                    translate([0,side_y])
+                        drawer_side_corner_dado_pockets_2d(d,bh);
+
+                paint("drawer_side_r",pi)
+                    translate([d+g,side_y])
+                        drawer_side_corner_dado_pockets_2d(d,bh);
+            }
+    }
+}
+
+module drawer_bottom_groove_pocket_layout() {
+    if (has_drawers && drawer_bottom_joinery == "dado") {
+        g = layout_gap;
+        d = drawer_box_depth;
+
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                bh = drawer_box_height(i,b);
+                side_y = drawer_layout_box_parts_y(b,i);
+                pi = drawer_part_index(b,i);
+
+                paint("drawer_side_l",pi)
+                    translate([0,side_y])
+                        drawer_side_bottom_groove_pocket_2d(d,bh);
+
+                paint("drawer_side_r",pi)
+                    translate([d+g,side_y])
+                        drawer_side_bottom_groove_pocket_2d(d,bh);
+
+                cross_x = 2*(d+g);
+
+                paint("drawer_box_front",pi)
+                    translate([cross_x,side_y])
+                        drawer_cross_panel_bottom_pocket_2d(bh,b);
+
+                paint("drawer_box_back",pi)
+                    translate([cross_x,side_y+bh+g])
+                        drawer_cross_panel_bottom_pocket_2d(bh,b);
+            }
+    }
+}
+
+module drawer_dado_pocket_layout() {
+    drawer_joinery_dado_pocket_layout();
+    drawer_bottom_groove_pocket_layout();
+}
+
+
+// Drawer-mounted portion of the two-piece wooden slide.
+// This is intentionally separate from drawer_box() so it can be grouped with
+// the drawer in every drawer-only display mode, even when drawer boxes are
+// hidden and only drawer fronts are being previewed.
+module drawer_mounted_wood_slides(i=0,b=0) {
+    if (has_drawers && drawer_mount == "wood_rails") {
+        ow = drawer_outer_width(b);
+        x0 = drawer_box_x0(b);
+        runner_z = drawer_runner_z(i,b);
+        pi = drawer_part_index(b,i);
+
+        paint("drawer_runner",pi)
+            wood_drawer_runner_3d(
+                x0-wood_drawer_runner_thickness,
+                wood_drawer_runner_front_setback,
+                runner_z
+            );
+
+        paint("drawer_runner",pi)
+            wood_drawer_runner_3d(
+                x0+ow,
+                wood_drawer_runner_front_setback,
+                runner_z
+            );
+    }
+}
+
+
+// ---------------------------
+// DRAWER FACE HARDWARE
+// ---------------------------
+
+module drawer_face_3d(i=0,b=0) {
+    fh = drawer_face_height_for(i,b);
+
+    difference() {
+        sheet_box(
+            [drawer_face_width(b),drawer_front_thickness,fh],
+            [drawer_face_x(b),-drawer_front_thickness,drawer_face_z(i,b)]
+        );
+
+        if (include_drawer_handle_holes) {
+            cx = drawer_face_x(b) + drawer_face_width(b)/2;
+            cz = drawer_face_z(i,b)
+                 + fh/2
+                 + drawer_handle_vertical_offset;
+
+            if (handle_hole_pattern == "single_hole") {
+                round_hole_y_3d(
+                    cx,1,cz,
+                    drawer_front_thickness+2,
+                    handle_hole_diameter
+                );
+            } else {
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        cx+dx,1,cz,
+                        drawer_front_thickness+2,
+                        handle_hole_diameter
+                    );
+            }
+        }
+
+        // Matching registration holes in the decorative drawer FACE.
+        if (active_drawer_face_registration) {
+            face_depth =
+                drawer_face_registration_face_hole == "through"
+                    ? drawer_front_thickness+2
+                    : drawer_face_registration_blind_depth()+0.02;
+
+            face_start_y =
+                drawer_face_registration_face_hole == "through"
+                    ? 1
+                    : 0.01;
+
+            for (n=[0:drawer_face_registration_hole_count-1])
+                round_hole_y_3d(
+                    drawer_face_reg_global_x(n,b),
+                    face_start_y,
+                    drawer_face_reg_global_z(i,b),
+                    face_depth,
+                    drawer_face_registration_hole_diameter
+                );
+        }
+    }
+}
+
+module drawer_face_cut(i=0,b=0) {
+    fh = drawer_face_height_for(i,b);
+
+    difference() {
+        cut_part(drawer_face_width(b),fh);
+
+        if (include_drawer_handle_holes) {
+            cx = drawer_face_width(b)/2;
+            cy = fh/2 + drawer_handle_vertical_offset;
+
+            if (handle_hole_pattern == "single_hole") {
+                round_hole_2d(cx,cy,handle_hole_diameter);
+            } else {
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(
+                        cx+dx,cy,handle_hole_diameter
+                    );
+            }
+        }
+
+        // Through registration holes belong in cut_layout. Half-depth face
+        // registration holes are exported through pocket_layout instead.
+        if (active_drawer_face_registration
+            && drawer_face_registration_face_hole == "through") {
+
+            for (n=[0:drawer_face_registration_hole_count-1])
+                round_hole_2d(
+                    drawer_face_reg_face_local_x(n,b),
+                    drawer_face_reg_face_local_z(i,b),
+                    drawer_face_registration_hole_diameter
+                );
+        }
+    }
+}
+
+
+// Blind half-depth registration holes in decorative drawer faces, positioned
+// exactly over those faces in cut_layout.
+module drawer_face_registration_pocket_layout() {
+    if (has_drawers
+        && active_drawer_face_registration
+        && drawer_face_registration_face_hole == "half_depth") {
+
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                row_y = drawer_layout_row_y(b,i);
+
+                for (n=[0:drawer_face_registration_hole_count-1])
+                    round_hole_2d(
+                        drawer_face_reg_face_local_x(n,b),
+                        row_y + drawer_face_reg_face_local_z(i,b),
+                        drawer_face_registration_hole_diameter
+                    );
+            }
+    }
+}
+
+// Full-depth printable drawer face. Through holes come from drawer_face_cut();
+// half-depth registration pockets are subtracted from one face here.
+module drawer_face_print_part(i=0,b=0) {
+    difference() {
+        linear_extrude(height=drawer_front_thickness)
+            drawer_face_cut(i,b);
+
+        if (active_drawer_face_registration
+            && drawer_face_registration_face_hole == "half_depth") {
+
+            bd = drawer_face_registration_blind_depth();
+
+            for (n=[0:drawer_face_registration_hole_count-1])
+                translate([
+                    drawer_face_reg_face_local_x(n,b),
+                    drawer_face_reg_face_local_z(i,b),
+                    drawer_front_thickness-bd
+                ])
+                    cylinder(
+                        h=bd+0.02,
+                        d=drawer_face_registration_hole_diameter
+                    );
+        }
+    }
+}
+
+
+module drawer_box(i=0,b=0,explode=0) {
+    ow = drawer_outer_width(b);
+    st = drawer_material_thickness;
+    bh = drawer_box_height(i,b);
+    d  = drawer_box_depth;
+    iz = drawer_box_z(i,b);
+    pi = drawer_part_index(b,i);
+
+    x0 = drawer_box_x0(b);
+    y0 = front_setback;
+    z0 = iz;
+
+    if (show_drawer_box_sides) {
+        paint("drawer_side_l",pi)
+            drawer_side_panel_3d(
+                x0-explode,y0,z0,d,bh,i,"left");
+
+        paint("drawer_side_r",pi)
+            drawer_side_panel_3d(
+                x0+ow-st+explode,y0,z0,d,bh,i,"right");
+    }
+
+    if (show_drawer_box_front_back) {
+        paint("drawer_box_front",pi)
+            drawer_cross_panel_3d(
+                x0,y0,z0,bh,true,b);
+
+        paint("drawer_box_back",pi)
+            drawer_cross_panel_3d(
+                x0,y0+d-st,z0,bh,false,b);
+    }
+
+    if (show_drawer_bottoms)
+        paint("drawer_bottom",pi)
+            drawer_bottom_3d(x0,y0,z0,b);
+
+    if (include_drawer_faces && show_drawer_faces)
+        paint("drawer_face",pi)
+            drawer_face_3d(i,b);
+}
+
+module all_drawers() {
+    if (has_drawers) {
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                drawer_box(i,b);
+
+                if (show_drawer_slide_parts)
+                    drawer_mounted_wood_slides(i,b);
+            }
+    }
+}
+
+
+// ---------------------------
+// DOORS + HINGE / HANDLE HARDWARE
+// ---------------------------
+
+module door_panel_3d(i=0) {
+    dw = door_each_width(i);
+    x0 = front_panel_x + door_local_x(i);
+    z0 = door_face_bottom_z;
+
+    difference() {
+        sheet_box(
+            [dw,door_thickness,door_face_height],
+            [x0,-door_thickness,z0]
+        );
+
+        if (hinge_style != "none") {
+            hx = x0 + hinge_local_x(dw,i);
+
+            for (j=[0:hinge_count-1]) {
+                hz = hinge_z(j);
+
+                if (hinge_style == "euro_35mm")
+                    round_hole_y_3d(
+                        hx,0.01,hz,
+                        min(hinge_cup_depth,door_thickness-0.5),
+                        hinge_cup_diameter
+                    );
+
+                for (dz=[
+                    -hinge_door_fixing_hole_spacing/2,
+                    hinge_door_fixing_hole_spacing/2
+                ])
+                    round_hole_y_3d(
+                        hx,1,hz+dz,
+                        door_thickness+2,
+                        hinge_door_fixing_hole_diameter
+                    );
+            }
+        }
+
+        if (include_door_handle_holes) {
+            hx = x0 + door_handle_local_x(dw,i);
+            hz = z0 + door_handle_local_z();
+
+            if (handle_hole_pattern == "single_hole") {
+                round_hole_y_3d(
+                    hx,1,hz,
+                    door_thickness+2,
+                    handle_hole_diameter
+                );
+            }
+            else if (door_handle_orientation == "vertical") {
+                for (dz=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        hx,1,hz+dz,
+                        door_thickness+2,
+                        handle_hole_diameter
+                    );
+            }
+            else {
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        hx+dx,1,hz,
+                        door_thickness+2,
+                        handle_hole_diameter
+                    );
+            }
+        }
+    }
+}
+
+module door_panel_cut(i=0) {
+    dw = door_each_width(i);
+
+    difference() {
+        cut_part(dw,door_face_height);
+
+        if (hinge_style != "none") {
+            hx = hinge_local_x(dw,i);
+
+            for (j=[0:hinge_count-1]) {
+                hz = hinge_local_z(j);
+
+                // 35 mm cup is blind, so only fixing holes go in cut_layout.
+                for (dz=[
+                    -hinge_door_fixing_hole_spacing/2,
+                    hinge_door_fixing_hole_spacing/2
+                ])
+                    round_hole_2d(
+                        hx,hz+dz,
+                        hinge_door_fixing_hole_diameter
+                    );
+            }
+        }
+
+        if (include_door_handle_holes) {
+            hx = door_handle_local_x(dw,i);
+            hz = door_handle_local_z();
+
+            if (handle_hole_pattern == "single_hole") {
+                round_hole_2d(hx,hz,handle_hole_diameter);
+            }
+            else if (door_handle_orientation == "vertical") {
+                for (dz=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(
+                        hx,hz+dz,handle_hole_diameter
+                    );
+            }
+            else {
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(
+                        hx+dx,hz,handle_hole_diameter
+                    );
+            }
+        }
+    }
+}
+
+module mixed_bay_door_panel_3d(b=0,leaf=0) {
+    dw = mixed_bay_door_leaf_width(b);
+    x0 = mixed_bay_door_leaf_x(b,leaf);
+    z0 = door_face_bottom_z;
+
+    difference() {
+        sheet_box(
+            [dw,door_thickness,door_face_height],
+            [x0,-door_thickness,z0]
+        );
+
+        if (hinge_style != "none") {
+            hx = x0 + mixed_bay_door_hinge_local_x(b,leaf);
+
+            for (j=[0:hinge_count-1]) {
+                hz = mixed_bay_hinge_z(j);
+
+                if (hinge_style == "euro_35mm")
+                    round_hole_y_3d(
+                        hx,0.01,hz,
+                        min(hinge_cup_depth,door_thickness-0.5),
+                        hinge_cup_diameter
+                    );
+
+                for (dz=[
+                    -hinge_door_fixing_hole_spacing/2,
+                    hinge_door_fixing_hole_spacing/2
+                ])
+                    round_hole_y_3d(
+                        hx,1,hz+dz,
+                        door_thickness+2,
+                        hinge_door_fixing_hole_diameter
+                    );
+            }
+        }
+
+        if (include_door_handle_holes) {
+            hx = x0 + mixed_bay_door_handle_local_x(b,leaf);
+            hz = z0 + door_handle_local_z();
+
+            if (handle_hole_pattern == "single_hole") {
+                round_hole_y_3d(
+                    hx,1,hz,
+                    door_thickness+2,
+                    handle_hole_diameter
+                );
+            }
+            else if (door_handle_orientation == "vertical") {
+                for (dz=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        hx,1,hz+dz,
+                        door_thickness+2,
+                        handle_hole_diameter
+                    );
+            }
+            else {
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_y_3d(
+                        hx+dx,1,hz,
+                        door_thickness+2,
+                        handle_hole_diameter
+                    );
+            }
+        }
+    }
+}
+
+module mixed_bay_door_panel_cut(b=0,leaf=0) {
+    dw = mixed_bay_door_leaf_width(b);
+
+    difference() {
+        cut_part(dw,door_face_height);
+
+        if (hinge_style != "none") {
+            hx = mixed_bay_door_hinge_local_x(b,leaf);
+
+            for (j=[0:hinge_count-1]) {
+                hz = mixed_bay_hinge_z(j)-door_face_bottom_z;
+
+                for (dz=[
+                    -hinge_door_fixing_hole_spacing/2,
+                    hinge_door_fixing_hole_spacing/2
+                ])
+                    round_hole_2d(
+                        hx,hz+dz,
+                        hinge_door_fixing_hole_diameter
+                    );
+            }
+        }
+
+        if (include_door_handle_holes) {
+            hx = mixed_bay_door_handle_local_x(b,leaf);
+            hz = door_handle_local_z();
+
+            if (handle_hole_pattern == "single_hole")
+                round_hole_2d(hx,hz,handle_hole_diameter);
+            else if (door_handle_orientation == "vertical")
+                for (dz=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(hx,hz+dz,handle_hole_diameter);
+            else
+                for (dx=[-handle_hole_spacing/2,handle_hole_spacing/2])
+                    round_hole_2d(hx+dx,hz,handle_hole_diameter);
+        }
+    }
+}
+
+module door_hinge_pocket_layout() {
+    if (has_doors && hinge_style == "euro_35mm") {
+        if (mixed_bay_mode) {
+            for (b=[0:mixed_bay_count-1])
+                if (mixed_bay_is_type(b,"door"))
+                    for (leaf=[0:mixed_bay_door_count(b)-1]) {
+                        door_layout_x = mixed_bay_door_layout_x(b,leaf);
+                        hx = door_layout_x
+                             + mixed_bay_door_hinge_local_x(b,leaf);
+
+                        for (j=[0:hinge_count-1])
+                            round_hole_2d(
+                                hx,
+                                door_layout_y
+                                    + mixed_bay_hinge_z(j)
+                                    - door_face_bottom_z,
+                                hinge_cup_diameter
+                            );
+                    }
+        }
+        else {
+            for (i=[0:door_count-1]) {
+                dw = door_each_width(i);
+                door_layout_x = door_layout_part_x(i);
+                hx = door_layout_x + hinge_local_x(dw,i);
+
+                for (j=[0:hinge_count-1])
+                    round_hole_2d(
+                        hx,
+                        door_layout_y + hinge_local_z(j),
+                        hinge_cup_diameter
+                    );
+            }
+        }
+    }
+}
+
+module doors() {
+    if (has_doors && show_doors && door_face_height > 20) {
+        if (mixed_bay_mode) {
+            for (b=[0:mixed_bay_count-1])
+                if (mixed_bay_is_type(b,"door"))
+                    for (leaf=[0:mixed_bay_door_count(b)-1])
+                        paint("door",mixed_bay_door_part_index(b,leaf))
+                            mixed_bay_door_panel_3d(b,leaf);
+        }
+        else {
+            for (i=[0:door_count-1])
+                paint("door",i)
+                    door_panel_3d(i);
+        }
+    }
+}
+
+
+// ---------------------------
+// ASSEMBLY
+// ---------------------------
+
+module assembly() {
+    carcass();
+    all_drawers();
+    doors();
+}
+
+

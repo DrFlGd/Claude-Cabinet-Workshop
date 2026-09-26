@@ -1,0 +1,73 @@
+{
+  "native_slide_example": {
+    "id": "manufacturer_family_500",
+    "category": "drawer_slide",
+    "manufacturer": "Manufacturer",
+    "family": "Family",
+    "model": "Model 500",
+    "label": "Manufacturer Family 500 mm",
+    "targets": ["utility", "shop_cart", "benchtop", "stackable", "kitchen", "drawer"],
+    "geometry_support": {
+      "status": "partial",
+      "notes": "Length/clearance/envelope map to the inherited Modular Organization geometry; only add automatic hole drilling when the source defines one unambiguous supported pattern."
+    },
+    "verification": {"status": "user_entered", "verified": false, "notes": "Replace with source and verification notes."},
+    "mounting_specs": {
+      "mounting": "side",
+      "nominal_length_mm": 500,
+      "side_space_per_side_mm": 12.7,
+      "slide_height_mm": 45
+    },
+    "apply": {
+      "drawer_mount": "metal_slides",
+      "metal_slide_clearance_per_side": 12.7,
+      "metal_slide_length": 500,
+      "metal_slide_front_setback": 0,
+      "metal_slide_envelope_height": 45,
+      "include_metal_slide_holes": false,
+      "metal_slide_hole_pattern_mode": "legacy_spacing"
+    },
+    "source": {"type": "manufacturer_pdf", "title": "Technical sheet", "url": "https://example.com"}
+  },
+  "partial_hinge_example": {
+    "id": "manufacturer_hinge_overlay",
+    "category": "hinge",
+    "manufacturer": "Manufacturer",
+    "family": "Hinge family",
+    "model": "Model",
+    "label": "Manufacturer hinge / overlay",
+    "targets": ["utility", "shop_cart", "stackable", "kitchen"],
+    "geometry_support": {"status": "partial", "notes": "Cup bore maps safely; fixing pattern is not represented by the current engine."},
+    "verification": {"status": "user_entered", "verified": false},
+    "mounting_specs": {"application": "overlay", "cup_diameter_mm": 35, "cup_depth_mm": 12},
+    "apply": {
+      "hinge_style": "euro_35mm",
+      "front_mount_style": "overlay",
+      "hinge_cup_diameter": 35,
+      "hinge_cup_depth": 12,
+      "hinge_cup_center_from_door_edge": 22.5,
+      "hinge_door_fixing_enabled": false,
+      "hinge_plate_holes_enabled": false
+    },
+    "source": {"type": "manufacturer_web", "url": "https://example.com"}
+  },
+  "metadata_only_example": {
+    "id": "manufacturer_undermount_family",
+    "category": "drawer_slide",
+    "manufacturer": "Manufacturer",
+    "family": "Undermount family",
+    "model": "Family",
+    "label": "Manufacturer concealed runner family",
+    "geometry_support": {
+      "status": "metadata_only",
+      "notes": "Keep manufacturer planning dimensions in the web catalog without emitting a machining preset until matching geometry exists."
+    },
+    "verification": {"status": "manufacturer_verified", "verified": true},
+    "mounting_specs": {
+      "mounting": "concealed_undermount",
+      "available_nominal_lengths_mm": [300, 350, 400, 450, 500],
+      "drawer_width_formula": "manufacturer formula here"
+    },
+    "source": {"type": "manufacturer_pdf", "url": "https://example.com"}
+  }
+}

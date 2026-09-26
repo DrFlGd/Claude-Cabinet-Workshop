@@ -1,0 +1,33 @@
+Modular Organization v3 — expanded hardware library validation
+Date: 2026-09-15
+
+Catalog validation
+- Canonical profiles: 97
+- Machining-capable (native/partial): 84
+- Metadata-only: 13
+- Categories: 80 drawer-slide records, 17 hinge records
+- Resolved manufacturer counts: Accuride 42; Knape & Vogt 20; Hettich 14; Blum 8; Salice 5; GRASS 4; Generic 4
+- JSON Schema validation: PASS for canonical and resolved catalogs
+- Hardware generator --check: PASS before and after regeneration
+
+OpenSCAD parser/compile validation
+- modular_organization_utility_v3.scad: PASS, no warnings/errors
+- modular_organization_shop_cart_v3.scad: PASS, no warnings/errors
+- modular_organization_benchtop_v3.scad: PASS, no warnings/errors
+- modular_organization_stackable_v3.scad: PASS, no warnings/errors
+- modular_organization_kitchen_v3.scad: PASS, no warnings/errors
+- modular_organization_drawer_v3.scad: PASS, no warnings/errors
+
+Representative generated hardware preset compile tests
+- Accuride 3634EC 20 in: PASS
+- Accuride 9301E 24 in: PASS
+- KV 8450FM 18 in: PASS
+- Hettich KA 5632 550 mm: PASS
+- Blum CLIP top BLUMOTION 110 degree overlay screw-on: PASS
+- Salice Silentia+ Series 100 105 degree inset: PASS
+
+Safety semantics
+- metadata_only records contain manufacturer mounting specs but no apply/targets: validated by generator
+- metadata_only records are omitted from OpenSCAD machining presets
+- side-mount manufacturer profiles with multiple valid rail holes keep automatic drilling disabled
+- hinge fixing-wing drilling remains disabled where V35 cannot represent lateral fixing-hole offset

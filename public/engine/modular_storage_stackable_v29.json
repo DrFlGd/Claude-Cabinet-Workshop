@@ -1,0 +1,50 @@
+{
+  "parameterSets": {
+    "1 Deep Drawer": {
+      "design_name": "1 Deep Drawer",
+      "module_type": "drawers",
+      "drawer_count": "1",
+      "door_shelf_count": "0",
+      "cabinet_width": "500",
+      "cabinet_height": "260",
+      "cabinet_depth": "500"
+    },
+    "2 Drawer": {
+      "design_name": "2 Drawer",
+      "module_type": "drawers",
+      "drawer_count": "2",
+      "door_shelf_count": "0",
+      "cabinet_width": "500",
+      "cabinet_height": "360",
+      "cabinet_depth": "500"
+    },
+    "4 Shallow Drawer": {
+      "design_name": "4 Shallow Drawer",
+      "module_type": "drawers",
+      "drawer_count": "4",
+      "door_shelf_count": "0",
+      "cabinet_width": "500",
+      "cabinet_height": "480",
+      "cabinet_depth": "500"
+    },
+    "Open Module": {
+      "design_name": "Open Module",
+      "module_type": "open",
+      "drawer_count": "0",
+      "door_shelf_count": "1",
+      "cabinet_width": "500",
+      "cabinet_height": "320",
+      "cabinet_depth": "500"
+    },
+    "Door Module": {
+      "design_name": "Door Module",
+      "module_type": "door",
+      "drawer_count": "0",
+      "door_shelf_count": "1",
+      "cabinet_width": "500",
+      "cabinet_height": "420",
+      "cabinet_depth": "500"
+    }
+  },
+  "fileFormatVersion": "1"
+}

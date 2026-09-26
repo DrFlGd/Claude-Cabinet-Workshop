@@ -1,0 +1,57 @@
+{
+  "project_format": "MORG-1",
+  "name": "Standalone Drawer with 4 x 3 Divider Grid",
+  "units": "mm",
+  "modules": [
+    {
+      "id": "drawer_a",
+      "type": "openscad",
+      "frontend": "drawer",
+      "parameters": {
+        "drawer_design_basis": "enclosure",
+        "enclosure_opening_width": 450,
+        "enclosure_opening_height": 160,
+        "enclosure_usable_depth": 500,
+        "enclosure_height_mode": "box_height",
+        "enclosure_target_box_height": 120,
+        "drawer_mount": "metal_slides",
+        "metal_slide_clearance_per_side": 12.7,
+        "drawer_face_style": "none"
+      },
+      "transform": {
+        "translate": [0, 0, 0],
+        "rotate_z": 0
+      }
+    },
+    {
+      "id": "grid_a",
+      "type": "drawer_divider_grid",
+      "parameters": {
+        "layout_mode": "equal_count",
+        "columns": 4,
+        "rows": 3,
+        "mounting": "bottom_and_perimeter",
+        "thickness": 6,
+        "height": 60,
+        "groove_clearance": 0.2,
+        "interlock_clearance": 0.2,
+        "bottom_groove_depth": 2.5,
+        "perimeter_groove_depth": 3,
+        "edge_margin": 8,
+        "interlock_orientation": "longitudinal_top",
+        "engrave_ids": true
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "id": "mount_grid_a",
+      "type": "mount",
+      "host": {
+        "module": "drawer_a",
+        "interface": "drawer.1.organizer"
+      },
+      "child": "grid_a"
+    }
+  ]
+}

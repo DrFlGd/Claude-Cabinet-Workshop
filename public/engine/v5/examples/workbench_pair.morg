@@ -1,0 +1,89 @@
+{
+  "project_format": "MORG-1",
+  "name": "V4 Composition Workbench Example",
+  "units": "mm",
+  "modules": [
+    {
+      "id": "cab_left",
+      "type": "openscad",
+      "frontend": "stackable",
+      "preset": "Open Module",
+      "parameters": {
+        "ganging_style": "dowel_connector",
+        "ganging_sides": "right",
+        "ganging_dowel_diameter": 8,
+        "ganging_dowel_depth": 10,
+        "ganging_connector_hole_diameter": 6.5
+      },
+      "transform": {
+        "translate": [
+          0,
+          0,
+          0
+        ],
+        "rotate_z": 0
+      }
+    },
+    {
+      "id": "cab_right",
+      "type": "openscad",
+      "frontend": "stackable",
+      "preset": "Open Module",
+      "parameters": {
+        "ganging_style": "dowel_connector",
+        "ganging_sides": "left",
+        "ganging_dowel_diameter": 8,
+        "ganging_dowel_depth": 10,
+        "ganging_connector_hole_diameter": 6.5
+      }
+    },
+    {
+      "id": "drawer_insert",
+      "type": "openscad",
+      "frontend": "drawer",
+      "preset": "450 mm Opening / Metal Slides"
+    },
+    {
+      "id": "worktop",
+      "type": "span_worktop",
+      "supports": [
+        "cab_left",
+        "cab_right"
+      ],
+      "thickness": 25,
+      "overhang": {
+        "left": 15,
+        "right": 15,
+        "front": 25,
+        "back": 0
+      },
+      "support_height_tolerance": 0.5
+    }
+  ],
+  "relationships": [
+    {
+      "id": "gang_pair",
+      "type": "mate",
+      "a": {
+        "module": "cab_left",
+        "interface": "side_gang.right"
+      },
+      "b": {
+        "module": "cab_right",
+        "interface": "side_gang.left"
+      }
+    },
+    {
+      "id": "drawer_in_left",
+      "type": "contains",
+      "parent": "cab_left",
+      "child": "drawer_insert",
+      "offset": [
+        25,
+        10,
+        105
+      ],
+      "rotate_z": 0
+    }
+  ]
+}

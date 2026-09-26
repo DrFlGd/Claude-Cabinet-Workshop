@@ -1,0 +1,15 @@
+{
+  "slide_example": {
+    "id":"manufacturer_family_500","category":"drawer_slide","manufacturer":"Manufacturer","family":"Family","model":"Model 500","label":"Manufacturer Family 500 mm",
+    "targets":["utility","shop_cart","benchtop","stackable","kitchen","drawer"],
+    "verification":{"status":"user_entered","verified":false,"notes":"Replace with source and verification notes."},
+    "apply":{"drawer_mount":"metal_slides","metal_slide_clearance_per_side":12.7,"metal_slide_length":500,"metal_slide_front_setback":0,"metal_slide_envelope_height":45,"include_metal_slide_holes":true,"metal_slide_hole_pattern_mode":"explicit_array","hardware_drilling_mode":"recommended","metal_slide_cabinet_holes_x":[37,133,229,325,421],"metal_slide_drawer_holes_x":[37,133,229,325,421],"metal_slide_cabinet_hole_diameter":5,"metal_slide_drawer_hole_diameter":5,"metal_slide_cabinet_hole_z_from_drawer_bottom":22.5,"metal_slide_drawer_hole_z_from_drawer_bottom":22.5},
+    "source":{"type":"manufacturer_pdf","title":"Technical sheet","url":"https://example.com"}
+  },
+  "hinge_example": {
+    "id":"manufacturer_hinge_overlay","category":"hinge","manufacturer":"Manufacturer","family":"Hinge family","model":"Model","label":"Manufacturer hinge / overlay",
+    "targets":["utility","shop_cart","stackable","kitchen"],"verification":{"status":"user_entered","verified":false},
+    "apply":{"hinge_style":"euro_35mm","front_mount_style":"overlay","hinge_cup_diameter":35,"hinge_cup_depth":12,"hinge_cup_center_from_door_edge":22.5,"hinge_door_fixing_enabled":false,"hinge_plate_holes_enabled":false},
+    "source":{"type":"manufacturer_web","url":"https://example.com"}
+  }
+}

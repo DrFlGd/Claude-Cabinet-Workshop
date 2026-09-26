@@ -1,0 +1,1124 @@
+[
+  {
+    "module": "utility",
+    "preset": "3 Drawer Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.06
+  },
+  {
+    "module": "utility",
+    "preset": "4 Drawer Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.37
+  },
+  {
+    "module": "utility",
+    "preset": "Door Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.36
+  },
+  {
+    "module": "utility",
+    "preset": "2 Drawer / 2 Door",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.05
+  },
+  {
+    "module": "utility",
+    "preset": "1 Drawer / 2 Door",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.61
+  },
+  {
+    "module": "utility",
+    "preset": "Wide 3-Section Drawers",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 5.52
+  },
+  {
+    "module": "utility",
+    "preset": "Wide 4-Section Drawers",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 6.43
+  },
+  {
+    "module": "utility",
+    "preset": "Wide Mixed Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 4.5
+  },
+  {
+    "module": "utility",
+    "preset": "Tall 2-Door Storage",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 4.32
+  },
+  {
+    "module": "utility",
+    "preset": "2-Door Wall",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.96
+  },
+  {
+    "module": "utility",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.83
+  },
+  {
+    "module": "utility",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.33
+  },
+  {
+    "module": "utility",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.19
+  },
+  {
+    "module": "utility",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 8
+    },
+    "errors": [],
+    "seconds": 2.15
+  },
+  {
+    "module": "shop_cart",
+    "preset": "Compact Mixed Cart",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 3.34
+  },
+  {
+    "module": "shop_cart",
+    "preset": "3-Section Drawer Workbench",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 5.62
+  },
+  {
+    "module": "shop_cart",
+    "preset": "4-Section Drawer Workbench",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 6.85
+  },
+  {
+    "module": "shop_cart",
+    "preset": "Machine Stand",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.6
+  },
+  {
+    "module": "shop_cart",
+    "preset": "Open Service Cart",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.58
+  },
+  {
+    "module": "shop_cart",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.65
+  },
+  {
+    "module": "shop_cart",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 3.0
+  },
+  {
+    "module": "shop_cart",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.46
+  },
+  {
+    "module": "shop_cart",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 8
+    },
+    "errors": [],
+    "seconds": 2.75
+  },
+  {
+    "module": "benchtop",
+    "preset": "Micro 2 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.58
+  },
+  {
+    "module": "benchtop",
+    "preset": "Mini 3 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.53
+  },
+  {
+    "module": "benchtop",
+    "preset": "Compact 4 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.6
+  },
+  {
+    "module": "benchtop",
+    "preset": "Parts 5 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.72
+  },
+  {
+    "module": "benchtop",
+    "preset": "Shallow Parts 6 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.99
+  },
+  {
+    "module": "benchtop",
+    "preset": "Wide 6 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 2.0
+  },
+  {
+    "module": "benchtop",
+    "preset": "Wide 8 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 2.62
+  },
+  {
+    "module": "benchtop",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 6
+    },
+    "errors": [],
+    "seconds": 1.63
+  },
+  {
+    "module": "benchtop",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 6
+    },
+    "errors": [],
+    "seconds": 1.68
+  },
+  {
+    "module": "benchtop",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 7
+    },
+    "errors": [],
+    "seconds": 1.58
+  },
+  {
+    "module": "benchtop",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 10
+    },
+    "errors": [],
+    "seconds": 1.89
+  },
+  {
+    "module": "stackable",
+    "preset": "1 Deep Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.04
+  },
+  {
+    "module": "stackable",
+    "preset": "2 Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.28
+  },
+  {
+    "module": "stackable",
+    "preset": "4 Shallow Drawer",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.86
+  },
+  {
+    "module": "stackable",
+    "preset": "Open Module",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.92
+  },
+  {
+    "module": "stackable",
+    "preset": "Door Module",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.26
+  },
+  {
+    "module": "stackable",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.16
+  },
+  {
+    "module": "stackable",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.14
+  },
+  {
+    "module": "stackable",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.06
+  },
+  {
+    "module": "stackable",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 8
+    },
+    "errors": [],
+    "seconds": 2.23
+  },
+  {
+    "module": "kitchen",
+    "preset": "B30 \u2014 Drawer over Doors",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.28
+  },
+  {
+    "module": "kitchen",
+    "preset": "DB36-3 \u2014 3 Drawer Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 1.96
+  },
+  {
+    "module": "kitchen",
+    "preset": "DB36-4 \u2014 4 Drawer Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.41
+  },
+  {
+    "module": "kitchen",
+    "preset": "SB36 \u2014 Sink Base",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.52
+  },
+  {
+    "module": "kitchen",
+    "preset": "W3030 \u2014 Wall Cabinet",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.41
+  },
+  {
+    "module": "kitchen",
+    "preset": "WO2424 \u2014 Open Wall",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.26
+  },
+  {
+    "module": "kitchen",
+    "preset": "T2490 \u2014 Tall Pantry",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 6.6
+  },
+  {
+    "module": "kitchen",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.29
+  },
+  {
+    "module": "kitchen",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 2.29
+  },
+  {
+    "module": "kitchen",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 2.14
+  },
+  {
+    "module": "kitchen",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 8
+    },
+    "errors": [],
+    "seconds": 2.32
+  },
+  {
+    "module": "drawer",
+    "preset": "450 mm Opening / Metal Slides",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.54
+  },
+  {
+    "module": "drawer",
+    "preset": "18 in Opening / Metal Slides",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.64
+  },
+  {
+    "module": "drawer",
+    "preset": "Copy 400 x 450 x 120 Box",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.59
+  },
+  {
+    "module": "drawer",
+    "preset": "420 x 336 x 85 Inside Clear",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.74
+  },
+  {
+    "module": "drawer",
+    "preset": "42 mm Grid 10 x 8",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.81
+  },
+  {
+    "module": "drawer",
+    "preset": "450 mm Opening / 4x3 Divider Grid",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.79
+  },
+  {
+    "module": "drawer",
+    "preset": null,
+    "parameters": {
+      "drawer_joinery_style": "butt"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.71
+  },
+  {
+    "module": "drawer",
+    "preset": null,
+    "parameters": {
+      "drawer_joinery_style": "screw"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.63
+  },
+  {
+    "module": "drawer",
+    "preset": null,
+    "parameters": {
+      "drawer_joinery_style": "dado"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 5
+    },
+    "errors": [],
+    "seconds": 1.61
+  },
+  {
+    "module": "drawer",
+    "preset": null,
+    "parameters": {
+      "drawer_joinery_style": "tab_slot"
+    },
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 4
+    },
+    "errors": [],
+    "seconds": 1.75
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Freestanding Single Printer Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.6
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Wall Mounted Pull-Out Printer Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.69
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Stacked Dual-Bay Printer Tower",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.79
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Skeletonized Wall Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.84
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Solid-Side Utility Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.78
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Compact Desktop Printer",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.76
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Medium Enclosed Printer",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.73
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Fixed Runner Service Shelf",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.66
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Wall Printer Tower",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.8
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Housed Joint Printer Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 2
+    },
+    "errors": [],
+    "seconds": 0.7
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Tab-Slot Full Back Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.78
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Applied Panel Back Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.78
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Three Stretcher Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.79
+  },
+  {
+    "module": "equipment_stand",
+    "preset": "Fractional Stock Stand",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.68
+  },
+  {
+    "module": "equipment_stand",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "butt"
+    },
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.61
+  },
+  {
+    "module": "equipment_stand",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "screw"
+    },
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.64
+  },
+  {
+    "module": "equipment_stand",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "dado"
+    },
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 2
+    },
+    "errors": [],
+    "seconds": 0.61
+  },
+  {
+    "module": "equipment_stand",
+    "preset": null,
+    "parameters": {
+      "joinery_style": "tab_slot"
+    },
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 2,
+      "info": 1
+    },
+    "errors": [],
+    "seconds": 0.54
+  }
+]
