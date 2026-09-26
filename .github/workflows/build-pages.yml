@@ -25,6 +25,8 @@ jobs:
       - run: npm install --global pnpm@11.25.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit --incremental false
+      - name: Install native geometry test dependency
+        run: sudo apt-get update && sudo apt-get install -y openscad
       - run: pnpm run test:release
       - run: pnpm run build:static
         env:
