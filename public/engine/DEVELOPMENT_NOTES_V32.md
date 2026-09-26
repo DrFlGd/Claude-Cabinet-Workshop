@@ -1,5 +1,8 @@
 # Development Notes — V32
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 Hardware must follow the same architectural rule as recipes:
 
 ```text

@@ -1,5 +1,8 @@
 # Modular Storage V32 — recipe-style hardware catalog
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 V32 refactors the hardware database so slides and hinges behave like recipes:
 select/apply hardware once, then edit the ordinary dimensions and drilling
 settings directly.

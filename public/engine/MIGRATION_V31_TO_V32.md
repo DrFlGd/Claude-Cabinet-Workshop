@@ -1,5 +1,8 @@
 # Migration: V31 → V32
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 V32 changes the hardware catalog from a persistent resolver to recipe-style
 one-time patches.
 

@@ -1,5 +1,8 @@
 # Fork: Modular Storage v35 -> Modular Organization
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 Modular Organization is a deliberate fork of Modular Storage v35. The storage
 line remains a cabinet/drawer generator; the organization line adds a public
 physical-interface model so independently generated modules can declare how

@@ -1,5 +1,8 @@
 # Modular Organization v3
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 Modular Organization v3 is the first **composition release** of the fork that began from Modular Storage v35. V1 introduced physical interfaces; V2 hardened compatibility signatures and exhaustive manufacturing validation; V3 adds a versioned project graph and a resolver that can compose multiple independently generated modules without moving geometry authority out of OpenSCAD.
 
 ## Architecture

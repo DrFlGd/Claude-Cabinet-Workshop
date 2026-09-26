@@ -1,5 +1,8 @@
 # Development Notes — V29
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 ## Solver architecture
 
 V29 preserves `cabinet_width` / `cabinet_depth` as the public configured

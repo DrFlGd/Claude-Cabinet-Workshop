@@ -1,5 +1,8 @@
 # Hardware Catalog V2 — one-time configuration patches
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 `modular_storage_hardware_v2.json` is the canonical hardware database.
 
 V32 deliberately makes hardware work like cabinet recipes:

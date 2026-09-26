@@ -1,5 +1,7 @@
 # Kitchen independent-bay and hardware grouping patch
 
+> Historical verification/change record for the stated package or patch. Results are not a fresh validation of subsequent changes. For current API and machining behavior see [Integration](INTEGRATION.md) and [Machining](MACHINING.md).
+
 Based on v5.3.0. Kitchen exposed bay count but hid a one-element width-weight
 array and explicitly disabled partitions. Increasing bay count raised
 ERROR|MIXED_BAY_WEIGHTS_SHORT, which the browser correctly rejected.

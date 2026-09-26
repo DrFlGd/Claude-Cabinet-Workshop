@@ -1,5 +1,8 @@
 # Modular Storage V29 — Fit-Target / Modular Drawer Sizing
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 V29 adds reverse sizing: instead of choosing an outside cabinet envelope first
 and accepting whatever drawer interior results, the user can specify the
 required finished drawer interior width and/or depth and let the cabinet solve

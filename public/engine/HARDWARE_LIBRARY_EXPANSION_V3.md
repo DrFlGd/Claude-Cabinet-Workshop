@@ -1,5 +1,8 @@
 # Hardware library inherited by Modular Organization v3
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 Date researched: 2026-09-15
 
 This catalog was expanded in the Modular Storage v35 parent and is carried forward by the fork with source-traceable manufacturer data from Blum, Hettich, Salice, GRASS, Accuride, and Knape & Vogt (KV).

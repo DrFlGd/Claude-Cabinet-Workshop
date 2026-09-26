@@ -1,5 +1,8 @@
 # Shared Cabinet Generator — V25 Segmented Back-Dado Face Frames
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 Files:
 - `parametric_kitchen_cabinet_v2.scad`
 - `parametric_utility_cabinet_v57.scad`

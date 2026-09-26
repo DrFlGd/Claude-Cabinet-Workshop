@@ -17,3 +17,14 @@ Historical release notes, old review snapshots, nested export archives, screensh
 All seven SCAD frontends now use the ordered section vocabulary in PARAMETER_CONVENTIONS.md. The generated web schema follows the exact same source order, exposes each frontend's `groups` list and includes `parameter_layout` metadata (schema version 7). Integrations that key UI sections by old group labels need to adopt the new labels. Parameter names, default expressions, ranges, enum values and native presets are unchanged.
 
 One internal resolver flag, `standalone_drawer_mode`, is no longer incorrectly exposed in the schema. It remains an internal constant; remove any attempt to send it as a public request parameter. Hidden dependency assignments may occur between public controls to preserve OpenSCAD evaluation order. Empty categories are omitted by each module.
+
+## Later Cabinet Workshop patches
+
+The bundled package additionally exposes kitchen bay widths/front gaps/partitions,
+uses four default bay type/weight entries and defaults partitions on. Material
+relief and cutter overrides are additive; zero cutter values inherit shared tools,
+and bottom relief defaults to none. See MACHINING.md and KITCHEN_BAY_FIX.md.
+
+These follow-ups are distinct from the original organization-only 5.3.0 change.
+Their public-contract signatures were updated deliberately. Native parameter keys
+remain the integration contract even where the web UI changes labels or grouping.

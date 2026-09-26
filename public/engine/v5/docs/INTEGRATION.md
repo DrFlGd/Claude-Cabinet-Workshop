@@ -1,6 +1,6 @@
-# Website integration
+# Python engine integration
 
-Use `modular_organization.api` as the application boundary. The package is an engine, not an HTTP server or deployed website.
+For a Python/server integration, use `modular_organization.api` as the application boundary. The package is an engine, not an HTTP server or deployed website.
 
 | Function | Input | Result |
 |---|---|---|
@@ -22,4 +22,11 @@ Manufacturing ZIPs contain registered CUT, POCKET and ENGRAVE exports, reports, 
 
 Project checks cover orthogonal Z rotation, translation, interface matching, logical organizers and conservative bounding boxes. They do not simulate arbitrary motion or structural loads. Equipment slide/load data are hardware metadata, not a wall-anchor or anti-tip calculation.
 
-For section rendering, use each frontend’s ordered `groups` list and parameter `group` values. `parameter_layout` defines the vocabulary and category ordering for all modules. Avoid a second client-side sort that diverges from native OpenSCAD.
+For section rendering, use each frontend’s ordered `groups` list and parameter `group` values. `parameter_layout` defines the vocabulary and category ordering for all modules. Generic clients can preserve that native order. Cabinet Workshop adds intentional presentation rules in its web adapter: Fronts is regrouped into Doors/Drawers, material-specific machining is grouped by material, and dependencies/advanced controls are filtered.
+
+## Browser integration distinction
+
+Cabinet Workshop's browser rendering runs bundled OpenSCAD WASM workers rather
+than calling this Python API. Its source/schema adapter and browser export review
+are separate from the native Python manufacturing audit. Passing browser Design
+Health must not be reported as completion of the native final-contour audit.

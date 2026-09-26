@@ -1,5 +1,7 @@
 # Review and changes
 
+> Historical verification/change record for the stated package or patch. Results are not a fresh validation of subsequent changes. For current API and machining behavior see [Integration](INTEGRATION.md) and [Machining](MACHINING.md).
+
 The review covered the seven frontend definitions, shared CAD geometry, preset and hardware catalogs, Python scripts, export flow, project composition, schema generation and package layout.
 
 | Finding | Change |

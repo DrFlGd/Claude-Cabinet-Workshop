@@ -21,6 +21,9 @@ possible configuration. Imported package capabilities are identified as such.
 
 - Expanded the changelog to cover the development history and detailed fixes.
 - Added source references, validation scope and current limitations.
+- Cleaned the README/hosting guide and added a documentation index and development guide.
+- Corrected native-vs-web grouping, per-material relief and browser-vs-Python API guidance.
+- Marked historical reports/versioned engine notes explicitly and synchronized embedded documentation.
 - Documentation only; application version remains 0.4.1.
 
 ## 0.4.1 — 2026-09-25

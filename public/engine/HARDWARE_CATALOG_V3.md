@@ -1,5 +1,8 @@
 # Hardware Catalog V3 — configuration patches + mounting-spec library
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 `modular_organization_hardware_v3.json` is the canonical hardware database inherited by Modular Organization v3 from the v35 parent line.
 
 The catalog now has two jobs:

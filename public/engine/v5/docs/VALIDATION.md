@@ -1,5 +1,7 @@
 # Release verification — 5.3.0
 
+> Historical verification/change record for the stated package or patch. Results are not a fresh validation of subsequent changes. For current API and machining behavior see [Integration](INTEGRATION.md) and [Machining](MACHINING.md).
+
 Verified with Python 3.12 and OpenSCAD 2021.01.
 
 | Check | Result |

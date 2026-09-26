@@ -1,5 +1,8 @@
 # Development notes — v3
 
+> Historical engine documentation. Applies to the version named below, not the current application. See the [documentation guide](../../docs/README.md) and [consolidated changelog](../../CHANGELOG.md).
+
+
 The project graph is intentionally outside OpenSCAD. OpenSCAD emits facts about generated physical modules; it does not own mutable project state.
 
 `modular_organization_project.py` is a reference resolver/service implementation suitable for porting to or invoking from a web backend. It reads MORG-1, materializes each OpenSCAD module contract, resolves relationships, and emits deterministic resolved state.

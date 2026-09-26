@@ -58,4 +58,8 @@ The matrix regenerates 82 manufacturing audits and requires OpenSCAD. It is more
 
 No structural certification or engineering load guarantee is provided by these geometric checks. Confirm material, hardware, loads and installation for the intended use. Distribution licensing and ownership should be confirmed before public publication; this cleanup does not assign a new license.
 
-Parameter sections are now consistent in native OpenSCAD and web schema. See [parameter conventions](docs/PARAMETER_CONVENTIONS.md) for the standard required of future modules.
+Native parameter sections follow a shared schema contract; Cabinet Workshop applies additional web presentation rules. See [parameter conventions](docs/PARAMETER_CONVENTIONS.md) for the standard required of future modules.
+
+The bundled copy includes later kitchen-bay and material-relief patches. See
+[Migration](docs/MIGRATION.md) and [Machining](docs/MACHINING.md). Historical review
+and validation counts describe their stated baseline, not every later patch.
