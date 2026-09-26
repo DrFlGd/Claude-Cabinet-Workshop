@@ -2,6 +2,8 @@ export type Field={key:string;value:any;expression?:string;section:string;descri
 export const sectionOrder=['Materials','Machining','Sizing','Structure','Doors','Shelves','Drawers','Dividers','Trays','Mounting','Hardware','Output','System'];
 
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
+ if(['cabinet_mount_style','mount_mode'].includes(f.key))return [{...f,section:'Mounting / Mount Style'}];
+ if(f.section==='Structure / Back and Braces')return [{...f,section:'Mounting / Rear Mounting',description:f.key==='back_style'?'Rear construction: choose a back panel or structural rear stretchers. Stretcher dimensions appear when Stretchers is selected. These controls define rear geometry, not a separate wall-fastener or French-cleat system.':f.description}];
  if(f.key==='face_frame_mid_rail_mode')f={...f,description:'Controls the horizontal crosspiece between the face frame’s top and bottom rails. None omits it. Combo auto places its center at the top of the door region, typically between the lower doors and upper drawers. Custom positions its center at the height entered in Face frame custom mid rail Z, measured from the cabinet base. Requires face-frame construction.'};
  if(!f.section.startsWith('Fronts /'))return [f];
  if(f.key.startsWith('drawer_')||f.key.startsWith('custom_drawer_'))return [{...f,section:'Drawers / Fronts'}];
@@ -41,8 +43,9 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(k==='overlay_width_style'&&v.front_mount_style==='inset_flush')return 'Select overlay fronts';
  if(k==='drawer_gap'&&!hasDrawers)return 'Add drawers first';
  if(k==='door_gap'&&!hasDoors)return 'Add doors first';
- if(k.startsWith('custom_toe_kick_')||['custom_bottom_above_toe','custom_side_toe_kick_cutout'].includes(k)){if(v.base_style!=='toe_kick')return 'Select a toe-kick base';}
+ if(k.startsWith('custom_toe_kick_')||['custom_bottom_above_toe','custom_side_toe_kick_cutout'].includes(k)){if(v.base_style!=='toe_kick'||v.cabinet_mount_style==='wall')return 'Select a floor-mounted toe-kick base';}
  if(['drawer_bank_face_gap','drawer_bank_partition_rear_clearance','drawer_bank_partition_joinery'].includes(k)&&Number(v.drawer_bank_count)<=1)return 'Requires multiple drawer banks';
+ if(k==='base_style'&&v.cabinet_mount_style==='wall')return 'Floor bases are disabled for wall mounting';
  if(k.startsWith('base_mounting_plate_')&&!v.include_base_mounting_plate)return 'Enable the base mounting plate';
  if(k==='include_drawer_face_registration_holes'&&!v.include_drawer_faces)return 'Enable drawer faces';
  if(k.startsWith('drawer_face_registration_')&&!v.include_drawer_faces)return 'Enable drawer faces';

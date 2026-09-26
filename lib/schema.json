@@ -30632,6 +30632,63 @@
         "advanced": false
       },
       {
+        "key": "custom_toe_kick_height",
+        "value": 101.6,
+        "expression": null,
+        "section": "Structure / Base",
+        "description": "Toe-kick dimensions; used only when base_style = \"toe_kick\".",
+        "options": null,
+        "bounds": null,
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "custom_toe_kick_setback",
+        "value": 76.2,
+        "expression": null,
+        "section": "Structure / Base",
+        "description": "",
+        "options": null,
+        "bounds": null,
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "custom_bottom_above_toe",
+        "value": null,
+        "expression": "custom_toe_kick_height",
+        "section": "Structure / Base",
+        "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "custom_side_toe_kick_cutout",
+        "value": "none",
+        "expression": null,
+        "section": "Structure / Base",
+        "description": "Optional lower-front side-panel notch for a toe kick.",
+        "options": [
+          "none",
+          "left",
+          "right",
+          "both"
+        ],
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "joinery_style",
         "value": "dado",
         "expression": null,
@@ -34306,7 +34363,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         }
       },
       {
@@ -34331,7 +34392,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34357,7 +34422,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34383,7 +34452,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34409,7 +34482,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34435,7 +34512,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34461,7 +34542,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34487,7 +34572,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34513,7 +34602,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34539,7 +34632,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34565,7 +34662,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34591,7 +34692,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34617,7 +34722,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34643,7 +34752,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34670,7 +34783,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34697,7 +34814,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34724,7 +34845,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34751,7 +34876,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34778,7 +34907,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34805,7 +34938,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34832,7 +34969,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34859,7 +35000,11 @@
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
           "shelf_style": "adjustable",
-          "drawer_height_mode": "equal"
+          "drawer_height_mode": "equal",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard drawer bases"
       },
@@ -34885,7 +35030,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard full-height door bases"
       },
@@ -34911,7 +35060,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard full-height door bases"
       },
@@ -34937,7 +35090,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard full-height door bases"
       },
@@ -34963,7 +35120,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard full-height door bases"
       },
@@ -34989,7 +35150,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard sink bases"
       },
@@ -35015,7 +35180,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard sink bases"
       },
@@ -35041,7 +35210,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard sink bases"
       },
@@ -35067,7 +35240,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard sink bases"
       },
@@ -35093,7 +35270,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35119,7 +35300,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35145,7 +35330,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35171,7 +35360,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35197,7 +35390,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35223,7 +35420,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35249,7 +35450,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35275,7 +35480,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35301,7 +35510,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35327,7 +35540,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35353,7 +35570,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35379,7 +35600,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35405,7 +35630,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35431,7 +35660,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35457,7 +35690,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard wall cabinets"
       },
@@ -35483,7 +35720,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard tall pantries"
       },
@@ -35509,7 +35750,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard tall pantries"
       },
@@ -35535,7 +35780,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard tall pantries"
       },
@@ -35561,7 +35810,11 @@
           "width_basis": "outside",
           "depth_basis": "outside",
           "drawer_bank_layout_mode": "shared",
-          "shelf_style": "adjustable"
+          "shelf_style": "adjustable",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Standard tall pantries"
       },
@@ -35966,7 +36219,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -36371,7 +36628,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -36776,7 +37037,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -37181,7 +37446,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -37586,7 +37855,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -37988,7 +38261,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       },
@@ -38393,7 +38670,11 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none"
         },
         "group": "Engine presets"
       }

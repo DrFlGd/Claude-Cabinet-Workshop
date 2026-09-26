@@ -57,7 +57,7 @@ It imports native presets/hardware, preserves the application kitchen catalog,
 and generates schema/source data and the worker allowlist. Review its output and
 provenance when importing a different upstream archive.
 
-UI-specific presentation lives in lib/settings.ts: front regrouping, material
+UI-specific presentation lives in lib/settings.ts: mount/rear-construction grouping, front regrouping, material
 subgroups, advanced kerf classification and mid-rail help are intentional adapter
 rules. Native parameter grouping remains governed by the engine layout contract.
 Do not evaluate OpenSCAD default expressions in JavaScript.

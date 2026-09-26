@@ -276,6 +276,14 @@ cabinet_mount_style = "floor"; // [floor, wall]
 
 base_style = "toe_kick"; // [toe_kick, flat, leveling_feet, casters]
 
+// Toe-kick dimensions; used only when base_style = "toe_kick".
+custom_toe_kick_height = 101.6;
+custom_toe_kick_setback = 76.2;
+custom_bottom_above_toe = custom_toe_kick_height;
+
+// Optional lower-front side-panel notch for a toe kick.
+custom_side_toe_kick_cutout = "none"; // [none, left, right, both]
+
 /* [Structure / Frame Joinery] */
 
 // One selector controls the fixed cabinet-to-side-panel joints.
@@ -1079,13 +1087,7 @@ face_frame_thickness =
 
 // Floor-base construction. Wall cabinets automatically suppress floor hardware.
 
-// Toe-kick dimensions; used only when base_style = "toe_kick".
-custom_toe_kick_height = 101.6;
-custom_toe_kick_setback = 76.2;
-custom_bottom_above_toe = custom_toe_kick_height;
 
-// Optional lower-front side-panel notch for a toe kick.
-custom_side_toe_kick_cutout = "none"; // [none, left, right, both]
 
 
 

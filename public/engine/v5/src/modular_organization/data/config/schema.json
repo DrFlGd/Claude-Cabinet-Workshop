@@ -13082,6 +13082,44 @@
           ]
         },
         {
+          "id": "custom_toe_kick_height",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 101.6,
+          "unit": "mm",
+          "description": "Toe-kick dimensions; used only when base_style = \"toe_kick\".",
+          "step": 0.01
+        },
+        {
+          "id": "custom_toe_kick_setback",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 76.2,
+          "unit": "mm",
+          "step": 0.01
+        },
+        {
+          "id": "custom_bottom_above_toe",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": null,
+          "default_expression": "custom_toe_kick_height",
+          "computed_default": true
+        },
+        {
+          "id": "custom_side_toe_kick_cutout",
+          "group": "Structure / Base",
+          "type": "enum",
+          "default": "none",
+          "enum": [
+            "none",
+            "left",
+            "right",
+            "both"
+          ],
+          "description": "Optional lower-front side-panel notch for a toe kick."
+        },
+        {
           "id": "joinery_style",
           "group": "Structure / Frame Joinery",
           "type": "enum",

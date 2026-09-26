@@ -48,3 +48,14 @@ assert(!presented.some(f=>f.section.startsWith('Fronts /')));
 assert.deepEqual(presented.filter(f=>f.key==='front_mount_style').map(f=>f.section),['Doors / Shared Fronts','Drawers / Shared Fronts']);
 assert.equal(m.exports.settingsGroup(presented.find(f=>f.key==='drawer_bottom_cnc_tool_diameter')),'Machining / Drawer bottoms');
 console.log('Material controls, clearance dependencies and shared front grouping passed.');
+for(const family of schema){
+ const fields=m.exports.presentFields(family.fields);
+ for(const f of fields){
+  if(['cabinet_mount_style','mount_mode'].includes(f.key))assert.equal(f.section,'Mounting / Mount Style');
+  if(f.key==='back_style'||f.key.startsWith('back_stretcher_'))assert.equal(f.section,'Mounting / Rear Mounting');
+ }
+}
+check('custom_side_toe_kick_cutout',false,{cabinet_mount_style:'floor',base_style:'toe_kick'},4);
+check('custom_side_toe_kick_cutout',true,{cabinet_mount_style:'wall',base_style:'toe_kick'},4);
+check('custom_side_toe_kick_cutout',true,{cabinet_mount_style:'floor',base_style:'flat'},4);
+console.log('Mounting groups and kitchen toe-kick controls passed.');

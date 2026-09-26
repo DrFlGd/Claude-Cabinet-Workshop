@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.4.1**) are separate from the bundled
+Application versions (currently **0.4.2**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -25,6 +25,21 @@ possible configuration. Imported package capabilities are identified as such.
 - Corrected native-vs-web grouping, per-material relief and browser-vs-Python API guidance.
 - Marked historical reports/versioned engine notes explicitly and synchronized embedded documentation.
 - Documentation only; application version remains 0.4.1.
+
+## 0.4.2 — 2026-09-26
+
+- Moved cabinet mount style and equipment mount mode into Mounting / Mount Style.
+- Moved existing back-panel and rear-stretcher controls into Mounting / Rear Mounting.
+  Rear mounting describes existing rear construction; no new wall-fastener or
+  cabinet French-cleat system is implied. Door/drawer front mount style remains
+  with its front settings.
+- Exposed kitchen toe-kick height, setback, bottom elevation and side-cutout mode
+  (None/Left/Right/Both) in native public controls and the generated web schema.
+- Kept toe-kick controls under Structure / Base, visible for a floor-mounted
+  toe-kick base; hid floor-base selection for wall cabinets.
+- Synchronized native schema, embedded engine source and kitchen contract signature.
+- Added mounting-group/visibility coverage and checked native cutout geometry.
+- Ongoing changes are recorded here with each release.
 
 ## 0.4.1 — 2026-09-25
 
