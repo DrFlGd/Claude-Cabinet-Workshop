@@ -17,4 +17,4 @@ by itself guarantee a private Pages website. Check the intended audience before
 enabling deployment. No repository visibility change is made by this workflow.
 
 No source ZIP, generated web-dist, node_modules or executable belongs in git.
-Application release version: 0.4.0. See CHANGELOG.md for release policy and limits.
+Application release version: 0.4.1. See CHANGELOG.md for release policy and limits.

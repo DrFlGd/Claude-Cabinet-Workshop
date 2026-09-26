@@ -1,4 +1,4 @@
-# Cabinet Workshop 0.4.0
+# Cabinet Workshop 0.4.1
 
 Web configurator for the supplied Modular Organization 5.3.0 package (engine v5,
 MOI-4). Seven families: shop cart, utility, benchtop, stackable, kitchen,

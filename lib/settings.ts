@@ -2,6 +2,7 @@ export type Field={key:string;value:any;expression?:string;section:string;descri
 export const sectionOrder=['Materials','Machining','Sizing','Structure','Doors','Shelves','Drawers','Dividers','Trays','Mounting','Hardware','Output','System'];
 
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
+ if(f.key==='face_frame_mid_rail_mode')f={...f,description:'Controls the horizontal crosspiece between the face frame’s top and bottom rails. None omits it. Combo auto places its center at the top of the door region, typically between the lower doors and upper drawers. Custom positions its center at the height entered in Face frame custom mid rail Z, measured from the cabinet base. Requires face-frame construction.'};
  if(!f.section.startsWith('Fronts /'))return [f];
  if(f.key.startsWith('drawer_')||f.key.startsWith('custom_drawer_'))return [{...f,section:'Drawers / Fronts'}];
  if(f.key==='door_gap')return [{...f,section:'Doors / Fronts'}];
@@ -19,7 +20,7 @@ export function settingsGroup(f:Field){
  }
  return f.section;
 }
-export function isAdvanced(f:Field){return f.advanced}
+export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  const k=f.key,s=sectionFor(f),mixed=v._family!==3&&v.cabinet_layout_mode==='mixed_bays';

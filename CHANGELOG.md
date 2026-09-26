@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 — 2026-09-25
+
+- Explain face-frame mid rail modes and custom rail-height measurement in setting help.
+- Mark kerf compensation and kerf width as advanced settings.
+
 ## 0.4.0 — 2026-09-25
 
 Application release; OpenSCAD package remains 5.3.0 (v5 / MOI-4).
