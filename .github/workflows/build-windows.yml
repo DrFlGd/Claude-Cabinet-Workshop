@@ -49,9 +49,7 @@ jobs:
         run: |
           $version = node -p "require('./package.json').version"
           $name = "Cabinet-Workshop-v$version-Windows-x64"
-          Rename-Item portable $name
-          python -c "import shutil; shutil.make_archive('$name', 'zip', '.', '$name')"
-          python -c "import zipfile; z=zipfile.ZipFile('$name.zip'); assert z.testzip() is None"
+          python desktop/archive-windows.py portable "$name.zip"
       - uses: actions/upload-artifact@v4
         with:
           name: Cabinet-Workshop-Windows-x64

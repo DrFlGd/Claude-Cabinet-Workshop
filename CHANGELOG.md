@@ -32,7 +32,9 @@ possible configuration. Imported package capabilities are identified as such.
   production worker section tests, runtime checksum and archive verification.
   A Windows GitHub workflow launches the packaged EXE, checks UI startup and renders
   the photo example through its local protocol. The artifact includes the result;
-  this does not replace manual interactive testing.
+  the EXE startup and photo rendering passed on the Windows runner. This does not
+  replace manual interactive testing. ZIP creation reads the built folder in place
+  to avoid Windows rename locks left by recently exited application processes.
 - This unsigned test distribution is a folder containing an EXE and dependencies,
   not a single-file executable or installer. Application version remains 0.5.0.
 
