@@ -1633,7 +1633,7 @@ if (has_doors) {
 if (has_doors && door_region_height < 100)
     echo("WARNING: Calculated door height is under 100 mm.");
 
-if (!mixed_bay_mode && cabinet_contents == "combo" && combo_divider_bottom_z < front_opening_bottom_z)
+if (!mixed_bay_mode && combo_contents_active && combo_divider_bottom_z < front_opening_bottom_z)
     echo("WARNING: Combo door region is too short for the divider thickness.");
 
 if (carcass_joint_geometry == "dado" && dado_depth > material_thickness)

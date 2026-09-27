@@ -387,7 +387,7 @@ module door_hinge_partition_bottom_joinery_3d(x0,z0) {
 }
 
 module door_hinge_partition_top_joinery_3d(x0,z0) {
-    if (cabinet_contents == "combo") {
+    if (combo_contents_active) {
         span =
             min(
                 door_hinge_partition_actual_depth,
@@ -581,7 +581,7 @@ module door_hinge_partition_bottom_joinery_cut() {
 }
 
 module door_hinge_partition_top_joinery_cut(body_top_y) {
-    if (cabinet_contents == "combo") {
+    if (combo_contents_active) {
         span =
             min(
                 door_hinge_partition_actual_depth,
@@ -1365,7 +1365,7 @@ module bottom_back_receiver_dado_pockets_2d() {
 
 module drawer_bank_partition_bottom_tabs_3d(x0,z0) {
     span = min(drawer_bank_partition_depth,
-               cabinet_contents == "combo" ? shelf_depth : resolved_cabinet_depth);
+               combo_contents_active ? shelf_depth : resolved_cabinet_depth);
 
     for (n=[0:effective_tab_count(span)-1]) {
         yy = tab_start(span,n);
@@ -1501,7 +1501,7 @@ module drawer_bank_partition_cut(p=0) {
                 if (mode == "tab_slot") {
                     bottom_span = min(
                         drawer_bank_partition_depth,
-                        cabinet_contents == "combo" ? shelf_depth : resolved_cabinet_depth);
+                        combo_contents_active ? shelf_depth : resolved_cabinet_depth);
 
                     for (n=[0:effective_tab_count(bottom_span)-1])
                         translate([tab_start(bottom_span,n),0])
@@ -2020,7 +2020,7 @@ module all_side_butt_registration_3d(x0) {
 
         // Combo divider.
         if (!mixed_bay_mode
-            && cabinet_contents == "combo"
+            && combo_contents_active
             && door_region_height > material_thickness)
             side_horizontal_butt_registration_3d(
                 x0,shelf_front_y,shelf_depth,combo_divider_bottom_z);
@@ -2089,7 +2089,7 @@ module all_side_butt_registration_2d() {
         }
 
         if (!mixed_bay_mode
-            && cabinet_contents == "combo"
+            && combo_contents_active
             && door_region_height > material_thickness)
             side_horizontal_butt_registration_2d(
                 shelf_front_y,shelf_depth,combo_divider_bottom_z);
@@ -2159,7 +2159,7 @@ module all_side_joinery_cuts_3d(side) {
         }
 
         // Combo divider.
-        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+        if (!mixed_bay_mode && combo_contents_active && door_region_height > material_thickness)
             side_horizontal_joint_cut_3d(
                 side,shelf_front_y,shelf_depth,combo_divider_bottom_z,"shelf");
 
@@ -2277,7 +2277,7 @@ module all_side_through_joinery_2d() {
         }
 
         // Combo divider.
-        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+        if (!mixed_bay_mode && combo_contents_active && door_region_height > material_thickness)
             for (i=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
                 sy = shelf_front_y+tab_start_for_location(shelf_depth,i,"shelf")-c/2;
                 sw = tab_width_for(shelf_depth)+c;
@@ -2397,7 +2397,7 @@ module all_side_dado_pockets_2d() {
         }
 
         // Combo divider.
-        if (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+        if (!mixed_bay_mode && combo_contents_active && door_region_height > material_thickness)
             translate([shelf_front_y-c/2,combo_divider_bottom_z-c/2])
                 square([shelf_depth+c,material_thickness+c]);
 
@@ -5137,7 +5137,7 @@ module carcass() {
 
     if (show_combo_divider
         && !mixed_bay_mode
-        && cabinet_contents == "combo"
+        && combo_contents_active
         && door_region_height > material_thickness) {
         paint("divider")
             joined_horizontal_bank_receiver_3d(

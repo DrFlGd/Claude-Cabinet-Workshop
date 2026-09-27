@@ -3,7 +3,8 @@
 Choose **Kitchen cabinet → Structure → Cabinet layout mode → Sections**.
 Click an opening in the front diagram, then split it left/right or top/bottom.
 Splits can contain more splits, so upper and lower dividers need not align.
-Select parents using the breadcrumbs or Selected section menu.
+Select parents using the Selected section menu; all descendant openings highlight
+together. Click an individual opening to select just that section.
 
 Each opening contains a drawer bank, one or two doors, or open shelves. A drawer
 bank has its own count and equal, graduated or custom-weighted heights. Weights

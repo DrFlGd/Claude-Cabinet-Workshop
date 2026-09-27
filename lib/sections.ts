@@ -70,3 +70,10 @@ export function collapseSection(a:SectionNode[],id:number):SectionNode[]{
  const kept=a.map((_,i)=>i).filter(i=>!remove.has(i)),map=new Map(kept.map((i,j)=>[i,j]));
  return kept.map(i=>{const n=structuredClone(a[i]);n[0]=n[0]===-1?-1:map.get(n[0])!;if(i===id)n[2]='leaf';return n});
 }
+
+// Parents precede children, so one pass includes every level of a selected subtree.
+export function selectedSectionIds(nodes:SectionNode[],id:number):Set<number>{
+ const selected=new Set<number>();
+ if(id>=0&&id<nodes.length){selected.add(id);nodes.forEach((n,i)=>{if(selected.has(n[0]))selected.add(i)});}
+ return selected;
+}

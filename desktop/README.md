@@ -18,7 +18,7 @@ Obtain the runtime ZIP and checksum manifest from the corresponding official
 Electron release. The packager checks SHA-256, ZIP CRCs and the Windows x64 PE
 header, requires a clean destination, retains upstream licenses, and takes the
 application version from package.json. After a passing Windows smoke test, `python desktop/archive-windows.py OUTPUT_FOLDER
-Cabinet-Workshop-v0.5.0-Windows-x64.zip` creates and CRC-verifies the portable ZIP
+Cabinet-Workshop-v0.5.1-Windows-x64.zip` creates and CRC-verifies the portable ZIP
 without renaming the recently executed folder.
 Generated binaries stay out of the source repository.
 

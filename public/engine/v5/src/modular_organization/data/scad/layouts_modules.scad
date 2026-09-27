@@ -245,7 +245,7 @@ module carcass_engrave_labels() {
         }
     }
 
-    if (!mixed_bay_mode && cabinet_contents == "combo") {
+    if (!mixed_bay_mode && combo_contents_active) {
         divider_y =
             layout_y4
             + (has_doors ? door_shelf_count : 0)
@@ -897,7 +897,7 @@ module bom_report() {
                             door_adjustable_shelf_piece_width(bb),
                             shelf_depth,"loose");
 
-    if (!mixed_bay_mode && cabinet_contents == "combo")
+    if (!mixed_bay_mode && combo_contents_active)
         bom_row(id_combo_divider(),"divider","CARCASS",
                 material_thickness,joined_w,shelf_depth,carcass_joint_geometry);
 
@@ -1723,7 +1723,7 @@ module carcass_cut_layout() {
         }
     }
 
-    if (!mixed_bay_mode && cabinet_contents == "combo") {
+    if (!mixed_bay_mode && combo_contents_active) {
         divider_y = layout_y4
                     + (has_doors ? door_shelf_count : 0)*(shelf_depth+g);
 
@@ -1977,7 +1977,7 @@ module carcass_dado_operation_geometry_2d() {
                     top_stretcher_depth);
         }
 
-        if (!mixed_bay_mode && cabinet_contents == "combo") {
+        if (!mixed_bay_mode && combo_contents_active) {
             divider_y = layout_y4
                 + (has_doors ? door_shelf_count : 0)
                   *(shelf_depth+g);
@@ -2054,7 +2054,7 @@ module carcass_dado_operation_geometry_2d() {
                     top_stretcher_depth);
         }
 
-        if (cabinet_contents == "combo") {
+        if (combo_contents_active) {
             divider_y = layout_y4
                 + (has_doors ? door_shelf_count : 0)
                   *(shelf_depth+g);
@@ -3147,7 +3147,7 @@ module print_layout() {
     }
 
     // Combo divider.
-    if (!mixed_bay_mode && cabinet_contents == "combo") {
+    if (!mixed_bay_mode && combo_contents_active) {
         divider_y = layout_y4
                     + (has_doors ? door_shelf_count : 0)
                       *(shelf_depth+g);

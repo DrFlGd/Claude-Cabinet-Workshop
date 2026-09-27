@@ -124,12 +124,14 @@ function sizing_mixed_has_drawer(i=0) =
             : sizing_mixed_has_drawer(i+1);
 
 section_layout_active = !is_undef(section_nodes) && active_cabinet_layout_mode == "sections";
+// Section splits exclusively own interior divider/shelf geometry and machining.
+combo_contents_active = !section_layout_active && cabinet_contents == "combo";
 
 sizing_has_drawers = section_layout_active ? false :
     sizing_mixed_mode
         ? sizing_mixed_has_drawer()
         : cabinet_contents == "drawers"
-          || cabinet_contents == "combo";
+          || combo_contents_active;
 
 sizing_bank_count =
     sizing_mixed_mode
@@ -375,12 +377,12 @@ function mixed_bay_door_part_index(b,leaf=0) =
 has_drawers = section_layout_active ? false :
     mixed_bay_mode
         ? mixed_bay_has_type("drawers")
-        : cabinet_contents == "drawers" || cabinet_contents == "combo";
+        : cabinet_contents == "drawers" || combo_contents_active;
 
 has_doors = section_layout_active ? false :
     mixed_bay_mode
         ? mixed_bay_has_type("door")
-        : cabinet_contents == "doors" || cabinet_contents == "combo";
+        : cabinet_contents == "doors" || combo_contents_active;
 
 active_door_count =
     has_doors
@@ -626,7 +628,7 @@ face_frame_inset_combo_rail =
     face_frame_active
     && fronts_inset_flush
     && !mixed_bay_mode
-    && cabinet_contents == "combo"
+    && combo_contents_active
     && face_frame_mid_rail_mode_resolved == "combo_auto";
 
 face_frame_center_stile_enabled =
@@ -850,7 +852,7 @@ active_drawer_count =
 // bays are full-height columns, so each drawer bay independently fills the
 // full drawer region instead.
 combo_reference_drawer_unit =
-    !mixed_bay_mode && cabinet_contents == "combo"
+    !mixed_bay_mode && combo_contents_active
         ? max(
             0,
             (
@@ -865,7 +867,7 @@ combo_reference_drawer_unit =
         : 0;
 
 combo_reference_door_height =
-    !mixed_bay_mode && cabinet_contents == "combo"
+    !mixed_bay_mode && combo_contents_active
         ? combo_door_height_units*combo_reference_drawer_unit
         : 0;
 
@@ -888,7 +890,7 @@ function drawer_height_unit_for_bank(b=0) =
                 )
                 / drawer_bank_weight_total(b)
               )
-            : cabinet_contents == "combo"
+            : combo_contents_active
                 ? max(
                     0,
                     face_frame_inset_combo_rail
@@ -934,7 +936,7 @@ door_region_height =
         ? (has_doors ? content_height : 0)
         : cabinet_contents == "doors"
             ? content_height
-            : cabinet_contents == "combo"
+            : combo_contents_active
                 ? combo_reference_door_height
                 : 0;
 
@@ -1357,7 +1359,7 @@ function door_hinge_partition_bottom_z() =
     front_opening_bottom_z;
 
 function door_hinge_partition_top_z() =
-    cabinet_contents == "combo"
+    combo_contents_active
         ? combo_divider_bottom_z
         : front_opening_top_z;
 
@@ -2122,7 +2124,7 @@ function drawer_bank_partition_x(p) =
     + drawer_bank_opening_width(p);
 
 function drawer_bank_partition_bottom_z() =
-    cabinet_contents == "combo"
+    combo_contents_active
         ? combo_divider_top_z
         : front_opening_bottom_z;
 
@@ -2848,7 +2850,7 @@ function ganging_structural_z_conflict(z,r) =
     )
     || (
         !mixed_bay_mode
-        && cabinet_contents == "combo"
+        && combo_contents_active
         && (
             ganging_near(
                 z,
@@ -3857,7 +3859,7 @@ function mo_side_carcass_joint_features(side="left") =
                     top_stretcher_depth,cabinet_height-material_thickness,
                     "top",str("top_rear.",side),"carcass.top")
               ),
-        (!mixed_bay_mode && cabinet_contents == "combo" && door_region_height > material_thickness)
+        (!mixed_bay_mode && combo_contents_active && door_region_height > material_thickness)
             ? mo_side_horizontal_features(
                 side,shelf_front_y,shelf_depth,combo_divider_bottom_z,"shelf",
                 str("combo_divider.",side),"carcass.shelf")
@@ -4139,7 +4141,7 @@ door_compartment_panel_count =
     mixed_bay_mode
         ? 0
         : (has_doors ? door_shelf_count : 0)
-          + (cabinet_contents == "combo" ? 1 : 0);
+          + (combo_contents_active ? 1 : 0);
 
 // Mixed-bay adjustable shelves use the same shelf-depth row pitch and occupy
 // the legacy door-compartment layout area before partition parts.

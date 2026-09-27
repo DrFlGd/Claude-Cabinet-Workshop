@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.5.0**) are separate from the bundled
+Application versions (currently **0.5.1**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,23 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.5.1 — 2026-09-27
+
+- Fixed an unwanted horizontal panel in Sections mode: hidden legacy Combo
+  contents could still emit its drawer-over-door divider even when a door section
+  specified zero shelves. Sections now suppress that legacy divider, its receiver
+  machining, BOM/engraving entry and layout allocation. Explicit section dividers
+  remain; per-opening shelf counts, including zero, are respected.
+- Removed redundant section navigation buttons below the organizer diagram.
+  Diagram clicking and the Selected section dropdown remain, as do split actions.
+- Selecting a parent highlights all descendant openings, including nested splits;
+  selecting a leaf highlights only that opening. Added accessible pressed states.
+- Updated the section guide and Windows test build to v0.5.1.
+- Regression coverage checks zero/one/three/zero shelves and identical native
+  assembly, flat, cut and pocket output regardless of hidden legacy Combo settings;
+  selection coverage checks whole-cabinet, parent and leaf membership. The Windows
+  smoke check exercises dropdown and diagram selection in the packaged app.
 
 ## Windows test package — 2026-09-27 (application 0.5.0)
 
