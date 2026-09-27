@@ -9,6 +9,8 @@
 - [Changelog](../CHANGELOG.md): consolidated application and engine history.
 - [VERSION](../VERSION): application release number; the engine version is separate.
 
+- [Windows packaging](../desktop/README.md): portable EXE builds and test limitations.
+
 ## Current bundled engine
 
 The application bundles Modular Organization 5.3.0 with the later cabinet/relief

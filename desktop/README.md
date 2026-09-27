@@ -1,0 +1,32 @@
+# Windows portable build
+
+The desktop wrapper loads the same static application as the website through
+`cabinet://app/`. Assets, engine sources, OpenSCAD WASM and fonts are local; no
+hosting or separately installed OpenSCAD is needed. Renderer Node integration is
+disabled, context isolation/sandboxing are enabled, and navigation stays within
+the app except HTTPS links opened in the system browser.
+
+Build with the repository's Node/pnpm versions and Python 3.11 or later:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run build:desktop:renderer
+python desktop/package-windows.py /path/electron-v44.4.3-win32-x64.zip /path/SHASUMS256.txt /path/empty-output-folder --source-revision GITHUB_APPLICATION_COMMIT
+```
+
+Obtain the runtime ZIP and checksum manifest from the corresponding official
+Electron release. The packager checks SHA-256, ZIP CRCs and the Windows x64 PE
+header, requires a clean destination, retains upstream licenses, and takes the
+application version from package.json. ZIP the entire output folder for delivery.
+Generated binaries stay out of the source repository.
+
+Extract everything and run `Cabinet Workshop.exe`; copying only that EXE will not
+work. This is an unsigned portable test build, not a single-file installer. Windows
+may show an unrecognized-app warning. The Windows workflow launches the packaged EXE and verifies UI readiness and a
+photo-example OpenSCAD render through the actual local protocol. Manual interactive
+testing remains necessary. Menu Help → About identifies the application
+version. Use Save design/Open design to transfer work between web and desktop;
+autosave remains in the desktop application's own user profile.
+
+`node tests/desktop-assets.cjs` checks offline asset resolution and build contents.
+The production worker smoke tests are available through `pnpm run test:sections:wasm`.

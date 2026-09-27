@@ -17,6 +17,25 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
+## Windows test package — 2026-09-27 (application 0.5.0)
+
+- Restored reproducible Windows x64 portable packaging in `desktop/`, using the
+  same v0.5.0 static renderer, section editor and photo example as the website.
+- Included the local OpenSCAD WASM runtime, engine assets and photo configuration;
+  no website hosting or separate OpenSCAD installation is required.
+- Packaging derives its version from package.json, verifies the Electron 44.4.3
+  runtime checksum/archive CRCs/PE architecture and requires an empty destination.
+  Runtime licenses and supporting files remain together in the portable ZIP.
+- Added version information under Help → About and a renderer-crash error dialog.
+  Documented extraction, rebuilding and separate desktop autosave storage.
+- Validation: static renderer compilation, offline asset routing/build contents,
+  production worker section tests, runtime checksum and archive verification.
+  A Windows GitHub workflow launches the packaged EXE, checks UI startup and renders
+  the photo example through its local protocol. The artifact includes the result;
+  this does not replace manual interactive testing.
+- This unsigned test distribution is a folder containing an EXE and dependencies,
+  not a single-file executable or installer. Application version remains 0.5.0.
+
 ## 0.5.0 — 2026-09-27
 
 - Added kitchen **Sections** mode with nested left/right and top/bottom splits.

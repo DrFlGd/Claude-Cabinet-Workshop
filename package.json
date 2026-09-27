@@ -15,7 +15,8 @@
     "dev:static": "vite --config vite.static.config.ts",
     "build:static": "vite build --config vite.static.config.ts",
     "test:release": "node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs && node tests/stackable-controls.cjs && node tests/sections.cjs && node tests/section-wasm.mjs",
-    "test:sections:wasm": "node tests/section-wasm.mjs"
+    "test:sections:wasm": "node tests/section-wasm.mjs",
+    "build:desktop:renderer": "vite build --config vite.static.config.ts --base /"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

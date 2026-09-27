@@ -1,0 +1,66 @@
+name: Windows test build
+on:
+  push:
+    branches: [main]
+    paths: ['desktop/**', '.github/workflows/build-windows.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm install --global pnpm@11.25.0
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build:desktop:renderer
+      - run: node tests/desktop-assets.cjs
+      - name: Download verified runtime inputs
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force runtime | Out-Null
+          $base = 'https://github.com/electron/electron/releases/download/v44.4.3'
+          Invoke-WebRequest "$base/electron-v44.4.3-win32-x64.zip" -OutFile runtime/electron-v44.4.3-win32-x64.zip
+          Invoke-WebRequest "$base/SHASUMS256.txt" -OutFile runtime/SHASUMS256.txt
+      - name: Package Windows x64
+        shell: pwsh
+        run: |
+          python desktop/package-windows.py runtime/electron-v44.4.3-win32-x64.zip runtime/SHASUMS256.txt portable --source-revision $env:GITHUB_SHA
+          node tests/desktop-assets.cjs portable/resources/app/renderer
+      - name: Launch EXE and render photo example
+        shell: pwsh
+        run: |
+          $env:CABINET_SMOKE_REPORT = Join-Path $PWD 'portable/WINDOWS-SMOKE-TEST.json'
+          $process = Start-Process -FilePath (Join-Path $PWD 'portable/Cabinet Workshop.exe') -ArgumentList '--smoke-test' -PassThru
+          if (-not $process.WaitForExit(120000)) { Stop-Process -Id $process.Id -Force; throw 'Desktop smoke test timed out' }
+          if (Test-Path $env:CABINET_SMOKE_REPORT) { Get-Content $env:CABINET_SMOKE_REPORT }
+          if ($process.ExitCode -ne 0) { throw "Desktop exited with $($process.ExitCode)" }
+          $result = Get-Content $env:CABINET_SMOKE_REPORT -Raw | ConvertFrom-Json
+          if (-not $result.passed) { throw 'Desktop smoke test failed' }
+      - name: Archive portable build
+        shell: pwsh
+        run: |
+          $version = node -p "require('./package.json').version"
+          $name = "Cabinet-Workshop-v$version-Windows-x64"
+          Rename-Item portable $name
+          python -c "import shutil; shutil.make_archive('$name', 'zip', '.', '$name')"
+          python -c "import zipfile; z=zipfile.ZipFile('$name.zip'); assert z.testzip() is None"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Cabinet-Workshop-Windows-x64
+          path: Cabinet-Workshop-v*-Windows-x64.zip
+          compression-level: 0
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: windows-startup-diagnostics
+          path: portable/WINDOWS-SMOKE-TEST.json
+          if-no-files-found: ignore
