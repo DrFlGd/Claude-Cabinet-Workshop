@@ -33,6 +33,10 @@ possible configuration. Imported package capabilities are identified as such.
   assembly, flat, cut and pocket output regardless of hidden legacy Combo settings;
   selection coverage checks whole-cabinet, parent and leaf membership. The Windows
   smoke check exercises dropdown and diagram selection in the packaged app.
+- Validation passed: TypeScript, the release regression suite, native OpenSCAD
+  shelf/layout checks, static production build, and Windows EXE startup, dropdown/
+  diagram highlighting and photo-example rendering. The portable ZIP passed CRC
+  verification; manual visual testing remains outside the automated checks.
 
 ## Windows test package — 2026-09-27 (application 0.5.0)
 
