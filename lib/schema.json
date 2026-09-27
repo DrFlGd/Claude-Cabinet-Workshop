@@ -30397,7 +30397,8 @@
         "description": "Most kitchen recipes use the simple vertical layout. Open wall cabinets use one generalized \"open\" bay. These remain ordinary editable configuration values so OpenSCAD-native presets can apply them without hidden logic.",
         "options": [
           "legacy",
-          "mixed_bays"
+          "mixed_bays",
+          "sections"
         ],
         "bounds": null,
         "step": null,
@@ -33900,6 +33901,38 @@
         "unit": "scalar",
         "visibleIf": null,
         "advanced": true
+      },
+      {
+        "key": "section_nodes",
+        "value": [
+          [
+            -1,
+            0,
+            "leaf",
+            "weight",
+            1,
+            "drawers",
+            3,
+            "equal",
+            0.25,
+            [
+              1,
+              1,
+              1
+            ],
+            "panel",
+            0
+          ]
+        ],
+        "expression": null,
+        "section": "Structure / Layout",
+        "description": "Section rows: parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents, count, drawer heights, graduated step, weights, separator(panel/rail/none), shelves. Children are ordered left-to-right or top-to-bottom. Root parent is -1.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
       }
     ],
     "groups": [
@@ -34367,7 +34400,185 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
+        }
+      },
+      {
+        "id": "photo_section_cabinet",
+        "name": "Photo example \u00b7 six drawers and paired doors",
+        "group": "Section layouts",
+        "values": {
+          "cabinet_layout_mode": "sections",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "z",
+              "weight",
+              1,
+              "open",
+              0,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ],
+            [
+              0,
+              0,
+              "x",
+              "weight",
+              2,
+              "open",
+              0,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ],
+            [
+              0,
+              1,
+              "x",
+              "weight",
+              1,
+              "open",
+              0,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ],
+            [
+              1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              2,
+              "custom_weights",
+              0.25,
+              [
+                0.8,
+                1.2
+              ],
+              "panel",
+              0
+            ],
+            [
+              1,
+              1,
+              "leaf",
+              "weight",
+              2,
+              "doors",
+              2,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ],
+            [
+              1,
+              2,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              2,
+              "custom_weights",
+              0.25,
+              [
+                0.8,
+                1.2
+              ],
+              "panel",
+              0
+            ],
+            [
+              2,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              1,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ],
+            [
+              2,
+              1,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              1,
+              "equal",
+              0.25,
+              [
+                1
+              ],
+              "panel",
+              0
+            ]
+          ],
+          "cabinet_width": 1500,
+          "cabinet_height": 850,
+          "cabinet_nominal_depth": 600,
+          "front_facing_style": "none",
+          "front_mount_style": "overlay",
+          "cabinet_mount_style": "floor",
+          "base_style": "toe_kick",
+          "custom_toe_kick_height": 90,
+          "custom_bottom_above_toe": 90,
+          "custom_toe_kick_setback": 65,
+          "top_style": "stretchers",
+          "width_basis": "outside",
+          "depth_basis": "outside",
+          "drawer_mount": "metal_slides",
+          "metal_slide_length": 500,
+          "include_metal_slide_holes": false,
+          "include_drawer_separators": false,
+          "front_edge_reveal": 2
         }
       },
       {
@@ -34396,7 +34607,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34426,7 +34657,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34456,7 +34707,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34486,7 +34757,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34516,7 +34807,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34546,7 +34857,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34576,7 +34907,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34606,7 +34957,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34636,7 +35007,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34666,7 +35057,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34696,7 +35107,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34726,7 +35157,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34756,7 +35207,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer-over-door bases"
       },
@@ -34787,7 +35258,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34818,7 +35309,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34849,7 +35360,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34880,7 +35411,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34911,7 +35462,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34942,7 +35513,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -34973,7 +35564,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -35004,7 +35615,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard drawer bases"
       },
@@ -35034,7 +35665,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard full-height door bases"
       },
@@ -35064,7 +35715,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard full-height door bases"
       },
@@ -35094,7 +35765,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard full-height door bases"
       },
@@ -35124,7 +35815,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard full-height door bases"
       },
@@ -35154,7 +35865,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard sink bases"
       },
@@ -35184,7 +35915,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard sink bases"
       },
@@ -35214,7 +35965,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard sink bases"
       },
@@ -35244,7 +36015,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard sink bases"
       },
@@ -35274,7 +36065,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35304,7 +36115,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35334,7 +36165,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35364,7 +36215,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35394,7 +36265,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35424,7 +36315,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35454,7 +36365,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35484,7 +36415,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35514,7 +36465,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35544,7 +36515,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35574,7 +36565,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35604,7 +36615,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35634,7 +36665,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35664,7 +36715,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35694,7 +36765,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard wall cabinets"
       },
@@ -35724,7 +36815,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard tall pantries"
       },
@@ -35754,7 +36865,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard tall pantries"
       },
@@ -35784,7 +36915,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard tall pantries"
       },
@@ -35814,7 +36965,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Standard tall pantries"
       },
@@ -36223,7 +37394,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -36632,7 +37823,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -37041,7 +38252,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -37450,7 +38681,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -37859,7 +39110,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -38265,7 +39536,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       },
@@ -38674,7 +39965,27 @@
           "custom_toe_kick_height": 101.6,
           "custom_toe_kick_setback": 76.2,
           "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none"
+          "custom_side_toe_kick_cutout": "none",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0
+            ]
+          ]
         },
         "group": "Engine presets"
       }

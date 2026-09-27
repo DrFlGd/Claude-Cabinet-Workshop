@@ -59,3 +59,6 @@ check('custom_side_toe_kick_cutout',false,{cabinet_mount_style:'floor',base_styl
 check('custom_side_toe_kick_cutout',true,{cabinet_mount_style:'wall',base_style:'toe_kick'},4);
 check('custom_side_toe_kick_cutout',true,{cabinet_mount_style:'floor',base_style:'flat'},4);
 console.log('Mounting groups and kitchen toe-kick controls passed.');
+const sectionValues={cabinet_layout_mode:'sections',section_nodes:[[-1,0,'leaf','weight',1,'drawers',3,'equal',.25,[1,1,1],'panel',0]]};
+for(const key of ['section_nodes','drawer_count','drawer_height_mode','mixed_bay_count','include_face_frame_center_stile'])check(key,true,sectionValues,4);
+console.log('Section-controlled layout fields are hidden.');

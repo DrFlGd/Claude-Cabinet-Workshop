@@ -1,7 +1,7 @@
 """Import the packaged v5 schema, native presets, runtime tree and hardware."""
 import json,pathlib,shutil,sys,re,hashlib
 root=pathlib.Path(__file__).resolve().parents[1];src=pathlib.Path(sys.argv[1]);data=src/'src/modular_organization/data';dest=root/'public/engine/v5'
-schema=json.loads((data/'config/schema.json').read_text());extras=json.loads((root/'catalog/kitchen-standard-recipes.json').read_text())['recipes'];out=[]
+schema=json.loads((data/'config/schema.json').read_text());extras=json.loads((root/'catalog/kitchen-standard-recipes.json').read_text())['recipes']+json.loads((root/'catalog/section-layout-recipes.json').read_text())['recipes'];out=[]
 def typed(v,p):
  if not isinstance(v,str) or p['type'] in ['string','enum']:return v
  try:return json.loads(v)
@@ -38,6 +38,7 @@ sources={}
 for p in sorted(src.rglob('*')):
  if p.is_file() and p.suffix in ['.scad','.json','.py','.md','.toml','.morg'] and '__pycache__' not in p.parts:
   rel=p.relative_to(src);target=dest/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,target);sources['v5/'+rel.as_posix()]=p.read_text()
+sources['section-layout-recipes.json']=(root/'catalog/section-layout-recipes.json').read_text()
 sources['kitchen-standard-recipes.json']=(root/'catalog/kitchen-standard-recipes.json').read_text()
 (root/'lib/engine-sources.json').write_text(json.dumps(sources))
 (root/'lib/schema.json').write_text(json.dumps(out,indent=2))

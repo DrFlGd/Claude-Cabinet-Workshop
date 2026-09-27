@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert/strict'),ts=require('typescript'),cp=require('child_process');
 function load(name,deps={}){const m={exports:{}};new Function('require','module','exports',ts.transpileModule(fs.readFileSync('lib/'+name+'.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText)(n=>deps[n],m,m.exports);return m.exports}
-const c=load('cabinet',{'./schema.json':require('../lib/schema.json'),'./engine-sources.json':require('../lib/engine-sources.json')}),p=load('projects',{'./cabinet':c}),m=load('manufacturing'),s=load('settings'),u=load('units');
+const c=load('cabinet',{'./sections':load('sections'),'./schema.json':require('../lib/schema.json'),'./engine-sources.json':require('../lib/engine-sources.json')}),p=load('projects',{'./cabinet':c,'./sections':load('sections')}),m=load('manufacturing'),s=load('settings'),u=load('units');
 const old=require('./fixtures/v3-schema.json');
 for(let family=0;family<6;family++){
  const values=Object.fromEntries(old[family].fields.map(f=>[f.key,f.value]));const result=p.parseDesign({version:2,engine:3,engineFamily:'modular_organization',family,displayUnits:'in',values});
@@ -16,4 +16,4 @@ for(const f of c.schemas[0].fields.filter(f=>/target_module_pitch|_from_|label_s
 const divider=c.schemas[0].fields.find(f=>f.key==='custom_drawer_divider_thickness');assert(s.inactiveReason(divider,{include_drawer_divider_grid:false}));assert.equal(s.inactiveReason(divider,{include_drawer_divider_grid:true,drawer_divider_stock:'custom_mm'}),null);
 assert.equal(c.schemas[4].starters.filter(s=>s.id.startsWith('kitchen_standard_')).length,48);
 const src=c.applySettings(c.engineSources[c.schemas[6].file],6,{...c.defaults(6),material_thickness:18.35,cleat_angle:45});assert(src.includes('material_thickness = 18.35;'));assert(src.includes('cleat_angle = 45;'));
-(async()=>{const bytes=await c.exportBundle(6,c.defaults(6));const text=await bytes.text();for(const name of ['v5/pyproject.toml','v5/src/modular_organization/data/scad/core/resolve.scad','v5/src/modular_organization/api.py'])assert(text.includes(name));console.log('V5: old designs, 109 presets, schematic finite geometry, units, visibility, decimal stock and complete nested source bundle passed')})();
+(async()=>{const bytes=await c.exportBundle(6,c.defaults(6));const text=await bytes.text();for(const name of ['v5/pyproject.toml','v5/src/modular_organization/data/scad/core/resolve.scad','v5/src/modular_organization/api.py'])assert(text.includes(name));console.log('V5: old designs, 110 presets, schematic finite geometry, units, visibility, decimal stock and complete nested source bundle passed')})();

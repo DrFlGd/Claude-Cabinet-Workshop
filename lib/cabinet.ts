@@ -1,3 +1,4 @@
+import {sectionRects,sectionRoot,sectionPanels,treeErrors,type SectionNode} from './sections';
 import schema from './schema.json';
 import bundledSources from './engine-sources.json';
 export const engineSources:Record<string,string>=bundledSources;
@@ -40,7 +41,7 @@ export function starterValues(family:number,id:string,current?:Values):Values{co
 export const defaults=(family:number):Values=>starterValues(family,schemas[family].defaultStarter);
 export const label=(s:string)=>s.replace(/^custom_/,'').replace(/_/g,' ').replace(/\b\w/,c=>c.toUpperCase());
 export function thickness(v:Values,key='carcass_stock',custom='custom_carcass_thickness') {if(v._family===6&&key==='carcass_stock')return Number(v.material_thickness);const n:Record<string,number>={'1/8_nominal':3.175,'1/4_nominal':6.35,'3/8_nominal':9.525,'1/2_nominal':12.7,'5/8_nominal':15.875,'3/4_nominal':19.05,'1_nominal':25.4};return n[v[key]]??Number(v[custom]??18)}
-export function validate(v:Values){if(v._family===6)return [...(!Number.isInteger(v.tray_count)||v.tray_count<1||v.tray_count>4?['Tray count must be a whole number from 1 to 4.']:[]),...['width','height','depth'].filter(k=>!Number.isFinite(v['custom_cabinet_'+k])||v['custom_cabinet_'+k]<=0).map(k=>'Stand '+k+' must be positive.')];if(v._family===5)return ['width','height','depth'].filter(k=>!Number.isFinite(v['custom_cabinet_'+k])||v['custom_cabinet_'+k]<=0).map(k=>'Drawer '+k+' must resolve to a positive dimension.');const errors:string[]=[];for(const k of ['width','height','depth']){const n=Number(v['custom_cabinet_'+k]);if(!Number.isFinite(n)||n<100||n>3000)errors.push(label(k)+' must be between 100 and 3,000 mm.')}const t=thickness(v);if(t<=0||t>50)errors.push('Carcass thickness must be greater than 0 and at most 50 mm.');const bays=v.cabinet_layout_mode==='mixed_bays'?Number(v.mixed_bay_count):1;if(v.width_basis!=='drawer_inside'&&v.custom_cabinet_width< (bays+1)*t+bays*60)errors.push('Increase width to leave room for each bay.');return errors}
+export function validate(v:Values){if(v._family===6)return [...(!Number.isInteger(v.tray_count)||v.tray_count<1||v.tray_count>4?['Tray count must be a whole number from 1 to 4.']:[]),...['width','height','depth'].filter(k=>!Number.isFinite(v['custom_cabinet_'+k])||v['custom_cabinet_'+k]<=0).map(k=>'Stand '+k+' must be positive.')];if(v._family===5)return ['width','height','depth'].filter(k=>!Number.isFinite(v['custom_cabinet_'+k])||v['custom_cabinet_'+k]<=0).map(k=>'Drawer '+k+' must resolve to a positive dimension.');const errors:string[]=[];if(v.cabinet_layout_mode==='sections'){errors.push(...treeErrors(v.section_nodes));if(!errors.length){const rects=sectionRects(v.section_nodes,sectionRoot(v,thickness(v)),thickness(v));if(rects.some(r=>!Number.isFinite(r.w)||!Number.isFinite(r.h)||r.w<60||r.h<60))errors.push('Each section needs at least 60 mm clear width and height; reduce fixed sizes or enlarge the cabinet.');}if(v.width_basis!=='outside'||v.depth_basis!=='outside')errors.push('Section layout requires outside-envelope sizing.');}for(const k of ['width','height','depth']){const n=Number(v['custom_cabinet_'+k]);if(!Number.isFinite(n)||n<100||n>3000)errors.push(label(k)+' must be between 100 and 3,000 mm.')}const t=thickness(v);if(t<=0||t>50)errors.push('Carcass thickness must be greater than 0 and at most 50 mm.');const bays=v.cabinet_layout_mode==='mixed_bays'?Number(v.mixed_bay_count):1;if(v.width_basis!=='drawer_inside'&&v.custom_cabinet_width< (bays+1)*t+bays*60)errors.push('Increase width to leave room for each bay.');return errors}
 export type Part={id:string;name:string;x:number;y:number;z:number;w:number;d:number;h:number;color:string;group:string};
 export function geometry(v:Values,interior:boolean,explode:boolean):Part[]{
  if(v._family===3&&v.module_type==='drawers'){const n=Math.max(1,Math.min(4,Number(v.drawer_bank_count)||1));v={...v,cabinet_layout_mode:'mixed_bays',mixed_bay_count:n,mixed_bay_types:Array(n).fill('drawers'),mixed_bay_width_weights:v.drawer_bank_width_weights,include_mixed_bay_partitions:true,mixed_bay_drawer_counts:Array.from({length:n},(_,i)=>v.drawer_bank_layout_mode==='independent'?(v.drawer_bank_drawer_counts?.[i]??v.drawer_count):v.drawer_count)}}
@@ -70,7 +71,20 @@ export function geometry(v:Values,interior:boolean,explode:boolean):Part[]{
  if(v.show_carcass_top!==false){if(v.custom_top_style==='full')add('TOP','Top',t,0,H-t+ex,W-2*t,D,t);else {add('TOP-F','Front stretcher',t,0,H-t+ex,W-2*t,70,t);add('TOP-R','Rear stretcher',t,D-70,H-t+ex,W-2*t,70,t)}}
  if(v.show_back_construction!==false){if(back)add('BACK','Back',t,D-back+ex,base+t,W-2*t,back,H-base-2*t,'#a0784e','back');else if(v.back_style==='stretchers'){add('BACK-U','Upper back rail',t,D-t,H-90,W-2*t,t,90);add('BACK-L','Lower back rail',t,D-t,base+t,W-2*t,t,90)}}
  if(v.include_worktop&&v.show_worktop!==false)add('WORKTOP','Worktop',-Number(v.worktop_side_overhang??20),-Number(v.worktop_front_overhang??25),H+ex*2,W+2*Number(v.worktop_side_overhang??20),D+Number(v.worktop_front_overhang??25)+Number(v.worktop_back_overhang??10),Number(v.worktop_thickness??38),'#d8b079','worktop');
- const mixed=v.cabinet_layout_mode==='mixed_bays',count=mixed?Math.max(1,Math.min(4,Number(v.mixed_bay_count))):1;
+ if(v.cabinet_layout_mode==='sections'&&!treeErrors(v.section_nodes).length){
+  const nodes=v.section_nodes as SectionNode[],rects=sectionRects(nodes,sectionRoot(v,t),t),depth=D-(v.back_style==='structural_panel'?t:0);
+  for(const p of sectionPanels(nodes,rects,t,depth))add(p.id,'Section support',p.x,0,p.z,p.w,p.d,p.h);
+  for(const r of rects){const n=nodes[r.id];if(n[2]!=='leaf')continue;
+   if(n[5]==='drawers'){
+    const weights=Array.from({length:n[6]},(_,i)=>n[7]==='graduated'?1+i*n[8]:n[7]==='custom_weights'?n[9][i]:1),sum=weights.reduce((a,b)=>a+b,0),gap=Number(v.drawer_gap)||3,reveal=Number(v.front_edge_reveal)||0;let z=r.z+r.h-reveal;
+    weights.forEach((weight,j)=>{const h=(r.h-2*reveal-gap*(n[6]-1))*weight/sum;z-=h;const yy=explode?-ex*(j+1)/2:0,id=`SEC-${r.id+1}-D${j+1}`;
+     if(v.show_drawer_faces!==false&&!interior)add(id+'-FACE','Drawer front',r.x+reveal,-t+yy,z,r.w-2*reveal,t,h,'#d4b182','front');
+     if(interior||explode){add(id+'-BOTTOM','Drawer bottom',r.x+13,12+yy,z+12,r.w-26,depth-45,6,'#dbbf96','drawer');add(id+'-SIDE-L','Drawer side',r.x+13,12+yy,z+18,12,depth-45,h-40,'#cba77a','drawer');add(id+'-SIDE-R','Drawer side',r.x+r.w-25,12+yy,z+18,12,depth-45,h-40,'#cba77a','drawer');}z-=gap;
+    });
+   }else if(n[5]==='doors'&&!interior&&v.show_doors!==false){const gap=Number(v.door_gap)||3;for(let j=0;j<n[6];j++)add(`DOOR-SEC-${r.id+1}-${j+1}`,'Door',r.x+j*r.w/n[6]+gap/2,-t,r.z+gap/2,r.w/n[6]-gap,t,r.h-gap,'#d4b182','front');}
+  }
+ }
+ const mixed=v.cabinet_layout_mode==='mixed_bays',count=v.cabinet_layout_mode==='sections'?0:mixed?Math.max(1,Math.min(4,Number(v.mixed_bay_count))):1;
  const partitionThickness=mixed&&v.include_mixed_bay_partitions!==false?t:0;
  const weights=Array.from({length:count},(_,i)=>Math.max(.1,Number(v.mixed_bay_width_weights?.[i]??1))),total=weights.reduce((a,b)=>a+b,0);let x=t;
  for(let i=0;i<count;i++){

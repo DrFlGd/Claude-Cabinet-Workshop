@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.4.2**) are separate from the bundled
+Application versions (currently **0.5.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,53 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.5.0 — 2026-09-27
+
+- Added kitchen **Sections** mode with nested left/right and top/bottom splits.
+  Upper and lower rows can have different divider positions. Legacy and mixed-bay
+  configurations retain their original modes; selecting Sections converts mixed
+  columns into an editable tree, or creates a starting layout from legacy contents.
+- Added a selectable front diagram, parent breadcrumbs, section selector, split
+  actions and divider dragging. Clear openings support proportional weights or
+  fixed metric/inch dimensions, with at least one flexible child per split.
+- Each leaf supports its own drawer bank, paired/single doors, or open shelves.
+  Drawer count and equal/graduated/custom height weights are independent per bank.
+  Door sections can contain shelves. Paired doors do not add a center divider;
+  drawer counts do not automatically add separator shelves.
+- Added full-depth split panels, horizontal 80 mm front rails and nonstructural
+  layout boundaries. Shared panels are emitted once; nested splits terminate at
+  their parent. The outer face-frame middle rail/center stile are suppressed in
+  Sections mode to avoid crossing independently defined openings.
+- Added bounded tree validation (31 nodes, eight nesting levels), clear-opening
+  checks, malformed-import rejection and native drawer/door clearance assertions.
+  Saved JSON preserves the tree; Undo/Redo includes section edits.
+- Hid global layout/count/height controls superseded by the section editor and
+  derives door/drawer visibility from leaf contents. Weighted drawer divisions
+  appear in the editor; dragging accounts for SVG scaling and letterboxing.
+- Reused existing native drawer/door modules per opening, separating reusable
+  layout modules from top-level reports. Added section supports to assembly,
+  flat parts, BOM and registered machining layers, SEC-prefixed part identities,
+  engraving, section dimensions and machining-depth records.
+- Added **Photo example · six drawers and paired doors** to the kitchen starters
+  (110 starters total), plus importable JSON and a directly openable native SCAD
+  example. The upper row has two drawers / paired doors / two drawers; the lower
+  row has two wider drawers. Its 1500 × 850 × 600 mm dimensions are illustrative,
+  not measured from the photo; decorative frame-and-panel fronts are not modeled.
+- Preserved the example in the application recipe catalog/importer. Updated the
+  generated schema, native parameter signature, embedded sources and worker file
+  manifest. Added the section layout guide and development/test instructions.
+- Construction limits: interior section supports are butt-fit blanks requiring
+  brackets, cleats or shop-drilled fastening. Cabinet-side slide/hinge/shelf-pin
+  drilling is transferred during fitting. Fronts fit within clear openings;
+  overlay controls depth, not coverage over dividers. Hardware/material settings
+  remain shared. Registered export bands are not optimized sheet nests.
+- Validation: TypeScript and the static production build passed; all release tests
+  passed, including new tree, persistence, fixed sizing, mixed conversion, native
+  counts/BOM, shelves, SVG registration and invalid-dimension tests. Production
+  WASM workers passed photo assembly, flat parts, BOM, cut, hinge-pocket and
+  engraving exports. Default native BOMs matched the previous source across all
+  seven families after the layout refactor. No interactive browser visual QA is claimed.
 
 ## Documentation update — 2026-09-26
 
@@ -394,8 +441,8 @@ Source: [parameter conventions](public/engine/v5/docs/PARAMETER_CONVENTIONS.md).
   or every browser interaction has been tested.
 - Windows launch testing was not available; no new desktop binary is promised by
   a web/source release.
-- Kitchen independent bays remain full-height columns, without arbitrary split
-  top/bottom mixed arrangements.
+- Legacy kitchen Mixed bays remain full-height columns. Sections mode adds nested
+  splits, with the butt-fit support and shared-hardware limits listed in 0.5.0.
 - The schematic is approximate; it does not reproduce all joints, pockets, cleat
   bevels or cutouts. Exact OpenSCAD geometry remains authoritative.
 - SVG layouts and rectangular nesting are not CNC toolpaths. Browser Design Health

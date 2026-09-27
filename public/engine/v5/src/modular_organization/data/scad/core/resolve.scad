@@ -123,7 +123,9 @@ function sizing_mixed_has_drawer(i=0) =
             ? true
             : sizing_mixed_has_drawer(i+1);
 
-sizing_has_drawers =
+section_layout_active = !is_undef(section_nodes) && active_cabinet_layout_mode == "sections";
+
+sizing_has_drawers = section_layout_active ? false :
     sizing_mixed_mode
         ? sizing_mixed_has_drawer()
         : cabinet_contents == "drawers"
@@ -370,12 +372,12 @@ function mixed_bay_total_door_count() =
 function mixed_bay_door_part_index(b,leaf=0) =
     mixed_bay_door_count_prefix(b)+leaf;
 
-has_drawers =
+has_drawers = section_layout_active ? false :
     mixed_bay_mode
         ? mixed_bay_has_type("drawers")
         : cabinet_contents == "drawers" || cabinet_contents == "combo";
 
-has_doors =
+has_doors = section_layout_active ? false :
     mixed_bay_mode
         ? mixed_bay_has_type("door")
         : cabinet_contents == "doors" || cabinet_contents == "combo";
@@ -628,7 +630,7 @@ face_frame_inset_combo_rail =
     && face_frame_mid_rail_mode_resolved == "combo_auto";
 
 face_frame_center_stile_enabled =
-    face_frame_active
+    !section_layout_active && face_frame_active
     && !is_undef(include_face_frame_center_stile)
     && include_face_frame_center_stile;
 
@@ -968,7 +970,7 @@ door_face_height =
 combo_divider_top_z = door_region_top_z;
 combo_divider_bottom_z = combo_divider_top_z - material_thickness;
 
-face_frame_mid_rail_active =
+face_frame_mid_rail_active = !section_layout_active &&
     face_frame_active
     && (
         face_frame_mid_rail_mode_resolved == "combo_auto"

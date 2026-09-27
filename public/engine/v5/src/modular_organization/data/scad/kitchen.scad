@@ -204,6 +204,10 @@ target_module_edge_clearance_y = 1; // [0:0.25:20]
 
 /* [Structure / Layout] */
 
+// Section rows: parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents, count, drawer heights, graduated step, weights, separator(panel/rail/none), shelves. Children are ordered left-to-right or top-to-bottom. Root parent is -1.
+section_nodes = [[-1,0,"leaf","weight",1,"drawers",3,"equal",0.25,[1,1,1],"panel",0]];
+
+
 // Kitchen family is structural metadata, not a preset. Recipes simply apply
 // ordinary values to the fields below.
 kitchen_family = "base"; // [base, wall, tall]
@@ -227,7 +231,7 @@ kitchen_model_code = "B30";
 // Most kitchen recipes use the simple vertical layout. Open wall cabinets use
 // one generalized "open" bay. These remain ordinary editable configuration
 // values so OpenSCAD-native presets can apply them without hidden logic.
-cabinet_layout_mode = "legacy"; // [legacy, mixed_bays]
+cabinet_layout_mode = "legacy"; // [legacy, mixed_bays, sections]
 
 mixed_bay_count = 1; // [1:1:4]
 
@@ -1294,6 +1298,7 @@ carcass_joint_geometry = joinery_style == "screw" ? "butt" : joinery_style;
 carcass_registration_enabled = joinery_style == "screw" || include_butt_registration_holes;
 drawer_joint_geometry = drawer_joinery_style == "screw" ? "butt" : drawer_joinery_style;
 include <core.scad>
+include <sections.scad>
 include <layouts.scad>
 
 

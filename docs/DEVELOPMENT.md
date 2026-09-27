@@ -61,3 +61,22 @@ UI-specific presentation lives in lib/settings.ts: mount/rear-construction group
 subgroups, advanced kerf classification and mid-rail help are intentional adapter
 rules. Native parameter grouping remains governed by the engine layout contract.
 Do not evaluate OpenSCAD default expressions in JavaScript.
+
+## Section layout maintenance
+
+`lib/sections.ts` and native `sections.scad` resolve the same bounded flat tree.
+The SectionEditor edits that tree; the existing drawer and door modules are
+re-resolved per opening using `layouts_modules.scad`. The root emits the carcass
+once and owns shared split panels. Keep UI/native geometry tests aligned.
+
+`catalog/section-layout-recipes.json` preserves the photo starter through engine
+imports. Its values also appear in `examples/photo-section-cabinet.cabinet.json`
+and the native `public/engine/v5/examples/photo_section_cabinet.scad`. Update all
+three deliberately. Include new SCAD dependencies in the embedded source bundle
+and worker manifest. `node tests/sections.cjs` is part of `test:release` and needs
+native OpenSCAD, like the existing stackable tests.
+
+`npm run test:sections:wasm` runs the production render/export workers in a Node
+harness: photo assembly, flat parts, BOM, cut, hinge pockets and engraving. It
+checks the full embedded source allowlist and shared SVG registration. This is
+worker integration coverage, not a visual browser interaction test.

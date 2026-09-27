@@ -1,0 +1,24 @@
+// Photo-inspired arrangement; illustrative dimensions, not a measured reproduction.
+// Open directly in OpenSCAD. Change output_mode below for cut layouts or BOM.
+include <../src/modular_organization/data/scad/kitchen.scad>
+cabinet_layout_mode = "sections";
+section_nodes = [[-1, 0, "z", "weight", 1, "open", 0, "equal", 0.25, [1], "panel", 0], [0, 0, "x", "weight", 2, "open", 0, "equal", 0.25, [1], "panel", 0], [0, 1, "x", "weight", 1, "open", 0, "equal", 0.25, [1], "panel", 0], [1, 0, "leaf", "weight", 1, "drawers", 2, "custom_weights", 0.25, [0.8, 1.2], "panel", 0], [1, 1, "leaf", "weight", 2, "doors", 2, "equal", 0.25, [1], "panel", 0], [1, 2, "leaf", "weight", 1, "drawers", 2, "custom_weights", 0.25, [0.8, 1.2], "panel", 0], [2, 0, "leaf", "weight", 1, "drawers", 1, "equal", 0.25, [1], "panel", 0], [2, 1, "leaf", "weight", 1, "drawers", 1, "equal", 0.25, [1], "panel", 0]];
+cabinet_width = 1500;
+cabinet_height = 850;
+cabinet_nominal_depth = 600;
+front_facing_style = "none";
+front_mount_style = "overlay";
+cabinet_mount_style = "floor";
+base_style = "toe_kick";
+custom_toe_kick_height = 90;
+custom_bottom_above_toe = 90;
+custom_toe_kick_setback = 65;
+top_style = "stretchers";
+width_basis = "outside";
+depth_basis = "outside";
+drawer_mount = "metal_slides";
+metal_slide_length = 500;
+include_metal_slide_holes = false;
+include_drawer_separators = false;
+front_edge_reveal = 2;
+output_mode = "assembly";

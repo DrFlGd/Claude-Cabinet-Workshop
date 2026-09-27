@@ -4,6 +4,7 @@
 
 - [README](../README.md): features, usage, limits and quick start.
 - [Hosting](../HOSTING.md): static builds, GitHub Pages and the retained Sites build.
+- [Section layouts](SECTION_LAYOUTS.md): editor, photo example and construction limits.
 - [Development](DEVELOPMENT.md): source layout, checks and engine maintenance.
 - [Changelog](../CHANGELOG.md): consolidated application and engine history.
 - [VERSION](../VERSION): application release number; the engine version is separate.

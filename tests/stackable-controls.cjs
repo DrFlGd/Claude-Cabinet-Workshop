@@ -1,6 +1,6 @@
 const fs=require('fs'),assert=require('assert/strict'),ts=require('typescript'),cp=require('child_process'),path=require('path');
 function load(name,deps={}){const m={exports:{}};new Function('require','module','exports',ts.transpileModule(fs.readFileSync('lib/'+name+'.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText)(n=>deps[n],m,m.exports);return m.exports}
-const c=load('cabinet',{'./schema.json':require('../lib/schema.json'),'./engine-sources.json':require('../lib/engine-sources.json')}),s=load('settings');
+const c=load('cabinet',{'./sections':load('sections'),'./schema.json':require('../lib/schema.json'),'./engine-sources.json':require('../lib/engine-sources.json')}),s=load('settings');
 const field=k=>c.schemas[3].fields.find(f=>f.key===k);
 const tmp=fs.mkdtempSync(path.join(process.cwd(),'.stack-controls-'));
 try{fs.cpSync('public/engine/v5/src/modular_organization/data/scad',tmp,{recursive:true});

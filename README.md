@@ -2,9 +2,9 @@
 
 A web configurator for shop carts, utility cabinets, benchtop cabinets, stackable
 cabinets, kitchen cabinets, standalone drawers and equipment stands. The app
-includes 109 starters, including 48 standard kitchen configurations.
+includes 110 starters, including 48 standard kitchen configurations.
 
-Application version: **0.4.2**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.5.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4), with the patches recorded in the
 [changelog](CHANGELOG.md). [Documentation guide](docs/README.md).
 
@@ -49,7 +49,9 @@ supported; outdated starter identifiers become Custom while values are retained.
 The schematic is a simplified view, not exact joinery geometry. Use OpenSCAD
 assembly or flat_3d rendering for exact geometry. Native part guides remain
 approximate and are disabled for equipment stands and flat layouts.
-Kitchen independent bays are full-height columns, not arbitrary top/bottom splits.
+Kitchen **Sections** supports nested top/bottom and left/right splits with independent
+drawers, doors and shelves. The older Mixed bays mode retains full-height columns.
+See the [section layout guide and photo example](docs/SECTION_LAYOUTS.md).
 For stackable open modules, each added shelf creates another open section.
 
 Machining groups applicable controls by carcass, drawer box, drawer bottom and

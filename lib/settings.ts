@@ -25,8 +25,10 @@ export function settingsGroup(f:Field){
 export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
- const k=f.key,s=sectionFor(f),mixed=v._family!==3&&v.cabinet_layout_mode==='mixed_bays';
- const drawerTypes=v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
+ const k=f.key,s=sectionFor(f),sections=v._family===4&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
+ if(k==='section_nodes')return 'Use the section layout editor';
+ if(sections&&(k.startsWith('mixed_')||k==='include_mixed_bay_partitions'||k.startsWith('drawer_bank_')||['cabinet_contents','drawer_count','door_count','door_shelf_count','drawer_height_mode','drawer_height_weights','drawer_graduated_step','include_drawer_separators','shelf_style','width_basis','depth_basis','include_door_hinge_partitions','face_frame_mid_rail_mode','face_frame_custom_mid_rail_z','include_face_frame_center_stile','face_frame_center_stile_width','fronts_cover_bottom_lip','overlay_width_style'].includes(k)))return 'Controlled by section layout';
+ const drawerTypes=sections?(v.section_nodes??[]).filter((n:any[])=>n[2]==='leaf').map((n:any[])=>n[5]):v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
  if(v._family===3){
   if(k.startsWith('mixed_bay_'))return 'Stackable modules use module and drawer-bank controls';
   if(k==='door_shelf_count'&&v.module_type==='drawers')return 'Select an open or door module';
@@ -120,7 +122,7 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(f.visibleIf){const unmet=Object.entries(f.visibleIf).filter(([key,value])=>Array.isArray(value)?!value.includes(v[key]):v[key]!==value);if(unmet.length)return 'Requires '+unmet.map(([k,x])=>k.replaceAll('_',' ')+' = '+String(x)).join(', ')}
  if(v._family===6){if(k.startsWith('overall_')&&v.sizing_mode!=='manual')return 'Used for manual sizing';if(/^(device_|side_clearance|top_clearance)/.test(k)&&v.sizing_mode!=='equipment')return 'Used for equipment sizing';if(k.startsWith('cleat_')&&v.mount_mode!=='wall_mount_french_cleat')return 'Requires French-cleat mounting';if(/^(side_frame_margin|minimum_rib_width|cutout_corner_radius|side_window_count|brace_style)$/.test(k)&&v.side_style!=='skeletonized')return 'Requires skeletonized sides';}
  if(k.startsWith('custom_')&&k.includes('thickness')){const stockKey=k==='custom_carcass_thickness'?'carcass_stock':k==='custom_drawer_material_thickness'?'drawer_stock':k.replace(/^custom_/,'').replace(/_thickness$/,'_stock');if(v[stockKey]&&v[stockKey]!=='custom_mm')return 'Choose measured stock (custom mm) to use this thickness';}
- const types=v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
+ const types=sections?drawerTypes:v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
  if(v._family===5){const basis=v.drawer_design_basis;if(k.startsWith('enclosure_')&&basis!=='enclosure')return 'Only used for enclosure sizing';if(k.startsWith('target_box_outside_')&&basis!=='outside_box')return 'Only used for outside-box sizing';if(k.startsWith('target_box_inside_')&&basis!=='inside_clear')return 'Only used for inside-clear sizing';if(k.startsWith('drawer_module_')&&basis!=='modular_grid')return 'Only used for modular-grid sizing';}
  const drawers=types.some((x:string)=>/drawer|combo/.test(x)),doors=types.some((x:string)=>/door|combo/.test(x));
  if(s==='Drawers'&&!drawers)return 'This layout has no drawers';

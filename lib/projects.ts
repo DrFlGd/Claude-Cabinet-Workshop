@@ -1,4 +1,5 @@
 import {defaults,families,legacyKeys,normalizeValues,schemas,Values} from './cabinet';
+import {treeErrors} from './sections';
 import type {Units} from './units';
 export type Design={version:2;engine:5;engineFamily:"modular_organization";bundleRevision?:5;family:number;name:string;displayUnits:Units;values:Values};
 export type Recent={id:string;updated:string;design:Design};
@@ -12,6 +13,7 @@ export function parseDesign(input:unknown):Design{
  if(d.family===3&&d.values.bottom_tab_placement===undefined)v.bottom_tab_placement='automatic';
  const validArray=(a:any,depth=0):boolean=>Array.isArray(a)&&depth<4&&a.length<=100&&a.every(x=>Array.isArray(x)?validArray(x,depth+1):typeof x==='number'?Number.isFinite(x):typeof x==='string'||typeof x==='boolean'||x===null);
  for(const f of schemas[d.family].fields){if(d.values[f.key]===undefined)continue;const a=d.values[f.key];if(f.expression?(a!==null&&(typeof a!=='number'||!Number.isFinite(a))):(Array.isArray(f.value)?!validArray(a):typeof a!==typeof f.value))throw Error('Invalid setting: '+f.key);if(f.options&&!f.options.includes(String(a)))throw Error('Invalid option: '+f.key);if(typeof a==='number'&&!Number.isFinite(a))throw Error('Invalid number: '+f.key);v[f.key]=a;}
+ if(v.cabinet_layout_mode==='sections'&&treeErrors(v.section_nodes).length)throw Error(treeErrors(v.section_nodes)[0]);
  v.cabinet_preset='custom';
  return {version:2,engine:5,engineFamily:"modular_organization",bundleRevision:5,family:d.family,name:typeof d.name==='string'?d.name.slice(0,160):'Imported cabinet',displayUnits:d.displayUnits==='in'?'in':'mm',values:normalizeValues(d.family,{...v,_starter:schemas[d.family].starters.some(s=>s.id===d.values._starter)?d.values._starter:'edited'})};
 }
