@@ -32,8 +32,14 @@ possible configuration. Imported package capabilities are identified as such.
   changes. Damaged or mismatched runtime resources remain a suspected cause,
   not a confirmed diagnosis of the user's installation. No cosmetic CSS rule
   was added to hide the symptom.
-- Validation of the final package is pending the Windows build. Added focused
-  checks for intact, mismatched and missing runtime files.
+- Validation: Windows build 36410571467 passed with normal launch graphics
+  settings and a visible window. All 68 runtime files passed verification;
+  metadata/header layout checks, section selection and the photo assembly render
+  passed. Reviewed the captured window: no exposed CSS/title text, and Design
+  Health and the section organizer displayed correctly. ZIP CRC verification and
+  intact/mismatched/missing-runtime tests passed. Build and Pages run 36410571460
+  passed the full release suite and static build; website deployment was skipped.
+  Confirmation on the originally affected Windows installation is still needed.
 
 ## 0.5.1 — 2026-09-27
 
