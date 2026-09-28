@@ -17,6 +17,13 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
+## Unreleased
+
+- Added packaged Windows checks for hidden document metadata/style elements and
+  header placement, plus a captured window image. These checks address the gap
+  in earlier functional smoke tests exposed by the reported raw-CSS layout bug.
+  Diagnosis is in progress; this is not yet a verified layout fix.
+
 ## 0.5.1 — 2026-09-27
 
 - Fixed an unwanted horizontal panel in Sections mode: hidden legacy Combo

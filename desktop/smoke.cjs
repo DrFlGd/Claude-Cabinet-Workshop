@@ -5,6 +5,8 @@ module.exports=async function smoke(win,example){
   while(!document.querySelector('#root button')){if(Date.now()>until)throw Error('UI did not become ready: '+document.body.innerText.slice(0,400));await new Promise(r=>setTimeout(r,100));}
   if(/could not (load|start)/i.test(document.body.innerText))throw Error('Startup error shown');
   const waitFor=async check=>{const deadline=Date.now()+10000;while(!check()){if(Date.now()>deadline)throw Error('Section editor interaction timed out');await new Promise(r=>setTimeout(r,50));}};
+  const layout={head:getComputedStyle(document.head).display,title:getComputedStyle(document.querySelector('title')).display,styles:[...document.querySelectorAll('style')].map(e=>({display:getComputedStyle(e).display,rects:e.getClientRects().length})),headerTop:document.querySelector('.app-header').getBoundingClientRect().top};
+  if(layout.head!=='none'||layout.styles.some(e=>e.rects)||Math.abs(layout.headerTop)>2)throw Error('Broken document layout: '+JSON.stringify(layout));
   const imported={version:2,engine:5,engineFamily:'modular_organization',family:4,name:'Windows section regression',displayUnits:'mm',values:${JSON.stringify(example)}};
   const transfer=new DataTransfer();transfer.items.add(new File([JSON.stringify(imported)],'photo.cabinet.json',{type:'application/json'}));
   const fileInput=document.querySelector('input[type=file]');fileInput.files=transfer.files;fileInput.dispatchEvent(new Event('change',{bubbles:true}));

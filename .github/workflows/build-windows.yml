@@ -60,5 +60,7 @@ jobs:
         if: failure()
         with:
           name: windows-startup-diagnostics
-          path: portable/WINDOWS-SMOKE-TEST.json
+          path: |
+            portable/WINDOWS-SMOKE-TEST.json
+            portable/WINDOWS-LAYOUT.png
           if-no-files-found: ignore

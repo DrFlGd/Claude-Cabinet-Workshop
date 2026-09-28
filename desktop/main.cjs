@@ -35,7 +35,9 @@ else {
   await win.loadURL('cabinet://app/');
   if(smoke){
    const example=JSON.parse(await fs.readFile(path.join(__dirname,'..','..','Photo-example.cabinet.json'),'utf8'));
-   const result=await require('./smoke.cjs')(win,example.values);
+   let result;
+   try { result=await require('./smoke.cjs')(win,example.values); }
+   finally { const screenshot=await win.webContents.capturePage(); await fs.writeFile(path.join(__dirname,'..','..','WINDOWS-LAYOUT.png'),screenshot.toPNG()); }
    await fs.writeFile(process.env.CABINET_SMOKE_REPORT||path.join(app.getPath('temp'),'cabinet-smoke.json'),JSON.stringify({passed:true,version:app.getVersion(),...result},null,2));
    app.exit(0);
   }
