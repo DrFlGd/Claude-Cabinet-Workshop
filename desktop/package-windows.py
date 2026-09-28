@@ -37,9 +37,21 @@ with exe.open('rb') as f:
     if f.read(6) != b'PE\x00\x00\x64\x86':
         raise ValueError('Expected Windows x64 PE executable')
 exe.rename(out / 'Cabinet Workshop.exe')
+# Verify the runtime again on the user's machine, after extraction. Browser
+# resource packs and the executable must always come from the same build.
+with zipfile.ZipFile(runtime) as archive:
+    runtime_names = [entry.filename for entry in archive.infolist()
+                     if not entry.is_dir() and entry.filename.lower().endswith(('.exe', '.dll', '.pak', '.bin', '.dat'))]
+runtime_hashes = {}
+for name in runtime_names:
+    name = 'Cabinet Workshop.exe' if name == 'electron.exe' else name
+    with (out / name).open('rb') as f:
+        runtime_hashes[name] = hashlib.file_digest(f, 'sha256').hexdigest()
+(out / 'RUNTIME-SHA256.json').write_text(json.dumps(runtime_hashes, indent=2)+'\n')
+
 app = out / 'resources/app'
 app.mkdir(parents=True, exist_ok=True)
-for name in ['main.cjs', 'assets.cjs', 'smoke.cjs']:
+for name in ['main.cjs', 'assets.cjs', 'smoke.cjs', 'runtime-integrity.cjs']:
     shutil.copyfile(root / 'desktop' / name, app / name)
 shutil.copytree(renderer, app / 'renderer')
 version = json.loads((root / 'package.json').read_text())['version']
@@ -50,7 +62,7 @@ shutil.copyfile(root / 'CHANGELOG.md', out / 'CHANGELOG.md')
 shutil.copyfile(root / 'examples/photo-section-cabinet.cabinet.json', out / 'Photo-example.cabinet.json')
 (out / 'START-HERE.txt').write_text(f'''Cabinet Workshop {version} — Windows x64 portable test build
 
-1. Extract ALL files from the ZIP into a folder.
+1. Extract ALL files from the ZIP into a NEW folder. Do not merge versions.
 2. Open Cabinet Workshop.exe inside that folder.
 3. Keep resources, DLLs, locales and the other runtime files beside the EXE.
 
@@ -64,7 +76,7 @@ You can also Open design and select the included Photo-example.cabinet.json.
 Use Save design for portable backups. Desktop autosave is separate from browser storage.
 This is an unsigned testing build, not an installer. Windows may identify it as
 an unrecognized application. See WINDOWS-SMOKE-TEST.json for automated Windows startup/render checks.
-Manual interactive testing remains necessary.
+The app verifies runtime files before opening. See WINDOWS-LAYOUT.png for the\nautomated Windows window capture. Manual interactive testing remains necessary.
 
 Interior section supports are butt-fit blanks requiring suitable mounting hardware
 or shop-drilled fastening. See the included changelog for scope and limitations.

@@ -4,7 +4,7 @@ A web configurator for shop carts, utility cabinets, benchtop cabinets, stackabl
 cabinets, kitchen cabinets, standalone drawers and equipment stands. The app
 includes 110 starters, including 48 standard kitchen configurations.
 
-Application version: **0.5.1**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.5.2**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4), with the patches recorded in the
 [changelog](CHANGELOG.md). [Documentation guide](docs/README.md).
 

@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.5.1**) are separate from the bundled
+Application versions (currently **0.5.2**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,12 +17,23 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## Unreleased
+## 0.5.2 — 2026-09-28
 
-- Added packaged Windows checks for hidden document metadata/style elements and
-  header placement, plus a captured window image. These checks address the gap
-  in earlier functional smoke tests exposed by the reported raw-CSS layout bug.
-  Diagnosis is in progress; this is not yet a verified layout fix.
+- Rebuilt the Windows portable distribution with runtime integrity verification.
+  The executable, DLLs, Chromium resource/locale packs and snapshots are checked
+  against a packaging-time SHA-256 manifest before the window opens. Missing or
+  mixed-version files now produce a clear extraction error instead of silently
+  opening a potentially broken interface. Extract releases into a new folder.
+- Added a startup check for browser default styles and Windows regression checks
+  for hidden document metadata/style elements and correct header placement.
+  Packaged tests now capture WINDOWS-LAYOUT.png for visual review.
+- Investigation: the reported raw-CSS/title display was not reproduced by the
+  clean Windows package; its new layout assertions passed before application
+  changes. Damaged or mismatched runtime resources remain a suspected cause,
+  not a confirmed diagnosis of the user's installation. No cosmetic CSS rule
+  was added to hide the symptom.
+- Validation of the final package is pending the Windows build. Added focused
+  checks for intact, mismatched and missing runtime files.
 
 ## 0.5.1 — 2026-09-27
 

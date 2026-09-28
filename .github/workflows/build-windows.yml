@@ -21,6 +21,7 @@ jobs:
       - run: npm install --global pnpm@11.25.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build:desktop:renderer
+      - run: node tests/runtime-integrity.cjs
       - run: node tests/desktop-assets.cjs
       - name: Download verified runtime inputs
         shell: pwsh

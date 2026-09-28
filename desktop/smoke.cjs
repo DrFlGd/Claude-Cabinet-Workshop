@@ -34,6 +34,7 @@ module.exports=async function smoke(win,example){
    w.postMessage({filename,source,sources,mode:'assembly'});
   });
   if(output.bytes<=84)throw Error('Empty model');
-  return {uiLoaded:true,sectionSelection:true,photoAssembly:output,origin:location.origin};
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  return {layoutVerified:true,uiLoaded:true,sectionSelection:true,photoAssembly:output,origin:location.origin};
  })()`);
 };
