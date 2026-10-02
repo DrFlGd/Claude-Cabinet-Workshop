@@ -1,7 +1,7 @@
 // Checks that the Electron runtime files beside the EXE are the ones this build
-// shipped with. Every launch does a quick check (each file present, readable and
-// the recorded size), retrying briefly while Windows is still extracting or
-// scanning new files. The full SHA-256 comparison reads about 330 MB, so it runs
+// shipped with. Every launch does a quick check (each file present with the
+// recorded size, metadata only), retrying briefly while Windows is still
+// extracting new files. The full SHA-256 comparison reads about 330 MB, so it runs
 // only on request (Help → Verify program files) and in the packaged smoke test.
 const fs=require('node:fs/promises');
 const {createReadStream}=require('node:fs');
@@ -33,10 +33,9 @@ async function checkFile(e,full){
  const stat=await fs.stat(e.filename).catch(error=>{throw error.code==='ENOENT'?new RuntimeFileError('missing',e.name):TRANSIENT.has(error.code)?new RuntimeFileError('locked',e.name,error.code):new RuntimeFileError('locked',e.name,error.code||String(error))});
  if(!stat.isFile())throw new RuntimeFileError('missing',e.name);
  if(e.size!==undefined&&stat.size!==e.size)throw new RuntimeFileError('mismatch',e.name,`size ${stat.size}, expected ${e.size}`);
- // Open the file even in the quick check: a file Windows is still writing or
- // scanning can exist with the right size but refuse to be read.
- const handle=await fs.open(e.filename,'r').catch(error=>{throw new RuntimeFileError(error.code==='ENOENT'?'missing':'locked',e.name,error.code)});
- await handle.close();
+ // The quick check reads metadata only. Opening each file would make antivirus scan
+ // all of them (about 330 MB) on the first launch, including DLLs Chromium loads
+ // only when needed, which is the delay this check replaces.
  if(!full&&e.size!==undefined)return;
  const hash=createHash('sha256');
  try{for await(const chunk of createReadStream(e.filename))hash.update(chunk)}

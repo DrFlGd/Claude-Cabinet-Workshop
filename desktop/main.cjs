@@ -55,8 +55,9 @@ else {
   win.show();
   log('starting page shown');
 
-  // Quick check on every launch (present, readable, right size), retrying for a few
-  // seconds while Windows finishes extracting or scanning. The smoke test compares hashes.
+  // Quick check on every launch (each file present with the recorded size, metadata
+  // only), retrying for a few seconds while Windows finishes extracting. The smoke
+  // test and Help > Verify program files compare SHA-256 hashes.
   const runtimeFiles=await verifyRuntime(installRoot,smoke?{full:true}:{retries:10,delay:400});
   log(`runtime files checked: ${runtimeFiles}${smoke?' (SHA-256)':''}`);
 

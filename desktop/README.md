@@ -34,9 +34,9 @@ autosave remains in the desktop application's own user profile.
 The production worker smoke tests are available through `pnpm run test:sections:wasm`.
 
 The window opens immediately with a starting page. Each launch then checks that
-the executable, DLLs, resource packs, snapshots and locale packs are present,
-readable and the size recorded at build time, retrying for a few seconds while
-Windows is still extracting or scanning them. Help → Verify program files
+the executable, DLLs, resource packs, snapshots and locale packs are present
+with the size recorded at build time (metadata only), retrying for a few seconds
+while Windows is still extracting them. Help → Verify program files
 compares their SHA-256 hashes (the packaged smoke test does the same), and
 Help → Open start-up log shows the last launch's log. Always extract a new
 version into a fresh folder. A startup error identifies missing or mismatched

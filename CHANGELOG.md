@@ -26,10 +26,12 @@ Windows desktop start-up. The application itself is unchanged from 0.7.0.
   including the 246 MB EXE) on every launch; on a first launch, with Windows
   scanning the newly extracted files, that could look like the program did
   nothing.
-- Each launch now checks that every runtime file is present, readable and the
-  size recorded at build time, instead of hashing it. Files that are still being
-  extracted or scanned (missing, short or locked) are retried for about four
-  seconds before an error is shown. The full SHA-256 comparison is still made by
+- Each launch now checks that every runtime file is present with the size
+  recorded at build time (file metadata only) instead of reading and hashing it,
+  so antivirus no longer has to scan every file, including DLLs Chromium loads
+  only when needed, before the app can start. Files that are still being
+  extracted (missing, short or locked) are retried for about four seconds before
+  an error is shown. The full SHA-256 comparison is still made by
   the packaged smoke test and on request through **Help → Verify program
   files…**.
 - Start-up errors say what happened and what to do: a file still in use
