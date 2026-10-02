@@ -27,7 +27,19 @@ jobs:
       - run: pnpm exec tsc --noEmit --incremental false
       - name: Install native geometry test dependency
         run: sudo apt-get update && sudo apt-get install -y openscad zip
-      - run: pnpm run test:release
+      # Same checks as `pnpm run test:release`, one step each so a failure names its suite.
+      - name: Embedded engine sources match public/engine
+        run: node scripts/sync-engine-sources.mjs --check
+      - name: Unit and settings tests
+        run: node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
+      - name: Native OpenSCAD stackable and section tests
+        run: node tests/stackable-controls.cjs && node tests/sections.cjs
+      - name: Production worker section test
+        run: node tests/section-wasm.mjs
+      - name: Engine fit suite
+        run: node tests/engine-fit.mjs
+      - name: Engine interference suite
+        run: node tests/engine-interference.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:
