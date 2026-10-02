@@ -473,6 +473,26 @@ module door_hinge_partition_fixed_shelf_notches_3d(x0) {
     }
 }
 
+module face_frame_partition_notches_3d(x0) {
+    for (b=face_frame_rail_back_bands())
+        translate([x0-1,-0.01,b[0]-0.01])
+            cube([
+                material_thickness+2,
+                effective_face_frame_back_dado_depth+0.01,
+                b[1]-b[0]+0.02
+            ]);
+}
+
+// Same notches in a partition's flat cut (X = depth from the front, Y = Z - cut_z0).
+module face_frame_partition_notches_2d(cut_z0) {
+    for (b=face_frame_rail_back_bands())
+        translate([-0.01,b[0]-cut_z0-0.01])
+            square([
+                effective_face_frame_back_dado_depth+0.01,
+                b[1]-b[0]+0.02
+            ]);
+}
+
 // Internal adjustable-shelf support holes are made THROUGH the partition so
 // one drilled row supports the bays on both sides. Cabinet outer-side holes
 // still obey adjustable_shelf_hole_type (through/blind).
@@ -480,6 +500,7 @@ module door_hinge_partition_shelf_pin_holes_3d(x0) {
     if (shelf_style == "adjustable")
         for (row=[0:1])
             for (i=[0:shelf_pin_count()-1])
+                if (shelf_pin_kept_on_door_partition(row,i))
                 round_hole_x_3d(
                     x0-1,
                     shelf_pin_y(row),
@@ -535,6 +556,7 @@ module door_hinge_partition_3d(p=0) {
         door_hinge_partition_fixed_shelf_notches_3d(x0);
         door_hinge_partition_shelf_pin_holes_3d(x0);
         door_hinge_partition_back_stretcher_notches_3d(x0);
+        face_frame_partition_notches_3d(x0);
     }
 }
 
@@ -648,6 +670,8 @@ module door_hinge_partition_cut() {
                 body_offset+bh);
         }
 
+        face_frame_partition_notches_2d(cut_z0);
+
         // Hinge mounting-plate holes.
         if (effective_hinge_style != "none")
             for (j=[0:hinge_count-1])
@@ -686,6 +710,7 @@ module door_hinge_partition_cut() {
         if (shelf_style == "adjustable")
             for (row=[0:1])
                 for (i=[0:shelf_pin_count()-1])
+                    if (shelf_pin_kept_on_door_partition(row,i))
                     round_hole_2d(
                         shelf_pin_y(row),
                         shelf_pin_z(i)-cut_z0,
@@ -987,6 +1012,7 @@ module mixed_bay_partition_hardware_holes_3d(x0,p=0) {
     if (mixed_bay_partition_has_shelf_pins(p))
         for (row=[0:1])
             for (i=[0:mixed_bay_shelf_pin_count()-1])
+                if (mixed_shelf_pin_kept_on_partition(p,row,i))
                 round_hole_x_3d(
                     x0-1,
                     shelf_pin_y(row),
@@ -1045,6 +1071,7 @@ module mixed_bay_partition_3d(p=0) {
         mixed_bay_partition_fixed_shelf_cuts_3d(x0,p);
         mixed_bay_partition_fixed_shelf_butt_registration_3d(x0,p);
         door_hinge_partition_back_stretcher_notches_3d(x0);
+        face_frame_partition_notches_3d(x0);
     }
 }
 
@@ -1095,6 +1122,8 @@ module mixed_bay_partition_cut(p=0) {
             mixed_bay_partition_top_joinery_cut(body_offset+bh);
         }
 
+        face_frame_partition_notches_2d(cut_z0);
+
         if (mixed_bay_partition_has_hinge_plates(p))
             for (j=[0:hinge_count-1])
                 if (hinge_plate_holes_enabled)
@@ -1111,6 +1140,7 @@ module mixed_bay_partition_cut(p=0) {
         if (mixed_bay_partition_has_shelf_pins(p))
             for (row=[0:1])
                 for (i=[0:mixed_bay_shelf_pin_count()-1])
+                    if (mixed_shelf_pin_kept_on_partition(p,row,i))
                     round_hole_2d(
                         shelf_pin_y(row),
                         mixed_bay_shelf_pin_z(i)-cut_z0,
@@ -1477,6 +1507,7 @@ module drawer_bank_partition_3d(p=0) {
         }
 
         drawer_bank_partition_slide_holes_3d(x0,z0,p);
+        face_frame_partition_notches_3d(x0);
     }
 }
 
@@ -1551,6 +1582,9 @@ module drawer_bank_partition_cut(p=0) {
 
         // Through registration holes for both adjacent drawer banks.
         z_local_base = mode == "dado" ? dd : bottom_extra;
+
+        face_frame_partition_notches_2d(
+            drawer_bank_partition_bottom_z()-z_local_base);
 
         for (bb=[p,p+1]) {
             if (drawer_mount == "wood_rails"
@@ -3169,7 +3203,7 @@ module wood_drawer_runner_cut() {
 module adjustable_shelf_pin_holes_3d(x0,side) {
     if (!mixed_bay_mode && has_doors && shelf_style == "adjustable") {
         for (row=[0:1])
-            for (i=[0:shelf_pin_count()-1]) {
+            for (i=[0:shelf_pin_count()-1]) if (shelf_pin_kept_on_side(side,row,i)) {
                 yy = shelf_pin_y(row);
                 zz = shelf_pin_z(i);
 
@@ -3205,7 +3239,7 @@ module adjustable_shelf_pin_holes_3d(x0,side) {
 }
 
 // Through shelf-pin holes belong in cut_layout.
-module adjustable_shelf_pin_holes_cut_2d() {
+module adjustable_shelf_pin_holes_cut_2d(side=undef) {
     if (!mixed_bay_mode
         && has_doors
         && shelf_style == "adjustable"
@@ -3213,6 +3247,7 @@ module adjustable_shelf_pin_holes_cut_2d() {
 
         for (row=[0:1])
             for (i=[0:shelf_pin_count()-1])
+                if (shelf_pin_kept_on_side(side,row,i))
                 round_hole_2d(
                     shelf_pin_y(row),
                     shelf_pin_z(i),
@@ -3222,7 +3257,7 @@ module adjustable_shelf_pin_holes_cut_2d() {
 }
 
 // Blind shelf-pin drilling belongs in pocket_layout.
-module adjustable_shelf_pin_holes_pocket_2d() {
+module adjustable_shelf_pin_holes_pocket_2d(side=undef) {
     if (!mixed_bay_mode
         && has_doors
         && shelf_style == "adjustable"
@@ -3230,6 +3265,7 @@ module adjustable_shelf_pin_holes_pocket_2d() {
 
         for (row=[0:1])
             for (i=[0:shelf_pin_count()-1])
+                if (shelf_pin_kept_on_side(side,row,i))
                 round_hole_2d(
                     shelf_pin_y(row),
                     shelf_pin_z(i),
@@ -3245,7 +3281,8 @@ module adjustable_shelf_pin_holes_pocket_2d() {
 module mixed_bay_side_shelf_pin_holes_3d(x0,side) {
     if (mixed_bay_mode && mixed_bay_side_has_shelf_pins(side)) {
         for (row=[0:1])
-            for (i=[0:mixed_bay_shelf_pin_count()-1]) {
+            for (i=[0:mixed_bay_shelf_pin_count()-1])
+            if (mixed_shelf_pin_kept_on_side(side,row,i)) {
                 yy = shelf_pin_y(row);
                 zz = mixed_bay_shelf_pin_z(i);
 
@@ -3286,6 +3323,7 @@ module mixed_bay_side_shelf_pin_holes_cut_2d(side) {
         && adjustable_shelf_hole_type == "through")
         for (row=[0:1])
             for (i=[0:mixed_bay_shelf_pin_count()-1])
+                if (mixed_shelf_pin_kept_on_side(side,row,i))
                 round_hole_2d(
                     shelf_pin_y(row),
                     mixed_bay_shelf_pin_z(i),
@@ -3299,6 +3337,7 @@ module mixed_bay_side_shelf_pin_holes_pocket_2d(side) {
         && adjustable_shelf_hole_type == "blind")
         for (row=[0:1])
             for (i=[0:mixed_bay_shelf_pin_count()-1])
+                if (mixed_shelf_pin_kept_on_side(side,row,i))
                 round_hole_2d(
                     shelf_pin_y(row),
                     mixed_bay_shelf_pin_z(i),
@@ -3911,7 +3950,7 @@ module cabinet_side_panel_cut_features(side="left") {
     all_side_through_joinery_2d();
     mixed_bay_side_fixed_shelf_through_2d(side);
 
-    adjustable_shelf_pin_holes_cut_2d();
+    adjustable_shelf_pin_holes_cut_2d(side);
     mixed_bay_side_shelf_pin_holes_cut_2d(side);
 
     all_side_butt_registration_2d();
@@ -4384,6 +4423,13 @@ module face_frame_stile_back_dado_pocket_2d(side="left") {
                     w,
                     face_frame_stile_cut_height
                 ]);
+
+        for (band=face_frame_stile_cross_pockets())
+            translate([0,band[0]])
+                square([
+                    effective_face_frame_side_stile_width,
+                    band[1]-band[0]
+                ]);
     }
 }
 
@@ -4423,10 +4469,7 @@ module face_frame_bottom_rail_back_dado_pocket_2d() {
 
 
 module face_frame_mid_rail_back_dado_pocket_2d() {
-    if (
-        face_frame_back_dado_active
-        && face_frame_mid_rail_active
-    ) {
+    if (face_frame_mid_rail_receives_divider) {
         h = min(
             effective_face_frame_mid_rail_width,
             face_frame_back_dado_width
@@ -4471,6 +4514,21 @@ module face_frame_stile_back_dado_cut_3d(
                 effective_face_frame_back_dado_depth+0.02,
                 face_frame_height+0.02
             ]);
+
+        // The bottom and top panels run under the part of each stile that
+        // overhangs the opening, so the stile is pocketed across its full width
+        // at those heights (the same bands the rails receive).
+        for (band=face_frame_stile_cross_pockets())
+            translate([
+                x0-0.01,
+                -0.01,
+                face_frame_bottom_z+band[0]-0.01
+            ])
+                cube([
+                    effective_face_frame_side_stile_width+0.02,
+                    effective_face_frame_back_dado_depth+0.02,
+                    band[1]-band[0]+0.02
+                ]);
     }
 }
 
@@ -4593,7 +4651,7 @@ module face_frame_mid_rail_3d() {
                 ]
             );
 
-            if (face_frame_back_dado_active)
+            if (face_frame_mid_rail_receives_divider)
                 face_frame_rail_back_dado_cut_3d(
                     face_frame_mid_rail_center_z
                         - effective_face_frame_mid_rail_width/2,

@@ -1183,8 +1183,14 @@ if (stackable_mode
     && top_style != "stretchers")
     echo("WARNING: stackable modules are intended to use top_style=stretchers so the mating tongue can enter the center top recess.");
 
+// Dado carcasses deliberately lift the bottom by stack_bottom_dado_lift (see
+// stackable.scad); only an unexpected offset is reported.
 if (stackable_mode
-    && abs(bottom_above_toe-effective_stack_interface_depth) > 0.01)
+    && abs(
+        bottom_above_toe
+        - effective_stack_interface_depth
+        - (is_undef(stack_bottom_dado_lift) ? 0 : stack_bottom_dado_lift)
+      ) > 0.01)
     echo("WARNING: stackable module bottom plane should equal stack interface depth; check the front-end bottom_above_toe resolver.");
 
 if (stackable_mode
@@ -1454,6 +1460,73 @@ if (validation_enabled()) {
                                 str("Two transverse divider centerlines are too close to machine distinct parts/grooves in drawer ",drawer_part_index(b,i)+1,"."));
                     }
     }
+
+    // Independent bays are laid out between the carcass sides; a face frame's
+    // stiles narrow the two end openings and inset fronts would sit inside the
+    // frame plane. Those combinations are rejected instead of drawn colliding.
+    if (face_frame_active && mixed_bay_mode) {
+        if (has_drawers
+            && (mixed_bay_is_type(0,"drawers")
+                || mixed_bay_is_type(active_mixed_bay_count-1,"drawers")))
+            validation_check("ERROR","FACE_FRAME_BAYS",
+                "Drawers in the first or last independent bay would run into the face-frame stiles. Use the Sections layout (which sizes openings to the frame), put drawers in a middle bay, or turn off the face frame.");
+        if (fronts_inset_flush && (has_drawers || has_doors))
+            validation_check("ERROR","FACE_FRAME_BAYS_INSET",
+                "Inset fronts are not supported for independent bays behind a face frame. Use overlay fronts or the Sections layout.");
+    }
+
+    // A custom mid rail crosses whatever front it overlaps. Inset fronts sit in
+    // the frame plane, so they must stay clear of the rail.
+    if (fronts_inset_flush
+        && face_frame_mid_rail_active
+        && face_frame_mid_rail_mode_resolved == "custom"
+        && (has_doors || has_drawers)) {
+        band = face_frame_mid_rail_band();
+        if (has_doors
+            && band[1] > door_face_bottom_z+0.01
+            && band[0] < door_face_bottom_z+door_face_height-0.01)
+            validation_check("ERROR","FACE_FRAME_RAIL_CROSSES_FRONT",
+                str("The custom mid rail (",band[0]," to ",band[1]," mm) crosses the inset doors. Move the rail to a door/drawer boundary or use overlay fronts."));
+        if (has_drawers)
+            for (b=[0:active_drawer_bank_count()-1])
+                if (drawer_bank_drawer_count(b) > 0)
+                    for (i=[0:drawer_bank_drawer_count(b)-1])
+                        if (band[1] > drawer_face_z(i,b)+0.01
+                            && band[0] < drawer_face_z(i,b)+drawer_face_nominal_height(i,b)-0.01)
+                            validation_check("ERROR","FACE_FRAME_RAIL_CROSSES_FRONT",
+                                str("The custom mid rail crosses inset drawer ",drawer_part_index(b,i)+1,". Move the rail to a drawer boundary or use overlay fronts."));
+    }
+
+    // Every drawer box (plus its running clearance) must fit inside its own
+    // opening, and side-mount slides need a box side at least as tall as the
+    // slide. Either failure means neighbouring parts would collide.
+    if (has_drawers && !standalone_drawer_active)
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1]) {
+                    need = drawer_box_height(i,b)
+                        + 2*effective_drawer_vertical_clearance_for(b);
+                    if (need > drawer_opening_height(i,b)+0.01)
+                        validation_check("ERROR","DRAWER_BOX_FIT",
+                            str("Drawer ",drawer_part_index(b,i)+1,
+                                " needs ",need," mm of height (box plus clearance) but its opening is ",
+                                drawer_opening_height(i,b),
+                                " mm. Use fewer drawers, a taller cabinet or less vertical clearance."));
+                    if (drawer_mount == "wood_rails"
+                        && wood_drawer_runner_bottom_offset+wood_drawer_runner_height
+                           > drawer_box_height(i,b)+0.01)
+                        validation_check("ERROR","RUNNER_HEIGHT",
+                            str("The wood runner on drawer ",drawer_part_index(b,i)+1,
+                                " reaches ",wood_drawer_runner_bottom_offset+wood_drawer_runner_height,
+                                " mm up the side but the box is only ",drawer_box_height(i,b),
+                                " mm tall. Lower the runner offset, use fewer drawers or choose metal slides."));
+                    if (drawer_mount == "metal_slides"
+                        && drawer_box_height(i,b) < effective_metal_slide_envelope_height-0.01)
+                        validation_check("ERROR","SLIDE_HEIGHT",
+                            str("Drawer ",drawer_part_index(b,i)+1," box is ",drawer_box_height(i,b),
+                                " mm tall; the side-mount slides need ",effective_metal_slide_envelope_height,
+                                " mm. Use fewer drawers or a lower-profile slide."));
+                }
 
     if (validation_verbose()) {
         validation_check("INFO","EDGE_POLICY",

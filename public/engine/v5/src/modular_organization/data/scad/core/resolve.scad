@@ -287,7 +287,7 @@ resolved_cabinet_depth =
 sizing_depth_delta =
     resolved_cabinet_depth-cabinet_depth;
 
-resolved_wood_rail_depth =
+sized_wood_rail_depth =
     max(
         20,
         wood_rail_depth
@@ -299,7 +299,7 @@ resolved_wood_rail_depth =
           )
     );
 
-resolved_wood_drawer_runner_depth =
+sized_wood_drawer_runner_depth =
     max(
         20,
         wood_drawer_runner_depth
@@ -464,6 +464,19 @@ usable_depth =
         : structural_back_active
             ? structural_back_y
             : resolved_cabinet_depth;
+
+// Depth available to loose interior members (drawer boxes, shelves, dividers,
+// drawer-bank partitions). Rear stretchers sit inside the carcass, so these
+// members stop at the stretchers' front face. Full-depth door-hinge and
+// mixed-bay partitions keep usable_depth because they are notched around the
+// stretchers instead.
+interior_usable_depth =
+    !standalone_drawer_active && back_style == "stretchers"
+        ? min(
+            usable_depth,
+            resolved_cabinet_depth-material_thickness-back_stretcher_inset
+          )
+        : usable_depth;
 
 fronts_inset_flush =
     front_mount_style == "inset_flush"
@@ -631,10 +644,22 @@ face_frame_inset_combo_rail =
     && combo_contents_active
     && face_frame_mid_rail_mode_resolved == "combo_auto";
 
-face_frame_center_stile_enabled =
+// A center stile divides a PAIR of doors. It is omitted where it would cross
+// drawer fronts (drawer-only layouts, or a combo without a mid rail to end on)
+// and where door-hinge partitions or independent bays already divide the front.
+function face_frame_center_stile_wanted() =
     !section_layout_active && face_frame_active
     && !is_undef(include_face_frame_center_stile)
-    && include_face_frame_center_stile;
+    && include_face_frame_center_stile
+    && has_doors
+    && !mixed_bay_mode
+    && door_count == 2
+    && (
+        cabinet_contents == "doors"
+        || (combo_contents_active && face_frame_mid_rail_mode_resolved != "none")
+    );
+
+face_frame_center_stile_enabled = face_frame_center_stile_wanted();
 
 face_frame_bottom_z =
     face_frame_active
@@ -972,10 +997,16 @@ door_face_height =
 combo_divider_top_z = door_region_top_z;
 combo_divider_bottom_z = combo_divider_top_z - material_thickness;
 
+// combo_auto marks the drawer/door boundary, so it exists only for combo
+// (drawer-over-door) contents; elsewhere it used to land on top of the doors.
 face_frame_mid_rail_active = !section_layout_active &&
     face_frame_active
     && (
-        face_frame_mid_rail_mode_resolved == "combo_auto"
+        (
+            face_frame_mid_rail_mode_resolved == "combo_auto"
+            && combo_contents_active
+            && !mixed_bay_mode
+        )
         || face_frame_mid_rail_mode_resolved == "custom"
     );
 
@@ -1027,9 +1058,32 @@ effective_metal_slide_front_setback =
 drawer_box_depth =
     standalone_drawer_active
         ? standalone_drawer_box_depth
-        : usable_depth
+        : interior_usable_depth
           - effective_drawer_front_setback
           - drawer_back_clearance;
+
+// Wood rails and runners never extend past the rear construction or the back of
+// the drawer box. Front-end defaults are cabinet-relative and ignore the rail's
+// own front setback, which let rails poke through the back of short cabinets.
+resolved_wood_rail_depth =
+    max(
+        20,
+        min(
+            sized_wood_rail_depth,
+            interior_usable_depth-effective_wood_rail_front_setback
+        )
+    );
+
+resolved_wood_drawer_runner_depth =
+    max(
+        20,
+        min(
+            sized_wood_drawer_runner_depth,
+            effective_drawer_front_setback
+            + drawer_box_depth
+            - effective_wood_drawer_runner_front_setback
+        )
+    );
 
 front_panel_x =
     face_frame_active
@@ -1243,11 +1297,25 @@ function door_width_weight_sum(i=0) =
 door_width_weight_total =
     max(0.05,door_width_weight_sum());
 
+// Overlay doors cover a door-hinge partition, splitting at door_gap. Inset doors
+// sit inside the cabinet front and cannot overlap a partition, so each partition
+// becomes a visible mullion with the normal edge reveal on both sides of it.
+function door_split_gap() =
+    fronts_inset_flush
+    && !mixed_bay_mode
+    && has_doors
+    && include_door_hinge_partitions
+    && door_count > 2
+        ? material_thickness + 2*front_edge_reveal
+        : fronts_inset_flush && face_frame_center_stile_wanted()
+            ? effective_face_frame_center_stile_width + 2*front_edge_reveal
+            : door_gap;
+
 door_available_front_width =
     max(
         1,
         front_panel_width
-        - door_gap*max(0,door_count-1)
+        - door_split_gap()*max(0,door_count-1)
     );
 
 function door_each_width(i=0) =
@@ -1266,7 +1334,7 @@ function door_width_prefix(i,j=0) =
 
 function door_local_x(i) =
     door_width_prefix(i)
-    + i*door_gap;
+    + i*door_split_gap();
 
 function door_layout_part_x(i,j=0) =
     j >= i
@@ -1344,7 +1412,7 @@ function door_gap_center_x(p) =
     front_panel_x
     + door_local_x(p)
     + door_each_width(p)
-    + door_gap/2;
+    + door_split_gap()/2;
 
 function door_hinge_partition_x(p) =
     min(
@@ -1355,13 +1423,19 @@ function door_hinge_partition_x(p) =
         )
     );
 
+// Structural partitions run between the carcass bottom and top panels. (The
+// front opening is narrower than the carcass when a face frame is fitted; using
+// it left partitions short of the panels their joinery must enter.)
+function carcass_interior_bottom_z() = bottom_above_toe + material_thickness;
+function carcass_interior_top_z() = cabinet_height - material_thickness;
+
 function door_hinge_partition_bottom_z() =
-    front_opening_bottom_z;
+    carcass_interior_bottom_z();
 
 function door_hinge_partition_top_z() =
     combo_contents_active
         ? combo_divider_bottom_z
-        : front_opening_top_z;
+        : carcass_interior_top_z();
 
 function door_hinge_partition_body_height() =
     max(
@@ -1465,8 +1539,8 @@ function door_adjustable_shelf_layout_x(b=0) =
 // GENERALIZED MIXED-BAY PARTITIONS / SHELVES
 // ---------------------------
 
-function mixed_bay_partition_bottom_z() = front_opening_bottom_z;
-function mixed_bay_partition_top_z() = front_opening_top_z;
+function mixed_bay_partition_bottom_z() = carcass_interior_bottom_z();
+function mixed_bay_partition_top_z() = carcass_interior_top_z();
 function mixed_bay_partition_body_height() =
     max(1,mixed_bay_partition_top_z()-mixed_bay_partition_bottom_z());
 
@@ -1737,22 +1811,74 @@ function effective_drawer_vertical_clearance_for(b=0) =
               )
             : drawer_vertical_clearance;
 
+// Face-frame mid rail as a [bottom, top] Z band, or [] when there is none.
+// The rail is face-frame stock that reaches behind the carcass front plane
+// (back-dado construction) and always narrows the opening behind it, so a
+// drawer box must pass between the rails rather than merely between the
+// carcass members. Overlay fronts hide the rail but do not move it.
+function face_frame_mid_rail_band() =
+    face_frame_mid_rail_active
+        ? [
+            face_frame_mid_rail_center_z-effective_face_frame_mid_rail_width/2,
+            face_frame_mid_rail_center_z+effective_face_frame_mid_rail_width/2
+          ]
+        : [];
+
+function drawer_face_opening_bottom_z(i,b=0) =
+    max(drawer_face_z(i,b), content_bottom_z);
+
+function drawer_face_opening_top_z(i,b=0) =
+    drawer_face_z(i,b)
+    + drawer_face_nominal_height(i,b);
+
+// True when the mid rail crosses this drawer's face span and the drawer lies
+// mostly above (or below) the rail's center line.
+function drawer_mid_rail_overlap(i,b=0) =
+    let(
+        band=face_frame_mid_rail_band(),
+        z0=drawer_face_opening_bottom_z(i,b),
+        z1=drawer_face_opening_top_z(i,b)
+    )
+    len(band) == 2 && band[1] > z0 && band[0] < z1;
+
+function drawer_is_above_mid_rail(i,b=0) =
+    let(band=face_frame_mid_rail_band())
+    len(band) == 2
+    && (drawer_face_opening_bottom_z(i,b)+drawer_face_opening_top_z(i,b))/2
+       >= (band[0]+band[1])/2;
+
 function drawer_box_opening_bottom_z(i,b=0) =
     standalone_drawer_active
         ? 0
-        : max(drawer_face_z(i,b), content_bottom_z);
+        : drawer_mid_rail_overlap(i,b) && drawer_is_above_mid_rail(i,b)
+            ? max(
+                drawer_face_opening_bottom_z(i,b),
+                face_frame_mid_rail_band()[1]
+              )
+            : drawer_face_opening_bottom_z(i,b);
 
 function drawer_box_opening_top_z(i,b=0) =
     standalone_drawer_active
         ? standalone_enclosure_opening_height
-        : drawer_face_z(i,b)
-          + drawer_face_nominal_height(i,b);
+        : drawer_mid_rail_overlap(i,b) && !drawer_is_above_mid_rail(i,b)
+            ? min(
+                drawer_face_opening_top_z(i,b),
+                face_frame_mid_rail_band()[0]
+              )
+            : drawer_face_opening_top_z(i,b);
+
+// Smallest box that still holds its bottom panel with a usable wall above it.
+// (A fixed 40 mm floor used to apply here; in short openings it silently made
+// neighbouring boxes overlap. Boxes that cannot fit are now reported by the
+// DRAWER_BOX_FIT validation check instead.)
+function minimum_drawer_box_height() =
+    drawer_bottom_inset + drawer_bottom_thickness + 10;
 
 function drawer_box_height(i=0,b=0) =
     standalone_drawer_active
         ? standalone_drawer_box_height
         : max(
-            40,
+            minimum_drawer_box_height(),
             drawer_box_opening_top_z(i,b)
             - drawer_box_opening_bottom_z(i,b)
             - 2*effective_drawer_vertical_clearance_for(b)
@@ -2020,7 +2146,7 @@ function cabinet_clear_height() =
 function cabinet_clear_depth() =
     max(
         0,
-        usable_depth
+        interior_usable_depth
         - (
             fronts_inset_flush
                 ? max(
@@ -2126,15 +2252,15 @@ function drawer_bank_partition_x(p) =
 function drawer_bank_partition_bottom_z() =
     combo_contents_active
         ? combo_divider_top_z
-        : front_opening_bottom_z;
+        : carcass_interior_bottom_z();
 
-function drawer_bank_partition_top_z() = front_opening_top_z;
+function drawer_bank_partition_top_z() = carcass_interior_top_z();
 
 function drawer_bank_partition_body_height() =
     max(1,drawer_bank_partition_top_z()-drawer_bank_partition_bottom_z());
 
 drawer_bank_partition_depth =
-    max(20,usable_depth-drawer_bank_partition_rear_clearance);
+    max(20,interior_usable_depth-drawer_bank_partition_rear_clearance);
 
 function drawer_bank_partition_dado_depth() =
     min(effective_dado_depth(),material_thickness-0.2);
@@ -2455,6 +2581,75 @@ function shelf_pin_y(row) =
         ? adjustable_shelf_front_setback
         : resolved_cabinet_depth-adjustable_shelf_rear_setback;
 
+// Shelf pins versus hinge mounting plates.
+//
+// The front shelf-pin row and the hinge mounting plate share the usual 32 mm
+// system setback, so on a door side some pin heights land on (or too close
+// to) a plate screw hole. Those pin holes are omitted - the standard shop
+// practice - instead of drilling two overlapping holes, which the machining
+// ledger rejects. A web of shelf_pin_hinge_plate_web() mm is kept between any
+// remaining pin hole and a plate hole. Every generator and the side-panel
+// ledger use these predicates so geometry, layouts and validation agree.
+function shelf_pin_hinge_plate_web() = 2;
+
+function shelf_pin_hits_hinge_plate(y,z,hinge_zs) =
+    hinge_plate_holes_enabled
+    && effective_hinge_style != "none"
+    && len([
+        for (hz=hinge_zs)
+            for (dz=[
+                -effective_hinge_plate_hole_spacing/2,
+                effective_hinge_plate_hole_spacing/2
+            ])
+                let(
+                    dy=y-effective_hinge_plate_center_from_front,
+                    dv=z-(hz+dz),
+                    r=adjustable_shelf_hole_diameter/2
+                      + effective_hinge_plate_hole_diameter/2
+                      + shelf_pin_hinge_plate_web()
+                )
+                if (dy*dy+dv*dv < r*r) 1
+    ]) > 0;
+
+function legacy_hinge_plate_zs() =
+    [for (j=[0:max(0,hinge_count-1)]) if (hinge_count > 0) hinge_z(j)];
+
+function mixed_bay_hinge_plate_zs() =
+    [for (j=[0:max(0,hinge_count-1)]) if (hinge_count > 0) mixed_bay_hinge_z(j)];
+
+// Outer cabinet side, full-width (legacy) layouts. An unknown side is treated
+// conservatively as a door side.
+function shelf_pin_kept_on_side(side,row,i) =
+    !(
+        (is_undef(side)
+            ? (!mixed_bay_mode && has_doors && effective_hinge_style != "none")
+            : cabinet_side_has_door_hinges(side))
+        && shelf_pin_hits_hinge_plate(
+            shelf_pin_y(row),shelf_pin_z(i),legacy_hinge_plate_zs())
+    );
+
+// Door-hinge partitions are drilled for every hinge station.
+function shelf_pin_kept_on_door_partition(row,i) =
+    !(
+        effective_hinge_style != "none"
+        && shelf_pin_hits_hinge_plate(
+            shelf_pin_y(row),shelf_pin_z(i),legacy_hinge_plate_zs())
+    );
+
+function mixed_shelf_pin_kept_on_side(side,row,i) =
+    !(
+        mixed_bay_side_has_hinge_plates(side)
+        && shelf_pin_hits_hinge_plate(
+            shelf_pin_y(row),mixed_bay_shelf_pin_z(i),mixed_bay_hinge_plate_zs())
+    );
+
+function mixed_shelf_pin_kept_on_partition(p,row,i) =
+    !(
+        mixed_bay_partition_has_hinge_plates(p)
+        && shelf_pin_hits_hinge_plate(
+            shelf_pin_y(row),mixed_bay_shelf_pin_z(i),mixed_bay_hinge_plate_zs())
+    );
+
 
 // Structural/captured-back body dimensions. The solid back fits BETWEEN the
 // bottom/top members in butt mode, then gains dado tongues or tab extensions
@@ -2569,17 +2764,41 @@ back_stretcher_layout_height =
 
 // General interior panels sit behind flush/inset decorative fronts and stop
 // short of the rear construction.
+// A back-dadoed face frame reaches effective_face_frame_back_dado_depth behind the
+// carcass front plane. Only the sides, bottom and top are received by frame
+// pockets, so every other interior member (shelves, combo divider, drawer
+// separators) starts behind the frame's back face instead of colliding with it.
 interior_panel_front_y =
-    fronts_inset_flush
-        ? inset_front_interior_depth
-        : 0;
+    max(
+        fronts_inset_flush ? inset_front_interior_depth : 0,
+        face_frame_back_dado_active ? effective_face_frame_back_dado_depth : 0
+    );
+
+// The mid rail only needs a back pocket when a member's front edge reaches it.
+// Horizontal pocket bands across each stile, in stile-local Z (from the frame
+// bottom): the bottom panel and the top panel/front stretcher. They match the
+// bands cut in the bottom and top rails.
+function face_frame_stile_cross_pockets() =
+    !face_frame_back_dado_active ? [] : [
+        [0, min(effective_face_frame_bottom_rail_width,face_frame_back_dado_width)],
+        [
+            face_frame_height
+            - min(effective_face_frame_top_rail_width,face_frame_back_dado_width),
+            face_frame_height
+        ]
+    ];
+
+face_frame_mid_rail_receives_divider =
+    face_frame_back_dado_active
+    && face_frame_mid_rail_active
+    && interior_panel_front_y <= 0;
 
 shelf_front_y = interior_panel_front_y;
 
 shelf_depth =
     max(
         10,
-        usable_depth
+        interior_usable_depth
         - shelf_front_y
         - 10
     );
@@ -3918,7 +4137,7 @@ function mo_side_shelf_pin_features(side="left") =
     concat(
         (!mixed_bay_mode && has_doors && shelf_style == "adjustable")
             ? [for(row=[0:1]) for(i=[0:max(0,shelf_pin_count()-1)])
-                if(shelf_pin_count()>0)
+                if(shelf_pin_count()>0 && shelf_pin_kept_on_side(side,row,i))
                 mo_side_circle_feature(
                     str("shelf_pin.",side,".",row,".",i+1),side,
                     blind ? "blind_hole" : "through_hole","storage.shelf_grid",
@@ -3927,7 +4146,8 @@ function mo_side_shelf_pin_features(side="left") =
             : [],
         (mixed_bay_mode && mixed_bay_side_has_shelf_pins(side))
             ? [for(row=[0:1]) for(i=[0:max(0,mixed_bay_shelf_pin_count()-1)])
-                if(mixed_bay_shelf_pin_count()>0)
+                if(mixed_bay_shelf_pin_count()>0
+                    && mixed_shelf_pin_kept_on_side(side,row,i))
                 mo_side_circle_feature(
                     str("mixed_shelf_pin.",side,".",row,".",i+1),side,
                     blind ? "blind_hole" : "through_hole","storage.shelf_grid",
@@ -4641,7 +4861,22 @@ face_frame_rail_cut_width =
 face_frame_center_stile_cut_height =
     max(
         1,
-        face_frame_clear_height
+        (combo_contents_active && face_frame_mid_rail_active
+            ? face_frame_mid_rail_center_z-effective_face_frame_mid_rail_width/2
+            : face_frame_clear_top_z)
+        - face_frame_clear_bottom_z
+    );
+
+// Face-frame rails reach effective_face_frame_back_dado_depth behind the carcass
+// front plane. Full-height partitions are notched at the front edge wherever a
+// rail crosses them. Bands are global [bottom, top] Z ranges.
+function face_frame_rail_back_bands() =
+    !face_frame_back_dado_active ? [] : concat(
+        [
+            [face_frame_bottom_z, face_frame_clear_bottom_z],
+            [face_frame_clear_top_z, face_frame_top_z]
+        ],
+        len(face_frame_mid_rail_band()) == 2 ? [face_frame_mid_rail_band()] : []
     );
 
 face_frame_mid_rail_cut_width =

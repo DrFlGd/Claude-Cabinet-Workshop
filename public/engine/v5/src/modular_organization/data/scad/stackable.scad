@@ -1184,7 +1184,12 @@ toe_kick_height = 0;
 toe_kick_setback = 0;
 // Dados span the entire side; lift them above the stacking shoulder keepout.
 // Butt and localized tab joints preserve the established bottom elevation.
-bottom_above_toe = stack_interface_depth + (joinery_style=="dado" ? material_thickness+dado_fit_clearance/2+0.1 : 0);
+// The interface depth is clamped here exactly as effective_stack_interface_depth
+// clamps it later (that variable is not yet assigned at this point).
+stack_bottom_dado_lift = joinery_style=="dado" ? material_thickness+dado_fit_clearance/2+0.1 : 0;
+bottom_above_toe =
+    min(max(2,stack_interface_depth),max(2,cabinet_height/3))
+    + stack_bottom_dado_lift;
 side_toe_kick_cutout = "none";
 
 base_hardware_active = false;

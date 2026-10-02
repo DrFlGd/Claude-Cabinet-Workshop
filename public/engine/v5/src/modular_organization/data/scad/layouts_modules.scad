@@ -770,7 +770,8 @@ module bom_report() {
             face_frame_back_dado_active
                 ? str(
                     "segmented_back_dado;depth=",
-                    effective_face_frame_back_dado_depth
+                    effective_face_frame_back_dado_depth,
+                    ";cross_pockets=bottom,top"
                   )
                 : "segmented_surface"
         );
@@ -784,7 +785,8 @@ module bom_report() {
             face_frame_back_dado_active
                 ? str(
                     "segmented_back_dado;depth=",
-                    effective_face_frame_back_dado_depth
+                    effective_face_frame_back_dado_depth,
+                    ";cross_pockets=bottom,top"
                   )
                 : "segmented_surface"
         );
@@ -826,7 +828,7 @@ module bom_report() {
                 effective_face_frame_mid_rail_width,
                 str(
                     "center_z=",face_frame_mid_rail_center_z,
-                    face_frame_back_dado_active
+                    face_frame_mid_rail_receives_divider
                         ? str(
                             ";back_dado_depth=",
                             effective_face_frame_back_dado_depth
@@ -2169,10 +2171,10 @@ module shelf_pin_operation_geometry_2d() {
         && adjustable_shelf_hole_type == "blind") {
 
         translate([0,-side_panel_bottom_z])
-            adjustable_shelf_pin_holes_pocket_2d();
+            adjustable_shelf_pin_holes_pocket_2d("left");
 
         translate([resolved_cabinet_depth+g,-side_panel_bottom_z])
-            adjustable_shelf_pin_holes_pocket_2d();
+            adjustable_shelf_pin_holes_pocket_2d("right");
     }
 
     if (mixed_bay_mode
@@ -2763,7 +2765,7 @@ module cabinet_side_print_part(side="left") {
             translate([0,0,material_thickness-dd])
                 linear_extrude(height=dd+0.02)
                     translate([0,-side_panel_bottom_z])
-                        adjustable_shelf_pin_holes_pocket_2d();
+                        adjustable_shelf_pin_holes_pocket_2d(side);
         }
 
         if (mixed_bay_mode

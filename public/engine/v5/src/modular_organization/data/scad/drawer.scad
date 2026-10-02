@@ -1246,6 +1246,10 @@ drawer_bank_partition_joinery = "match_carcass"; // [match_carcass, butt, dado, 
 
 
 
+// Called while wood_rail_depth is evaluated, which happens before the resolved
+// stock thicknesses further down this file are assigned. OpenSCAD would see
+// those variables as undef, so the thicknesses are resolved directly here from
+// the public stock inputs (defined at the top of the file).
 function standalone_pre_resolved_box_depth() =
     drawer_design_basis == "enclosure"
         ? max(
@@ -1255,7 +1259,10 @@ function standalone_pre_resolved_box_depth() =
                 drawer_face_style == "inset_flush"
                     ? max(
                         front_setback,
-                        drawer_front_thickness
+                        resolved_stock_thickness(
+                            drawer_front_stock,
+                            custom_drawer_front_thickness
+                        )
                         + max(0,drawer_face_back_clearance)
                       )
                     : front_setback
@@ -1266,7 +1273,10 @@ function standalone_pre_resolved_box_depth() =
             ? max(
                 1,
                 target_box_inside_depth
-                + 2*drawer_material_thickness
+                + 2*resolved_stock_thickness(
+                    drawer_stock,
+                    custom_drawer_material_thickness
+                  )
               )
             : drawer_design_basis == "modular_grid"
                 ? max(
@@ -1274,7 +1284,10 @@ function standalone_pre_resolved_box_depth() =
                     drawer_module_pitch_y
                     * max(1,round(drawer_module_count_y))
                     + 2*max(0,drawer_module_edge_clearance_y)
-                    + 2*drawer_material_thickness
+                    + 2*resolved_stock_thickness(
+                        drawer_stock,
+                        custom_drawer_material_thickness
+                      )
                   )
                 : max(1,target_box_outside_depth);
 
