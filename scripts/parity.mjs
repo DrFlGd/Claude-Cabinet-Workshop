@@ -1,0 +1,143 @@
+// Generates docs/PARITY.md: which features, options and layouts each cabinet type
+// offers, from the app schema, the value normalisation the app applies and the
+// layout editor's profiles. `--check` fails when the committed file is stale.
+//
+//   node scripts/parity.mjs           rewrite docs/PARITY.md
+//   node scripts/parity.mjs --check   verify it is current (used by CI)
+import fs from 'node:fs';
+import ts from 'typescript';
+const root=new URL('../',import.meta.url);
+const read=n=>JSON.parse(fs.readFileSync(new URL(n,root)));
+const schema=read('lib/schema.json'),bundle=read('lib/engine-sources.json');
+function load(name,deps={}){
+ const m={exports:{}};
+ new Function('require','module','exports',ts.transpileModule(fs.readFileSync(new URL('lib/'+name+'.ts',root),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText)(n=>{if(n in deps)return deps[n];throw Error('missing '+n)},m,m.exports);
+ return m.exports;
+}
+const sections=load('sections');
+const cabinet=load('cabinet',{'./sections':sections,'./schema.json':schema,'./engine-sources.json':bundle});
+const settings=load('settings');
+const layout=load('layout',{'./cabinet':cabinet,'./sections':sections,'./settings':settings});
+const names=['Shop cart','Utility','Benchtop','Stackable','Kitchen','Drawer','Equipment stand'];
+const F=schema.map((_,i)=>i);
+const field=(f,k)=>schema[f].fields.find(x=>x.key===k);
+// An option is offered when the setting exists, lists the option, and the app keeps it.
+function offers(f,key,option){
+ const fl=field(f,key);
+ if(!fl)return false;
+ if(option===undefined)return true;
+ if(fl.options&&!fl.options.map(String).includes(String(option)))return false;
+ const v=cabinet.normalizeValues(f,{...cabinet.defaults(f),[key]:option});
+ return String(v[key])===String(option);
+}
+const any=(...tests)=>f=>tests.some(t=>t(f));
+const has=(key,option)=>f=>offers(f,key,option);
+const features=[
+ ['Sizing',[
+  ['Outside envelope',has('cabinet_width')],
+  ['Fit drawers to contents (drawer-inside sizing)',has('width_basis','drawer_inside')],
+  ['Modular grid sizing',has('target_dimension_mode','modular_grid')],
+ ]],
+ ['Carcass',[
+  ['Butt / screw joinery',any(has('joinery_style','butt'),has('joinery_style','screw'))],
+  ['Dado joinery',has('joinery_style','dado')],
+  ['Tab-and-slot joinery',has('joinery_style','tab_slot')],
+  ['Full top panel',any(has('top_style','full'),has('custom_top_style','full'))],
+  ['Top stretchers',any(has('top_style','stretchers'),has('custom_top_style','stretchers'))],
+  ['Applied back panel',has('back_style','panel')],
+  ['Structural back panel',has('back_style','structural_panel')],
+  ['Rear stretchers',has('back_style','stretchers')],
+  ['Face frame',has('front_facing_style','face_frame')],
+ ]],
+ ['Base and mounting',[
+  ['Toe kick',has('base_style','toe_kick')],
+  ['Casters',has('base_style','casters')],
+  ['Leveling feet',has('base_style','leveling_feet')],
+  ['Wall mounting',any(has('cabinet_mount_style','wall'),has('mount_mode','wall_mount_french_cleat'))],
+  ['Worktop',has('include_worktop',true)],
+  ['Base mounting plate',has('include_base_mounting_plate',true)],
+  ['Stacking interface',has('stack_interface_depth')],
+  ['Side ganging',has('ganging_style')],
+  ['French cleats',any(has('mount_mode','wall_mount_french_cleat'),has('cleat_angle'))],
+ ]],
+ ['Fronts',[
+  ['Overlay fronts',has('front_mount_style','overlay')],
+  ['Inset fronts',any(has('front_mount_style','inset_flush'),has('drawer_face_style','inset_flush'))],
+  ['Applied drawer faces',any(has('include_drawer_faces',true),has('drawer_face_style'))],
+  ['Door hinge drilling',has('hinge_style','euro_35mm')],
+  ['Handle holes',any(has('include_door_handle_holes',true),has('include_drawer_handle_holes',true))],
+  ['Face registration holes',has('include_drawer_face_registration_holes',true)],
+ ]],
+ ['Drawers',[
+  ['Metal side-mount slides',any(has('drawer_mount','metal_slides'),has('slide_type','side_mount'))],
+  ['Wood rails and runners',any(has('drawer_mount','wood_rails'),has('slide_type','fixed_runner'))],
+  ['Drawer divider grid',has('include_drawer_divider_grid',true)],
+  ['Drawer separators (rails between drawers)',has('include_drawer_separators',true)],
+  ['Dado / tab-and-slot drawer boxes',any(has('drawer_joinery_style','dado'),has('drawer_joinery_style','tab_slot'))],
+ ]],
+ ['Shelves',[
+  ['Adjustable shelves',any(has('shelf_style','adjustable'),f=>!!field(f,'mixed_bay_shelf_styles'))],
+  ['Fixed shelves',any(has('shelf_style','fixed'),f=>!!field(f,'mixed_bay_shelf_styles'))],
+ ]],
+];
+const mark=b=>b?'✓':'—';
+const lines=[];
+const head=['Feature',...names];
+const table=(rows)=>{lines.push('| '+head.join(' | ')+' |','|'+head.map((_,i)=>i?':-:':'---').join('|')+'|');for(const r of rows)lines.push('| '+r.join(' | ')+' |');lines.push('')};
+lines.push('# Feature parity by cabinet type','','Generated by `node scripts/parity.mjs` from the app schema, the value normalisation the app applies and the layout editor profiles. Do not edit by hand; CI fails when it is stale.','','✓ offered · — not offered (the setting is absent, lacks the option, or the cabinet type forces another value).','');
+lines.push('## Overview','');
+table([
+ ['Starting designs',...F.map(f=>String(schema[f].starters.length))],
+ ['Settings',...F.map(f=>String(schema[f].fields.length))],
+ ['Settings set in the Layout tab',...F.map(f=>String(settings.hasLayoutEditor(f)?schema[f].fields.filter(x=>settings.LAYOUT_KEYS.has(x.key)).length:0))],
+]);
+for(const [group,rows] of features){lines.push('## '+group,'');table(rows.map(([label,test])=>[label,...F.map(f=>mark(test(f)))]))}
+lines.push('## Front layouts (Layout tab)','');
+const prof=F.map(f=>layout.profile(f));
+const modes=f=>field(f,'cabinet_layout_mode')?.options??[];
+table([
+ ['Layout editor',...prof.map(p=>mark(!!p))],
+ ['Single drawer column',...prof.map(p=>mark(!!p&&p.contents.includes('drawers')))],
+ ['Doors',...prof.map(p=>p&&p.maxDoors?`✓ (up to ${p.maxDoors})`:'—')],
+ ['Open with shelves',...prof.map(p=>mark(!!p&&p.contents.includes('open')))],
+ ['Drawers over doors',...prof.map(p=>mark(!!p&&p.combo))],
+ ['Side-by-side drawer columns',...prof.map(p=>p?`✓ (up to ${p.maxColumns})`:'—')],
+ ['Side-by-side bays of any contents',...F.map(f=>prof[f]&&prof[f].columnContents.length>1&&modes(f).includes('mixed_bays')?`✓ (up to ${prof[f].maxColumns})`:'—')],
+ ['Nested openings (sections)',...F.map(f=>mark(!!prof[f]&&prof[f].nested&&modes(f).includes('sections')))],
+]);
+// Combinations the engine refuses with an explanation instead of building.
+const refused=['FACE_FRAME_BAYS','FACE_FRAME_BAYS_INSET','FACE_FRAME_RAIL_CROSSES_FRONT','DRAWER_SEPARATOR_BANKS','MIXED_BAY_PARTITIONS'];
+const scad=Object.entries(bundle).filter(([n])=>n.endsWith('.scad')).map(([,t])=>t).join('\n');
+lines.push('## Combinations the engine refuses','','These are reported as errors with a fix, rather than built with colliding parts. Each is a parity gap to close.','','| Check | Message |','|---|---|');
+for(const code of refused){
+ // The message argument may be built with str(...); keep its literal parts and mark values with "…".
+ const m=scad.match(new RegExp('validation_check\\("ERROR","'+code+'",([\\s\\S]*?)\\);'));
+ const text=m?[...m[1].matchAll(/"([^"]*)"/g)].map(x=>x[1]).join('…').replace(/\s+/g,' ').trim():'(message built at run time)';
+ lines.push(`| \`${code}\` | ${text.replace(/\|/g,'\\|')} |`);
+}
+lines.push('| `INTERFACE_KEEPOUT_CONFLICT` | Stackable connector-only ganging with wood slides: the connector keep-outs overlap the wood-slide features. |','');
+// Settings offered by some cabinet types but not others (types with the layout editor).
+lines.push('## Settings offered by only some cabinet types','','Shop cart, utility, benchtop, stackable and kitchen share one engine core; a setting missing from some of them is either intentionally type-specific or a gap. Layout-tab settings and output/system settings are left out.','');
+const core=[0,1,2,3,4],bySection=new Map();
+const allKeys=[...new Set(core.flatMap(f=>schema[f].fields.map(x=>x.key)))].sort();
+for(const k of allKeys){
+ const where=core.filter(f=>field(f,k));
+ if(where.length===core.length||settings.LAYOUT_KEYS.has(k))continue;
+ const section=field(where[0],k).section.split(' / ')[0];
+ if(['Output','System'].includes(section))continue;
+ if(!bySection.has(section))bySection.set(section,[]);
+ bySection.get(section).push([k,where]);
+}
+lines.push('| Setting | '+core.map(f=>names[f]).join(' | ')+' |','|---|'+core.map(()=>':-:').join('|')+'|');
+for(const [section,list] of [...bySection.entries()].sort(([a],[b])=>a<b?-1:1)){
+ lines.push(`| **${section}** |${core.map(()=>' ').join('|')}|`);
+ for(const [k,where] of list)lines.push(`| \`${k}\` | `+core.map(f=>where.includes(f)?'✓':'—').join(' | ')+' |');
+}
+lines.push('');
+const text=lines.join('\n');
+const target=new URL('docs/PARITY.md',root);
+if(process.argv.includes('--check')){
+ const current=fs.existsSync(target)?fs.readFileSync(target,'utf8'):'';
+ if(current!==text){console.error('docs/PARITY.md is stale; run node scripts/parity.mjs');process.exit(1)}
+ console.log('Parity table is current.');
+}else{fs.writeFileSync(target,text);console.log('Wrote docs/PARITY.md ('+lines.length+' lines).')}

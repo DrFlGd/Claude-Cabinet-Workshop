@@ -1,0 +1,548 @@
+{
+ "default": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|531.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "98f1e6744977b604f7908508",
+    "bytes": 19415,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "90f2b7a1833cc7d6c9e84f4f",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_freestanding_single_printer_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|531.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "98f1e6744977b604f7908508",
+    "bytes": 19415,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "90f2b7a1833cc7d6c9e84f4f",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_wall_mounted_pull_out_printer_stand": {
+  "records": [
+   "CHECK|WARN|WALL_LOAD_REVIEW|Verify wall anchors, studs, cleat engagement and extended-load overturning moment; geometry is not load certification",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "BOM|CLEAT_STAND_1|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_1|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_1|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|CLEAT_STAND_2|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_2|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_2|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|STABILIZER|1|spacer|plywood|18|567.4|90|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate",
+   "HARDWARE|ID=wall_anchors|QTY=4|NOTE=stud layout is a guide; verify actual wall"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "4bddf1f82038cb42f6868ee6",
+    "bytes": 32488,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "e09784b2e653e836bf52d779",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_stacked_dual_bay_printer_tower": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=1533|TRAY_W=506|TRAY_D=508|COUNT=2",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|1533|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|1533|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|UPPER_SHELF|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|TRAY_2|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_2|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_2|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|531.4|90|inside face up",
+   "BOM|BACK_2|1|back|plywood|18|531.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "BOM|LIP_2|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=2|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=40|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "9fcdb834704b483d5a88cd2f",
+    "bytes": 32453,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "ee272dbbe3470bb008ffafa8",
+    "bytes": 447,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_skeletonized_wall_stand": {
+  "records": [
+   "CHECK|WARN|WALL_LOAD_REVIEW|Verify wall anchors, studs, cleat engagement and extended-load overturning moment; geometry is not load certification",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "BOM|CLEAT_STAND_1|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_1|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_1|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|CLEAT_STAND_2|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_2|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_2|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|STABILIZER|1|spacer|plywood|18|567.4|90|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate",
+   "HARDWARE|ID=wall_anchors|QTY=4|NOTE=stud layout is a guide; verify actual wall"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "cbd5d3b990205bcfff7864a7",
+    "bytes": 35121,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "e09784b2e653e836bf52d779",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_solid_side_utility_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP_FRONT|1|horizontal|plywood|18|531.4|90|inside face up",
+   "BOM|TOP_REAR|1|horizontal|plywood|18|531.4|90|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|531.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "c490151e28e9705be1bda719",
+    "bytes": 19188,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "27396f0595edb8cbf7ddb896",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_compact_desktop_printer": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=437.4|D=426|H=509|TRAY_W=376|TRAY_D=358|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|426|509|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|426|509|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|401.4|426|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|401.4|426|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|376|358|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|358|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|358|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|401.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|340|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=300|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "a185e7526f67db96c05823ac",
+    "bytes": 19398,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "c5433f636c4fc585606daaae",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_medium_enclosed_printer": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=587.4|D=606|H=709|TRAY_W=526|TRAY_D=538|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|606|709|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|606|709|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|551.4|606|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|551.4|606|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|526|538|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|538|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|538|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|551.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|490|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=500|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "e77ec781748f4add773f411d",
+    "bytes": 19429,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "9764929f84b168e6272a81c8",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_fixed_runner_service_shelf": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=546|D=576|H=359|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|359|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|359|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|510|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|510|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|510|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "BOM|RUNNER_1_0|1|runner|plywood|20|508|20|inside face up",
+   "BOM|RUNNER_1_1|1|runner|plywood|20|508|20|inside face up",
+   "HARDWARE|ID=slides|QTY=0|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=runner_retention_screws|QTY=2|NOTE=remove for service tray; field drill runner vertically through tray holes",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "0db9690560a19129b010c47c",
+    "bytes": 20516,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "4d768d091cc262f1169c9abf",
+    "bytes": 440,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_wall_printer_tower": {
+  "records": [
+   "CHECK|WARN|WALL_LOAD_REVIEW|Verify wall anchors, studs, cleat engagement and extended-load overturning moment; geometry is not load certification",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=1295|TRAY_W=506|TRAY_D=508|COUNT=2",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|1295|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|1295|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|TRAY_2|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_2|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_2|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "BOM|LIP_2|1|lip|plywood|18|470|20|inside face up",
+   "BOM|CLEAT_STAND_1|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_1|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_1|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|CLEAT_STAND_2|1|cleat_stand|plywood|18|531.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_WALL_2|1|cleat_wall|plywood|18|567.4|90|SECONDARY BEVEL 45deg; blank dimensions; see machining guide",
+   "BOM|CLEAT_BACKER_2|1|backer|plywood|18|531.4|162.5|inside face up",
+   "BOM|STABILIZER|1|spacer|plywood|18|567.4|90|inside face up",
+   "HARDWARE|ID=slides|QTY=2|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=36|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate",
+   "HARDWARE|ID=wall_anchors|QTY=4|NOTE=stud layout is a guide; verify actual wall"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "02b08558fda278c2a23c3676",
+    "bytes": 42271,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "687fe88aa20849f9b51d925a",
+    "bytes": 461,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_housed_joint_printer_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=6|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|543.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|543.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|543.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "ed49c3d9973b41077d65a3f3",
+    "bytes": 13653,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "d5e5bd06527543ed471c8c2f",
+    "bytes": 7000,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_tab_slot_full_back_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=18|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|567.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|567.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|STRUCTURAL_BACK|1|structural|plywood|18|567.4|669|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "b64b15bb08032c1776c2ac97",
+    "bytes": 31153,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "5223121e89c59c3fb02475f5",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_applied_panel_back_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=0|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|531.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|PANEL_BACK|1|applied|plywood|6.35|567.4|669|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "c3674a680431d90027c86283",
+    "bytes": 20633,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "5ada88d3cc9b09ed259649f6",
+    "bytes": 448,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_three_stretcher_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=567.4|D=576|H=669|TRAY_W=506|TRAY_D=508|COUNT=1",
+   "DIM|machining|DADO_DEPTH=18|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18|576|669|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18|576|669|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18|567.4|576|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18|567.4|576|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|18|506|508|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18|508|70|outside face up; pilot depth from outside",
+   "BOM|BACK_1|1|back|plywood|18|567.4|90|inside face up",
+   "BOM|BACK_2|1|back|plywood|18|567.4|90|inside face up",
+   "BOM|BACK_3|1|back|plywood|18|567.4|90|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "25deae3178610299505e3af7",
+    "bytes": 26469,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "48d3e9d4ce4d4da7103249cb",
+    "bytes": 440,
+    "paths": 1
+   }
+  }
+ },
+ "equipment_stand_fractional_stock_stand": {
+  "records": [
+   "CHECK|WARN|TIP_REVIEW|Extended trays and stacked equipment require independent stability assessment and anti-tip anchoring",
+   "CHECK|WARN|HARDWARE_REFERENCE|Generic hole arrays require verification against the purchased slides before drilling",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric/manufacturing checks only; no structural certification or CAM verification",
+   "DIM|equipment_stand|W=568.8|D=576.7|H=664.4|TRAY_W=506.7|TRAY_D=508.35|COUNT=1",
+   "DIM|machining|DADO_DEPTH=18.35|SLIDE_PILOT_DEPTH=8|CLEAT_BEVEL_ANGLE=45|CLEAT_RISE=18",
+   "BOM|SIDE_L|1|side|plywood|18.35|576.7|664.4|inside face up",
+   "BOM|SIDE_R|1|side|plywood|18.35|576.7|664.4|inside face up",
+   "BOM|BASE|1|horizontal|plywood|18.35|568.8|576.7|inside face up",
+   "BOM|TOP|1|horizontal|plywood|18.35|568.8|576.7|inside face up",
+   "BOM|TRAY_1|1|tray|plywood|12.7|506.7|508.35|inside face up",
+   "BOM|CHEEK_L_1|1|cheek|plywood|18.35|508.35|70|outside face up; pilot depth from outside",
+   "BOM|CHEEK_R_1|1|cheek|plywood|18.35|508.35|70|outside face up; pilot depth from outside",
+   "BOM|STRUCTURAL_BACK|1|structural|plywood|18.35|568.8|664.4|inside face up",
+   "BOM|LIP_1|1|lip|plywood|18.35|470|20|inside face up",
+   "HARDWARE|ID=slides|QTY=1|UNIT=pair|LENGTH=450|RATING_KG=45",
+   "HARDWARE|ID=assembly_screws|QTY=22|UNIT=minimum estimate|NOTE=choose length for actual stock and joints",
+   "HARDWARE|ID=stack_bolts|QTY=4 per joint when stacking|NOTE=6mm holes; choose bolt length for two panels plus washers and nuts",
+   "HARDWARE|ID=anti_tip_bracket|QTY=1|NOTE=select anchors for substrate"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "0efcf9be5ce0b3cd95bffbce",
+    "bytes": 30402,
+    "paths": 1
+   },
+   "pocket_carcass_dados": {
+    "sha256": "890d11a8d076afda446ad047",
+    "bytes": 456,
+    "paths": 1
+   }
+  }
+ }
+}

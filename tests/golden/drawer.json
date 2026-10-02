@@ -1,0 +1,238 @@
+{
+ "default": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=enclosure|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=424.6|OUTSIDE_D=478|OUTSIDE_H=120|INSIDE_W=400.6|INSIDE_D=454|INSIDE_H=106",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=measured|W=450|D=500|H=160",
+   "DIM|DRAWER|D1|OUTSIDE|W=424.6|D=478|H=120",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=400.6|D=454|H=106",
+   "DIM|DRAWER|D1|OPENING|W=450|D=500|H=160|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=20|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=400.6|CUT_D=454|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "35c6fda40a39e635f43cc4af",
+    "bytes": 7676,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "7f9969b7584e6575808ef1ae",
+    "bytes": 460,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_450_mm_opening_metal_slides": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=enclosure|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=424.6|OUTSIDE_D=478|OUTSIDE_H=120|INSIDE_W=400.6|INSIDE_D=454|INSIDE_H=106",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=measured|W=450|D=500|H=160",
+   "DIM|DRAWER|D1|OUTSIDE|W=424.6|D=478|H=120",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=400.6|D=454|H=106",
+   "DIM|DRAWER|D1|OPENING|W=450|D=500|H=160|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=20|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=400.6|CUT_D=454|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "35c6fda40a39e635f43cc4af",
+    "bytes": 7676,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "7f9969b7584e6575808ef1ae",
+    "bytes": 460,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_18_in_opening_metal_slides": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=enclosure|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=431.8|OUTSIDE_D=511.4|OUTSIDE_H=127|INSIDE_W=407.8|INSIDE_D=487.4|INSIDE_H=113",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=measured|W=457.2|D=533.4|H=152.4",
+   "DIM|DRAWER|D1|OUTSIDE|W=431.8|D=511.4|H=127",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=407.8|D=487.4|H=113",
+   "DIM|DRAWER|D1|OPENING|W=457.2|D=533.4|H=152.4|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=12.7|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=407.8|CUT_D=487.4|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|511.4|127|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|511.4|127|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|407.8|127|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|407.8|127|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|407.8|487.4|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "f150625e39fa40fa9f27dc57",
+    "bytes": 7726,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "3b85b322e617bff3aea7d8fb",
+    "bytes": 464,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_copy_400_x_450_x_120_box": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=outside_box|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=400|OUTSIDE_D=450|OUTSIDE_H=120|INSIDE_W=376|INSIDE_D=426|INSIDE_H=106",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=required|W=425.4|D=472|H=130",
+   "DIM|DRAWER|D1|OUTSIDE|W=400|D=450|H=120",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=376|D=426|H=106",
+   "DIM|DRAWER|D1|OPENING|W=425.4|D=472|H=130|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=5|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=376|CUT_D=426|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|450|120|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|450|120|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|376|120|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|376|120|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|376|426|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "8c977ac21a8b1866121f2701",
+    "bytes": 7660,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "889cf0ab45feb0e933cc14f7",
+    "bytes": 456,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_420_x_336_x_85_inside_clear": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=inside_clear|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=444|OUTSIDE_D=360|OUTSIDE_H=99|INSIDE_W=420|INSIDE_D=336|INSIDE_H=85",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=required|W=469.4|D=382|H=109",
+   "DIM|DRAWER|D1|OUTSIDE|W=444|D=360|H=99",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=420|D=336|H=85",
+   "DIM|DRAWER|D1|OPENING|W=469.4|D=382|H=109|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=5|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=420|CUT_D=336|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|360|99|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|360|99|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|420|99|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|420|99|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|420|336|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "8a73e7f7f23da84643e4e04c",
+    "bytes": 7660,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "272a3b72b593978ebd54cfcc",
+    "bytes": 456,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_42_mm_grid_10_x_8": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=modular_grid|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=446|OUTSIDE_D=362|OUTSIDE_H=99|INSIDE_W=422|INSIDE_D=338|INSIDE_H=85",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=required|W=471.4|D=384|H=109",
+   "DIM|DRAWER|D1|OUTSIDE|W=446|D=362|H=99",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=422|D=338|H=85",
+   "DIM|DRAWER|D1|OPENING|W=471.4|D=384|H=109|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=5|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=422|CUT_D=338|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|362|99|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|362|99|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|422|99|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|422|99|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|422|338|butt"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "711d5496a24f5e6233a4e0f8",
+    "bytes": 7660,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "0ede9d0c4d473d5078e65f8a",
+    "bytes": 456,
+    "paths": 1
+   }
+  }
+ },
+ "drawer_450_mm_opening_4x3_divider_grid": {
+  "records": [
+   "TARGET|DRAWER_DESIGN|BASIS=enclosure|HEIGHT_MODE=box_height|MOUNT=metal_slides|FACE_STYLE=none|OUTSIDE_W=424.6|OUTSIDE_D=478|OUTSIDE_H=120|INSIDE_W=400.6|INSIDE_D=454|INSIDE_H=106",
+   "DIM|UNITS|mm",
+   "DIM|ENCLOSURE|OPENING|ROLE=measured|W=450|D=500|H=160",
+   "DIM|DRAWER|D1|OUTSIDE|W=424.6|D=478|H=120",
+   "DIM|DRAWER|D1|INSIDE_CLEAR|W=400.6|D=454|H=106",
+   "DIM|DRAWER|D1|OPENING|W=450|D=500|H=160|SIDE_CLEAR_PER_SIDE=12.7|VERT_CLEAR_PER_SIDE=20|FRONT_SETBACK=2|REAR_CLEARANCE=20",
+   "DIM|MATERIALS|DRAWER_WALL_T=12|DRAWER_BOTTOM_T=6|DRAWER_FACE_T=18",
+   "DIM|DRAWER_BOTTOM|D1-BOT|CUT_W=400.6|CUT_D=454|T=6|FLOOR_TOP_Z_IN_BOX=14",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 0 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "BOM|D1-SL|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|478|120|butt",
+   "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|400.6|120|butt",
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt",
+   "BOM|D1-DIV-L1|1|drawer_divider_longitudinal|DRAWER_DIVIDER|6|460|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
+   "BOM|D1-DIV-L2|1|drawer_divider_longitudinal|DRAWER_DIVIDER|6|460|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
+   "BOM|D1-DIV-L3|1|drawer_divider_longitudinal|DRAWER_DIVIDER|6|460|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
+   "BOM|D1-DIV-T1|1|drawer_divider_transverse|DRAWER_DIVIDER|6|406.6|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
+   "BOM|D1-DIV-T2|1|drawer_divider_transverse|DRAWER_DIVIDER|6|406.6|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "0764dad5f81acecb55d10e9f",
+    "bytes": 8727,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "1195dad27dcd63fe93b4cf2b",
+    "bytes": 1769,
+    "paths": 1
+   }
+  }
+ }
+}

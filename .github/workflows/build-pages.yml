@@ -30,6 +30,8 @@ jobs:
       # Same checks as `pnpm run test:release`, one step each so a failure names its suite.
       - name: Embedded engine sources match public/engine
         run: node scripts/sync-engine-sources.mjs --check
+      - name: Parity table is current
+        run: node scripts/parity.mjs --check
       - name: Unit and settings tests
         run: node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
@@ -42,6 +44,8 @@ jobs:
         run: node tests/engine-interference.mjs
       - name: Layout editor suite
         run: node tests/layout-editor.mjs
+      - name: Golden outputs of every starter
+        run: node tests/golden.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:

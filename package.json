@@ -14,11 +14,13 @@
     "db:generate": "drizzle-kit generate",
     "dev:static": "vite --config vite.static.config.ts",
     "build:static": "vite build --config vite.static.config.ts",
-    "test:release": "node scripts/sync-engine-sources.mjs --check && node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs && node tests/stackable-controls.cjs && node tests/sections.cjs && node tests/section-wasm.mjs && node tests/engine-fit.mjs && node tests/engine-interference.mjs && node tests/layout-editor.mjs",
+    "test:release": "node scripts/sync-engine-sources.mjs --check && node scripts/parity.mjs --check && node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs && node tests/stackable-controls.cjs && node tests/sections.cjs && node tests/section-wasm.mjs && node tests/engine-fit.mjs && node tests/engine-interference.mjs && node tests/layout-editor.mjs && node tests/golden.mjs",
     "test:sections:wasm": "node tests/section-wasm.mjs",
     "build:desktop:renderer": "vite build --config vite.static.config.ts --base /",
     "test:engine": "node tests/engine-fit.mjs && node tests/engine-interference.mjs && node tests/layout-editor.mjs",
-    "sync:engine": "node scripts/sync-engine-sources.mjs"
+    "sync:engine": "node scripts/sync-engine-sources.mjs",
+    "golden:update": "node tests/golden.mjs --update",
+    "parity": "node scripts/parity.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
