@@ -1,6 +1,6 @@
 # Kitchen section layouts
 
-Choose **Kitchen cabinet → Structure → Cabinet layout mode → Sections**.
+Choose **Kitchen cabinet**, open the **Structure** section and set **Layout** to **Sections (split openings)**.
 Click an opening in the front diagram, then split it left/right or top/bottom.
 Splits can contain more splits, so upper and lower dividers need not align.
 Select parents using the Selected section menu; all descendant openings highlight
@@ -29,8 +29,8 @@ per-opening hardware presets are not implemented.
 
 ## Photo example
 
-In the kitchen starter list, choose **Section layouts → Photo example · six drawers
-and paired doors**. This opens the Structure editor. The included arrangement is:
+In the cabinet picker (**New** or **Change**), choose **Kitchen cabinet → Section layouts →
+Photo example · six drawers and paired doors**. This opens the Structure editor. The included arrangement is:
 
 - Upper left: two drawers, with a smaller upper drawer.
 - Upper middle: paired doors in one wide opening.

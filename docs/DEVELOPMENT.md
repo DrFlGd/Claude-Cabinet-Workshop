@@ -9,7 +9,10 @@ local serving and deployment. Application versioning is defined in the
 | Area | Location |
 |---|---|
 | Configuration workspace | app/page.tsx |
-| Presentation, help and dependencies | lib/settings.ts, app/SettingHelp.tsx |
+| Cabinet type and starter picker | app/FamilyPicker.tsx |
+| Presentation, help and dependencies | lib/settings.ts, lib/help.ts, app/SettingHelp.tsx |
+| Background engine check, cut list and fit report | app/useEngineAnalysis.ts, lib/analysis.ts, app/PlanPanel.tsx, app/FitTargetResult.tsx |
+| Dimension entry (fractions, unit suffixes) | lib/units.ts, app/DimensionInput.tsx |
 | Design normalization and source export | lib/cabinet.ts |
 | Local recovery | app/useProjects.tsx, lib/projects.ts |
 | Schematic and exact rendering | app/CabinetView.tsx, app/SchematicScene.tsx, app/OpenSCADView.tsx |
@@ -30,7 +33,21 @@ pnpm run test:release
 pnpm run build:static
 ```
 
-The release tests require native OpenSCAD on PATH for stackable geometry checks.
+`test:release` also runs:
+
+- `scripts/sync-engine-sources.mjs --check`: the browser renders from the embedded
+  copies in lib/engine-sources.json, so every edit under public/engine must be
+  followed by `pnpm run sync:engine`.
+- `tests/engine-fit.mjs`: the production export worker evaluates every starter and
+  a set of regression configurations; it fails on undefined engine values, engine
+  errors, BOM rows without sizes or drawer boxes that do not fit their openings.
+- `tests/engine-interference.mjs`: renders sub-assemblies (carcass shell, rear
+  construction, shelves, partitions, rails, face frame, alternating drawers, doors)
+  of representative designs with the bundled OpenSCAD WASM and intersects every
+  pair. Correct joinery only touches; any overlap volume fails the test.
+
+`pnpm run test:engine` runs the two engine suites alone (about three minutes on a
+two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.
 Browser use does not require native OpenSCAD. For the material-specific geometry
 check, also install Python 3.10+ and run `python3 tests/material-relief.py` from the
 repository root. Engine regression/matrix commands are documented in the engine
@@ -44,7 +61,13 @@ browser-visual, desktop and manufacturing validation limits.
 
 ## Engine maintenance
 
-Keep native resources, generated schema and lib/engine-sources.json synchronized.
+Keep native resources, generated schema and lib/engine-sources.json synchronized
+(`pnpm run sync:engine` refreshes the embedded copies of existing files).
+
+OpenSCAD evaluates top-level assignments in file order. A function that runs
+while an earlier variable is assigned must not read a variable assigned later in
+the file (it is `undef` at that point); resolve such values from the public inputs
+instead. The engine-fit suite fails on the resulting `undefined operation` warnings.
 The browser and source exports use the embedded source map; changing only the
 public SCAD file can leave them stale. Documentation included in that map also
 needs synchronization. Preserve original runtime licenses and legacy source paths.

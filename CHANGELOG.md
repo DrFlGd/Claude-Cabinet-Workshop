@@ -1,11 +1,11 @@
-# Cabinet Workshop changelog
+# Claude Cabinet Workshop changelog
 
 This is the consolidated, evidence-based history of the work delivered for this
 project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.5.2**) are separate from the bundled
+Application versions (currently **0.6.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,139 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.6.0 — 2026-10-01
+
+First release of the Claude Cabinet Workshop fork (forked from Cabinet Workshop
+0.5.2). The focus is plans whose parts actually fit together, and a simpler path
+from "what am I building" to a cut list.
+
+### Fit and accuracy fixes in the bundled engine
+
+These were found by evaluating every starter and about 1,300 option variations
+with the production OpenSCAD worker, and by rendering sub-assemblies of real
+designs and intersecting them (two parts must never occupy the same space).
+
+- **Face frames (kitchen default).** Back-dadoed stiles were not pocketed where
+  the bottom and top panels pass behind them, leaving a 19 × 6.35 mm overlap at
+  every frame corner; shelves, the combo divider and drawer separators also ran
+  into the frame. Stiles now carry bottom/top cross pockets (3D model, face-frame
+  pocket layout and BOM note), and those interior members start behind the
+  frame's back face, so their depth is reduced by the dado depth (default
+  kitchen shelf 586.9 → 580.55 mm). The mid-rail back pocket is no longer cut
+  because nothing enters it.
+- **Drawers behind a face-frame mid rail.** Drawer boxes were placed from the
+  carcass divider, 6 mm below the top of the mid rail they must pass. Box openings
+  now start above (or stop below) the rail; the default kitchen drawer box changes
+  from 152.9 to 136.8 mm tall.
+- **Short drawer stacks.** A fixed 40 mm minimum box height made neighbouring
+  boxes overlap when openings were shorter (the "Shallow parts 6-drawer" starter
+  overlapped by 1.3 mm per drawer). The minimum is now the bottom inset plus bottom
+  thickness plus 10 mm, and new errors report a box that cannot fit its opening
+  (DRAWER_BOX_FIT), side-mount slides taller than the box (SLIDE_HEIGHT) and wood
+  runners that reach above the box (RUNNER_HEIGHT).
+- **Rear stretchers.** Drawer boxes, shelves, dividers and drawer-bank partitions
+  extended into the rear stretchers (1.5 mm in the wide benchtop starter); they now
+  stop at the stretchers' front face.
+- **Wood rails and runners** could be longer than the space behind their front
+  setback (the benchtop default rails passed 2.5 mm through the back). Rails are
+  limited to the rear construction and runners to the back of the drawer box.
+- **Standalone drawers** sized from the inside (inside-clear or modular grid) read
+  a stock thickness before the engine had assigned it, so the wood-rail length was
+  undefined (the BOM showed `undef`); inset faces had the same problem. The values
+  are now resolved from the stock inputs.
+- **Hinges and shelf pins.** Turning on 35 mm cup or screw-on hinges in the default
+  kitchen produced blocking machining-collision errors because front shelf-pin holes
+  landed on hinge-plate holes. Pins that would come within 2 mm of a plate hole are
+  omitted (standard shop practice) in the 3D model, cut and pocket layouts,
+  partitions and the collision ledger.
+- **Partitions** (door-hinge, independent-bay and drawer-bank) took their height from
+  the face-frame opening, stopping short of the bottom and top panels their joinery
+  enters. They now run between the carcass panels and are notched behind face-frame
+  rails.
+- **Inset doors with three or more doors** overlapped the door-hinge partitions;
+  they now close against each partition with the normal reveal. Inset door pairs
+  with a face-frame center stile are split the same way.
+- **combo_auto mid rail** was also added to door-only cabinets, on top of the doors;
+  it now exists only for drawers-over-doors. The **center stile** is used only for a
+  pair of doors (ending at the mid rail in combos) instead of crossing drawer fronts.
+- Combinations the engine cannot lay out are reported instead of drawn colliding:
+  drawers in the first or last independent bay behind a face frame, inset fronts in
+  independent bays behind a face frame, and a custom mid rail crossing inset fronts.
+- The stackable "bottom plane" warning fired for every dado carcass although the
+  lift is intentional; the check now allows for it, and the bottom elevation uses
+  the same interface-depth limit as the rest of the engine.
+
+### Workflow and interface
+
+- The cabinet type is always visible in a card at the top of the settings; **New**
+  and **Change** open a picker with all seven types and their 110 starting points
+  (with sizes). The hidden Setup rail is gone and units moved to the header.
+- Settings sections are buttons in design order (Sizing, Structure, Drawers, Doors,
+  Shelves, … then Materials, Hardware, Machining, Output, System), each with a count
+  of applicable settings; sections with nothing to set are hidden. Sizing no longer
+  repeats the width/height/depth fields shown by the fit guide.
+- OpenSCAD now checks the design in the background after every edit. A status chip
+  shows whether parts fit, notes to review or problems to fix.
+- New **Cut list & fit** tab built from the engine's BOM and dimension reports:
+  parts grouped by material and thickness with plain names, sheet-goods area and an
+  approximate sheet count, a drawer fit table (opening, box, usable inside size,
+  clearances), doors, shelves, section openings and reported hardware. Copy or
+  download as CSV, or print.
+- Fitted sizing ("objects in drawers", standalone drawers, equipment stands) appears
+  automatically; the separate Calculate button is gone. **Exact 3D** re-renders
+  automatically after edits (can be turned off).
+- Dimension fields accept fractions and units (`23 1/2`, `3/4"`, `600 mm`, `60 cm`,
+  `2' 3"`). Inch values keep four decimals instead of two; inch cut lists show sizes
+  to the nearest 1/32 in. Invalid entries are marked instead of silently reverting.
+- Plain-language help for about 100 commonly used settings, clearer option names
+  (for example "3/4″ nominal (19.05 mm)", "Drawers over doors", "Wood runners") and
+  help text included in search. Choosing fixed runners on an equipment stand sets
+  tray travel to zero automatically.
+- Section-editor labels scale with the panel and use the selected units.
+- Manufacturing exports are blocked by any plan error, including undefined engine
+  values and drawer-fit failures, not only by engine CHECK errors.
+- Keyboard undo/redo (Ctrl/⌘+Z, Ctrl/⌘+Shift+Z or Ctrl+Y). Phones show the preview
+  first, then the settings. The Design Health panel and Design summary tab were
+  folded into the status chip and the cut list.
+
+### Repository, tests and releases
+
+- `scripts/sync-engine-sources.mjs` keeps lib/engine-sources.json (what the browser
+  renders) in step with public/engine; the release suite fails when they differ.
+- New `tests/engine-fit.mjs` (every starter plus regression configurations through
+  the production worker) and `tests/engine-interference.mjs` (pairwise intersection
+  of rendered sub-assemblies for 14 representative designs). Run with
+  `pnpm run test:engine`; both are part of `test:release`.
+- CI builds a portable release (relative base path) and, for a new version on main,
+  tags it and publishes a GitHub release with the zipped site. Pages builds use
+  `/Claude-Cabinet-Workshop/`.
+
+### Validation performed
+
+- Locally: static-app TypeScript check (Sites-only modules excluded because their
+  packages were not installed in the review environment), units, settings
+  visibility, v5 integration, section WASM worker, engine fit and engine
+  interference suites, and the static production build (also built with a
+  relative base and served from a sub-folder).
+- Audit sweeps against the final engine: single-option variations of every family
+  (952 runs) with no undefined values or unreported errors; randomised option
+  mixes (320 runs) where every remaining overlap coincided with an engine error
+  shown to the user.
+- Browser screenshots of the main flows at 1440 × 900 and 390 × 844 (picker,
+  section editor, cut list in mm and inches, exact 3D, fitted sizing).
+- The stackable and section native-OpenSCAD tests run in CI only (no native
+  OpenSCAD in the review environment); CI must pass before the release is tagged.
+
+### Known limits
+
+- Independent bays behind a face frame support open bays, overlay doors and
+  drawers in middle bays only; use Sections for framed drawer layouts.
+- Section layouts report section openings in the fit table, not per-drawer boxes.
+- The Python package checks (`modular_organization_validate.py`, matrix tests) were
+  not re-run. Hardware hole patterns remain starting points to verify against the
+  purchased hardware; geometry checks are not load or stability certification.
+- The Windows package was not rebuilt or manually tested as part of this release.
 
 ## 0.5.2 — 2026-09-28
 
