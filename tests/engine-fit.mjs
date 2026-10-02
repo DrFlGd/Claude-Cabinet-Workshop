@@ -101,7 +101,11 @@ assert(!/bottom plane should equal/.test((await bom(3,valuesFor(3,undefined,{joi
 }
 // Unsupported face-frame combinations are rejected rather than drawn colliding.
 assert(analyse((await bom(4,valuesFor(4,'kitchen_standard_DB324',{cabinet_layout_mode:'mixed_bays',mixed_bay_count:3}))).text).issues.some(i=>i.code==='FACE_FRAME_BAYS'));
+// Full-width drawer separators cannot cross drawer-bank partitions.
+assert(analyse((await bom(2,valuesFor(2,'benchtop_compact_4_drawer',{include_drawer_separators:true,drawer_bank_count:3}))).text).issues.some(i=>i.code==='DRAWER_SEPARATOR_BANKS'));
+// Independent bays without partitions have nowhere to mount slides or shelves.
+assert(analyse((await bom(0,valuesFor(0,undefined,{include_mixed_bay_partitions:false}))).text).issues.some(i=>i.code==='MIXED_BAY_PARTITIONS'));
 // Fixed runners cannot travel; the UI zeroes travel when they are chosen.
 assert.deepEqual(linkedChanges('slide_type','fixed_runner',{_family:6,tray_extension:450}),{tray_extension:0,preview_extension:0});
 check('fixed runner stand',await bom(6,valuesFor(6,undefined,{slide_type:'fixed_runner',...linkedChanges('slide_type','fixed_runner',{_family:6})})),{allowErrors:[]});
-console.log('Engine fit regressions passed: undefined drawer-rail length, hinge/shelf-pin collisions, stackable dado check, short drawer stacks, slide height, rear stretchers, rail length, face-frame pockets and setbacks, combo-only mid rail, inset partitions, unsupported bay frames, fixed runners.');
+console.log('Engine fit regressions passed: undefined drawer-rail length, hinge/shelf-pin collisions, stackable dado check, short drawer stacks, slide height, rear stretchers, rail length, face-frame pockets and setbacks, combo-only mid rail, inset partitions, unsupported bay frames, bays without partitions, separators across banks, fixed runners.');

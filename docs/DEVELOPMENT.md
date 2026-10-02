@@ -41,12 +41,14 @@ pnpm run build:static
 - `tests/engine-fit.mjs`: the production export worker evaluates every starter and
   a set of regression configurations; it fails on undefined engine values, engine
   errors, BOM rows without sizes or drawer boxes that do not fit their openings.
-- `tests/engine-interference.mjs`: renders sub-assemblies (carcass shell, rear
-  construction, shelves, partitions, rails, face frame, alternating drawers, doors)
-  of representative designs with the bundled OpenSCAD WASM and intersects every
-  pair. Correct joinery only touches; any overlap volume fails the test.
+- `tests/engine-interference.mjs`: renders sub-assemblies (carcass sides, bottom
+  and top, rear construction, shelves, dividers and separators, partitions, rails,
+  face frame, alternating drawers, doors) of representative designs with the
+  bundled OpenSCAD WASM and intersects every pair, so tabs and tongues are checked
+  against the parts that receive them. Correct joinery only touches; any overlap
+  volume fails the test. `CASES='[[family,starter,{...}]]'` runs chosen designs.
 
-`pnpm run test:engine` runs the two engine suites alone (about three minutes on a
+`pnpm run test:engine` runs the two engine suites alone (about four minutes on a
 two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.
 Browser use does not require native OpenSCAD. For the material-specific geometry
 check, also install Python 3.10+ and run `python3 tests/material-relief.py` from the

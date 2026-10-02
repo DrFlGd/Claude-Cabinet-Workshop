@@ -1185,6 +1185,26 @@ function mixed_bay_door_uses_right_boundary(b=0) =
         || mixed_bay_door_hinge_side(b) == "right"
     );
 
+// Without mixed-bay partitions an interior bay boundary has no panel, so drawer
+// slides or runners, shelf ends and hinges on that boundary have nothing to
+// mount to (and shelf joinery would reach into the neighbouring bay).
+function mixed_bay_needs_boundary(b,side) =
+    mixed_bay_is_type(b,"drawers")
+    || (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
+    || (side == "left"
+        ? mixed_bay_door_uses_left_boundary(b)
+        : mixed_bay_door_uses_right_boundary(b));
+
+// First interior boundary (between bay p and p+1) that needs a partition, or -1.
+function mixed_bay_unsupported_boundary(p=0) =
+    !mixed_bay_mode || include_mixed_bay_partitions
+    || p >= active_mixed_bay_count-1
+        ? -1
+        : mixed_bay_needs_boundary(p,"right")
+          || mixed_bay_needs_boundary(p+1,"left")
+            ? p
+            : mixed_bay_unsupported_boundary(p+1);
+
 function mixed_bay_hinge_z(j) =
     hinge_count <= 1
         ? door_face_bottom_z + door_face_height/2
@@ -1483,6 +1503,12 @@ function door_hinge_depth_overlap_length(panel_y0,panel_depth) =
         door_hinge_depth_overlap_end(panel_y0,panel_depth)
         - door_hinge_depth_overlap_start(panel_y0)
     );
+
+// Combo top joint: the band of the divider (from shelf_front_y) that receives it.
+function door_hinge_partition_combo_joint_y0() =
+    door_hinge_depth_overlap_start(shelf_front_y);
+function door_hinge_partition_combo_joint_span() =
+    door_hinge_depth_overlap_length(shelf_front_y,shelf_depth);
 
 // Door-bay boundaries are used for adjustable shelves. A full-depth partition
 // physically separates the shelf spaces, so loose shelves become one panel per
@@ -2288,6 +2314,16 @@ function depth_overlap_end(panel_y0,panel_depth) =
     min(drawer_bank_partition_depth,panel_y0+panel_depth);
 function depth_overlap_length(panel_y0,panel_depth) =
     max(0,depth_overlap_end(panel_y0,panel_depth)-depth_overlap_start(panel_y0));
+
+// Joinery on a partition must occupy exactly the depth band its receiver cuts.
+// In combo contents the receiver is the divider, which starts at shelf_front_y
+// (behind inset fronts or a back-dadoed face frame), not at the carcass front.
+function drawer_bank_partition_bottom_joint_y0() =
+    combo_contents_active ? depth_overlap_start(shelf_front_y) : 0;
+function drawer_bank_partition_bottom_joint_span() =
+    combo_contents_active
+        ? depth_overlap_length(shelf_front_y,shelf_depth)
+        : min(drawer_bank_partition_depth,resolved_cabinet_depth);
 
 function drawer_bottom_cross_panel_local_x() =
     drawer_cross_panel_inner_x_offset()

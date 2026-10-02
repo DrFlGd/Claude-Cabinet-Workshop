@@ -25,10 +25,14 @@ const configure=(f,values)=>{let s=bundle[schema[f].file];for(const fl of schema
 const FLAGS=['show_carcass_sides','show_carcass_bottom','show_carcass_top','show_toe_kick','show_base_hardware','show_worktop','show_back_construction','show_combo_divider','show_shelves','show_door_hinge_partitions','show_drawer_separators','show_drawer_bank_partitions','show_mixed_bay_partitions','show_drawer_slide_parts','show_stack_base'];
 const drawers=parity=>`if (has_drawers) for (b=[0:active_drawer_bank_count()-1]) if (drawer_bank_drawer_count(b) > 0) for (i=[0:drawer_bank_drawer_count(b)-1]) if ((i+b)%2==${parity}) { drawer_box(i,b); if (show_drawer_slide_parts) drawer_mounted_wood_slides(i,b); }`;
 const GROUPS={
- shell:{on:['show_carcass_sides','show_carcass_bottom','show_carcass_top','show_toe_kick'],code:'carcass();'},
+ sides:{on:['show_carcass_sides'],code:'carcass();'},
+ caps:{on:['show_carcass_bottom','show_carcass_top','show_toe_kick'],code:'carcass();'},
  back:{on:['show_back_construction'],code:'carcass();'},
  shelves:{on:['show_shelves'],code:'carcass();'},
- members:{on:['show_combo_divider','show_door_hinge_partitions','show_drawer_separators','show_drawer_bank_partitions','show_mixed_bay_partitions'],code:'carcass();'},
+ // Horizontal and vertical interior members are separate groups so partition tabs and
+ // tongues are checked against the divider and separators that receive them.
+ horizontals:{on:['show_combo_divider','show_drawer_separators'],code:'carcass();'},
+ verticals:{on:['show_door_hinge_partitions','show_drawer_bank_partitions','show_mixed_bay_partitions'],code:'carcass();'},
  rails:{on:['show_drawer_slide_parts'],code:'carcass();'},
  frame:{on:[],code:'face_frame_assembly_3d();'},
  drawersA:{on:['show_drawer_slide_parts'],code:drawers(0)},
@@ -62,9 +66,13 @@ const cases=[
  [4,'kitchen_standard_B36',{cabinet_contents:'doors',door_count:3,include_door_hinge_partitions:true}],
  [4,'kitchen_standard_B30',{include_face_frame_center_stile:true,front_mount_style:'inset_flush'}],
  [4,'kitchen_standard_DB324',{}],
+ // Combo contents: partitions joined to a divider that is set back behind the face frame or inset fronts.
+ [4,'kitchen_standard_B36',{cabinet_contents:'combo',drawer_bank_count:3,door_count:3,include_door_hinge_partitions:true,joinery_style:'tab_slot'}],
+ [4,'kitchen_standard_B36',{cabinet_contents:'combo',front_mount_style:'inset_flush',joinery_style:'dado',drawer_bank_count:4,door_count:3,include_door_hinge_partitions:true,include_drawer_faces:false,face_frame_mid_rail_mode:'none'}],
 ];
-for(const [f,starter,patch] of cases){
+const only=process.env.CASES?JSON.parse(process.env.CASES):null;
+for(const [f,starter,patch] of only??cases){
  const bad=await overlaps(f,valuesFor(f,starter,patch));
  assert.deepEqual(bad,{},`${schema[f].id}:${starter??'default'} ${JSON.stringify(patch)} has overlapping parts`);
 }
-console.log('Engine interference: '+cases.length+' configurations render with no overlapping parts (carcass, rear construction, shelves, partitions, rails, face frame, drawers and doors).');
+console.log('Engine interference: '+(only??cases).length+' configurations render with no overlapping parts (carcass sides, bottom/top, rear construction, shelves, dividers, partitions, rails, face frame, drawers and doors).');

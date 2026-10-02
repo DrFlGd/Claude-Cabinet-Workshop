@@ -1475,6 +1475,18 @@ if (validation_enabled()) {
                 "Inset fronts are not supported for independent bays behind a face frame. Use overlay fronts or the Sections layout.");
     }
 
+    // Separators are continuous full-width parts; the drawer-bank partitions
+    // have no cross-lap or receiver for them.
+    if (drawer_separator_count > 0 && drawer_bank_partition_count() > 0)
+        validation_check("ERROR","DRAWER_SEPARATOR_BANKS",
+            "Drawer separators run the full cabinet width and would pass through the drawer-bank partitions. Turn off Include drawer separators, or set Drawer bank count to 1.");
+
+    if (mixed_bay_unsupported_boundary() >= 0)
+        validation_check("ERROR","MIXED_BAY_PARTITIONS",
+            str("Bays ",mixed_bay_unsupported_boundary()+1," and ",
+                mixed_bay_unsupported_boundary()+2,
+                " have no partition between them, but their drawers, shelves or hinges need one to mount to. Turn on Include mixed bay partitions (Structure)."));
+
     // A custom mid rail crosses whatever front it overlaps. Inset fronts sit in
     // the frame plane, so they must stay clear of the rail.
     if (fronts_inset_flush
@@ -1592,8 +1604,8 @@ if (mixed_bay_mode) {
                  "' is unsupported; use fixed or adjustable.");
     }
 
-    if (active_mixed_bay_count > 1 && !include_mixed_bay_partitions)
-        echo("WARNING: Mixed-bay partitions are disabled. Interior drawer/door/shelf bays may lack mounting and support surfaces.");
+    // Missing partitions are reported as CHECK|ERROR|MIXED_BAY_PARTITIONS when a
+    // bay actually needs one (see the validation checks).
 }
 
 if (has_drawers) {

@@ -388,14 +388,11 @@ module door_hinge_partition_bottom_joinery_3d(x0,z0) {
 
 module door_hinge_partition_top_joinery_3d(x0,z0) {
     if (combo_contents_active) {
-        span =
-            min(
-                door_hinge_partition_actual_depth,
-                shelf_depth
-            );
-
         door_hinge_partition_joinery_segment_3d(
-            x0,0,span,z0,"top");
+            x0,
+            door_hinge_partition_combo_joint_y0(),
+            door_hinge_partition_combo_joint_span(),
+            z0,"top");
     }
     else if (top_style == "full") {
         door_hinge_partition_joinery_segment_3d(
@@ -604,14 +601,10 @@ module door_hinge_partition_bottom_joinery_cut() {
 
 module door_hinge_partition_top_joinery_cut(body_top_y) {
     if (combo_contents_active) {
-        span =
-            min(
-                door_hinge_partition_actual_depth,
-                shelf_depth
-            );
-
         door_hinge_partition_joinery_segment_cut(
-            0,span,body_top_y,0);
+            door_hinge_partition_combo_joint_y0(),
+            door_hinge_partition_combo_joint_span(),
+            body_top_y,0);
     }
     else if (top_style == "full") {
         door_hinge_partition_joinery_segment_cut(
@@ -1394,11 +1387,12 @@ module bottom_back_receiver_dado_pockets_2d() {
 }
 
 module drawer_bank_partition_bottom_tabs_3d(x0,z0) {
-    span = min(drawer_bank_partition_depth,
-               combo_contents_active ? shelf_depth : resolved_cabinet_depth);
+    y0 = drawer_bank_partition_bottom_joint_y0();
+    span = drawer_bank_partition_bottom_joint_span();
 
+    if (span > 0)
     for (n=[0:effective_tab_count(span)-1]) {
-        yy = tab_start(span,n);
+        yy = y0+tab_start(span,n);
         th = tab_width_for(span);
         sheet_box(
             [material_thickness,th,material_thickness],
@@ -1488,10 +1482,22 @@ module drawer_bank_partition_3d(p=0) {
     difference() {
         union() {
             if (mode == "dado") {
+                // Body plus top tongue, and a bottom tongue only where the
+                // supporting panel's dado runs.
                 sheet_box(
-                    [material_thickness,drawer_bank_partition_depth,bh+2*dd],
-                    [x0,0,z0-dd]
+                    [material_thickness,drawer_bank_partition_depth,bh+dd],
+                    [x0,0,z0]
                 );
+
+                if (drawer_bank_partition_bottom_joint_span() > 0)
+                    sheet_box(
+                        [
+                            material_thickness,
+                            drawer_bank_partition_bottom_joint_span(),
+                            dd
+                        ],
+                        [x0,drawer_bank_partition_bottom_joint_y0(),z0-dd]
+                    );
             }
             else {
                 sheet_box(
@@ -1520,22 +1526,29 @@ module drawer_bank_partition_cut(p=0) {
     difference() {
         union() {
             if (mode == "dado") {
-                cut_part(
-                    drawer_bank_partition_depth,
-                    bh+2*dd
-                );
+                translate([0,dd])
+                    cut_part(
+                        drawer_bank_partition_depth,
+                        bh+dd
+                    );
+
+                translate([drawer_bank_partition_bottom_joint_y0(),0])
+                    cut_part(
+                        drawer_bank_partition_bottom_joint_span(),
+                        dd+0.01
+                    );
             }
             else {
                 translate([0,bottom_extra])
                     cut_part(drawer_bank_partition_depth,bh);
 
                 if (mode == "tab_slot") {
-                    bottom_span = min(
-                        drawer_bank_partition_depth,
-                        combo_contents_active ? shelf_depth : resolved_cabinet_depth);
+                    bottom_y0 = drawer_bank_partition_bottom_joint_y0();
+                    bottom_span = drawer_bank_partition_bottom_joint_span();
 
+                    if (bottom_span > 0)
                     for (n=[0:effective_tab_count(bottom_span)-1])
-                        translate([tab_start(bottom_span,n),0])
+                        translate([bottom_y0+tab_start(bottom_span,n),0])
                             cut_part(
                                 tab_width_for(bottom_span),
                                 material_thickness

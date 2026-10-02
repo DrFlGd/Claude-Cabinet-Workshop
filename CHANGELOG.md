@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.6.0 — 2026-10-01
+## 0.6.0 — 2026-10-02
 
 First release of the Claude Cabinet Workshop fork (forked from Cabinet Workshop
 0.5.2). The focus is plans whose parts actually fit together, and a simpler path
@@ -25,9 +25,10 @@ from "what am I building" to a cut list.
 
 ### Fit and accuracy fixes in the bundled engine
 
-These were found by evaluating every starter and about 1,300 option variations
-with the production OpenSCAD worker, and by rendering sub-assemblies of real
-designs and intersecting them (two parts must never occupy the same space).
+These were found by evaluating every starter, every single-option variation of
+each cabinet type and randomised option mixes with the production OpenSCAD
+worker, and by rendering sub-assemblies of real designs and intersecting them
+(two parts must never occupy the same space).
 
 - **Face frames (kitchen default).** Back-dadoed stiles were not pocketed where
   the bottom and top panels pass behind them, leaving a 19 × 6.35 mm overlap at
@@ -66,6 +67,14 @@ designs and intersecting them (two parts must never occupy the same space).
   the face-frame opening, stopping short of the bottom and top panels their joinery
   enters. They now run between the carcass panels and are notched behind face-frame
   rails.
+- **Partition joinery at a set-back combo divider.** When the drawers-over-doors
+  divider starts behind inset fronts (already the case in 0.5.2) or behind a face
+  frame, the door-hinge partitions' top joinery and the drawer-bank partitions'
+  bottom tabs were still laid out from the carcass front. Tabs missed their slots
+  (14.7 cm³ of overlap in a tab-and-slot B36 combo) and dado tongues hung in front
+  of the divider into the inset doors. Partition joinery now covers exactly the
+  depth band that the divider's slots and dados are cut in, in the 3D model and
+  the cut layouts.
 - **Inset doors with three or more doors** overlapped the door-hinge partitions;
   they now close against each partition with the normal reveal. Inset door pairs
   with a face-frame center stile are split the same way.
@@ -74,7 +83,12 @@ designs and intersecting them (two parts must never occupy the same space).
   pair of doors (ending at the mid rail in combos) instead of crossing drawer fronts.
 - Combinations the engine cannot lay out are reported instead of drawn colliding:
   drawers in the first or last independent bay behind a face frame, inset fronts in
-  independent bays behind a face frame, and a custom mid rail crossing inset fronts.
+  independent bays behind a face frame, a custom mid rail crossing inset fronts,
+  drawer separators with side-by-side drawer banks (the full-width separators
+  passed straight through the bank partitions; DRAWER_SEPARATOR_BANKS), and
+  independent bays with partitions turned off while drawers, shelves or hinges
+  need them (shelf tabs reached into the neighbouring drawers;
+  MIXED_BAY_PARTITIONS, previously only a console warning).
 - The stackable "bottom plane" warning fired for every dado carcass although the
   lift is intentional; the check now allows for it, and the bottom elevation uses
   the same interface-depth limit as the rest of the engine.
@@ -118,8 +132,11 @@ designs and intersecting them (two parts must never occupy the same space).
   renders) in step with public/engine; the release suite fails when they differ.
 - New `tests/engine-fit.mjs` (every starter plus regression configurations through
   the production worker) and `tests/engine-interference.mjs` (pairwise intersection
-  of rendered sub-assemblies for 14 representative designs). Run with
-  `pnpm run test:engine`; both are part of `test:release`.
+  of rendered sub-assemblies for 16 representative designs; carcass sides,
+  bottom/top, dividers and partitions are rendered separately so joinery is
+  checked against the part that receives it).
+  Run with `pnpm run test:engine`; both are part of `test:release`, and CI runs
+  each suite as its own step.
 - CI builds a portable release (relative base path) and, for a new version on main,
   tags it and publishes a GitHub release with the zipped site. Pages builds use
   `/Claude-Cabinet-Workshop/`.
@@ -132,9 +149,14 @@ designs and intersecting them (two parts must never occupy the same space).
   interference suites, and the static production build (also built with a
   relative base and served from a sub-folder).
 - Audit sweeps against the final engine: single-option variations of every family
-  (952 runs) with no undefined values or unreported errors; randomised option
-  mixes (320 runs) where every remaining overlap coincided with an engine error
-  shown to the user.
+  (952 runs) with no undefined values or unreported errors; pairwise sub-assembly
+  intersection of 87 starters of the shop cart, utility, benchtop, stackable and
+  kitchen types (the section-layout starter is covered by the section tests) and
+  of 120 randomised option mixes, where every remaining overlap coincided with an
+  engine error shown to the user. Earlier sweep rounds found the issues fixed
+  above.
+- Browser check of the built site: default design reports that all parts fit;
+  turning off the bay partitions shows the new MIXED_BAY_PARTITIONS problem.
 - Browser screenshots of the main flows at 1440 × 900 and 390 × 844 (picker,
   section editor, cut list in mm and inches, exact 3D, fitted sizing).
 - The stackable and section native-OpenSCAD tests run in CI only (no native
@@ -148,7 +170,11 @@ designs and intersecting them (two parts must never occupy the same space).
 - The Python package checks (`modular_organization_validate.py`, matrix tests) were
   not re-run. Hardware hole patterns remain starting points to verify against the
   purchased hardware; geometry checks are not load or stability certification.
-- The Windows package was not rebuilt or manually tested as part of this release.
+- Stackable modules with connector-only ganging and wood slides report an
+  INTERFACE_KEEPOUT_CONFLICT (the connector keep-outs overlap the wood-slide
+  features on the sides); choose another ganging style or drawer mount.
+- The Windows package is built by its CI workflow; the desktop app was not
+  manually tested for this release.
 
 ## 0.5.2 — 2026-09-28
 
