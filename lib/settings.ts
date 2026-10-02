@@ -1,10 +1,22 @@
 export type Field={key:string;value:any;expression?:string;section:string;description:string;options:string[]|null;bounds:number[]|null;advanced:boolean;unit?:string;step?:number;visibleIf?:Record<string,any>};
-export const sectionOrder=['Materials','Machining','Sizing','Structure','Doors','Shelves','Drawers','Dividers','Trays','Mounting','Hardware','Output','System'];
+// Workflow order: describe the cabinet first (size, layout, contents), then shop details.
+export const sectionOrder=['Sizing','Structure','Drawers','Doors','Shelves','Dividers','Trays','Mounting','Materials','Hardware','Machining','Output','System'];
+// Sections that describe how the parts are made rather than what the cabinet is.
+export const shopSections=['Materials','Hardware','Machining','Output','System'];
+// Companion edits that keep a choice buildable. Each returns only the keys it changes.
+export function linkedChanges(key:string,value:unknown,v:Record<string,any>):Record<string,any>{
+ // Fixed runners only carry a removable service tray; the engine rejects any travel.
+ if(v._family===6&&key==='slide_type'){
+  if(value==='fixed_runner')return {tray_extension:0,preview_extension:0};
+  if(value!=='fixed_runner'&&Number(v.tray_extension)===0&&Number(v.metal_slide_length)>0)return {tray_extension:Number(v.metal_slide_length)};
+ }
+ return {};
+}
 
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
  if(['cabinet_mount_style','mount_mode'].includes(f.key))return [{...f,section:'Mounting / Mount Style'}];
  if(f.section==='Structure / Back and Braces')return [{...f,section:'Mounting / Rear Mounting',description:f.key==='back_style'?'Rear construction: choose a back panel or structural rear stretchers. Stretcher dimensions appear when Stretchers is selected. These controls define rear geometry, not a separate wall-fastener or French-cleat system.':f.description}];
- if(f.key==='face_frame_mid_rail_mode')f={...f,description:'Controls the horizontal crosspiece between the face frame’s top and bottom rails. None omits it. Combo auto places its center at the top of the door region, typically between the lower doors and upper drawers. Custom positions its center at the height entered in Face frame custom mid rail Z, measured from the cabinet base. Requires face-frame construction.'};
+ if(f.key==='face_frame_mid_rail_mode')f={...f,description:'Controls the horizontal crosspiece between the face frame’s top and bottom rails. None omits it. Automatic places it on the boundary between the lower doors and the upper drawers, so it is used only for drawers-over-doors contents. Custom positions its center at the height entered in Face frame custom mid rail Z, measured from the cabinet base; drawer boxes are kept clear of it, and inset fronts must not cross it. Requires face-frame construction.'};
  if(!f.section.startsWith('Fronts /'))return [f];
  if(f.key.startsWith('drawer_')||f.key.startsWith('custom_drawer_'))return [{...f,section:'Drawers / Fronts'}];
  if(f.key==='door_gap')return [{...f,section:'Doors / Fronts'}];

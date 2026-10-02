@@ -4,6 +4,7 @@ import {useEffect,useRef,useState} from 'react';
 import {configuredSource,engineSources,renderSources,schemas,zip,download,Values} from '@/lib/cabinet';
 import {designHealth,operations,reports,Entry,parseManufacturing,operationNotes} from '@/lib/manufacturing';
 import {assemblyPacket} from '@/lib/assembly';
+import {analyse} from '@/lib/analysis';
 import {formatDimension,Units} from '@/lib/units';
 function SvgPreview({data}:{data:string}){const [url,setUrl]=useState('');useEffect(()=>{const u=URL.createObjectURL(new Blob([data],{type:'image/svg+xml'}));setUrl(u);return()=>URL.revokeObjectURL(u)},[data]);return url?<img className='svg-review' src={url} alt='OpenSCAD manufacturing layout preview'/>:null}
 type Package={entries:Entry[];text:string;packet:string;key:string;name:string;full:boolean};
@@ -29,7 +30,7 @@ export default function ManufacturingExport({family,values,name,invalid,units='m
     controller.signal.throwIfAborted();const mode=modes[i];setStatus(`${i+1} / ${modes.length} · ${mode==='bom'?'BOM and dimensions':mode.replaceAll('_',' ')}`);
     const output=await operation({filename,source,sources:renderSources,mode},controller.signal);
     const outputLog=output.logs.join('\n')+(mode==='bom'?'\n'+output.output:'');entries.push({name:`logs/${mode}.txt`,data:outputLog});
-    if(mode==='bom'){text=outputLog;const health=designHealth(text);if(health.status==='ERROR'||health.status==='UNVERIFIED'){setLog(text);throw Error(health.errors.map(c=>c.code+': '+c.message).join('\n')||'No validation report returned. Manufacturing package blocked.')}entries.push(...reports(text))}
+    if(mode==='bom'){text=outputLog;const health=designHealth(text),blocking=analyse(text).issues.filter(i=>i.severity==='error');if(health.status==='UNVERIFIED'||blocking.length){setLog(text);throw Error(blocking.map(c=>c.code+': '+c.message).join('\n')||'No validation report returned. Manufacturing package blocked.')}entries.push(...reports(text))}
     else if(!output.empty)entries.push({name:`svg/${mode}.svg`,data:output.output});
     notes.push(mode+': '+(output.empty?'No geometry; SVG omitted.':'Exported; inspect for registration-only output.'));
    }
