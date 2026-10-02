@@ -7,8 +7,8 @@ try{fs.cpSync('public/engine/v5/src/modular_organization/data/scad',tmp,{recursi
 for(const type of ['open','drawers','door','drawers','open']){
  const v=c.normalizeValues(3,{...c.defaults(3),module_type:type,stack_preview_count:1,custom_cabinet_contents:'open',door_shelf_count:3,drawer_count:3});
  assert.equal(v.custom_cabinet_contents,type);
- assert.equal(!!s.inactiveReason(field('drawer_count'),v),type!=='drawers');
- assert.equal(!!s.inactiveReason(field('door_shelf_count'),v),type==='drawers');
+ // Module contents and counts are edited in the Layout tab, not the settings list.
+ for(const key of ['module_type','drawer_count','door_shelf_count'])assert.equal(s.inactiveReason(field(key),v),s.LAYOUT_REASON,key);
  assert(s.inactiveReason(field('mixed_bay_shelf_counts'),v));
  const source=c.applySettings(c.engineSources[c.schemas[3].file],3,v);fs.writeFileSync(path.join(tmp,'stackable.scad'),source);
  const r=cp.spawnSync('openscad',['-o',path.join(tmp,'model.csg'),path.join(tmp,'stackable.scad')],{encoding:'utf8',timeout:30000});assert.equal(r.status,0,r.stderr);assert(!/ECHO: "ERROR\||CHECK\|ERROR|^ERROR:/m.test(r.stderr),r.stderr);

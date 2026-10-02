@@ -100,7 +100,11 @@ and typing sizes instead of through bay arrays and dropdowns.
   errors; utility, benchtop and stackable flows; 390 px phone layout; search
   hint; the desktop smoke test's layout steps.
 - Static-app TypeScript check (Sites-only modules excluded locally), unit,
-  settings visibility, v5 integration and section WASM tests, static build.
+  settings visibility, v5 integration and section WASM tests, static build. The
+  stackable and section tests that call native OpenSCAD were run locally through
+  the bundled OpenSCAD WebAssembly build with the same command-line arguments;
+  CI runs them with native OpenSCAD. A Windows test build of this change passed
+  the packaged-EXE smoke test (including the new Layout tab steps) before release.
 
 ### Known limits
 
@@ -113,8 +117,7 @@ and typing sizes instead of through bay arrays and dropdowns.
   still recalculating uses the estimate. Sections layouts show estimated fronts
   (the engine reports their openings, not each front).
 - Widths of three or four doors across one opening stay in the Doors settings
-  (door width weights). The native OpenSCAD section tests and the desktop app run
-  in CI only.
+  (door width weights). The desktop app was not tested interactively.
 
 ## 0.6.0 — 2026-10-02
 
