@@ -23,6 +23,14 @@ Pages build. On a push to main whose package version has no tag yet, it tags
 `claude-cabinet-workshop-web-v<version>.zip`, with the matching CHANGELOG section
 as release notes. Existing tags and releases are never overwritten.
 
+The Windows test build workflow runs on pushes to main that change `desktop/`, its
+own workflow file or `VERSION`. After its packaged EXE passes the smoke test, it
+attaches `Claude-Cabinet-Workshop-v<version>-Windows-x64.zip` to the release that
+was tagged at the same commit (it waits for Build and Pages to publish it). To add
+a Windows build to an existing release, run the workflow manually with that tag
+(for example `v0.6.0`); it builds that tag's sources. An asset that is already
+attached is never replaced.
+
 Keep package.json, VERSION and the changelog heading aligned when releasing.
 
 ## Publish with GitHub Pages

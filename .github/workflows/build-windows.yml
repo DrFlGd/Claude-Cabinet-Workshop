@@ -2,16 +2,25 @@ name: Windows test build
 on:
   push:
     branches: [main]
-    paths: ['desktop/**', '.github/workflows/build-windows.yml']
+    # VERSION changes with every release, so each release also gets a Windows build.
+    paths: ['desktop/**', '.github/workflows/build-windows.yml', 'VERSION']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build and attach the Windows ZIP to (for example v0.6.0). Leave empty for a test build only.
+        type: string
+        default: ''
 permissions:
-  contents: read
+  contents: write
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v6
+        with:
+          # A requested release tag is built from exactly that tag's sources.
+          ref: ${{ inputs.tag || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -33,7 +42,8 @@ jobs:
       - name: Package Windows x64
         shell: pwsh
         run: |
-          python desktop/package-windows.py runtime/electron-v44.4.3-win32-x64.zip runtime/SHASUMS256.txt portable --source-revision $env:GITHUB_SHA
+          $revision = git rev-parse HEAD
+          python desktop/package-windows.py runtime/electron-v44.4.3-win32-x64.zip runtime/SHASUMS256.txt portable --source-revision $revision
           node tests/desktop-assets.cjs portable/resources/app/renderer
       - name: Launch EXE and render photo example
         shell: pwsh
@@ -49,14 +59,68 @@ jobs:
         shell: pwsh
         run: |
           $version = node -p "require('./package.json').version"
-          $name = "Cabinet-Workshop-v$version-Windows-x64"
+          $name = "Claude-Cabinet-Workshop-v$version-Windows-x64"
           python desktop/archive-windows.py portable "$name.zip"
       - uses: actions/upload-artifact@v4
         with:
-          name: Cabinet-Workshop-Windows-x64
-          path: Cabinet-Workshop-v*-Windows-x64.zip
+          name: Claude-Cabinet-Workshop-Windows-x64
+          path: Claude-Cabinet-Workshop-v*-Windows-x64.zip
           compression-level: 0
           retention-days: 30
+      # Only a smoke-tested build reaches this step. A push attaches it only to the
+      # release tagged at this exact commit (created by the Build and Pages workflow
+      # once its tests pass); a manual run attaches it to the requested tag. Existing
+      # release assets are never replaced.
+      - name: Attach the ZIP to the GitHub release
+        if: (github.event_name == 'workflow_dispatch' && inputs.tag != '') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          tag="v$version"
+          zip="Claude-Cabinet-Workshop-v$version-Windows-x64.zip"
+          tag_commit() {
+            local refs
+            # List all tags: with a pattern, ls-remote omits the peeled ^{} commit line.
+            refs=$(git ls-remote --tags origin || true)
+            printf '%s\n' "$refs" | awk -v t="refs/tags/$tag^{}" '$2==t{print $1}' | grep . \
+              || printf '%s\n' "$refs" | awk -v t="refs/tags/$tag" '$2==t{print $1}'
+          }
+          if [ -n "$REQUESTED_TAG" ]; then
+            if [ "$REQUESTED_TAG" != "$tag" ]; then
+              echo "::error::Tag $REQUESTED_TAG does not match the package version $version at that tag."
+              exit 1
+            fi
+          else
+            commit=""
+            for attempt in $(seq 1 30); do
+              commit=$(tag_commit || true)
+              [ -n "$commit" ] && break
+              sleep 30
+            done
+            if [ -z "$commit" ]; then
+              echo "No $tag tag was created for this push; nothing to attach."
+              exit 0
+            fi
+            if [ "$commit" != "$GITHUB_SHA" ]; then
+              echo "$tag was released from $commit, not this commit; nothing to attach."
+              exit 0
+            fi
+          fi
+          for attempt in $(seq 1 20); do
+            gh release view "$tag" >/dev/null 2>&1 && break
+            if [ "$attempt" = 20 ]; then echo "::error::Release $tag was not found."; exit 1; fi
+            sleep 30
+          done
+          if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$zip"; then
+            echo "$zip is already attached to $tag; leaving it unchanged."
+            exit 0
+          fi
+          gh release upload "$tag" "$zip"
+          echo "Attached $zip to $tag."
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

@@ -27,6 +27,12 @@ Then open http://localhost:8080/. The release build uses relative paths, so it
 also works from any sub-folder of an existing web server. Do not open
 `index.html` directly from disk (`file://`); the OpenSCAD workers need HTTP.
 
+On Windows you can instead download
+`Claude-Cabinet-Workshop-v<version>-Windows-x64.zip` from the same release,
+extract all of it into a new folder and run `Cabinet Workshop.exe`. It is an
+unsigned portable test build (Windows may warn about an unrecognized app) and
+needs no web server; see the [desktop notes](desktop/README.md).
+
 ## Run from source
 
 Use Node 24 and pnpm 11.25.0:
@@ -118,4 +124,5 @@ design files are migrated where supported.
 [CHANGELOG.md](CHANGELOG.md) contains the consolidated history, validation
 performed and known limits. Pushing a new version to `main` builds and tests the
 site, tags `v<version>` and publishes a GitHub release with the portable web
-build. Windows packaging (`desktop/`) is a separate test deliverable.
+build; the Windows workflow then adds its smoke-tested portable Windows build to
+the same release.

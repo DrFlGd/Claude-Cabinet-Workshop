@@ -17,6 +17,23 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
+## Unreleased
+
+Release automation only; the application is unchanged from 0.6.0.
+
+- The Windows test build workflow attaches its smoke-tested portable build
+  (`Claude-Cabinet-Workshop-v<version>-Windows-x64.zip`, previously only a
+  30-day workflow artifact named `Cabinet-Workshop-…`) to the GitHub release
+  tagged at the commit it built, and also runs when `VERSION` changes so each
+  release gets one. Started manually with a release tag, it builds that tag's
+  sources and attaches the ZIP to that release. Existing assets are never
+  replaced. The build records the commit it was built from in BUILD-INFO.json.
+- README and HOSTING describe the Windows download.
+
+Validation: the 0.6.0 Windows build passed the workflow's packaging, runtime
+integrity, asset and EXE launch/photo-render smoke checks on a Windows runner.
+The desktop app itself was not tested interactively.
+
 ## 0.6.0 — 2026-10-02
 
 First release of the Claude Cabinet Workshop fork (forked from Cabinet Workshop
