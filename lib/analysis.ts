@@ -10,10 +10,21 @@ export type DrawerFit={id:string;opening:{w:number;h:number};box:{w:number;h:num
 export type DoorFit={id:string;w:number;h:number;mount:string;hinge:string};
 export type ShelfFit={id:string;style:string;span?:number;cut:number;depth:number};
 export type SectionFit={id:string;w:number;h:number;contents:string};
+// Front elevation reported by the engine (LAYOUT records), in cabinet coordinates:
+// X from the left outside face, Z from the cabinet bottom, millimeters.
+export type LayoutRect={x:number;z:number;w:number;h:number};
+export type LayoutFront=LayoutRect&{id:string;kind:'drawer'|'door';bay:number;index:number;nominal?:number;open?:{z:number;h:number};hinge?:string;face?:string};
+export type LayoutReport={
+ cabinet:{w:number;h:number;t:number;open:LayoutRect;content:{z:number;h:number};mode:string};
+ faceFrame?:{z0:number;z1:number;stile:number;bottomRail:number;topRail:number;mid?:[number,number];centerStile:number};
+ bays:(LayoutRect&{index:number;type:string})[];banks:{index:number;x:number;w:number}[];doorRegion?:{z:number;h:number};
+ fronts:LayoutFront[];shelves:{id:string;bay:number;x:number;w:number;z:number;style:string}[];
+ members:(LayoutRect&{id:string;kind:string})[];sections:(LayoutRect&{index:number;contents:string})[];
+};
 export type Plan={
  outside?:{w:number;h:number;d:number};interior?:{w:number;h:number;d:number};
  cut:CutRow[];materials:MaterialTotal[];drawers:DrawerFit[];doors:DoorFit[];shelves:ShelfFit[];sections:SectionFit[];
- issues:Issue[];hardware:{id:string;qty:string;note:string}[];target?:Record<string,number>;partCount:number;
+ issues:Issue[];hardware:{id:string;qty:string;note:string}[];target?:Record<string,number>;partCount:number;layout?:LayoutReport;
  status:'PASS'|'WARN'|'ERROR'|'UNVERIFIED';
 };
 
@@ -110,6 +121,7 @@ export function analyse(text:string):Plan{
    plan.target={};for(const [k,v] of Object.entries(kv))if(Number.isFinite(Number(v)))plan.target[k]=Number(v);
   }
  }
+ plan.layout=layoutReport(recs);
  for(const d of drawers.values()){
   if(!d.box||!d.opening)continue;
   const side=Number.isFinite(d.side)?d.side!:0,vertical=Number.isFinite(d.vertical)?d.vertical!:0;
@@ -124,6 +136,36 @@ export function analyse(text:string):Plan{
  if(plan.issues.some(i=>i.severity==='error'))plan.status='ERROR';
  else if(plan.status==='PASS'&&plan.issues.some(i=>i.severity==='warning'))plan.status='WARN';
  return plan;
+}
+
+export function layoutReport(recs:string[]):LayoutReport|undefined{
+ let report:LayoutReport|undefined;
+ const rect=(kv:Record<string,string>):LayoutRect=>({x:num(kv.X),z:num(kv.Z),w:num(kv.W),h:num(kv.H)});
+ const sections:LayoutReport['sections']=[];
+ for(const r of recs){
+  const {kv,plain}=fields(r);
+  if(plain[0]==='DIM'&&plain[1]==='SECTION'&&plain[2])sections.push({...rect(kv),index:Number(plain[2].replace(/^S/,''))-1,contents:kv.CONTENTS??''});
+  if(plain[0]!=='LAYOUT')continue;
+  if(plain[1]==='CABINET'){report={cabinet:{w:num(kv.W),h:num(kv.H),t:num(kv.T),open:{x:num(kv.OPEN_X),z:num(kv.OPEN_Z),w:num(kv.OPEN_W),h:num(kv.OPEN_H)},content:{z:num(kv.CONTENT_Z),h:num(kv.CONTENT_H)},mode:kv.MODE??''},bays:[],banks:[],fronts:[],shelves:[],members:[],sections:[]};continue}
+  if(!report)continue;
+  if(plain[1]==='FACE_FRAME')report.faceFrame={z0:num(kv.Z0),z1:num(kv.Z1),stile:num(kv.STILE_W),bottomRail:num(kv.BOTTOM_RAIL_W),topRail:num(kv.TOP_RAIL_W),mid:num(kv.MID_Z0)>=0?[num(kv.MID_Z0),num(kv.MID_Z1)]:undefined,centerStile:num(kv.CENTER_STILE_W)};
+  else if(plain[1]==='BAY')report.bays.push({...rect(kv),index:Number(plain[2].replace(/^B/,''))-1,type:kv.TYPE??''});
+  else if(plain[1]==='BANK')report.banks.push({index:Number(plain[2].replace(/^B/,''))-1,x:num(kv.X),w:num(kv.W)});
+  else if(plain[1]==='DOOR_REGION')report.doorRegion={z:num(kv.Z),h:num(kv.H)};
+  else if(plain[1]==='FRONT')report.fronts.push({...rect(kv),id:plain[2],kind:kv.KIND==='door'?'door':'drawer',bay:Number(kv.BAY),index:Number(kv.INDEX),nominal:kv.NOMINAL_H?num(kv.NOMINAL_H):undefined,open:kv.OPEN_Z?{z:num(kv.OPEN_Z),h:num(kv.OPEN_H)}:undefined,hinge:kv.HINGE,face:kv.FACE});
+  else if(plain[1]==='SHELF')report.shelves.push({id:plain[2],bay:Number(kv.BAY),x:num(kv.X),w:num(kv.W),z:num(kv.Z),style:kv.STYLE??''});
+  else if(plain[1]==='MEMBER')report.members.push({...rect(kv),id:plain[2],kind:kv.KIND??''});
+ }
+ if(report)report.sections=sections;
+ else if(sections.length){
+  // Section layouts report their openings through DIM|SECTION; the cabinet frame comes from DIM|CABINET.
+  let open:LayoutRect|undefined,w=NaN,h=NaN;
+  for(const r of recs){const {kv,plain}=fields(r);if(plain[0]==='DIM'&&plain[1]==='CABINET'&&plain[2]==='OUTSIDE'){w=num(kv.W);h=num(kv.H)}if(plain[0]==='DIM'&&plain[1]==='CABINET'&&plain[2]==='FRONT_OPENING')open={x:NaN,z:num(kv.BOTTOM_Z),w:num(kv.W),h:num(kv.H)}}
+  if(open&&!Number.isFinite(open.x))open.x=(w-open.w)/2;
+  const root=sections.find(s=>s.index===0);
+  report={cabinet:{w,h,t:NaN,open:root?{x:root.x,z:root.z,w:root.w,h:root.h}:open??{x:NaN,z:NaN,w:NaN,h:NaN},content:{z:NaN,h:NaN},mode:'sections'},bays:[],banks:[],fronts:[],shelves:[],members:[],sections};
+ }
+ return report;
 }
 
 export function cutListCsv(plan:Plan){

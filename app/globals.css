@@ -56,7 +56,6 @@
 .display-controls{position:static;inset:auto;display:flex;flex-wrap:wrap;gap:12px 20px;padding:12px 16px;flex-shrink:0;border-bottom:1px solid #d5e0e3}.display-controls label{font-size:14px;white-space:nowrap}.display-controls>button{font-size:14px;min-height:38px}.display-controls button span{display:inline}.preview-scope{flex-shrink:0}.preview-scope>div{min-width:0}.preview-scope button{white-space:normal}
 
 .field.is-advanced{border-left:3px solid #976316;padding-left:10px;background:#fffaf0}.advanced-badge{font-size:12px;line-height:1.4;font-weight:600;border:1px solid #c4a16c;border-radius:4px;color:#704609;background:#fff4da;padding:2px 5px;white-space:nowrap}.setting-label{flex-wrap:wrap}
-.section-editor{margin:0 0 22px;padding:14px;border:1px solid #9db5c3;border-radius:10px;background:#f7fafb}.section-editor h3{margin:0 0 10px}.section-editor p{font-size:14px;line-height:1.5;margin:10px 0}.section-editor label{display:grid;gap:6px;margin:12px 0;font-size:14px}.section-editor select,.section-editor input{width:100%;min-width:0;padding:8px;border:1px solid #b7c5ce;border-radius:5px;background:white;color:#233c49}.section-diagram{display:block;width:100%;height:auto;max-height:500px;aspect-ratio:auto;touch-action:none}.section-diagram g[role=button]{cursor:pointer}.section-diagram g:focus rect{stroke:#146390;stroke-width:6}.split-handle.x{cursor:col-resize}.split-handle.z{cursor:row-resize}.section-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.section-editor button{border:1px solid #8da5b5;background:white;border-radius:5px;padding:8px;color:#234459;font-size:14px}.section-editor button:disabled{opacity:.4}.section-control-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.section-construction-note{border-top:1px solid #c7d4dc;padding-top:10px}.section-size{font-weight:600}
 
 /* ===== Claude Cabinet Workshop 1.0 layout =====
    Two columns: settings (type card, step navigation, fields) and the design surface.
@@ -191,3 +190,90 @@
  .cw-workspace .summary-bar strong{font-size:clamp(17px,5vw,22px)}
  .cw-workspace .model-caption{flex-wrap:wrap}
 }
+/* Layout editor (front elevation) */
+.layout-content{flex:1;min-height:0;overflow:auto;background:#fff}
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:100%}
+.lay-stage{display:flex;flex-direction:column;gap:10px;padding:14px 18px 12px;min-width:0}
+.lay-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.lay-head>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.lay-head strong{font-size:15px;color:#1d343d}
+.lay-head>div span{font-size:12.5px;color:#657980;line-height:1.45}
+.lay-state{display:flex;align-items:center;gap:6px;font-size:12px;color:#4c6670;white-space:nowrap;background:#edf3f4;border-radius:999px;padding:5px 10px}
+.lay-state.is-busy{background:#fdf3dc;color:#7a5508}
+.lay-state .spin{animation:render-spin 1.1s linear infinite}
+.lay-svg{display:block;width:100%;height:auto;max-height:calc(100dvh - 330px);min-height:300px;touch-action:none;user-select:none;-webkit-user-select:none;overflow:visible}
+.lay-svg *{vector-effect:non-scaling-stroke}
+.lay-carcass{fill:#dcc39d;stroke:#8c6743;stroke-width:1.5}
+.lay-opening{fill:#5b4129;opacity:.2}
+.lay-frame rect{fill:#c99f6d;stroke:#8c6743;stroke-width:1}
+.lay-member{fill:#a87e50}
+.lay-shelf{fill:#b88c5b;stroke:#8c6743;stroke-width:.75}
+.lay-front rect:first-child{fill:#f5ebdb;stroke:#9a7550;stroke-width:1.2}
+.lay-front.is-predicted rect:first-child{stroke-dasharray:5 3}
+.lay-pull{fill:#55666b;stroke:none}
+.lay-swing{fill:none;stroke:#b4906a;stroke-width:1;stroke-dasharray:7 5}
+.lay-front-size{fill:#6b5338;font-weight:600;font-family:Arial,Helvetica,sans-serif;pointer-events:none}
+.lay-hidden-shelf{stroke:#8f6b47;stroke-width:1.2;stroke-dasharray:2 5;opacity:.75;pointer-events:none}
+.lay-cell{cursor:pointer;outline:none}
+.lay-hit{fill:transparent}
+.lay-outline{fill:none;stroke:#ce572b;stroke-width:1.5;opacity:.55;pointer-events:none}
+.lay-cell.is-selected .lay-outline{fill:rgba(206,87,43,.09);stroke-width:3;opacity:1}
+.lay-cell:focus-visible .lay-outline{stroke-width:3;opacity:1}
+.lay-label{pointer-events:none}
+.lay-label rect{fill:rgba(255,255,255,.9);stroke:rgba(29,52,61,.14);stroke-width:1}
+.lay-label text{fill:#1d343d;font-family:Arial,Helvetica,sans-serif}
+.lay-label .lay-label-size{fill:#4a6470;font-weight:400}
+.lay-handle line{stroke:transparent;stroke-linecap:round}
+.lay-handle.is-x{cursor:col-resize}
+.lay-handle.is-z,.lay-handle.is-drawer{cursor:row-resize}
+.lay-grip{fill:#ce572b;opacity:.3;transition:opacity .15s}
+.lay-handle:hover .lay-grip{opacity:1}
+.lay-handle.is-drawer .lay-grip{opacity:0}
+.lay-handle.is-drawer:hover .lay-grip{opacity:.9}
+.lay-dims line{stroke:#7d8f95;stroke-width:1}
+.lay-dims text{fill:#4c6670;font-family:Arial,Helvetica,sans-serif}
+.lay-dim.is-link{cursor:pointer}
+.lay-dim.is-link:hover text{fill:#ce572b;text-decoration:underline}
+.lay-live{pointer-events:none}
+.lay-live rect{fill:#1d343d}
+.lay-live text{fill:#fff;font-family:Arial,Helvetica,sans-serif;font-weight:600}
+.lay-hint{display:flex;align-items:center;gap:7px;font-size:12px;color:#6b8088;line-height:1.5}
+.lay-hint svg{flex-shrink:0}
+.lay-inspector{border-left:1px solid #dde4e6;padding:16px 18px 22px;display:flex;flex-direction:column;gap:15px;background:#fbfcfc;min-width:0}
+.lay-inspector header{display:flex;flex-direction:column;gap:3px;padding-bottom:12px;border-bottom:1px solid #e3e9ea}
+.lay-inspector h3{font-size:18px;font-weight:600;color:#1d343d}
+.lay-inspector header p{font-size:13px;color:#5f757d;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lay-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#7a5508;background:#fdf3dc;border-radius:999px;padding:2px 8px}
+.lay-field{display:grid;gap:7px}
+.lay-field>span{font-size:13px;font-weight:600;color:#33515c}
+.segmented{display:flex;border:1px solid #cfdadd;border-radius:7px;overflow:hidden;background:#fff}
+.segmented button{flex:1;border:0;border-right:1px solid #cfdadd;background:#fff;color:#2b4a56;font-size:13px;padding:8px 6px;line-height:1.25}
+.segmented button:last-child{border-right:0}
+.segmented button.is-active,.segmented button.is-active:hover{background:#1d343d;color:#fff}
+.lay-stepper>div{display:flex;align-items:center;gap:8px}
+.lay-stepper button{width:34px;height:34px;display:grid;place-items:center;border:1px solid #cfdadd;border-radius:7px;background:#fff;color:#2b4a56}
+.lay-stepper output{min-width:34px;text-align:center;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums;color:#1d343d}
+.lay-inline{display:flex;align-items:center;gap:8px;font-size:13px;color:#4c6670}
+.lay-inline input{width:76px!important;padding:6px 8px!important}
+.lay-inline small{font-size:12px;color:#7b8c93}
+.lay-drawers{display:grid;gap:6px;margin-top:2px}
+.lay-drawers>small{font-size:12px;color:#6b8088}
+.lay-drawers label{display:grid;grid-template-columns:24px 1fr;align-items:center;gap:8px}
+.lay-drawers label>span{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#e8eef0;color:#33515c;font-size:11px;font-weight:600}
+.lay-drawers input,.lay-field .number-wrap input{padding:7px 40px 7px 9px!important}
+.lay-field .number-wrap span{top:9px;right:14px}
+.lay-actions{display:grid;gap:7px}
+.lay-actions button{display:flex;align-items:center;gap:8px;border:1px solid #cfdadd;border-radius:7px;background:#fff;color:#2b4a56;font-size:13px;padding:9px 11px;text-align:left}
+.lay-actions button.is-danger{color:#9d2716}
+.lay-note{display:flex;gap:7px;font-size:12px;line-height:1.5;color:#6b8088}
+.lay-note svg{flex-shrink:0;margin-top:2px}
+.lay-problems{display:flex;gap:8px;background:#fdeae7;border:1px solid #f3c3bb;color:#7e1f12;border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:1.5}
+.lay-problems svg{flex-shrink:0;margin-top:2px}
+.lay-problems p+p{margin-top:5px}
+.link-button{border:0;background:transparent;color:#a8401f;padding:0;font-size:12.5px;text-decoration:underline;justify-self:start}
+.note.layout-link{align-items:flex-start;flex-wrap:wrap}
+.note.layout-link p{flex:1;min-width:170px}
+.note.layout-link button{border:1px solid #ce572b;background:#fff;color:#a8401f;border-radius:6px;padding:6px 11px;font-size:13px;font-weight:600}
+@media(max-width:1180px){.lay{grid-template-columns:1fr}.lay-inspector{border-left:0;border-top:1px solid #dde4e6}.lay-svg{max-height:none}}
+.lay-handle line{stroke-width:14px}
+.lay-handle.is-drawer line{stroke-width:10px}

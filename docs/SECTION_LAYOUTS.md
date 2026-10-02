@@ -1,36 +1,38 @@
 # Kitchen section layouts
 
-Choose **Kitchen cabinet**, open the **Structure** section and set **Layout** to **Sections (split openings)**.
-Click an opening in the front diagram, then split it left/right or top/bottom.
-Splits can contain more splits, so upper and lower dividers need not align.
-Select parents using the Selected section menu; all descendant openings highlight
-together. Click an individual opening to select just that section.
+Choose **Kitchen cabinet** and open the **Layout** tab. Click an opening in the
+front view, then use **Split side by side** or **Split top / bottom**. Splits can
+contain more splits, so upper and lower dividers need not align. When an
+arrangement can only be built as nested sections (for example doors side by side
+below a drawer, or different splits in neighbouring columns), the editor switches
+the cabinet to **Sections** and says so; simpler arrangements keep the single
+column or side-by-side bay construction, which has joined dividers. The panel
+title names the selected opening, for example *Top › Column 2*.
 
 Each opening contains a drawer bank, one or two doors, or open shelves. A drawer
 bank has its own count and equal, graduated or custom-weighted heights. Weights
 run from top to bottom. Door openings can contain shelves. Paired doors share one
 opening without an automatic center partition. Adding drawers does not add shelves.
 
-Drag a divider to resize adjacent openings, or use proportional weights and fixed
-clear-opening dimensions. Fixed dimensions follow the current metric/inch display.
-At least one child per split must remain proportional. Split panel thickness is
-subtracted before allocating space. Dragging changes both adjacent sizes to weights.
-The tree allows 31 nodes and eight nesting levels; clear openings must be at least
-60 mm, and native checks also reject undersized drawer boxes and doors.
+Drag a divider to resize adjacent openings, or type a width or height in the
+panel. Typed sizes in a sections layout become fixed clear-opening dimensions
+(marked *Fixed*; **Make proportional** releases them); dragged sizes are
+proportional, so they scale with the cabinet. At least one child per split
+remains proportional. Split panel thickness is subtracted before allocating
+space. The tree allows 31 nodes and eight nesting levels; clear openings must be
+at least 60 mm, and native checks also reject undersized drawer boxes and doors.
 
-Choose full-depth panels, an 80 mm front support rail for horizontal splits, or a
-logical boundary with no physical divider. Replace split with one opening removes
-its descendants; Undo restores them. Legacy and Mixed bays remain available and
-old saved designs retain their original mode. Selecting Sections converts mixed
-columns and creates an initial layout from legacy contents; inspect sizes before
-using it. Re-selecting Sections creates a fresh conversion; save or Undo to recover
-an earlier tree. Global hardware, materials and machining settings still apply;
-per-opening hardware presets are not implemented.
+For a row of columns choose full-depth panels or no physical divider; for a
+column of rows also an 80 mm front support rail. **Remove this opening** gives its
+space to a neighbour and removes a split that is left with one opening; Undo
+restores it. Old saved designs keep their layout mode. Global hardware, materials
+and machining settings still apply; per-opening hardware presets are not
+implemented.
 
 ## Photo example
 
 In the cabinet picker (**New** or **Change**), choose **Kitchen cabinet → Section layouts →
-Photo example · six drawers and paired doors**. This opens the Structure editor. The included arrangement is:
+Photo example · six drawers and paired doors**. This opens the Layout tab. The included arrangement is:
 
 - Upper left: two drawers, with a smaller upper drawer.
 - Upper middle: paired doors in one wide opening.

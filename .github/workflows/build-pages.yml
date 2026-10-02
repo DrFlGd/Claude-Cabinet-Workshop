@@ -40,6 +40,8 @@ jobs:
         run: node tests/engine-fit.mjs
       - name: Engine interference suite
         run: node tests/engine-interference.mjs
+      - name: Layout editor suite
+        run: node tests/layout-editor.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:

@@ -395,6 +395,12 @@ drawer_gap = 3;
 // Example: [1,1.5,2] creates progressively wider door bays.
 door_width_weights = [1,1,1,1];
 
+// Drawers-over-doors only: height of the door region in mm, from the bottom of
+// the front opening to the drawer/door divider. 0 keeps the automatic split
+// (doors three drawer-heights tall). The layout editor sets this when you drag
+// or type the drawer/door boundary.
+combo_door_height = 0; // [0:1:3000]
+
 // For a DOORS-ONLY wall cabinet, extend decorative doors to the cabinet top.
 // Combo cabinets intentionally stop below the drawer region.
 wall_doors_flush_top = true;

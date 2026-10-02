@@ -891,9 +891,25 @@ combo_reference_drawer_unit =
           )
         : 0;
 
+// combo_door_height (mm) sets the door region of a drawers-over-doors cabinet
+// directly; 0 keeps the automatic three drawer-height units. It is limited so
+// the drawer stack keeps at least 40 mm per drawer.
+combo_requested_door_height =
+    is_undef(combo_door_height) ? 0 : max(0,combo_door_height);
+
 combo_reference_door_height =
     !mixed_bay_mode && combo_contents_active
-        ? combo_door_height_units*combo_reference_drawer_unit
+        ? combo_requested_door_height > 0
+            ? min(
+                combo_requested_door_height,
+                max(
+                    0,
+                    content_height
+                    - drawer_gap*drawer_bank_drawer_count(0)
+                    - 40*drawer_bank_drawer_count(0)
+                )
+              )
+            : combo_door_height_units*combo_reference_drawer_unit
         : 0;
 
 function drawer_height_unit_for_bank(b=0) =

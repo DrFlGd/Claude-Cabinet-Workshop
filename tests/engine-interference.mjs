@@ -69,6 +69,9 @@ const cases=[
  // Combo contents: partitions joined to a divider that is set back behind the face frame or inset fronts.
  [4,'kitchen_standard_B36',{cabinet_contents:'combo',drawer_bank_count:3,door_count:3,include_door_hinge_partitions:true,joinery_style:'tab_slot'}],
  [4,'kitchen_standard_B36',{cabinet_contents:'combo',front_mount_style:'inset_flush',joinery_style:'dado',drawer_bank_count:4,door_count:3,include_door_hinge_partitions:true,include_drawer_faces:false,face_frame_mid_rail_mode:'none'}],
+ // Door region set by the layout editor (combo_door_height), overlay and inset behind a face frame.
+ [1,undefined,{combo_door_height:400}],
+ [4,'kitchen_standard_B36',{combo_door_height:450,front_mount_style:'inset_flush'}],
 ];
 const only=process.env.CASES?JSON.parse(process.env.CASES):null;
 for(const [f,starter,patch] of only??cases){

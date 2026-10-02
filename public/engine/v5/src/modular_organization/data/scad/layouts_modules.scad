@@ -3667,3 +3667,212 @@ module pocket_ganging_layout() {
 }
 
 
+
+// ---------------------------
+// LAYOUT EDITOR ELEVATION REPORT
+// ---------------------------
+// One record per opening, front, shelf and interior member as seen from the
+// front, in cabinet coordinates (X from the left outside face, Z from the
+// cabinet bottom). The browser layout editor draws these exact positions.
+module layout_elevation_report() {
+    open_x = face_frame_active ? face_frame_inner_left_x : material_thickness;
+    open_w = face_frame_active ? face_frame_clear_width : inner_width;
+    open_h = front_opening_top_z-front_opening_bottom_z;
+
+    echo(str(
+        "LAYOUT|CABINET",
+        "|W=",resolved_cabinet_width,
+        "|H=",cabinet_height,
+        "|T=",material_thickness,
+        "|OPEN_X=",open_x,
+        "|OPEN_Z=",front_opening_bottom_z,
+        "|OPEN_W=",open_w,
+        "|OPEN_H=",open_h,
+        "|CONTENT_Z=",content_bottom_z,
+        "|CONTENT_H=",content_height,
+        "|MODE=",mixed_bay_mode ? "mixed_bays" : "legacy"
+    ));
+
+    if (face_frame_active) {
+        band = face_frame_mid_rail_band();
+        echo(str(
+            "LAYOUT|FACE_FRAME",
+            "|Z0=",face_frame_bottom_z,
+            "|Z1=",face_frame_top_z,
+            "|STILE_W=",effective_face_frame_side_stile_width,
+            "|BOTTOM_RAIL_W=",effective_face_frame_bottom_rail_width,
+            "|TOP_RAIL_W=",effective_face_frame_top_rail_width,
+            "|MID_Z0=",len(band) > 0 ? band[0] : -1,
+            "|MID_Z1=",len(band) > 0 ? band[1] : -1,
+            "|CENTER_STILE_W=",
+                face_frame_center_stile_enabled
+                    ? effective_face_frame_center_stile_width
+                    : 0
+        ));
+    }
+
+    if (mixed_bay_mode) {
+        for (b=[0:active_mixed_bay_count-1])
+            echo(str(
+                "LAYOUT|BAY|B",b+1,
+                "|TYPE=",mixed_bay_type_normalized(b),
+                "|X=",mixed_bay_opening_x(b),
+                "|W=",mixed_bay_opening_width(b),
+                "|Z=",front_opening_bottom_z,
+                "|H=",open_h
+            ));
+    }
+    else {
+        if (has_drawers)
+            for (b=[0:active_drawer_bank_count()-1])
+                echo(str(
+                    "LAYOUT|BANK|B",b+1,
+                    "|X=",drawer_bank_opening_x(b),
+                    "|W=",drawer_bank_opening_width(b)
+                ));
+
+        if (has_doors)
+            echo(str(
+                "LAYOUT|DOOR_REGION",
+                "|Z=",door_region_bottom_z,
+                "|H=",door_region_height
+            ));
+    }
+
+    if (has_drawers)
+        for (b=[0:active_drawer_bank_count()-1])
+            if (drawer_bank_drawer_count(b) > 0)
+                for (i=[0:drawer_bank_drawer_count(b)-1])
+                    echo(str(
+                        "LAYOUT|FRONT|",id_drawer_prefix(b,i),
+                        "|KIND=drawer",
+                        "|BAY=",b+1,
+                        "|INDEX=",i+1,
+                        "|FACE=",include_drawer_faces ? "applied" : "box",
+                        "|X=",include_drawer_faces
+                            ? drawer_face_x(b) : drawer_box_x0(b),
+                        "|Z=",include_drawer_faces
+                            ? drawer_face_z(i,b) : drawer_box_z(i,b),
+                        "|W=",include_drawer_faces
+                            ? drawer_face_width(b) : drawer_outer_width(b),
+                        "|H=",include_drawer_faces
+                            ? drawer_face_height_for(i,b)
+                            : drawer_box_height(i,b),
+                        "|NOMINAL_H=",drawer_face_nominal_height(i,b),
+                        "|OPEN_Z=",drawer_box_opening_bottom_z(i,b),
+                        "|OPEN_H=",drawer_opening_height(i,b)
+                    ));
+
+    if (has_doors && door_face_height > 20) {
+        if (mixed_bay_mode) {
+            for (b=[0:active_mixed_bay_count-1])
+                if (mixed_bay_is_type(b,"door"))
+                    for (leaf=[0:mixed_bay_door_count(b)-1])
+                        echo(str(
+                            "LAYOUT|FRONT|",id_mixed_door(b,leaf),
+                            "|KIND=door",
+                            "|BAY=",b+1,
+                            "|INDEX=",leaf+1,
+                            "|X=",mixed_bay_door_leaf_x(b,leaf),
+                            "|Z=",door_face_bottom_z,
+                            "|W=",mixed_bay_door_leaf_width(b),
+                            "|H=",door_face_height,
+                            "|HINGE=",mixed_bay_door_leaf_hinge_side(b,leaf)
+                        ));
+        }
+        else {
+            for (i=[0:door_count-1])
+                echo(str(
+                    "LAYOUT|FRONT|",id_legacy_door(i),
+                    "|KIND=door",
+                    "|BAY=0",
+                    "|INDEX=",i+1,
+                    "|X=",front_panel_x+door_local_x(i),
+                    "|Z=",door_face_bottom_z,
+                    "|W=",door_each_width(i),
+                    "|H=",door_face_height,
+                    "|HINGE=",door_hinge_side(i)
+                ));
+        }
+    }
+
+    if (mixed_bay_mode) {
+        for (b=[0:active_mixed_bay_count-1])
+            if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
+                for (s=[1:mixed_bay_shelf_count(b)])
+                    echo(str(
+                        "LAYOUT|SHELF|",id_mixed_shelf(b,s),
+                        "|BAY=",b+1,
+                        "|X=",mixed_bay_opening_x(b),
+                        "|W=",mixed_bay_opening_width(b),
+                        "|Z=",mixed_bay_shelf_z(b,s),
+                        "|STYLE=",mixed_bay_shelf_style(b)
+                    ));
+
+        if (mixed_bay_partition_count() > 0)
+            for (p=[0:mixed_bay_partition_count()-1])
+                echo(str(
+                    "LAYOUT|MEMBER|MB",p+1,
+                    "|KIND=bay_partition",
+                    "|X=",mixed_bay_partition_x(p),
+                    "|W=",material_thickness,
+                    "|Z=",carcass_interior_bottom_z(),
+                    "|H=",carcass_interior_top_z()-carcass_interior_bottom_z()
+                ));
+    }
+    else {
+        if (has_doors && door_shelf_count > 0)
+            for (s=[1:door_shelf_count])
+                echo(str(
+                    "LAYOUT|SHELF|",id_legacy_shelf(s-1),
+                    "|BAY=0",
+                    "|X=",open_x,
+                    "|W=",open_w,
+                    "|Z=",door_shelf_z(s),
+                    "|STYLE=",shelf_style
+                ));
+
+        if (drawer_bank_partition_count() > 0)
+            for (p=[0:drawer_bank_partition_count()-1])
+                echo(str(
+                    "LAYOUT|MEMBER|DB",p+1,
+                    "|KIND=bank_partition",
+                    "|X=",drawer_bank_partition_x(p),
+                    "|W=",material_thickness,
+                    "|Z=",drawer_bank_partition_bottom_z(),
+                    "|H=",drawer_bank_partition_top_z()-drawer_bank_partition_bottom_z()
+                ));
+
+        if (door_hinge_partition_count() > 0)
+            for (p=[0:door_hinge_partition_count()-1])
+                echo(str(
+                    "LAYOUT|MEMBER|DH",p+1,
+                    "|KIND=door_partition",
+                    "|X=",door_hinge_partition_x(p),
+                    "|W=",material_thickness,
+                    "|Z=",door_hinge_partition_bottom_z(),
+                    "|H=",door_hinge_partition_top_z()-door_hinge_partition_bottom_z()
+                ));
+
+        if (combo_contents_active && door_region_height > material_thickness)
+            echo(str(
+                "LAYOUT|MEMBER|DIV",
+                "|KIND=divider",
+                "|X=",open_x,
+                "|W=",open_w,
+                "|Z=",combo_divider_bottom_z,
+                "|H=",material_thickness
+            ));
+
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1])
+                echo(str(
+                    "LAYOUT|MEMBER|SEP",s+1,
+                    "|KIND=separator",
+                    "|X=",open_x,
+                    "|W=",open_w,
+                    "|Z=",drawer_separator_z(s),
+                    "|H=",material_thickness
+                ));
+    }
+}

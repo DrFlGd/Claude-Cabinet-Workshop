@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.6.0**) are separate from the bundled
+Application versions (currently **0.7.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,22 +17,104 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## Unreleased
+## 0.7.0 — 2026-10-02
 
-Release automation only; the application is unchanged from 0.6.0.
+Adds a visual layout editor: the cabinet front is designed by clicking, dragging
+and typing sizes instead of through bay arrays and dropdowns.
+
+### Layout editor
+
+- New **Layout** tab, the first tab for shop carts, utility, benchtop, stackable
+  and kitchen cabinets. It draws the cabinet front to scale with dimension chains
+  (overall size, bay widths, row heights). Click an opening to select it; the
+  panel beside the drawing sets its contents (drawers, doors or open shelves),
+  the number of drawers, doors and shelves, shelf type, hinge side and drawer
+  heights (equal, graduated or custom, with one front height per drawer).
+- Drag the divider between two openings, or the line between two drawers, to
+  resize them; a label shows both sizes while dragging and sizes snap to 1 mm or
+  1/16 in. Typed widths, row heights, drawer front heights and the door height of
+  a drawers-over-doors cabinet come out exactly in the engine (checked by the new
+  test suite). **Split side by side**, **Drawers over doors** (kitchen: **Split
+  top / bottom**) and **Remove this opening** change the arrangement; Ctrl+Z
+  undoes any edit.
+- The editor chooses the engine construction that can build the arrangement:
+  a single column (drawers, doors, drawers over doors, or side-by-side drawer
+  columns with joined partitions), up to four side-by-side bays with joined
+  partitions, or, for kitchen cabinets only, nested sections. The current
+  construction is kept whenever it can still build the edit, and a note appears
+  when it changes. Arrangements a cabinet type cannot build are refused with the
+  reason (for example stacking openings inside a bay of a shop cart, or doors
+  side by side in a stackable module). Kitchen bays behind a face frame that
+  would put drawers in an end bay are built as sections instead of failing.
+- Fronts, shelves, dividers and the face frame are drawn at the positions the
+  engine reports. Until the engine has recalculated after an edit, fronts are
+  dashed estimates and the status reads *Recalculating exact sizes*.
+- Bay, drawer-count, door-count, shelf-count and drawer-height settings are no
+  longer listed in the settings panel; the Structure section and search results
+  for them point to the Layout tab. The Structure-step section editor is
+  replaced by the Layout tab (the photo example opens there).
+
+### Engine
+
+- New `LAYOUT|…` report records give the exact front-view position of every bay
+  or drawer column, drawer and door front, shelf, partition and divider, and the
+  face frame. They are report lines only; no geometry changes.
+- New `combo_door_height` (mm, 0 = automatic) for shop carts, utility and kitchen
+  cabinets sets the door region of a drawers-over-doors cabinet directly instead
+  of the fixed three drawer-heights proportion; the drawer stack keeps at least
+  40 mm per drawer.
+- The existing per-bay and per-bank drawer height arrays
+  (`mixed_bay_drawer_height_weights`, `drawer_bank_height_weights`) are now
+  settable from the app, so each bay or drawer column can have its own heights.
+
+### Release automation
 
 - The Windows test build workflow attaches its smoke-tested portable build
-  (`Claude-Cabinet-Workshop-v<version>-Windows-x64.zip`, previously only a
-  30-day workflow artifact named `Cabinet-Workshop-…`) to the GitHub release
+  (`Claude-Cabinet-Workshop-v<version>-Windows-x64.zip`) to the GitHub release
   tagged at the commit it built, and also runs when `VERSION` changes so each
   release gets one. Started manually with a release tag, it builds that tag's
-  sources and attaches the ZIP to that release. Existing assets are never
-  replaced. The build records the commit it was built from in BUILD-INFO.json.
-- README and HOSTING describe the Windows download.
+  sources and attaches the ZIP to that release (this added the 0.6.0 Windows
+  ZIP). Existing assets are never replaced, and BUILD-INFO.json records the
+  commit the build came from. The Windows smoke test now exercises the Layout
+  tab.
 
-Validation: the 0.6.0 Windows build passed the workflow's packaging, runtime
-integrity, asset and EXE launch/photo-render smoke checks on a Windows runner.
-The desktop app itself was not tested interactively.
+### Validation performed
+
+- `tests/layout-editor.mjs` (new, in the release suite and CI): all 88 starters
+  of the five cabinet types round-trip through the editor without moving any
+  front; 75 openings computed by the editor match the engine's report; typed bay
+  width (300 mm), drawer front height (120 mm), door height (500 mm) and a bank
+  width land within 0.01 mm in the engine; a dragged drawer/door boundary sets
+  the door region the engine reports; column splits, a stackable door module,
+  kitchen sections and refusals behave as described.
+- 80 random sequences of one to four editor edits on random starters (SEED 11),
+  each evaluated by the engine: no undefined values, failed evaluations or front
+  count mismatches; the only errors were the reported fit errors that appear when
+  edits make drawers too small for their slides or boxes.
+- Engine fit suite (110 starters and regressions) and interference suite (now 18
+  designs, adding custom door heights with overlay and inset fronts) pass.
+- Browser checks on the development server and the static build: dragging a bay
+  divider and a drawer line, typing a bay width and drawer height, switching a
+  bay to a right-hinged door, adding bays, inch display, undo; kitchen B36
+  drawer/door boundary drag, typed door height and a sections split with no
+  errors; utility, benchtop and stackable flows; 390 px phone layout; search
+  hint; the desktop smoke test's layout steps.
+- Static-app TypeScript check (Sites-only modules excluded locally), unit,
+  settings visibility, v5 integration and section WASM tests, static build.
+
+### Known limits
+
+- At most four bays or drawer columns. Only kitchen cabinets can stack openings
+  inside a bay; other types offer drawers over doors across the full width.
+- Bay widths and drawer heights are stored as proportions, so they scale when
+  the cabinet size changes; sizes typed into a kitchen sections layout become
+  fixed millimeters.
+- Exact typed sizes use the engine's latest report; a size typed while it is
+  still recalculating uses the estimate. Sections layouts show estimated fronts
+  (the engine reports their openings, not each front).
+- Widths of three or four doors across one opening stay in the Doors settings
+  (door width weights). The native OpenSCAD section tests and the desktop app run
+  in CI only.
 
 ## 0.6.0 — 2026-10-02
 

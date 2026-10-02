@@ -48,7 +48,13 @@ pnpm run build:static
   against the parts that receive them. Correct joinery only touches; any overlap
   volume fails the test. `CASES='[[family,starter,{...}]]'` runs chosen designs.
 
-`pnpm run test:engine` runs the two engine suites alone (about four minutes on a
+- `tests/layout-editor.mjs`: the Layout tab's model (lib/layout.ts) against the
+  engine. Every starter of the five cabinet types with a layout editor must map
+  back to identical engine fronts, the editor's openings must match the engine's
+  LAYOUT report, and typed widths, drawer front heights and door heights must
+  come out exactly in the engine; unsupported arrangements must be refused.
+
+`pnpm run test:engine` runs the three engine suites alone (about six minutes on a
 two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.
 Browser use does not require native OpenSCAD. For the material-specific geometry
 check, also install Python 3.10+ and run `python3 tests/material-relief.py` from the

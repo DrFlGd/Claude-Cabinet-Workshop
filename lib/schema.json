@@ -1806,6 +1806,25 @@
         "advanced": false
       },
       {
+        "key": "combo_door_height",
+        "value": 0,
+        "expression": null,
+        "section": "Doors / Layout",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "options": null,
+        "bounds": [
+          0,
+          3000,
+          1
+        ],
+        "step": null,
+        "unit": "mm",
+        "visibleIf": {
+          "cabinet_contents": "combo"
+        },
+        "advanced": false
+      },
+      {
         "key": "wall_doors_flush_top",
         "value": true,
         "expression": null,
@@ -2167,6 +2186,60 @@
         "advanced": false
       },
       {
+        "key": "mixed_bay_drawer_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per bay, top drawer first. Used by bays whose height mode is custom_weights.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "drawer_bank_count",
         "value": 1,
         "expression": null,
@@ -2264,6 +2337,60 @@
         "expression": null,
         "section": "Drawers / Layout",
         "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "drawer_bank_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per independent drawer bank, top drawer first.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -9166,6 +9293,25 @@
         "advanced": false
       },
       {
+        "key": "combo_door_height",
+        "value": 0,
+        "expression": null,
+        "section": "Doors / Layout",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "options": null,
+        "bounds": [
+          0,
+          3000,
+          1
+        ],
+        "step": null,
+        "unit": "mm",
+        "visibleIf": {
+          "cabinet_contents": "combo"
+        },
+        "advanced": false
+      },
+      {
         "key": "wall_doors_flush_top",
         "value": true,
         "expression": null,
@@ -9527,6 +9673,60 @@
         "advanced": false
       },
       {
+        "key": "mixed_bay_drawer_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per bay, top drawer first. Used by bays whose height mode is custom_weights.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "drawer_bank_count",
         "value": 1,
         "expression": null,
@@ -9624,6 +9824,60 @@
         "expression": null,
         "section": "Drawers / Layout",
         "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "drawer_bank_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per independent drawer bank, top drawer first.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -18487,6 +18741,60 @@
         "advanced": false
       },
       {
+        "key": "drawer_bank_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per independent drawer bank, top drawer first.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "drawer_bank_face_gap",
         "value": null,
         "expression": "drawer_gap",
@@ -24585,6 +24893,60 @@
         "expression": null,
         "section": "Drawers / Layout",
         "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "drawer_bank_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per independent drawer bank, top drawer first.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -31244,6 +31606,25 @@
         "advanced": false
       },
       {
+        "key": "combo_door_height",
+        "value": 0,
+        "expression": null,
+        "section": "Doors / Layout",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "options": null,
+        "bounds": [
+          0,
+          3000,
+          1
+        ],
+        "step": null,
+        "unit": "mm",
+        "visibleIf": {
+          "cabinet_contents": "combo"
+        },
+        "advanced": false
+      },
+      {
         "key": "wall_doors_flush_top",
         "value": true,
         "expression": null,
@@ -31607,6 +31988,60 @@
         "advanced": false
       },
       {
+        "key": "mixed_bay_drawer_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per bay, top drawer first. Used by bays whose height mode is custom_weights.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "drawer_bank_count",
         "value": 1,
         "expression": null,
@@ -31704,6 +32139,60 @@
         "expression": null,
         "section": "Drawers / Layout",
         "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "drawer_bank_height_weights",
+        "value": [
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "expression": null,
+        "section": "Drawers / Layout",
+        "description": "One row of custom drawer-height weights per independent drawer bank, top drawer first.",
         "options": null,
         "bounds": null,
         "step": null,

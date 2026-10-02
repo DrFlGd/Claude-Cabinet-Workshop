@@ -13,6 +13,13 @@ export function linkedChanges(key:string,value:unknown,v:Record<string,any>):Rec
  return {};
 }
 
+// Settings owned by the layout editor (Layout tab) for cabinet types that have one.
+export const LAYOUT_KEYS=new Set(['cabinet_layout_mode','cabinet_contents','module_type','drawer_count','door_count','door_shelf_count','shelf_style','single_door_hinge_side','combo_door_height','section_nodes',
+ 'mixed_bay_count','mixed_bay_types','mixed_bay_width_weights','mixed_bay_drawer_counts','mixed_bay_door_counts','mixed_bay_shelf_counts','mixed_bay_shelf_styles','mixed_bay_drawer_height_modes','mixed_bay_drawer_graduated_steps','mixed_bay_drawer_height_weights','mixed_bay_door_hinge_sides','include_mixed_bay_partitions',
+ 'drawer_bank_count','drawer_bank_layout_mode','drawer_bank_width_weights','drawer_bank_drawer_counts','drawer_bank_height_modes','drawer_bank_graduated_steps','drawer_bank_height_weights','drawer_height_mode','drawer_height_weights','drawer_graduated_step']);
+export const LAYOUT_REASON='Set in the Layout tab';
+export const hasLayoutEditor=(family:unknown)=>typeof family==='number'&&family>=0&&family<5;
+
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
  if(['cabinet_mount_style','mount_mode'].includes(f.key))return [{...f,section:'Mounting / Mount Style'}];
  if(f.section==='Structure / Back and Braces')return [{...f,section:'Mounting / Rear Mounting',description:f.key==='back_style'?'Rear construction: choose a back panel or structural rear stretchers. Stretcher dimensions appear when Stretchers is selected. These controls define rear geometry, not a separate wall-fastener or French-cleat system.':f.description}];
@@ -37,6 +44,7 @@ export function settingsGroup(f:Field){
 export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
+ if(hasLayoutEditor(v._family)&&LAYOUT_KEYS.has(f.key))return LAYOUT_REASON;
  const k=f.key,s=sectionFor(f),sections=v._family===4&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
  if(k==='section_nodes')return 'Use the section layout editor';
  if(sections&&(k.startsWith('mixed_')||k==='include_mixed_bay_partitions'||k.startsWith('drawer_bank_')||['cabinet_contents','drawer_count','door_count','door_shelf_count','drawer_height_mode','drawer_height_weights','drawer_graduated_step','include_drawer_separators','shelf_style','width_basis','depth_basis','include_door_hinge_partitions','face_frame_mid_rail_mode','face_frame_custom_mid_rail_z','include_face_frame_center_stile','face_frame_center_stile_width','fronts_cover_bottom_lip','overlay_width_style'].includes(k)))return 'Controlled by section layout';

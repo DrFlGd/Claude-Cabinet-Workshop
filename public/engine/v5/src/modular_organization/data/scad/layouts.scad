@@ -810,6 +810,11 @@ module echo_dimension_report() {
                 ));
         }
 
+        // Front elevation for the layout editor, in cabinet coordinates: X from
+        // the left outside face, Z from the bottom of the cabinet (module).
+        if (!standalone_drawer_active && !section_layout_active)
+            layout_elevation_report();
+
         if (dimension_report == "full") {
             // Finished drawer boxes, storage volume, faces, and bottoms.
             if (has_drawers)
