@@ -45,6 +45,8 @@ jobs:
           $revision = git rev-parse HEAD
           python desktop/package-windows.py runtime/electron-v44.4.3-win32-x64.zip runtime/SHASUMS256.txt portable --source-revision $revision
           node tests/desktop-assets.cjs portable/resources/app/renderer
+          # The manifest the packager wrote must pass both the per-launch and the full check.
+          node -e "const {verifyRuntime}=require('./desktop/runtime-integrity.cjs');(async()=>{console.log('quick check',await verifyRuntime('portable'));console.log('full check',await verifyRuntime('portable',{full:true}))})().catch(e=>{console.error(e);process.exit(1)})"
       - name: Launch EXE and render photo example
         shell: pwsh
         run: |

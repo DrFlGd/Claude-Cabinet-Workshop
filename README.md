@@ -11,7 +11,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.7.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.7.1**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -21,7 +21,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.7.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.7.1
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -31,8 +31,10 @@ also works from any sub-folder of an existing web server. Do not open
 On Windows you can instead download
 `Claude-Cabinet-Workshop-v<version>-Windows-x64.zip` from the same release,
 extract all of it into a new folder and run `Cabinet Workshop.exe`. It is an
-unsigned portable test build (Windows may warn about an unrecognized app) and
-needs no web server; see the [desktop notes](desktop/README.md).
+unsigned portable test build (Windows may warn about an unrecognized app; choose
+**More info → Run anyway**) and needs no web server. Its window opens at once
+with a *Starting…* page while the program files are checked; see the
+[desktop notes](desktop/README.md).
 
 ## Run from source
 

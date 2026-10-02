@@ -42,11 +42,13 @@ exe.rename(out / 'Cabinet Workshop.exe')
 with zipfile.ZipFile(runtime) as archive:
     runtime_names = [entry.filename for entry in archive.infolist()
                      if not entry.is_dir() and entry.filename.lower().endswith(('.exe', '.dll', '.pak', '.bin', '.dat'))]
+# Each launch checks presence and size quickly; Help > Verify program files and
+# the packaged smoke test compare the full SHA-256.
 runtime_hashes = {}
 for name in runtime_names:
     name = 'Cabinet Workshop.exe' if name == 'electron.exe' else name
     with (out / name).open('rb') as f:
-        runtime_hashes[name] = hashlib.file_digest(f, 'sha256').hexdigest()
+        runtime_hashes[name] = dict(sha256=hashlib.file_digest(f, 'sha256').hexdigest(), size=(out / name).stat().st_size)
 (out / 'RUNTIME-SHA256.json').write_text(json.dumps(runtime_hashes, indent=2)+'\n')
 
 app = out / 'resources/app'
@@ -73,10 +75,18 @@ Photo example: choose Kitchen cabinet, then the starter named
 Photo example · six drawers and paired doors (Section layouts group).
 You can also Open design and select the included Photo-example.cabinet.json.
 
+Starting: a window opens at once and shows "Starting..." while the program files
+are checked; the first start after extracting can take a few seconds longer while
+Windows scans the new files. Starting the EXE again while it runs only brings the
+open window to the front. Help > Verify program files compares every runtime file
+with its checksum; Help > Open start-up log shows the last launch's log.
+
 Use Save design for portable backups. Desktop autosave is separate from browser storage.
-This is an unsigned testing build, not an installer. Windows may identify it as
-an unrecognized application. See WINDOWS-SMOKE-TEST.json for automated Windows startup/render checks.
-The app verifies runtime files before opening. See WINDOWS-LAYOUT.png for the\nautomated Windows window capture. Manual interactive testing remains necessary.
+This is an unsigned testing build, not an installer. Windows SmartScreen may say
+"Windows protected your PC": choose More info, then Run anyway.
+See WINDOWS-SMOKE-TEST.json for the automated Windows start-up/render checks and
+WINDOWS-LAYOUT.png for the automated window capture. Manual interactive testing
+remains necessary.
 
 Interior section supports are butt-fit blanks requiring suitable mounting hardware
 or shop-drilled fastening. See the included changelog for scope and limitations.

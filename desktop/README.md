@@ -33,8 +33,12 @@ autosave remains in the desktop application's own user profile.
 `node tests/desktop-assets.cjs` checks offline asset resolution and build contents.
 The production worker smoke tests are available through `pnpm run test:sections:wasm`.
 
-The portable build verifies SHA-256 hashes of its executable, DLLs, resource
-packs, snapshots and locale packs before opening a window. Always extract a new
+The window opens immediately with a starting page. Each launch then checks that
+the executable, DLLs, resource packs, snapshots and locale packs are present,
+readable and the size recorded at build time, retrying for a few seconds while
+Windows is still extracting or scanning them. Help → Verify program files
+compares their SHA-256 hashes (the packaged smoke test does the same), and
+Help → Open start-up log shows the last launch's log. Always extract a new
 version into a fresh folder. A startup error identifies missing or mismatched
 runtime files. Windows smoke tests now reject visible document metadata/style
 text or a displaced header, and include `WINDOWS-LAYOUT.png` for visual review.

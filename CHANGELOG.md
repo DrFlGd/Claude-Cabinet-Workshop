@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.7.0**) are separate from the bundled
+Application versions (currently **0.7.1**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,36 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.7.1 — 2026-10-02
+
+Windows desktop start-up. The application itself is unchanged from 0.7.0.
+
+- The window now opens immediately with a *Starting…* page. Previously nothing
+  appeared until the app had read and hashed every runtime file (about 330 MB,
+  including the 246 MB EXE) on every launch; on a first launch, with Windows
+  scanning the newly extracted files, that could look like the program did
+  nothing.
+- Each launch now checks that every runtime file is present, readable and the
+  size recorded at build time, instead of hashing it. Files that are still being
+  extracted or scanned (missing, short or locked) are retried for about four
+  seconds before an error is shown. The full SHA-256 comparison is still made by
+  the packaged smoke test and on request through **Help → Verify program
+  files…**.
+- Start-up errors say what happened and what to do: a file still in use
+  (extraction or antivirus), a missing file, or a damaged or mismatched file,
+  with the file name and the system error code. A start-up log of the last
+  launch is saved in the user profile (**Help → Open start-up log**).
+- Starting the EXE again while it runs brings the open window to the front.
+  START-HERE.txt describes the start-up and the SmartScreen prompt for this
+  unsigned build.
+
+Validation: `tests/runtime-integrity.cjs` covers the quick and full checks, size
+and hash mismatches, missing files, a file that appears and grows while the check
+waits, manifests from earlier builds and path traversal. The Windows workflow
+additionally verifies the packaged manifest with both checks and launches the
+packaged EXE for the smoke test. The start-up page, retry timing and error
+dialogs were not exercised on a desktop interactively.
 
 ## 0.7.0 — 2026-10-02
 
