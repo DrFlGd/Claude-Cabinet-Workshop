@@ -11,9 +11,8 @@ module.exports=async function smoke(win,example){
   const transfer=new DataTransfer();transfer.items.add(new File([JSON.stringify(imported)],'photo.cabinet.json',{type:'application/json'}));
   const fileInput=document.querySelector('input[type=file]');fileInput.files=transfer.files;fileInput.dispatchEvent(new Event('change',{bubbles:true}));
   await waitFor(()=>document.querySelector('input[aria-label="Design name"]').value==='Windows section regression');
-  document.getElementById('settings-section').click();
-  await waitFor(()=>[...document.querySelectorAll('[role=option]')].some(e=>e.textContent.trim()==='Structure'));
-  [...document.querySelectorAll('[role=option]')].find(e=>e.textContent.trim()==='Structure').click();
+  await waitFor(()=>document.querySelector('[data-settings-step="Structure"]'));
+  document.querySelector('[data-settings-step="Structure"]').click();
   await waitFor(()=>document.getElementById('section-selection'));
   if(document.querySelector('.section-breadcrumbs'))throw Error('Redundant section buttons still present');
   const highlighted=()=>[...document.querySelectorAll('.section-diagram g[aria-pressed=true]')].map(e=>Number(e.dataset.sectionId)).join(',');

@@ -26,11 +26,26 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit --incremental false
       - name: Install native geometry test dependency
-        run: sudo apt-get update && sudo apt-get install -y openscad
+        run: sudo apt-get update && sudo apt-get install -y openscad zip
       - run: pnpm run test:release
+      # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:
-          CABINET_BASE_PATH: /Cabinet-Workshop/
+          CABINET_BASE_PATH: ./
+      - name: Package the portable web build
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          mkdir -p release
+          (cd web-dist && zip -qr "../release/claude-cabinet-workshop-web-v$version.zip" .)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-web
+          path: release/
+      # GitHub Pages build for this repository's project URL.
+      - run: pnpm run build:static
+        env:
+          CABINET_BASE_PATH: /Claude-Cabinet-Workshop/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: web-dist
@@ -70,5 +85,39 @@ jobs:
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git tag -a "v$version" -m "Cabinet Workshop v$version"
+          git tag -a "v$version" -m "Claude Cabinet Workshop v$version"
           git push origin "refs/tags/v$version"
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-web
+          path: release
+      - name: Publish the GitHub release for the tagged version
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "Release v$version already exists; leaving it unchanged."
+            exit 0
+          fi
+          # Release notes are the changelog section for this version.
+          awk -v v="$version" '
+            $0 ~ "^## " v "( |$)" {on=1; next}
+            on && /^## / {exit}
+            on {print}
+          ' CHANGELOG.md > release-notes.md
+          test -s release-notes.md
+          gh release create "v$version" release/*.zip \
+            --title "Claude Cabinet Workshop v$version" \
+            --notes-file release-notes.md \
+            --verify-tag

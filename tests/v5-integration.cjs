@@ -8,7 +8,7 @@ for(let family=0;family<6;family++){
  for(const f of old[family].fields)if(c.schemas[family].fields.some(x=>x.key===f.key)&&!['cabinet_preset','cabinet_layout_mode','mixed_bay_count','mixed_bay_types','mixed_bay_width_weights','mixed_bay_drawer_counts','mixed_bay_shelf_counts','mixed_bay_door_counts','base_style','include_worktop'].includes(f.key))assert.deepEqual(result.values[f.key],f.value,family+' '+f.key);
 }
 for(let family=0;family<7;family++)for(const starter of c.schemas[family].starters){const v=c.starterValues(family,starter.id);p.parseDesign({version:2,engine:5,engineFamily:'modular_organization',family,values:v});assert.deepEqual(c.validate(v),[],starter.id);assert(c.geometry(v,false,false).every(p=>[p.x,p.y,p.z,p.w,p.d,p.h].every(Number.isFinite)),starter.id)}
-assert.deepEqual(s.sectionOrder.slice(0,2),['Materials','Machining']);
+assert.deepEqual(s.sectionOrder.slice(0,2),['Sizing','Structure']);assert(s.shopSections.every(x=>s.sectionOrder.includes(x)));
 const stand=c.schemas[6].fields;
 for(const k of ['equipment_mass_kg','slide_load_rating_kg','cleat_angle','cleat_safety_factor','tray_count'])assert.equal(u.isLengthField(stand.find(f=>f.key===k)),false,k);
 for(const k of ['material_thickness','router_bit_diameter','tray_extension'])assert.equal(u.isLengthField(stand.find(f=>f.key===k)),true,k);
