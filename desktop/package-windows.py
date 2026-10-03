@@ -88,7 +88,6 @@ See WINDOWS-SMOKE-TEST.json for the automated Windows start-up/render checks and
 WINDOWS-LAYOUT.png for the automated window capture. Manual interactive testing
 remains necessary.
 
-Interior section supports are butt-fit blanks requiring suitable mounting hardware
-or shop-drilled fastening. See the included changelog for scope and limitations.
+See the included changelog for scope and limitations.
 ''', encoding='utf-8')
 print('Packaged Windows x64:', out)

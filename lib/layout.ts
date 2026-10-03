@@ -489,7 +489,7 @@ export function splitColumns(root:LayoutNode,path:Path,sizes?:number[]):LayoutNo
   return {kind:'x',divider:'panel',children:[a,b],size:n.size,fixed:n.fixed,ref:n.kind==='leaf'?undefined:n.ref};
  });
 }
-// Stacked: drawers over doors for a whole-width opening, or two rows for kitchen sections.
+// Stacked: drawers over doors for a whole-width opening, or two rows in a section layout.
 export function splitRows(root:LayoutNode,path:Path,p:Profile,heightMm:number):LayoutNode{
  return update(root,path,n=>{
   if(n.kind!=='leaf')return n;
