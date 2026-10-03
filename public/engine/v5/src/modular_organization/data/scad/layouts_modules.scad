@@ -77,6 +77,9 @@ function id_door_partition(p) =
 function id_mixed_partition(p) =
     str("BAY-P",p+1);
 
+function id_section_divider(h) =
+    str("BAY-D",h+1);
+
 function id_drawer_bank_partition(p) =
     str("DB-P",p+1);
 
@@ -259,7 +262,7 @@ module carcass_engrave_labels() {
 
     // Mixed-bay shelves.
     if (mixed_bay_mode && mixed_bay_total_shelf_count() > 0)
-        for (bb=[0:active_mixed_bay_count-1])
+        for (bb=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(bb)
                 && mixed_bay_shelf_count(bb) > 0)
                 for (s=[1:mixed_bay_shelf_count(bb)])
@@ -268,7 +271,7 @@ module carcass_engrave_labels() {
                         mixed_bay_shelf_layout_y(bb,s),
                         id_mixed_shelf(bb,s),
                         mixed_bay_shelf_style(bb) == "fixed"
-                            ? mixed_bay_fixed_shelf_cut_width(bb)
+                            ? mixed_bay_fixed_shelf_cut_width(bb,s)
                             : mixed_bay_adjustable_shelf_width(bb),
                         shelf_depth
                     );
@@ -277,11 +280,20 @@ module carcass_engrave_labels() {
         for (p=[0:mixed_bay_partition_count()-1])
             engraving_label_at(
                 0,
-                mixed_bay_partition_layout_base_y
-                + p*mixed_bay_partition_layout_row_height,
+                mixed_bay_partition_layout_y(p),
                 id_mixed_partition(p),
                 mixed_bay_partition_depth,
-                mixed_bay_partition_cut_height()
+                mixed_bay_partition_cut_height(p)
+            );
+
+    if (section_divider_count() > 0)
+        for (h=[0:section_divider_count()-1])
+            engraving_label_at(
+                0,
+                section_divider_layout_y(h),
+                id_section_divider(h),
+                section_divider_cut_width(h),
+                section_divider_depth(h)
             );
 
     if (door_hinge_partition_count() > 0)
@@ -486,7 +498,7 @@ module drawer_engrave_labels() {
 module door_engrave_labels() {
     if (has_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (bb=[0:active_mixed_bay_count-1])
+            for (bb=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(bb,"door"))
                     for (leaf=[0:mixed_bay_door_count(bb)-1])
                         engraving_label_at(
@@ -494,7 +506,7 @@ module door_engrave_labels() {
                             door_layout_y,
                             id_mixed_door(bb,leaf),
                             mixed_bay_door_leaf_width(bb),
-                            door_face_height
+                            mixed_bay_door_height(bb)
                         );
         }
         else {
@@ -905,7 +917,7 @@ module bom_report() {
 
     // Mixed shelves.
     if (mixed_bay_mode && mixed_bay_total_shelf_count() > 0)
-        for (bb=[0:active_mixed_bay_count-1])
+        for (bb=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(bb)
                 && mixed_bay_shelf_count(bb) > 0)
                 for (s=[1:mixed_bay_shelf_count(bb)])
@@ -917,7 +929,7 @@ module bom_report() {
                         "CARCASS",
                         material_thickness,
                         mixed_bay_shelf_style(bb) == "fixed"
-                            ? mixed_bay_fixed_shelf_cut_width(bb)
+                            ? mixed_bay_fixed_shelf_cut_width(bb,s)
                             : mixed_bay_adjustable_shelf_width(bb),
                         shelf_depth,
                         mixed_bay_shelf_style(bb) == "fixed"
@@ -933,7 +945,20 @@ module bom_report() {
                 "mixed_bay_partition","CARCASS",
                 material_thickness,
                 mixed_bay_partition_depth,
-                mixed_bay_partition_cut_height(),
+                mixed_bay_partition_cut_height(p),
+                carcass_joint_geometry
+            );
+
+    // Section dividers between stacked bays.
+    if (section_divider_count() > 0)
+        for (h=[0:section_divider_count()-1])
+            bom_row(
+                id_section_divider(h),
+                section_divider_is_rail(h) ? "section_rail" : "section_divider",
+                "CARCASS",
+                material_thickness,
+                section_divider_cut_width(h),
+                section_divider_depth(h),
                 carcass_joint_geometry
             );
 
@@ -1103,7 +1128,7 @@ module bom_report() {
     // Doors.
     if (has_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (bb=[0:active_mixed_bay_count-1])
+            for (bb=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(bb,"door"))
                     for (leaf=[0:mixed_bay_door_count(bb)-1])
                         bom_row(
@@ -1111,7 +1136,7 @@ module bom_report() {
                             "door","DOOR",
                             door_thickness,
                             mixed_bay_door_leaf_width(bb),
-                            door_face_height,
+                            mixed_bay_door_height(bb),
                             str(
                                 mixed_bay_door_leaf_hinge_side(bb,leaf),
                                 ";",
@@ -1737,7 +1762,7 @@ module carcass_cut_layout() {
 
     // Generalized mixed-bay shelves. Each bay may choose adjustable or fixed.
     if (mixed_bay_mode && mixed_bay_total_shelf_count() > 0) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
                 for (s=[1:mixed_bay_shelf_count(b)])
                     paint("shelf",mixed_bay_shelf_part_index(b,s))
@@ -1746,7 +1771,7 @@ module carcass_cut_layout() {
                             mixed_bay_shelf_layout_y(b,s)
                         ])
                             if (mixed_bay_shelf_style(b) == "fixed")
-                                mixed_bay_fixed_shelf_cut(b);
+                                mixed_bay_fixed_shelf_cut(b,s);
                             else
                                 mixed_bay_adjustable_shelf_cut(b);
     }
@@ -1757,10 +1782,17 @@ module carcass_cut_layout() {
             paint("mixed_bay_partition",p)
                 translate([
                     0,
-                    mixed_bay_partition_layout_base_y
-                    + p*mixed_bay_partition_layout_row_height
+                    mixed_bay_partition_layout_y(p)
                 ])
                     mixed_bay_partition_cut(p);
+    }
+
+    // Section dividers between stacked bays.
+    if (section_divider_count() > 0) {
+        for (h=[0:section_divider_count()-1])
+            paint("section_divider",h)
+                translate([0,section_divider_layout_y(h)])
+                    section_divider_cut(h);
     }
 
     // Vertical hinge-mounting partitions for cabinets with >2 doors.
@@ -1914,7 +1946,7 @@ module drawer_cut_layout() {
 module door_cut_layout() {
     if (has_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
+            for (b=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(b,"door"))
                     for (leaf=[0:mixed_bay_door_count(b)-1])
                         paint("door",mixed_bay_door_part_index(b,leaf))
@@ -2000,11 +2032,11 @@ module carcass_dado_operation_geometry_2d() {
         if (top_style == "full") {
             translate([top_layout_x,layout_y2])
                 mixed_bay_partition_receiver_dado_pockets_2d(
-                    0,resolved_cabinet_depth);
+                    0,resolved_cabinet_depth,"top");
         } else {
             translate([top_layout_x,layout_y2])
                 mixed_bay_partition_receiver_dado_pockets_2d(
-                    0,top_stretcher_depth);
+                    0,top_stretcher_depth,"top");
 
             translate([
                 top_layout_x,
@@ -2012,7 +2044,7 @@ module carcass_dado_operation_geometry_2d() {
             ])
                 mixed_bay_partition_receiver_dado_pockets_2d(
                     resolved_cabinet_depth-top_stretcher_depth,
-                    top_stretcher_depth);
+                    top_stretcher_depth,"top");
         }
     }
 
@@ -2023,12 +2055,18 @@ module carcass_dado_operation_geometry_2d() {
         for (p=[0:mixed_bay_partition_count()-1])
             translate([
                 0,
-                mixed_bay_partition_layout_base_y
-                + p*mixed_bay_partition_layout_row_height
+                mixed_bay_partition_layout_y(p)
             ])
                 mixed_bay_partition_fixed_shelf_dado_pockets_2d(
                     p,"both");
     }
+
+    // Dados in section dividers for the partitions above and below them.
+    if (section_divider_count() > 0
+        && carcass_joint_geometry == "dado")
+        for (h=[0:section_divider_count()-1])
+            translate([0,section_divider_layout_y(h)])
+                section_divider_dado_pockets_2d(h);
 
     // Dado receivers for internal drawer-bank partitions live in horizontal
     // bottom/top/combo-divider parts, not the cabinet sides.
@@ -2841,7 +2879,7 @@ module mixed_bay_door_print_part(b=0,leaf=0) {
             for (j=[0:hinge_count-1])
                 translate([
                     mixed_bay_door_hinge_local_x(b,leaf),
-                    mixed_bay_hinge_z(j)-door_face_bottom_z,
+                    mixed_bay_hinge_z(j,b)-mixed_bay_door_bottom_z(b),
                     door_thickness
                         - min(
                             effective_hinge_cup_depth,
@@ -2878,6 +2916,24 @@ module mixed_bay_partition_print_part(p=0) {
                 linear_extrude(height=dd+0.02)
                     mixed_bay_partition_fixed_shelf_dado_pockets_2d(
                         p,"right");
+        }
+    }
+}
+
+module section_divider_print_part(h) {
+    difference() {
+        linear_extrude(height=material_thickness)
+            section_divider_cut(h);
+
+        if (carcass_joint_geometry == "dado") {
+            for (face=["top","bottom"])
+                for (p=section_divider_partitions(h,face))
+                    let(dd=mixed_bay_partition_end_length(p,face == "top" ? "bottom" : "top"))
+                    translate([0,0,face == "top" ? material_thickness-dd : -0.01])
+                        linear_extrude(height=dd+0.02)
+                            partition_receiver_dado_pockets_2d(
+                                [p],section_divider_y0(h),section_divider_depth(h),
+                                section_divider_cut_origin_x(h));
         }
     }
 }
@@ -2997,7 +3053,7 @@ module horizontal_bank_receiver_print_part(
             translate([0,0,zcut])
                 linear_extrude(height=dd+0.02)
                     mixed_bay_partition_receiver_dado_pockets_2d(
-                        panel_y0,depth);
+                        panel_y0,depth,receiver_face == "top" ? "bottom" : "top");
         }
 
         if (structural_back_active
@@ -3162,7 +3218,7 @@ module print_layout() {
 
     // Generalized mixed-bay shelves.
     if (mixed_bay_mode && mixed_bay_total_shelf_count() > 0) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
                 for (s=[1:mixed_bay_shelf_count(b)])
                     paint("shelf",mixed_bay_shelf_part_index(b,s))
@@ -3173,7 +3229,7 @@ module print_layout() {
                         ])
                             linear_extrude(height=material_thickness)
                                 if (mixed_bay_shelf_style(b) == "fixed")
-                                    mixed_bay_fixed_shelf_cut(b);
+                                    mixed_bay_fixed_shelf_cut(b,s);
                                 else
                                     mixed_bay_adjustable_shelf_cut(b);
     }
@@ -3184,11 +3240,19 @@ module print_layout() {
             paint("mixed_bay_partition",p)
                 translate([
                     0,
-                    mixed_bay_partition_layout_base_y
-                    + p*mixed_bay_partition_layout_row_height,
+                    mixed_bay_partition_layout_y(p),
                     0
                 ])
                     mixed_bay_partition_print_part(p);
+    }
+
+    // Section dividers, with dados for the partitions above (top face) and
+    // below (bottom face).
+    if (section_divider_count() > 0) {
+        for (h=[0:section_divider_count()-1])
+            paint("section_divider",h)
+                translate([0,section_divider_layout_y(h),0])
+                    section_divider_print_part(h);
     }
 
     // Vertical door hinge partitions.
@@ -3364,7 +3428,7 @@ module print_layout() {
     // Doors, including true blind Euro cup pockets.
     if (has_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
+            for (b=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(b,"door"))
                     for (leaf=[0:mixed_bay_door_count(b)-1])
                         paint("door",mixed_bay_door_part_index(b,leaf))
@@ -3690,7 +3754,9 @@ module layout_elevation_report() {
         "|OPEN_H=",open_h,
         "|CONTENT_Z=",content_bottom_z,
         "|CONTENT_H=",content_height,
-        "|MODE=",mixed_bay_mode ? "mixed_bays" : "legacy"
+        "|MODE=",
+            section_layout_active ? "sections"
+            : mixed_bay_mode ? "mixed_bays" : "legacy"
     ));
 
     if (face_frame_active) {
@@ -3712,14 +3778,20 @@ module layout_elevation_report() {
     }
 
     if (mixed_bay_mode) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             echo(str(
                 "LAYOUT|BAY|B",b+1,
                 "|TYPE=",mixed_bay_type_normalized(b),
                 "|X=",mixed_bay_opening_x(b),
                 "|W=",mixed_bay_opening_width(b),
-                "|Z=",front_opening_bottom_z,
-                "|H=",open_h
+                "|Z=",mixed_bay_opening_bottom_z(b),
+                "|H=",mixed_bay_opening_top_z(b)-mixed_bay_opening_bottom_z(b),
+                section_layout_active
+                    ? str(
+                        "|SECTION=",sec_leaf_ids[b],
+                        "|BOUNDS=",mixed_bay_bound(b)[0],",",mixed_bay_bound(b)[1],
+                        ",",mixed_bay_bound(b)[2],",",mixed_bay_bound(b)[3])
+                    : ""
             ));
     }
     else {
@@ -3765,7 +3837,7 @@ module layout_elevation_report() {
 
     if (has_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
+            for (b=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(b,"door"))
                     for (leaf=[0:mixed_bay_door_count(b)-1])
                         echo(str(
@@ -3774,9 +3846,9 @@ module layout_elevation_report() {
                             "|BAY=",b+1,
                             "|INDEX=",leaf+1,
                             "|X=",mixed_bay_door_leaf_x(b,leaf),
-                            "|Z=",door_face_bottom_z,
+                            "|Z=",mixed_bay_door_bottom_z(b),
                             "|W=",mixed_bay_door_leaf_width(b),
-                            "|H=",door_face_height,
+                            "|H=",mixed_bay_door_height(b),
                             "|HINGE=",mixed_bay_door_leaf_hinge_side(b,leaf)
                         ));
         }
@@ -3797,14 +3869,14 @@ module layout_elevation_report() {
     }
 
     if (mixed_bay_mode) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
                 for (s=[1:mixed_bay_shelf_count(b)])
                     echo(str(
                         "LAYOUT|SHELF|",id_mixed_shelf(b,s),
                         "|BAY=",b+1,
-                        "|X=",mixed_bay_opening_x(b),
-                        "|W=",mixed_bay_opening_width(b),
+                        "|X=",mixed_bay_shelf_x(b),
+                        "|W=",mixed_bay_shelf_span(b),
                         "|Z=",mixed_bay_shelf_z(b,s),
                         "|STYLE=",mixed_bay_shelf_style(b)
                     ));
@@ -3816,8 +3888,19 @@ module layout_elevation_report() {
                     "|KIND=bay_partition",
                     "|X=",mixed_bay_partition_x(p),
                     "|W=",material_thickness,
-                    "|Z=",carcass_interior_bottom_z(),
-                    "|H=",carcass_interior_top_z()-carcass_interior_bottom_z()
+                    "|Z=",mixed_bay_partition_bottom_z(p),
+                    "|H=",mixed_bay_partition_top_z(p)-mixed_bay_partition_bottom_z(p)
+                ));
+
+        if (section_divider_count() > 0)
+            for (h=[0:section_divider_count()-1])
+                echo(str(
+                    "LAYOUT|MEMBER|SD",h+1,
+                    "|KIND=",section_divider_is_rail(h) ? "section_rail" : "section_divider",
+                    "|X=",section_divider_x0(h),
+                    "|W=",section_divider_width(h),
+                    "|Z=",section_divider_z(h),
+                    "|H=",material_thickness
                 ));
     }
     else {

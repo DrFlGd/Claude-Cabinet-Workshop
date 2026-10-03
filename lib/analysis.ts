@@ -17,7 +17,7 @@ export type LayoutFront=LayoutRect&{id:string;kind:'drawer'|'door';bay:number;in
 export type LayoutReport={
  cabinet:{w:number;h:number;t:number;open:LayoutRect;content:{z:number;h:number};mode:string};
  faceFrame?:{z0:number;z1:number;stile:number;bottomRail:number;topRail:number;mid?:[number,number];centerStile:number};
- bays:(LayoutRect&{index:number;type:string})[];banks:{index:number;x:number;w:number}[];doorRegion?:{z:number;h:number};
+ bays:(LayoutRect&{index:number;type:string;section?:number})[];banks:{index:number;x:number;w:number}[];doorRegion?:{z:number;h:number};
  fronts:LayoutFront[];shelves:{id:string;bay:number;x:number;w:number;z:number;style:string}[];
  members:(LayoutRect&{id:string;kind:string})[];sections:(LayoutRect&{index:number;contents:string})[];
 };
@@ -34,7 +34,7 @@ const PART_NAMES:Record<string,string>={
  drawer_rail:'Drawer rail (cabinet side)',drawer_runner:'Drawer runner (drawer side)',drawer_side:'Drawer box side',drawer_front_box:'Drawer box front',
  drawer_back_box:'Drawer box back',drawer_bottom:'Drawer bottom',toe_kick:'Toe kick',divider:'Horizontal divider',door:'Door',
  stack_base_side:'Stack base side',stack_base_cross:'Stack base cross member',face_frame_stile:'Face-frame stile',face_frame_rail:'Face-frame rail',
- section_shelf:'Section rail or shelf',section_partition:'Section partition',side:'Side',tray:'Pull-out tray',cheek:'Tray cheek',lip:'Tray lip',
+ section_shelf:'Section rail or shelf',section_partition:'Section partition',section_divider:'Section divider',section_rail:'Section front rail',side:'Side',tray:'Pull-out tray',cheek:'Tray cheek',lip:'Tray lip',
  drawer_divider_longitudinal:'Drawer divider (front to back)',drawer_divider_transverse:'Drawer divider (side to side)',cleat_stand:'French cleat (on stand)',
  cleat_wall:'French cleat (on wall)',backer:'Cleat backer',spacer:'Stabilizer',runner:'Tray runner',
 };
@@ -149,7 +149,7 @@ export function layoutReport(recs:string[]):LayoutReport|undefined{
   if(plain[1]==='CABINET'){report={cabinet:{w:num(kv.W),h:num(kv.H),t:num(kv.T),open:{x:num(kv.OPEN_X),z:num(kv.OPEN_Z),w:num(kv.OPEN_W),h:num(kv.OPEN_H)},content:{z:num(kv.CONTENT_Z),h:num(kv.CONTENT_H)},mode:kv.MODE??''},bays:[],banks:[],fronts:[],shelves:[],members:[],sections:[]};continue}
   if(!report)continue;
   if(plain[1]==='FACE_FRAME')report.faceFrame={z0:num(kv.Z0),z1:num(kv.Z1),stile:num(kv.STILE_W),bottomRail:num(kv.BOTTOM_RAIL_W),topRail:num(kv.TOP_RAIL_W),mid:num(kv.MID_Z0)>=0?[num(kv.MID_Z0),num(kv.MID_Z1)]:undefined,centerStile:num(kv.CENTER_STILE_W)};
-  else if(plain[1]==='BAY')report.bays.push({...rect(kv),index:Number(plain[2].replace(/^B/,''))-1,type:kv.TYPE??''});
+  else if(plain[1]==='BAY')report.bays.push({...rect(kv),index:Number(plain[2].replace(/^B/,''))-1,type:kv.TYPE??'',...(kv.SECTION!==undefined?{section:Number(kv.SECTION)}:{})});
   else if(plain[1]==='BANK')report.banks.push({index:Number(plain[2].replace(/^B/,''))-1,x:num(kv.X),w:num(kv.W)});
   else if(plain[1]==='DOOR_REGION')report.doorRegion={z:num(kv.Z),h:num(kv.H)};
   else if(plain[1]==='FRONT')report.fronts.push({...rect(kv),id:plain[2],kind:kv.KIND==='door'?'door':'drawer',bay:Number(kv.BAY),index:Number(kv.INDEX),nominal:kv.NOMINAL_H?num(kv.NOMINAL_H):undefined,open:kv.OPEN_Z?{z:num(kv.OPEN_Z),h:num(kv.OPEN_H)}:undefined,hinge:kv.HINGE,face:kv.FACE});

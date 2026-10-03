@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.7.1**) are separate from the bundled
+Application versions (currently **0.8.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,16 +17,76 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## Unreleased
+## 0.8.0 — 2026-10-02
 
-- Golden outputs (`tests/golden.mjs`, run in CI): the engine's parts list,
-  reports and cut/pocket layout fingerprints for all 110 starters are recorded in
-  `tests/golden/`. Every engine change must reproduce them or be accepted
-  explicitly, so the planned layout refactor cannot silently change existing
-  designs. Validation: two consecutive local runs matched exactly.
+Section layouts are now real construction and are available on shop carts and
+utility cabinets as well as kitchen cabinets.
+
+- **One construction for bays and sections.** Section layouts used to place
+  drawers and doors in "virtual cabinets" inside loose, butt-fit divider blanks.
+  The engine now builds them with the same bay construction as side-by-side bays,
+  generalized to any arrangement: every section opening is a bay with its own
+  height, and the bay functions (drawer stacks, doors, hinges, shelves, shelf
+  pins, fronts) work per opening.
+- **Joined dividers.** Vertical section dividers run between the members below
+  and above them (carcass bottom/top or a horizontal divider) and horizontal
+  dividers between the members beside them (carcass sides or vertical dividers),
+  joined with the cabinet's joinery: dado tongues, tabs through slots, or butt
+  joints with optional registration holes. Receiving dados, slots and holes are
+  cut in the sides, bottom, top/stretchers and other dividers, and appear in the
+  cut, pocket, print and engraving layouts and the BOM (`BAY-P…` partitions,
+  `BAY-D…` dividers).
+- **Opposed joints.** Where two horizontal members meet a partition from both
+  faces at the same height (or two partitions meet a divider from above and
+  below), their tabs share the through-slot at half length and dados keep a web.
+  This also fixes side-by-side bays with fixed shelves at equal heights on both
+  sides of a partition using tab-and-slot joinery: their full-length tabs
+  overlapped (76 cm³ in the open service cart starter with tab-and-slot).
+- **Drilled hardware.** Slide holes (or wood-rail registration holes), hinge-plate
+  holes and shelf-pin rows of every section opening are drilled into the carcass
+  side or partition beside it, and are part of the outer-side collision ledger
+  and ganging checks. Previously they were left to be transferred during fitting.
+- **Fronts.** Overlay fronts meet at the centre of each divider with the bay gap
+  and cover the carcass edges at the outside; inset fronts sit inside their own
+  opening. Section fronts used to stop inside each opening in every case. Face
+  frames still surround section layouts; openings at the frame are sized to the
+  frame opening.
+- **Exact layout reports.** Section layouts now emit the same `LAYOUT` records as
+  other layouts (with the tree node of each opening), so the Layout tab draws the
+  engine's own fronts and shelves for sections instead of estimates.
+- **Per-opening hinge side and shelf style.** Section rows gained two optional
+  fields; the Layout tab now offers hinge side and fixed/adjustable shelves for
+  section openings. Designs saved with twelve-field rows keep the cabinet's
+  single-door hinge side and fixed shelves.
+- **Sections on shop carts and utility cabinets.** Both types gained the
+  `sections` layout. In the Layout tab, splitting a bay top/bottom (or a fifth
+  column) now builds a section layout on these types instead of being refused.
+- **New checks.** `SECTION_BOUNDARY` (an opening's drawers, shelves or hinge need
+  a divider where the split has none), `SECTION_DIVIDER_ENDS` (a divider would end
+  against a split without a divider), `SECTION_DOOR_SIZE`, and per-opening
+  door-height warnings.
+- **Tests.** Golden outputs (`tests/golden.mjs`) record the engine's parts list,
+  reports and cut/pocket fingerprints for all 110 starters; this refactor
+  reproduces all 109 non-section starters exactly (the photo section example
+  changed as intended). Eleven extra side-by-side bay configurations (all
+  joinery styles, hinges, shelf styles, inset fronts, no partitions, wall
+  mounting) were also reproduced exactly, apart from the overlapping-tab fix
+  above. The interference suite now checks every partition, divider and set of
+  fixed shelves on its own and adds section grids, a nested face-frame layout
+  with inset doors and a front rail, and the opposed-shelf bay case (23
+  configurations, no overlaps). The engine-fit suite covers the new checks and
+  joined sections on shop cart, utility and kitchen cabinets with tab-and-slot,
+  dado and butt joinery; the layout editor suite round-trips all 88 starters and
+  checks exact section fronts, hinge side, shelf style and a typed section height
+  on a shop cart.
 - `docs/PARITY.md`, generated by `scripts/parity.mjs` and checked in CI, lists
   which features, options and front layouts each cabinet type offers, the
   combinations the engine still refuses, and settings only some types expose.
+
+Remaining limits: section openings use the bay front gap at dividers (drawer gap
+within a drawer stack); wood rails and slides in openings at a face frame still
+need spacer blocks to reach the carcass side, as in other face-frame layouts;
+cut and pocket layouts are registered rows, not optimized sheet nests.
 
 ## 0.7.1 — 2026-10-02
 

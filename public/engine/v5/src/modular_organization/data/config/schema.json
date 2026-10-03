@@ -841,9 +841,41 @@
           "default": "legacy",
           "enum": [
             "legacy",
-            "mixed_bays"
+            "mixed_bays",
+            "sections"
           ],
-          "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns."
+          "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns. sections = any arrangement of side-by-side and stacked openings (section_nodes)."
+        },
+        {
+          "id": "section_nodes",
+          "group": "Structure / Layout",
+          "type": "array",
+          "default": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
+          "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.",
+          "visible_if": {
+            "cabinet_layout_mode": "sections"
+          }
         },
         {
           "id": "mixed_bay_count",
@@ -4236,8 +4268,41 @@
           "default": "mixed_bays",
           "enum": [
             "legacy",
-            "mixed_bays"
-          ]
+            "mixed_bays",
+            "sections"
+          ],
+          "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns. sections = any arrangement of side-by-side and stacked openings (section_nodes)."
+        },
+        {
+          "id": "section_nodes",
+          "group": "Structure / Layout",
+          "type": "array",
+          "default": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
+          "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.",
+          "visible_if": {
+            "cabinet_layout_mode": "sections"
+          }
         },
         {
           "id": "mixed_bay_count",
@@ -13169,10 +13234,12 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ],
-          "description": "Section rows: parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents, count, drawer heights, graduated step, weights, separator(panel/rail/none), shelves. Children are ordered left-to-right or top-to-bottom. Root parent is -1."
+          "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it."
         },
         {
           "id": "kitchen_family",
@@ -15666,13 +15733,13 @@
         }
       ],
       "presets": [
-        "B30 \u2014 Drawer over Doors",
-        "DB36-3 \u2014 3 Drawer Base",
-        "DB36-4 \u2014 4 Drawer Base",
-        "SB36 \u2014 Sink Base",
-        "W3030 \u2014 Wall Cabinet",
-        "WO2424 \u2014 Open Wall",
-        "T2490 \u2014 Tall Pantry"
+        "B30 — Drawer over Doors",
+        "DB36-3 — 3 Drawer Base",
+        "DB36-4 — 4 Drawer Base",
+        "SB36 — Sink Base",
+        "W3030 — Wall Cabinet",
+        "WO2424 — Open Wall",
+        "T2490 — Tall Pantry"
       ],
       "capabilities": {
         "carcass_joinery": true,

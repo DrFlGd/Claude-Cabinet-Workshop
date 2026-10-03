@@ -105,7 +105,26 @@ assert(analyse((await bom(4,valuesFor(4,'kitchen_standard_DB324',{cabinet_layout
 assert(analyse((await bom(2,valuesFor(2,'benchtop_compact_4_drawer',{include_drawer_separators:true,drawer_bank_count:3}))).text).issues.some(i=>i.code==='DRAWER_SEPARATOR_BANKS'));
 // Independent bays without partitions have nowhere to mount slides or shelves.
 assert(analyse((await bom(0,valuesFor(0,undefined,{include_mixed_bay_partitions:false}))).text).issues.some(i=>i.code==='MIXED_BAY_PARTITIONS'));
+// Section layouts: every divider needs members to join to, and a section bay's hardware
+// needs a member on the side it mounts to.
+{
+ const row=(parent,order,axis,contents='open',count=0,separator='panel')=>[parent,order,axis,'weight',1,contents,count,'equal',.25,[1],separator,0,'left','adjustable'];
+ const floating=[row(-1,0,'x','open',0,'none'),row(0,0,'z'),row(0,1,'leaf','open',0),row(1,0,'leaf','open',0),row(1,1,'leaf','open',0)];
+ assert(analyse((await bom(1,valuesFor(1,undefined,{cabinet_layout_mode:'sections',section_nodes:floating}))).text).issues.some(i=>i.code==='SECTION_DIVIDER_ENDS'));
+ const unsupported=[row(-1,0,'x','open',0,'none'),row(0,0,'leaf','drawers',2),row(0,1,'leaf','open',0)];
+ unsupported[1][9]=[1,1];
+ assert(analyse((await bom(0,valuesFor(0,undefined,{cabinet_layout_mode:'sections',section_nodes:unsupported}))).text).issues.some(i=>i.code==='SECTION_BOUNDARY'));
+ // Joined section construction on every section-capable type and joinery.
+ const grid=[row(-1,0,'x'),row(0,0,'z'),row(0,1,'z'),row(1,0,'leaf','drawers',2),row(1,1,'leaf','doors',1),row(2,0,'leaf','drawers',2),row(2,1,'leaf','open',2)];
+ grid[3][9]=[1,1];grid[5][9]=[1,1];grid[4][11]=1;grid[4][13]='fixed';grid[6][13]='fixed';
+ for(const [f,joinery_style] of [[0,'tab_slot'],[1,'dado'],[4,'butt']]){
+  const r=await bom(f,valuesFor(f,undefined,{cabinet_layout_mode:'sections',section_nodes:grid,joinery_style,width_basis:'outside',depth_basis:'outside'}));
+  const plan=check('sections '+f+' '+joinery_style,r);
+  assert.equal(plan.cut.filter(c=>c.category==='section_divider').reduce((a,c)=>a+c.qty,0),2);
+  assert(plan.cut.some(c=>c.category==='mixed_bay_partition'&&c.notes===joinery_style));
+ }
+}
 // Fixed runners cannot travel; the UI zeroes travel when they are chosen.
 assert.deepEqual(linkedChanges('slide_type','fixed_runner',{_family:6,tray_extension:450}),{tray_extension:0,preview_extension:0});
 check('fixed runner stand',await bom(6,valuesFor(6,undefined,{slide_type:'fixed_runner',...linkedChanges('slide_type','fixed_runner',{_family:6})})),{allowErrors:[]});
-console.log('Engine fit regressions passed: undefined drawer-rail length, hinge/shelf-pin collisions, stackable dado check, short drawer stacks, slide height, rear stretchers, rail length, face-frame pockets and setbacks, combo-only mid rail, inset partitions, unsupported bay frames, bays without partitions, separators across banks, fixed runners.');
+console.log('Engine fit regressions passed: undefined drawer-rail length, hinge/shelf-pin collisions, stackable dado check, short drawer stacks, slide height, rear stretchers, rail length, face-frame pockets and setbacks, combo-only mid rail, inset partitions, unsupported bay frames, section divider ends and boundaries, joined section construction, bays without partitions, separators across banks, fixed runners.');

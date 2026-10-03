@@ -1020,15 +1020,52 @@
         "value": "mixed_bays",
         "expression": null,
         "section": "Structure / Layout",
-        "description": "",
+        "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns. sections = any arrangement of side-by-side and stacked openings (section_nodes).",
         "options": [
           "legacy",
-          "mixed_bays"
+          "mixed_bays",
+          "sections"
         ],
         "bounds": null,
         "step": null,
         "unit": "scalar",
         "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "section_nodes",
+        "value": [
+          [
+            -1,
+            0,
+            "leaf",
+            "weight",
+            1,
+            "drawers",
+            3,
+            "equal",
+            0.25,
+            [
+              1,
+              1,
+              1
+            ],
+            "panel",
+            0,
+            "left",
+            "adjustable"
+          ]
+        ],
+        "expression": null,
+        "section": "Structure / Layout",
+        "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": {
+          "cabinet_layout_mode": "sections"
+        },
         "advanced": false
       },
       {
@@ -5375,7 +5412,29 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ]
         }
       },
       {
@@ -5441,6 +5500,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 2,
           "mixed_bay_types": [
             "drawers",
@@ -5862,6 +5943,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -6283,6 +6386,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 4,
           "mixed_bay_types": [
             "drawers",
@@ -6704,6 +6829,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 2,
           "mixed_bay_types": [
             "drawers",
@@ -7125,6 +7272,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 2,
           "mixed_bay_types": [
             "open",
@@ -8506,15 +8675,52 @@
         "value": "legacy",
         "expression": null,
         "section": "Structure / Layout",
-        "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns.",
+        "description": "legacy = full-width vertical arrangement. mixed_bays = independent side-by-side vertical columns. sections = any arrangement of side-by-side and stacked openings (section_nodes).",
         "options": [
           "legacy",
-          "mixed_bays"
+          "mixed_bays",
+          "sections"
         ],
         "bounds": null,
         "step": null,
         "unit": "scalar",
         "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "section_nodes",
+        "value": [
+          [
+            -1,
+            0,
+            "leaf",
+            "weight",
+            1,
+            "drawers",
+            3,
+            "equal",
+            0.25,
+            [
+              1,
+              1,
+              1
+            ],
+            "panel",
+            0,
+            "left",
+            "adjustable"
+          ]
+        ],
+        "expression": null,
+        "section": "Structure / Layout",
+        "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": {
+          "cabinet_layout_mode": "sections"
+        },
         "advanced": false
       },
       {
@@ -12862,7 +13068,29 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce"
+          "interface_keepout_policy": "enforce",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ]
         }
       },
       {
@@ -12928,6 +13156,28 @@
           "drawer_count": 3,
           "door_count": 0,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -13349,6 +13599,28 @@
           "drawer_count": 4,
           "door_count": 0,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -13770,6 +14042,28 @@
           "drawer_count": 0,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -14191,6 +14485,28 @@
           "drawer_count": 2,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -14612,6 +14928,28 @@
           "drawer_count": 1,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -15033,6 +15371,28 @@
           "drawer_count": 2,
           "door_count": 2,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -15454,6 +15814,28 @@
           "drawer_count": 2,
           "door_count": 2,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 4,
           "mixed_bay_types": [
             "drawers",
@@ -15875,6 +16257,28 @@
           "drawer_count": 2,
           "door_count": 2,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -16296,6 +16700,28 @@
           "drawer_count": 0,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -16717,6 +17143,28 @@
           "drawer_count": 0,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -34410,12 +34858,14 @@
               1
             ],
             "panel",
-            0
+            0,
+            "left",
+            "adjustable"
           ]
         ],
         "expression": null,
         "section": "Structure / Layout",
-        "description": "Section rows: parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents, count, drawer heights, graduated step, weights, separator(panel/rail/none), shelves. Children are ordered left-to-right or top-to-bottom. Root parent is -1.",
+        "description": "Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.",
         "options": null,
         "bounds": null,
         "step": null,

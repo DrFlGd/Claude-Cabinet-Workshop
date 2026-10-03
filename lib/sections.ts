@@ -1,7 +1,10 @@
 // Flat, bounded tree shared with native OpenSCAD. Indices are stable until a subtree is removed.
-export type SectionNode=[number,number,'leaf'|'x'|'z','weight'|'mm',number,'drawers'|'doors'|'open',number,'equal'|'graduated'|'custom_weights',number,number[],'panel'|'rail'|'none',number];
+// [parent, order, axis, size mode, size, contents, count, height mode, graduated step,
+//  height weights, divider, shelves behind doors, hinge side, shelf style]. The last two
+// are optional: designs saved before they existed have twelve fields.
+export type SectionNode=[number,number,'leaf'|'x'|'z','weight'|'mm',number,'drawers'|'doors'|'open',number,'equal'|'graduated'|'custom_weights',number,number[],'panel'|'rail'|'none',number,('left'|'right')?,('fixed'|'adjustable')?];
 export type Rect={id:number;x:number;z:number;w:number;h:number};
-export const leaf=(parent=-1,order=0,type:SectionNode[5]='drawers',count=3):SectionNode=>[parent,order,'leaf','weight',1,type,count,'equal',.25,Array(Math.max(1,count)).fill(1),'panel',0];
+export const leaf=(parent=-1,order=0,type:SectionNode[5]='drawers',count=3):SectionNode=>[parent,order,'leaf','weight',1,type,count,'equal',.25,Array(Math.max(1,count)).fill(1),'panel',0,'left','adjustable'];
 export const photoSections=():SectionNode[]=>[
  [-1,0,'z','weight',1,'open',0,'equal',.25,[1],'panel',0],
  [0,0,'x','weight',2,'open',0,'equal',.25,[1],'panel',0],
@@ -15,10 +18,10 @@ export const photoSections=():SectionNode[]=>[
 export function treeErrors(value:unknown):string[]{
  if(!Array.isArray(value)||value.length<1||value.length>31)return ['Use between 1 and 31 section nodes.'];
  const a=value as SectionNode[];
- if(a.some(n=>!Array.isArray(n)||n.length!==12))return ['Each section must contain twelve fields.'];
+ if(a.some(n=>!Array.isArray(n)||(n.length!==12&&n.length!==14)))return ['Each section must contain twelve or fourteen fields.'];
  for(let i=0;i<a.length;i++){
   const n=a[i];
-  if(!Array.isArray(n)||n.length!==12||!Number.isInteger(n[0])||(i===0?n[0]!==-1:n[0]<0||n[0]>=i)||!Number.isInteger(n[1])||n[1]<0||!['leaf','x','z'].includes(n[2])||!['weight','mm'].includes(n[3])||!Number.isFinite(n[4])||n[4]<=0||!['drawers','doors','open'].includes(n[5])||!Number.isInteger(n[6])||n[6]<0||n[6]>8||!['equal','graduated','custom_weights'].includes(n[7])||!Number.isFinite(n[8])||n[8]<0||!Array.isArray(n[9])||n[9].length>8||n[9].some(w=>!Number.isFinite(w)||w<=0)||!['panel','rail','none'].includes(n[10])||!Number.isInteger(n[11])||n[11]<0||n[11]>8)return ['Invalid section '+(i+1)+'.'];
+  if(!Array.isArray(n)||(n.length===14&&(!['left','right'].includes(n[12] as string)||!['fixed','adjustable'].includes(n[13] as string)))||!Number.isInteger(n[0])||(i===0?n[0]!==-1:n[0]<0||n[0]>=i)||!Number.isInteger(n[1])||n[1]<0||!['leaf','x','z'].includes(n[2])||!['weight','mm'].includes(n[3])||!Number.isFinite(n[4])||n[4]<=0||!['drawers','doors','open'].includes(n[5])||!Number.isInteger(n[6])||n[6]<0||n[6]>8||!['equal','graduated','custom_weights'].includes(n[7])||!Number.isFinite(n[8])||n[8]<0||!Array.isArray(n[9])||n[9].length>8||n[9].some(w=>!Number.isFinite(w)||w<=0)||!['panel','rail','none'].includes(n[10])||!Number.isInteger(n[11])||n[11]<0||n[11]>8)return ['Invalid section '+(i+1)+'.'];
   if(n[2]==='x'&&n[10]==='rail')return ['Vertical splits need a panel or no divider.'];
   const children=a.map((c,j)=>({c,j})).filter(x=>x.c[0]===i);
   if(n[2]==='leaf'?(children.length!==0):(children.length<2||children.every(x=>x.c[3]==='mm')))return ['A split needs at least two children and one flexible size.'];
@@ -54,14 +57,17 @@ export function sectionPanels(a:SectionNode[],rects:Rect[],t:number,depth:number
  });return parts;
 }
 export function convertBays(v:Record<string,any>):SectionNode[]{
+ const hinge=(x:unknown):'left'|'right'=>x==='right'?'right':'left',style=(x:unknown):'fixed'|'adjustable'=>x==='fixed'?'fixed':'adjustable';
  if(v.cabinet_layout_mode!=='mixed_bays'){
-  if(v.cabinet_contents==='combo'){const root=leaf();root[2]='z';const top=leaf(0,0,'drawers',Number(v.drawer_count)||2),bottom=leaf(0,1,'doors',Number(v.door_count)||2);top[4]=1;bottom[4]=2;bottom[11]=Number(v.door_shelf_count)||0;return [root,top,bottom];}
+  const doors=(n:SectionNode)=>{n[11]=Number(v.door_shelf_count)||0;n[12]=hinge(v.single_door_hinge_side);n[13]=style(v.shelf_style);return n};
+  if(v.cabinet_contents==='combo'){const root=leaf();root[2]='z';const top=leaf(0,0,'drawers',Number(v.drawer_count)||2),bottom=doors(leaf(0,1,'doors',Math.min(2,Number(v.door_count)||2)));top[4]=1;bottom[4]=2;return [root,top,bottom];}
   const type=v.cabinet_contents==='doors'?'doors':v.cabinet_contents==='open'?'open':'drawers';
-  return [leaf(-1,0,type,Number(type==='doors'?v.door_count:type==='open'?v.door_shelf_count:v.drawer_count)||(type==='open'?0:1))];
+  const n=leaf(-1,0,type,Number(type==='doors'?Math.min(2,Number(v.door_count)||1):type==='open'?v.door_shelf_count:v.drawer_count)||(type==='open'?0:1));
+  return [type==='doors'?doors(n):n];
  }
  const count=Math.max(1,Math.min(4,Number(v.mixed_bay_count)||1));
  const nodes:SectionNode[]=[leaf()];nodes[0][2]='x';nodes[0][10]=v.include_mixed_bay_partitions===false?'none':'panel';
- for(let i=0;i<count;i++){const type=/door/.test(v.mixed_bay_types?.[i])?'doors':/drawer/.test(v.mixed_bay_types?.[i])?'drawers':'open';const n=leaf(0,i,type,Number(type==='drawers'?v.mixed_bay_drawer_counts?.[i]:type==='doors'?v.mixed_bay_door_counts?.[i]:v.mixed_bay_shelf_counts?.[i])|| (type==='open'?0:1));n[4]=Number(v.mixed_bay_width_weights?.[i])||1;n[7]=v.mixed_bay_drawer_height_modes?.[i]??'equal';n[8]=v.mixed_bay_drawer_graduated_steps?.[i]??.25;n[9]=v.mixed_bay_drawer_height_weights?.[i]??Array(Math.max(1,n[6])).fill(1);n[11]=Number(v.mixed_bay_shelf_counts?.[i])||0;nodes.push(n);}
+ for(let i=0;i<count;i++){const type=/door/.test(v.mixed_bay_types?.[i])?'doors':/drawer/.test(v.mixed_bay_types?.[i])?'drawers':'open';const n=leaf(0,i,type,Number(type==='drawers'?v.mixed_bay_drawer_counts?.[i]:type==='doors'?v.mixed_bay_door_counts?.[i]:v.mixed_bay_shelf_counts?.[i])|| (type==='open'?0:1));n[4]=Number(v.mixed_bay_width_weights?.[i])||1;n[7]=v.mixed_bay_drawer_height_modes?.[i]??'equal';n[8]=v.mixed_bay_drawer_graduated_steps?.[i]??.25;n[9]=v.mixed_bay_drawer_height_weights?.[i]??Array(Math.max(1,n[6])).fill(1);n[11]=type==='doors'?Number(v.mixed_bay_shelf_counts?.[i])||0:0;n[12]=hinge(v.mixed_bay_door_hinge_sides?.[i]);n[13]=style(v.mixed_bay_shelf_styles?.[i]);nodes.push(n);}
  if(count===1){nodes[1][0]=-1;nodes[1][1]=0;return [nodes[1]];}
  return nodes;
 }

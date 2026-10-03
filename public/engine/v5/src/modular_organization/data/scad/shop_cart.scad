@@ -202,7 +202,10 @@ drawer_count = 4; // [0:1:12]
 
 door_count = 1; // [0:1:4]
 
-cabinet_layout_mode = "mixed_bays"; // [legacy, mixed_bays]
+cabinet_layout_mode = "mixed_bays"; // [legacy, mixed_bays, sections]
+
+// Section rows (cabinet_layout_mode = sections): parent, order, axis(leaf/x/z), size mode(weight/mm), size, contents(drawers/doors/open), count, drawer heights(equal/graduated/custom_weights), graduated step, height weights, separator(panel/rail/none), shelves behind doors, hinge side(left/right), shelf style(adjustable/fixed). Children are ordered left-to-right or top-to-bottom; the root's parent is -1. Dividers are joined with the carcass joinery, and each opening's slides, hinges and shelf pins are drilled into the members around it.
+section_nodes = [[-1,0,"leaf","weight",1,"drawers",3,"equal",0.25,[1,1,1],"panel",0,"left","adjustable"]];
 
 // Used only when cabinet_layout_mode = "mixed_bays".
 // Valid bay types: drawers/drawer, door/doors, open/shelf/shelves.

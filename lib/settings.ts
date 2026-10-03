@@ -45,9 +45,9 @@ export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compe
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(hasLayoutEditor(v._family)&&LAYOUT_KEYS.has(f.key))return LAYOUT_REASON;
- const k=f.key,s=sectionFor(f),sections=v._family===4&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
+ const k=f.key,s=sectionFor(f),sections=[0,1,4].includes(v._family)&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
  if(k==='section_nodes')return 'Use the section layout editor';
- if(sections&&(k.startsWith('mixed_')||k==='include_mixed_bay_partitions'||k.startsWith('drawer_bank_')||['cabinet_contents','drawer_count','door_count','door_shelf_count','drawer_height_mode','drawer_height_weights','drawer_graduated_step','include_drawer_separators','shelf_style','width_basis','depth_basis','include_door_hinge_partitions','face_frame_mid_rail_mode','face_frame_custom_mid_rail_z','include_face_frame_center_stile','face_frame_center_stile_width','fronts_cover_bottom_lip','overlay_width_style'].includes(k)))return 'Controlled by section layout';
+ if(sections&&(k.startsWith('mixed_')||k==='include_mixed_bay_partitions'||k.startsWith('drawer_bank_')||['cabinet_contents','drawer_count','door_count','door_shelf_count','drawer_height_mode','drawer_height_weights','drawer_graduated_step','include_drawer_separators','shelf_style','width_basis','depth_basis','include_door_hinge_partitions','face_frame_mid_rail_mode','face_frame_custom_mid_rail_z','include_face_frame_center_stile','face_frame_center_stile_width'].includes(k)))return 'Controlled by section layout';
  const drawerTypes=sections?(v.section_nodes??[]).filter((n:any[])=>n[2]==='leaf').map((n:any[])=>n[5]):v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
  if(v._family===3){
   if(k.startsWith('mixed_bay_'))return 'Stackable modules use module and drawer-bank controls';

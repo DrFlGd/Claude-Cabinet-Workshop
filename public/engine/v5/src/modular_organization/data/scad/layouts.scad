@@ -777,7 +777,7 @@ module echo_dimension_report() {
 
         // Major compartment openings.
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
+            for (b=[0:layout_bay_count-1])
                 echo(str(
                     "DIM|BAY|B",b+1,
                     "|TYPE=",mixed_bay_type_normalized(b),
@@ -812,7 +812,7 @@ module echo_dimension_report() {
 
         // Front elevation for the layout editor, in cabinet coordinates: X from
         // the left outside face, Z from the bottom of the cabinet (module).
-        if (!standalone_drawer_active && !section_layout_active)
+        if (!standalone_drawer_active)
             layout_elevation_report();
 
         if (dimension_report == "full") {
@@ -890,14 +890,14 @@ module echo_dimension_report() {
             // Finished door dimensions.
             if (has_doors) {
                 if (mixed_bay_mode) {
-                    for (b=[0:active_mixed_bay_count-1])
+                    for (b=[0:layout_bay_count-1])
                         if (mixed_bay_is_type(b,"door"))
                             for (leaf=[0:mixed_bay_door_count(b)-1])
                                 echo(str(
                                     "DIM|DOOR|",
                                     id_mixed_door(b,leaf),
                                     "|W=",mixed_bay_door_leaf_width(b),
-                                    "|H=",door_face_height,
+                                    "|H=",mixed_bay_door_height(b),
                                     "|T=",door_thickness,
                                     "|MOUNT=",
                                         fronts_inset_flush
@@ -927,7 +927,7 @@ module echo_dimension_report() {
             // Shelf finished/cut dimensions.
             if (show_shelves) {
                 if (mixed_bay_mode) {
-                    for (b=[0:active_mixed_bay_count-1])
+                    for (b=[0:layout_bay_count-1])
                         if (mixed_bay_is_shelfable(b)
                             && mixed_bay_shelf_count(b) > 0)
                             for (si=[1:mixed_bay_shelf_count(b)]) {
@@ -940,10 +940,10 @@ module echo_dimension_report() {
                                     "|STYLE=",
                                         fixed ? "fixed" : "adjustable",
                                     "|CLEAR_SPAN_W=",
-                                        mixed_bay_opening_width(b),
+                                        mixed_bay_shelf_span(b),
                                     "|CUT_W=",
                                         fixed
-                                            ? mixed_bay_fixed_shelf_cut_width(b)
+                                            ? mixed_bay_fixed_shelf_cut_width(b,si)
                                             : mixed_bay_adjustable_shelf_width(b),
                                     "|D=",shelf_depth,
                                     "|T=",material_thickness
@@ -1469,10 +1469,10 @@ if (validation_enabled()) {
     // Independent bays are laid out between the carcass sides; a face frame's
     // stiles narrow the two end openings and inset fronts would sit inside the
     // frame plane. Those combinations are rejected instead of drawn colliding.
-    if (face_frame_active && mixed_bay_mode) {
+    if (face_frame_active && mixed_bay_mode && !section_layout_active) {
         if (has_drawers
             && (mixed_bay_is_type(0,"drawers")
-                || mixed_bay_is_type(active_mixed_bay_count-1,"drawers")))
+                || mixed_bay_is_type(layout_bay_count-1,"drawers")))
             validation_check("ERROR","FACE_FRAME_BAYS",
                 "Drawers in the first or last independent bay would run into the face-frame stiles. Use the Sections layout (which sizes openings to the frame), put drawers in a middle bay, or turn off the face frame.");
         if (fronts_inset_flush && (has_drawers || has_doors))
@@ -1491,6 +1491,24 @@ if (validation_enabled()) {
             str("Bays ",mixed_bay_unsupported_boundary()+1," and ",
                 mixed_bay_unsupported_boundary()+2,
                 " have no partition between them, but their drawers, shelves or hinges need one to mount to. Turn on Include mixed bay partitions (Structure)."));
+
+    // Section layouts: every divider needs a member at each end, and a bay's
+    // slides, shelves and hinges need a member on the sides they mount to.
+    if (len(section_unsupported_bays()) > 0)
+        validation_check("ERROR","SECTION_BOUNDARY",
+            str("Opening ",section_unsupported_bays()[0]+1,
+                " needs a divider beside it for its drawer slides, shelves or hinges, but its split has no divider. Give that split a panel divider, or change the opening's contents."));
+
+    if (section_layout_active && layout_bay_count > 0)
+        for (b=[0:layout_bay_count-1])
+            if (mixed_bay_is_type(b,"door")
+                && (mixed_bay_door_leaf_width(b) < 40 || mixed_bay_door_height(b) < 40))
+                validation_check("ERROR","SECTION_DOOR_SIZE",
+                    str("The doors in opening ",b+1," would be under 40 mm. Make the opening larger or use one door."));
+
+    if (len(section_floating_dividers()) > 0)
+        validation_check("ERROR","SECTION_DIVIDER_ENDS",
+            "A divider ends against a split that has no divider, so it has nothing to be joined to. Give the surrounding split a panel divider.");
 
     // A custom mid rail crosses whatever front it overlaps. Inset fronts sit in
     // the frame plane, so they must stay clear of the rail.
@@ -1565,12 +1583,12 @@ if (validation_enabled()) {
 
 if (mixed_bay_mode) {
     echo("Mixed bay layout:");
-    echo("  bay count = ", active_mixed_bay_count);
+    echo("  bay count = ", layout_bay_count);
     echo("  bay types = ", active_mixed_bay_types);
     echo("  width weights = ", active_mixed_bay_width_weights);
     echo("  structural partitions = ", mixed_bay_partition_count());
 
-    for (b=[0:active_mixed_bay_count-1]) {
+    for (b=[0:layout_bay_count-1]) {
         echo("  bay ", b+1,
              ": type = ", mixed_bay_type(b),
              ", opening width = ", mixed_bay_opening_width(b), " mm",
@@ -1686,7 +1704,7 @@ if (has_doors) {
     echo(mixed_bay_mode ? "Mixed-bay doors:" : "Door bays:");
 
     if (mixed_bay_mode) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_type(b,"door")) {
                 echo("  bay ", b+1,
                      " doors = ", mixed_bay_door_count(b),
@@ -1722,6 +1740,16 @@ if (has_doors) {
 
 if (has_doors && door_region_height < 100)
     echo("WARNING: Calculated door height is under 100 mm.");
+
+// Section doors are sized by their own openings.
+if (section_layout_active && layout_bay_count > 0)
+    for (b=[0:layout_bay_count-1])
+        if (mixed_bay_is_type(b,"door")) {
+            if (mixed_bay_door_height(b) < 100)
+                echo(str("WARNING: The door in opening ",b+1," is under 100 mm tall."));
+            if (effective_hinge_style != "none" && 2*hinge_end_offset > mixed_bay_door_height(b))
+                echo(str("WARNING: hinge_end_offset is too large for the door in opening ",b+1,"."));
+        }
 
 if (!mixed_bay_mode && combo_contents_active && combo_divider_bottom_z < front_opening_bottom_z)
     echo("WARNING: Combo door region is too short for the divider thickness.");
@@ -2072,14 +2100,14 @@ if (mixed_bay_mode && mixed_bay_total_shelf_count() > 0) {
     echo("Mixed-bay shelves:");
     echo("  total supplied shelf panels = ", mixed_bay_total_shelf_count());
 
-    for (b=[0:active_mixed_bay_count-1])
+    for (b=[0:layout_bay_count-1])
         if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
             echo("  bay ", b+1,
                  " style = ", mixed_bay_shelf_style(b),
                  ", supplied shelves = ", mixed_bay_shelf_count(b),
                  ", part width = ",
                  mixed_bay_shelf_style(b) == "fixed"
-                    ? mixed_bay_fixed_shelf_cut_width(b)
+                    ? mixed_bay_fixed_shelf_cut_width(b,1)
                     : mixed_bay_adjustable_shelf_width(b),
                  " mm");
 
@@ -2445,10 +2473,10 @@ if (output_mode == "calibration_coupon_cut"
 // OUTPUT SWITCH
 // ---------------------------
 
-if (section_layout_active && substr_category(output_mode) != "calibr") {
-    section_layout_output();
-}
-else if (standalone_drawer_active && output_mode == "assembly") {
+if (section_layout_active)
+    sec_validate();
+
+if (standalone_drawer_active && output_mode == "assembly") {
     standalone_drawer_assembly();
 }
 else if (standalone_drawer_active && (output_mode == "print_layout" || output_mode == "flat_3d")) {

@@ -731,69 +731,87 @@ module door_hinge_partition_cut() {
 
 
 // ---------------------------
-// MIXED-BAY FULL-DEPTH PARTITIONS
+// MIXED-BAY AND SECTION PARTITIONS
 // ---------------------------
+//
+// A partition (vertical member between bays) enters the member below it and
+// the member above it: the carcass bottom/top for full-height mixed-bay
+// partitions, or a section divider. Fixed shelves and section dividers enter
+// its faces. Everything a bay mounts (slides, hinge plates, shelf pins) is
+// drilled through it.
 
-module mixed_bay_partition_receiver_cuts_3d(
-    panel_y0,panel_depth,z0,receiver_face="top"
+// Partitions whose bottom (member "bottom") or top (member "top") enters the
+// carcass bottom panel or top panel/stretchers.
+function mixed_bay_partitions_into(member="bottom") =
+    [for (p=[0:max(0,mixed_bay_partition_count()-1)])
+        if (mixed_bay_partition_count() > 0
+            && (member == "bottom"
+                ? mixed_bay_partition_bottom_end(p)
+                : mixed_bay_partition_top_end(p)) == -1)
+            p];
+
+// Receiver cuts for a list of partitions entering a horizontal member that
+// occupies [panel_y0, panel_y0+panel_depth] at height z0. receiver_face "top"
+// means the partitions come from above.
+module partition_receiver_cuts_3d(
+    parts,panel_y0,panel_depth,z0,receiver_face="top"
 ) {
-    if (mixed_bay_partition_count() > 0) {
-        ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
-        ov0 = mixed_bay_depth_overlap_start(panel_y0);
+    ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
+    ov0 = mixed_bay_depth_overlap_start(panel_y0);
+    end = receiver_face == "top" ? "bottom" : "top";
 
-        if (ov > 0)
-            for (p=[0:mixed_bay_partition_count()-1]) {
-                px = mixed_bay_partition_x(p);
+    if (ov > 0)
+        for (p=parts) {
+            px = mixed_bay_partition_x(p);
 
-                if (carcass_joint_geometry == "dado") {
-                    c = dado_fit_clearance;
-                    dd = mixed_bay_partition_dado_depth();
-                    zcut =
-                        receiver_face == "top"
-                            ? z0 + material_thickness-dd-0.01
-                            : z0-0.01;
+            if (carcass_joint_geometry == "dado") {
+                c = dado_fit_clearance;
+                dd = mixed_bay_partition_end_length(p,end);
+                zcut =
+                    receiver_face == "top"
+                        ? z0 + material_thickness-dd-0.01
+                        : z0-0.01;
 
-                    translate([px-c/2,ov0-c/2,zcut])
-                        cube([
-                            material_thickness+c,
-                            ov+c,
-                            dd+0.02
-                        ]);
-                }
-                else if (carcass_joint_geometry == "tab_slot") {
-                    c = joint_fit_clearance;
+                translate([px-c/2,ov0-c/2,zcut])
+                    cube([
+                        material_thickness+c,
+                        ov+c,
+                        dd+0.02
+                    ]);
+            }
+            else if (carcass_joint_geometry == "tab_slot") {
+                c = joint_fit_clearance;
 
-                    for (n=[0:effective_tab_count(ov)-1]) {
-                        yy = ov0+tab_start(ov,n)-c/2;
-                        hh = tab_width_for(ov)+c;
+                for (n=[0:effective_tab_count(ov)-1]) {
+                    yy = ov0+tab_start(ov,n)-c/2;
+                    hh = tab_width_for(ov)+c;
 
-                        slot_cut_z_3d(
-                            px-c/2,
-                            yy,
-                            z0-1,
-                            material_thickness+2,
-                            material_thickness+c,
-                            hh
-                        );
-                    }
+                    slot_cut_z_3d(
+                        px-c/2,
+                        yy,
+                        z0-1,
+                        material_thickness+2,
+                        material_thickness+c,
+                        hh
+                    );
                 }
             }
-    }
+        }
 }
 
-module mixed_bay_partition_receiver_through_2d(
-    panel_y0,panel_depth
+// The same through slots in a flat horizontal part whose local X origin is
+// at global X = origin_x.
+module partition_receiver_through_2d(
+    parts,panel_y0,panel_depth,origin_x
 ) {
-    if (mixed_bay_partition_count() > 0
-        && carcass_joint_geometry == "tab_slot") {
-
+    if (carcass_joint_geometry == "tab_slot") {
         c = joint_fit_clearance;
         ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
         ov0 = mixed_bay_depth_overlap_start(panel_y0);
 
         if (ov > 0)
-            for (p=[0:mixed_bay_partition_count()-1]) {
-                lx = horizontal_panel_local_x(mixed_bay_partition_x(p))-c/2;
+            for (p=parts) {
+                lx = mixed_bay_partition_x(p)-origin_x-c/2;
                 ly0 = ov0-panel_y0;
 
                 for (n=[0:effective_tab_count(ov)-1]) {
@@ -807,19 +825,17 @@ module mixed_bay_partition_receiver_through_2d(
     }
 }
 
-module mixed_bay_partition_receiver_dado_pockets_2d(
-    panel_y0,panel_depth
+module partition_receiver_dado_pockets_2d(
+    parts,panel_y0,panel_depth,origin_x
 ) {
-    if (mixed_bay_partition_count() > 0
-        && carcass_joint_geometry == "dado") {
-
+    if (carcass_joint_geometry == "dado") {
         c = dado_fit_clearance;
         ov = mixed_bay_depth_overlap_length(panel_y0,panel_depth);
         ov0 = mixed_bay_depth_overlap_start(panel_y0);
 
         if (ov > 0)
-            for (p=[0:mixed_bay_partition_count()-1]) {
-                lx = horizontal_panel_local_x(mixed_bay_partition_x(p))-c/2;
+            for (p=parts) {
+                lx = mixed_bay_partition_x(p)-origin_x-c/2;
                 ly = ov0-panel_y0-c/2;
 
                 translate([lx,ly])
@@ -828,167 +844,226 @@ module mixed_bay_partition_receiver_dado_pockets_2d(
     }
 }
 
-module mixed_bay_partition_bottom_joinery_3d(x0,z0) {
-    door_hinge_partition_joinery_segment_3d(
-        x0,0,mixed_bay_partition_depth,z0,"bottom");
+// Carcass bottom (receiver_face "top") and top (receiver_face "bottom").
+module mixed_bay_partition_receiver_cuts_3d(
+    panel_y0,panel_depth,z0,receiver_face="top"
+) {
+    if (mixed_bay_partition_count() > 0)
+        partition_receiver_cuts_3d(
+            mixed_bay_partitions_into(receiver_face == "top" ? "bottom" : "top"),
+            panel_y0,panel_depth,z0,receiver_face);
 }
 
-module mixed_bay_partition_top_joinery_3d(x0,z0) {
-    if (top_style == "full") {
-        door_hinge_partition_joinery_segment_3d(
-            x0,0,mixed_bay_partition_depth,z0,"top");
+module mixed_bay_partition_receiver_through_2d(
+    panel_y0,panel_depth,member="bottom"
+) {
+    if (mixed_bay_partition_count() > 0)
+        partition_receiver_through_2d(
+            mixed_bay_partitions_into(member),
+            panel_y0,panel_depth,horizontal_panel_global_x0());
+}
+
+module mixed_bay_partition_receiver_dado_pockets_2d(
+    panel_y0,panel_depth,member="bottom"
+) {
+    if (mixed_bay_partition_count() > 0)
+        partition_receiver_dado_pockets_2d(
+            mixed_bay_partitions_into(member),
+            panel_y0,panel_depth,horizontal_panel_global_x0());
+}
+
+// Depth bands [y0, span] in which a partition end is joined: the full depth of
+// the carcass bottom, the top panel or both top stretchers, or the depth of the
+// section divider it enters.
+function mixed_bay_partition_end_segments(p,end="bottom") =
+    let(e=end == "bottom" ? mixed_bay_partition_bottom_end(p) : mixed_bay_partition_top_end(p))
+    e >= 0
+        ? [[
+            mixed_bay_depth_overlap_start(section_divider_y0(e)),
+            mixed_bay_depth_overlap_length(section_divider_y0(e),section_divider_depth(e))
+          ]]
+    : end == "bottom" || top_style == "full"
+        ? [[0,mixed_bay_partition_depth]]
+        : let(
+            front_span=min(mixed_bay_partition_depth,top_stretcher_depth),
+            rear_start=max(0,resolved_cabinet_depth-top_stretcher_depth),
+            rear_span=max(0,min(mixed_bay_partition_depth,resolved_cabinet_depth)-rear_start)
+          )
+          [
+            if (front_span > 0) [0,front_span],
+            if (rear_span > 0) [rear_start,rear_span]
+          ];
+
+// Tongue (dado) or tabs (tab-and-slot) of length len at one partition end.
+module partition_joinery_segment_3d(x0,y0,span,z0,edge="bottom",len=0) {
+    if (span > 0 && len > 0) {
+        zz = edge == "bottom" ? z0-len : z0;
+
+        if (carcass_joint_geometry == "dado")
+            sheet_box([material_thickness,span,len],[x0,y0,zz]);
+        else if (carcass_joint_geometry == "tab_slot")
+            for (n=[0:effective_tab_count(span)-1])
+                sheet_box(
+                    [material_thickness,tab_width_for(span),len],
+                    [x0,y0+tab_start(span,n),zz]
+                );
     }
-    else {
-        front_span = min(mixed_bay_partition_depth,top_stretcher_depth);
+}
 
-        if (front_span > 0)
-            door_hinge_partition_joinery_segment_3d(
-                x0,0,front_span,z0,"top");
-
-        rear_start = max(0,resolved_cabinet_depth-top_stretcher_depth);
-        rear_span =
-            max(
-                0,
-                min(mixed_bay_partition_depth,resolved_cabinet_depth)-rear_start
-            );
-
-        if (rear_span > 0)
-            door_hinge_partition_joinery_segment_3d(
-                x0,rear_start,rear_span,z0,"top");
+module partition_joinery_segment_cut(y0,span,ybase,len=0) {
+    if (span > 0 && len > 0) {
+        if (carcass_joint_geometry == "dado")
+            translate([y0,ybase])
+                cut_part(span,len);
+        else if (carcass_joint_geometry == "tab_slot")
+            for (n=[0:effective_tab_count(span)-1])
+                translate([y0+tab_start(span,n),ybase])
+                    cut_part(tab_width_for(span),len);
     }
 }
 
-// Fixed shelves terminate into the vertical support on each side of a mixed
-// bay. Internal partitions can therefore receive shelf joinery from either
-// face at independently chosen shelf elevations.
-module mixed_bay_partition_fixed_shelf_cuts_3d(x0,p=0) {
-    c = carcass_joint_geometry == "dado" ? dado_fit_clearance : joint_fit_clearance;
-    dd = mixed_bay_fixed_shelf_dado_depth();
-
-    for (bb=[p,p+1])
-        if (mixed_bay_has_fixed_shelves(bb))
-            for (s=[1:mixed_bay_shelf_count(bb)]) {
-                zz = mixed_bay_shelf_z(bb,s);
-
-                if (carcass_joint_geometry == "dado") {
-                    // Bay p approaches this partition from the left; bay p+1
-                    // approaches it from the right.
-                    xx = bb == p
-                        ? x0-0.01
-                        : x0+material_thickness-dd-0.01;
-
-                    translate([xx,shelf_front_y-c/2,zz-c/2])
-                        cube([
-                            dd+0.02,
-                            shelf_depth+c,
-                            material_thickness+c
-                        ]);
-                }
-                else if (carcass_joint_geometry == "tab_slot") {
-                    for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
-                        sy = shelf_front_y+tab_start_for_location(shelf_depth,n,"shelf")-c/2;
-                        sw = tab_width_for(shelf_depth)+c;
-
-                        slot_cut_x_3d(
-                            x0-1,
-                            material_thickness+2,
-                            sy,
-                            zz-c/2,
-                            sw,
-                            material_thickness+c
-                        );
-                    }
-                }
-            }
+module mixed_bay_partition_end_joinery_3d(p,end="bottom") {
+    for (seg=mixed_bay_partition_end_segments(p,end))
+        partition_joinery_segment_3d(
+            mixed_bay_partition_x(p),seg[0],seg[1],
+            end == "bottom" ? mixed_bay_partition_bottom_z(p) : mixed_bay_partition_top_z(p),
+            end,
+            mixed_bay_partition_end_length(p,end));
 }
 
-module mixed_bay_partition_fixed_shelf_through_2d(p=0) {
-    c = joint_fit_clearance;
-    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+// Horizontal members entering partition p: [z, face, y0, depth, length].
+// face "left" is entered from the bays to the partition's left.
+function mixed_bay_partition_entries(p) =
+    concat(
+        [for (face=["left","right"])
+            for (bb=face == "left"
+                    ? mixed_bay_partition_left_bays(p)
+                    : mixed_bay_partition_right_bays(p))
+                if (mixed_bay_has_fixed_shelves(bb))
+                    for (s=[1:mixed_bay_shelf_count(bb)])
+                        [
+                            mixed_bay_shelf_z(bb,s),face,
+                            shelf_front_y,shelf_depth,
+                            mixed_bay_fixed_shelf_end_length(
+                                bb,s,face == "left" ? "right" : "left")
+                        ]],
+        [for (h=[0:max(0,section_divider_count()-1)])
+            if (section_divider_count() > 0)
+                for (face=["left","right"])
+                    if ((face == "left"
+                            ? section_divider_right_end(h)
+                            : section_divider_left_end(h)) == p)
+                        [
+                            section_divider_z(h),face,
+                            section_divider_y0(h),section_divider_depth(h),
+                            section_divider_end_length(
+                                h,face == "left" ? "right" : "left")
+                        ]]
+    );
 
-    if (carcass_joint_geometry == "tab_slot")
-        for (bb=[p,p+1])
-            if (mixed_bay_has_fixed_shelves(bb))
-                for (s=[1:mixed_bay_shelf_count(bb)])
-                    for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
-                        sy = shelf_front_y+tab_start_for_location(shelf_depth,n,"shelf")-c/2;
-                        sw = tab_width_for(shelf_depth)+c;
+module mixed_bay_partition_horizontal_receivers_3d(x0,p=0) {
+    for (e=mixed_bay_partition_entries(p)) {
+        zz = e[0];
+        yy = e[2];
+        dp = e[3];
 
-                        translate([
-                            sy,
-                            mixed_bay_shelf_z(bb,s)-cut_z0-c/2
-                        ])
-                            slot_shape_2d(
-                                sw,
-                                material_thickness+c
-                            );
-                    }
+        if (carcass_joint_geometry == "dado") {
+            c = dado_fit_clearance;
+            // Members on the left enter the partition's left face.
+            xx = e[1] == "left"
+                ? x0-0.01
+                : x0+material_thickness-e[4]-0.01;
+
+            translate([xx,yy-c/2,zz-c/2])
+                cube([
+                    e[4]+0.02,
+                    dp+c,
+                    material_thickness+c
+                ]);
+        }
+        else if (carcass_joint_geometry == "tab_slot") {
+            c = joint_fit_clearance;
+
+            for (n=[0:tab_count_for_location(dp,"shelf")-1])
+                slot_cut_x_3d(
+                    x0-1,
+                    material_thickness+2,
+                    yy+tab_start_for_location(dp,n,"shelf")-c/2,
+                    zz-c/2,
+                    tab_width_for(dp)+c,
+                    material_thickness+c
+                );
+        }
+        else if (carcass_joint_geometry == "butt" && carcass_registration_enabled) {
+            for (n=[0:butt_reg_count(dp)-1])
+                round_hole_x_3d(
+                    x0-1,
+                    yy+butt_reg_pos(dp,n),
+                    zz+material_thickness/2,
+                    material_thickness+2,
+                    butt_registration_hole_diameter
+                );
+        }
+    }
 }
 
-module mixed_bay_partition_fixed_shelf_butt_registration_2d(p=0) {
-    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+// Flat-cut equivalents: X = depth from the front, Y = Z - cut_z0.
+module mixed_bay_partition_horizontal_receivers_through_2d(p=0) {
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z(p);
 
-    if (carcass_joint_geometry == "butt" && carcass_registration_enabled)
-        for (bb=[p,p+1])
-            if (mixed_bay_has_fixed_shelves(bb))
-                for (s=[1:mixed_bay_shelf_count(bb)])
-                    for (n=[0:butt_reg_count(shelf_depth)-1])
-                        round_hole_2d(
-                            shelf_front_y+butt_reg_pos(shelf_depth,n),
-                            mixed_bay_shelf_z(bb,s)
-                                + material_thickness/2
-                                - cut_z0,
-                            butt_registration_hole_diameter
-                        );
+    for (e=mixed_bay_partition_entries(p)) {
+        zz = e[0];
+        yy = e[2];
+        dp = e[3];
+
+        if (carcass_joint_geometry == "tab_slot") {
+            c = joint_fit_clearance;
+
+            for (n=[0:tab_count_for_location(dp,"shelf")-1])
+                translate([
+                    yy+tab_start_for_location(dp,n,"shelf")-c/2,
+                    zz-cut_z0-c/2
+                ])
+                    slot_shape_2d(
+                        tab_width_for(dp)+c,
+                        material_thickness+c
+                    );
+        }
+        else if (carcass_joint_geometry == "butt" && carcass_registration_enabled) {
+            for (n=[0:butt_reg_count(dp)-1])
+                round_hole_2d(
+                    yy+butt_reg_pos(dp,n),
+                    zz+material_thickness/2-cut_z0,
+                    butt_registration_hole_diameter
+                );
+        }
+    }
 }
 
-// face = "left" means the shelf in bay p enters the left face of partition p.
-// face = "right" means the shelf in bay p+1 enters the right face.
+// face = "left" draws the pockets entered from the partition's left face,
+// "right" those entered from its right face, "both" every pocket.
 module mixed_bay_partition_fixed_shelf_dado_pockets_2d(
     p=0,face="both"
 ) {
     c = dado_fit_clearance;
-    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z(p);
 
     if (carcass_joint_geometry == "dado")
-        for (bb=[p,p+1]) {
-            selected =
-                face == "both"
-                || (face == "left" && bb == p)
-                || (face == "right" && bb == p+1);
-
-            if (selected && mixed_bay_has_fixed_shelves(bb))
-                for (s=[1:mixed_bay_shelf_count(bb)])
-                    translate([
-                        shelf_front_y-c/2,
-                        mixed_bay_shelf_z(bb,s)-cut_z0-c/2
-                    ])
-                        square([
-                            shelf_depth+c,
-                            material_thickness+c
-                        ]);
-        }
-}
-
-module mixed_bay_partition_fixed_shelf_butt_registration_3d(x0,p=0) {
-    if (carcass_joint_geometry == "butt" && carcass_registration_enabled)
-        for (bb=[p,p+1])
-            if (mixed_bay_has_fixed_shelves(bb))
-                for (s=[1:mixed_bay_shelf_count(bb)])
-                    for (n=[0:butt_reg_count(shelf_depth)-1])
-                        round_hole_x_3d(
-                            x0-1,
-                            shelf_front_y+butt_reg_pos(shelf_depth,n),
-                            mixed_bay_shelf_z(bb,s)
-                                + material_thickness/2,
-                            material_thickness+2,
-                            butt_registration_hole_diameter
-                        );
+        for (e=mixed_bay_partition_entries(p))
+            if (face == "both" || face == e[1])
+                translate([
+                    e[2]-c/2,
+                    e[0]-cut_z0-c/2
+                ])
+                    square([
+                        e[3]+c,
+                        material_thickness+c
+                    ]);
 }
 
 module mixed_bay_partition_hardware_holes_3d(x0,p=0) {
     if (mixed_bay_partition_has_hinge_plates(p))
-        for (j=[0:hinge_count-1])
+        for (hz=mixed_bay_partition_hinge_zs(p))
             if (hinge_plate_holes_enabled)
             for (dz=[
                 -effective_hinge_plate_hole_spacing/2,
@@ -997,25 +1072,25 @@ module mixed_bay_partition_hardware_holes_3d(x0,p=0) {
                 round_hole_x_3d(
                     x0-1,
                     effective_hinge_plate_center_from_front,
-                    mixed_bay_hinge_z(j)+dz,
+                    hz+dz,
                     material_thickness+2,
                     effective_hinge_plate_hole_diameter
                 );
 
     if (mixed_bay_partition_has_shelf_pins(p))
         for (row=[0:1])
-            for (i=[0:mixed_bay_shelf_pin_count()-1])
-                if (mixed_shelf_pin_kept_on_partition(p,row,i))
+            for (zz=mixed_bay_partition_pin_zs(p))
+                if (mixed_shelf_pin_kept_on_partition(p,row,zz))
                 round_hole_x_3d(
                     x0-1,
                     shelf_pin_y(row),
-                    mixed_bay_shelf_pin_z(i),
+                    zz,
                     material_thickness+2,
                     adjustable_shelf_hole_diameter
                 );
 
-    // Drawer slide patterns from both neighboring bays share this partition.
-    for (bb=[p,p+1]) {
+    // Drawer slide patterns from the bays on both faces share this partition.
+    for (bb=mixed_bay_partition_bays(p)) {
         if (mixed_bay_is_type(bb,"drawers")
             && drawer_mount == "wood_rails"
             && include_wood_slide_registration_holes)
@@ -1045,9 +1120,8 @@ module mixed_bay_partition_hardware_holes_3d(x0,p=0) {
 
 module mixed_bay_partition_3d(p=0) {
     x0 = mixed_bay_partition_x(p);
-    z0 = mixed_bay_partition_bottom_z();
-    z1 = mixed_bay_partition_top_z();
-    bh = mixed_bay_partition_body_height();
+    z0 = mixed_bay_partition_bottom_z(p);
+    bh = mixed_bay_partition_body_height(p);
 
     difference() {
         union() {
@@ -1056,69 +1130,40 @@ module mixed_bay_partition_3d(p=0) {
                 [x0,0,z0]
             );
 
-            mixed_bay_partition_bottom_joinery_3d(x0,z0);
-            mixed_bay_partition_top_joinery_3d(x0,z1);
+            mixed_bay_partition_end_joinery_3d(p,"bottom");
+            mixed_bay_partition_end_joinery_3d(p,"top");
         }
 
         mixed_bay_partition_hardware_holes_3d(x0,p);
-        mixed_bay_partition_fixed_shelf_cuts_3d(x0,p);
-        mixed_bay_partition_fixed_shelf_butt_registration_3d(x0,p);
+        mixed_bay_partition_horizontal_receivers_3d(x0,p);
         door_hinge_partition_back_stretcher_notches_3d(x0);
         face_frame_partition_notches_3d(x0);
     }
 }
 
-module mixed_bay_partition_bottom_joinery_cut() {
-    ext = mixed_bay_partition_cut_body_offset();
-
-    if (carcass_joint_geometry == "dado" || carcass_joint_geometry == "tab_slot")
-        door_hinge_partition_joinery_segment_cut(
-            0,mixed_bay_partition_depth,0,ext);
-}
-
-module mixed_bay_partition_top_joinery_cut(body_top_y) {
-    if (top_style == "full") {
-        door_hinge_partition_joinery_segment_cut(
-            0,mixed_bay_partition_depth,body_top_y,0);
-    }
-    else {
-        front_span = min(mixed_bay_partition_depth,top_stretcher_depth);
-
-        if (front_span > 0)
-            door_hinge_partition_joinery_segment_cut(
-                0,front_span,body_top_y,0);
-
-        rear_start = max(0,resolved_cabinet_depth-top_stretcher_depth);
-        rear_span =
-            max(
-                0,
-                min(mixed_bay_partition_depth,resolved_cabinet_depth)-rear_start
-            );
-
-        if (rear_span > 0)
-            door_hinge_partition_joinery_segment_cut(
-                rear_start,rear_span,body_top_y,0);
-    }
-}
-
 module mixed_bay_partition_cut(p=0) {
-    bh = mixed_bay_partition_body_height();
-    body_offset = mixed_bay_partition_cut_body_offset();
-    cut_z0 = mixed_bay_partition_cut_global_bottom_z();
+    bh = mixed_bay_partition_body_height(p);
+    body_offset = mixed_bay_partition_cut_body_offset(p);
+    cut_z0 = mixed_bay_partition_cut_global_bottom_z(p);
 
     difference() {
         union() {
             translate([0,body_offset])
                 cut_part(mixed_bay_partition_depth,bh);
 
-            mixed_bay_partition_bottom_joinery_cut();
-            mixed_bay_partition_top_joinery_cut(body_offset+bh);
+            for (seg=mixed_bay_partition_end_segments(p,"bottom"))
+                partition_joinery_segment_cut(
+                    seg[0],seg[1],0,mixed_bay_partition_end_length(p,"bottom"));
+
+            for (seg=mixed_bay_partition_end_segments(p,"top"))
+                partition_joinery_segment_cut(
+                    seg[0],seg[1],body_offset+bh,mixed_bay_partition_end_length(p,"top"));
         }
 
         face_frame_partition_notches_2d(cut_z0);
 
         if (mixed_bay_partition_has_hinge_plates(p))
-            for (j=[0:hinge_count-1])
+            for (hz=mixed_bay_partition_hinge_zs(p))
                 if (hinge_plate_holes_enabled)
                 for (dz=[
                     -effective_hinge_plate_hole_spacing/2,
@@ -1126,24 +1171,23 @@ module mixed_bay_partition_cut(p=0) {
                 ])
                     round_hole_2d(
                         effective_hinge_plate_center_from_front,
-                        mixed_bay_hinge_z(j)+dz-cut_z0,
+                        hz+dz-cut_z0,
                         effective_hinge_plate_hole_diameter
                     );
 
         if (mixed_bay_partition_has_shelf_pins(p))
             for (row=[0:1])
-                for (i=[0:mixed_bay_shelf_pin_count()-1])
-                    if (mixed_shelf_pin_kept_on_partition(p,row,i))
+                for (zz=mixed_bay_partition_pin_zs(p))
+                    if (mixed_shelf_pin_kept_on_partition(p,row,zz))
                     round_hole_2d(
                         shelf_pin_y(row),
-                        mixed_bay_shelf_pin_z(i)-cut_z0,
+                        zz-cut_z0,
                         adjustable_shelf_hole_diameter
                     );
 
-        mixed_bay_partition_fixed_shelf_through_2d(p);
-        mixed_bay_partition_fixed_shelf_butt_registration_2d(p);
+        mixed_bay_partition_horizontal_receivers_through_2d(p);
 
-        for (bb=[p,p+1]) {
+        for (bb=mixed_bay_partition_bays(p)) {
             if (mixed_bay_is_type(bb,"drawers")
                 && drawer_mount == "wood_rails"
                 && include_wood_slide_registration_holes)
@@ -1184,18 +1228,18 @@ module mixed_bay_partition_cut(p=0) {
     }
 }
 
-module mixed_bay_fixed_shelf_3d(b=0,z0=0) {
-    x0 = mixed_bay_opening_x(b);
-    ww = mixed_bay_opening_width(b);
+// Fixed bay shelves span the bay between its members and are joined into them
+// (or into the carcass sides) with the carcass joinery.
+module mixed_bay_fixed_shelf_3d(b=0,z0=0,s=1) {
+    x0 = mixed_bay_shelf_x(b);
+    ww = mixed_bay_shelf_span(b);
+    ll = mixed_bay_fixed_shelf_end_length(b,s,"left");
+    rl = mixed_bay_fixed_shelf_end_length(b,s,"right");
 
-    if (carcass_joint_geometry == "butt") {
-        sheet_box([ww,shelf_depth,material_thickness],[x0,shelf_front_y,z0]);
-    }
-    else if (carcass_joint_geometry == "dado") {
-        dd = mixed_bay_fixed_shelf_dado_depth();
+    if (carcass_joint_geometry == "dado") {
         sheet_box(
-            [ww+2*dd,shelf_depth,material_thickness],
-            [x0-dd,shelf_front_y,z0]
+            [ww+ll+rl,shelf_depth,material_thickness],
+            [x0-ll,shelf_front_y,z0]
         );
     }
     else if (carcass_joint_geometry == "tab_slot") {
@@ -1207,33 +1251,32 @@ module mixed_bay_fixed_shelf_3d(b=0,z0=0) {
                 tw = tab_width_for(shelf_depth);
 
                 sheet_box(
-                    [material_thickness,tw,material_thickness],
-                    [x0-material_thickness,shelf_front_y+yy,z0]
+                    [ll,tw,material_thickness],
+                    [x0-ll,shelf_front_y+yy,z0]
                 );
                 sheet_box(
-                    [material_thickness,tw,material_thickness],
+                    [rl,tw,material_thickness],
                     [x0+ww,shelf_front_y+yy,z0]
                 );
             }
         }
     }
+    else {
+        sheet_box([ww,shelf_depth,material_thickness],[x0,shelf_front_y,z0]);
+    }
 }
 
-module mixed_bay_fixed_shelf_cut(b=0) {
-    ww = mixed_bay_opening_width(b);
+module mixed_bay_fixed_shelf_cut(b=0,s=1) {
+    ww = mixed_bay_shelf_span(b);
+    ll = mixed_bay_fixed_shelf_end_length(b,s,"left");
+    rl = mixed_bay_fixed_shelf_end_length(b,s,"right");
 
-    if (carcass_joint_geometry == "butt") {
-        cut_part(ww,shelf_depth);
-    }
-    else if (carcass_joint_geometry == "dado") {
-        cut_part(
-            ww+2*mixed_bay_fixed_shelf_dado_depth(),
-            shelf_depth
-        );
+    if (carcass_joint_geometry == "dado") {
+        cut_part(ww+ll+rl,shelf_depth);
     }
     else if (carcass_joint_geometry == "tab_slot") {
         union() {
-            translate([material_thickness,0])
+            translate([ll,0])
                 cut_part(ww,shelf_depth);
 
             for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
@@ -1241,11 +1284,14 @@ module mixed_bay_fixed_shelf_cut(b=0) {
                 tw = tab_width_for(shelf_depth);
 
                 translate([0,yy])
-                    cut_part(material_thickness,tw);
-                translate([material_thickness+ww,yy])
-                    cut_part(material_thickness,tw);
+                    cut_part(ll,tw);
+                translate([ll+ww,yy])
+                    cut_part(rl,tw);
             }
         }
+    }
+    else {
+        cut_part(ww,shelf_depth);
     }
 }
 
@@ -1262,6 +1308,108 @@ module mixed_bay_adjustable_shelf_3d(b=0,z0=0) {
 
 module mixed_bay_adjustable_shelf_cut(b=0) {
     cut_part(mixed_bay_adjustable_shelf_width(b),shelf_depth);
+}
+
+// ---------------------------
+// SECTION DIVIDERS
+// ---------------------------
+
+// Partitions entering a divider from above (receiver face "top") and below.
+module section_divider_receivers_3d(h) {
+    partition_receiver_cuts_3d(
+        section_divider_partitions(h,"top"),
+        section_divider_y0(h),section_divider_depth(h),
+        section_divider_z(h),"top");
+    partition_receiver_cuts_3d(
+        section_divider_partitions(h,"bottom"),
+        section_divider_y0(h),section_divider_depth(h),
+        section_divider_z(h),"bottom");
+}
+
+module section_divider_3d(h) {
+    x0 = section_divider_x0(h);
+    ww = section_divider_width(h);
+    y0 = section_divider_y0(h);
+    dp = section_divider_depth(h);
+    z0 = section_divider_z(h);
+    ll = section_divider_end_length(h,"left");
+    rl = section_divider_end_length(h,"right");
+
+    difference() {
+        if (carcass_joint_geometry == "dado") {
+            sheet_box([ww+ll+rl,dp,material_thickness],[x0-ll,y0,z0]);
+        }
+        else if (carcass_joint_geometry == "tab_slot") {
+            union() {
+                sheet_box([ww,dp,material_thickness],[x0,y0,z0]);
+
+                for (n=[0:tab_count_for_location(dp,"shelf")-1]) {
+                    yy = y0+tab_start_for_location(dp,n,"shelf");
+                    tw = tab_width_for(dp);
+
+                    sheet_box([ll,tw,material_thickness],[x0-ll,yy,z0]);
+                    sheet_box([rl,tw,material_thickness],[x0+ww,yy,z0]);
+                }
+            }
+        }
+        else {
+            sheet_box([ww,dp,material_thickness],[x0,y0,z0]);
+        }
+
+        section_divider_receivers_3d(h);
+    }
+}
+
+// Flat part: X along the divider from its left end, Y = depth from its front.
+function section_divider_cut_origin_x(h) =
+    section_divider_x0(h)-section_divider_end_length(h,"left");
+
+module section_divider_cut(h) {
+    ww = section_divider_width(h);
+    dp = section_divider_depth(h);
+    ll = section_divider_end_length(h,"left");
+    rl = section_divider_end_length(h,"right");
+    parts = concat(
+        section_divider_partitions(h,"top"),
+        section_divider_partitions(h,"bottom"));
+
+    difference() {
+        if (carcass_joint_geometry == "dado") {
+            cut_part(ww+ll+rl,dp);
+        }
+        else if (carcass_joint_geometry == "tab_slot") {
+            union() {
+                translate([ll,0])
+                    cut_part(ww,dp);
+
+                for (n=[0:tab_count_for_location(dp,"shelf")-1]) {
+                    yy = tab_start_for_location(dp,n,"shelf");
+                    tw = tab_width_for(dp);
+
+                    translate([0,yy])
+                        cut_part(ll,tw);
+                    translate([ll+ww,yy])
+                        cut_part(rl,tw);
+                }
+            }
+        }
+        else {
+            cut_part(ww,dp);
+        }
+
+        partition_receiver_through_2d(
+            parts,section_divider_y0(h),dp,section_divider_cut_origin_x(h));
+    }
+}
+
+// Dado pockets on both faces of a divider (plan view, overlapping).
+module section_divider_dado_pockets_2d(h) {
+    partition_receiver_dado_pockets_2d(
+        concat(
+            section_divider_partitions(h,"top"),
+            section_divider_partitions(h,"bottom")),
+        section_divider_y0(h),section_divider_depth(h),
+        section_divider_cut_origin_x(h));
 }
 
 // Wrapper horizontal carcass member. It can receive both drawer-bank
@@ -1302,7 +1450,7 @@ module joined_horizontal_bank_receiver_cut(
         door_hinge_partition_receiver_through_2d(
             panel_y0,depth);
         mixed_bay_partition_receiver_through_2d(
-            panel_y0,depth);
+            panel_y0,depth,tab_location == "top" ? "top" : "bottom");
         back_horizontal_receiver_through_2d(
             panel_y0,depth);
     }
@@ -3294,10 +3442,9 @@ module adjustable_shelf_pin_holes_pocket_2d(side=undef) {
 module mixed_bay_side_shelf_pin_holes_3d(x0,side) {
     if (mixed_bay_mode && mixed_bay_side_has_shelf_pins(side)) {
         for (row=[0:1])
-            for (i=[0:mixed_bay_shelf_pin_count()-1])
-            if (mixed_shelf_pin_kept_on_side(side,row,i)) {
+            for (zz=mixed_bay_side_pin_zs(side))
+            if (mixed_shelf_pin_kept_on_side(side,row,zz)) {
                 yy = shelf_pin_y(row);
-                zz = mixed_bay_shelf_pin_z(i);
 
                 if (adjustable_shelf_hole_type == "through") {
                     round_hole_x_3d(
@@ -3335,11 +3482,11 @@ module mixed_bay_side_shelf_pin_holes_cut_2d(side) {
         && mixed_bay_side_has_shelf_pins(side)
         && adjustable_shelf_hole_type == "through")
         for (row=[0:1])
-            for (i=[0:mixed_bay_shelf_pin_count()-1])
-                if (mixed_shelf_pin_kept_on_side(side,row,i))
+            for (zz=mixed_bay_side_pin_zs(side))
+                if (mixed_shelf_pin_kept_on_side(side,row,zz))
                 round_hole_2d(
                     shelf_pin_y(row),
-                    mixed_bay_shelf_pin_z(i),
+                    zz,
                     adjustable_shelf_hole_diameter
                 );
 }
@@ -3349,18 +3496,18 @@ module mixed_bay_side_shelf_pin_holes_pocket_2d(side) {
         && mixed_bay_side_has_shelf_pins(side)
         && adjustable_shelf_hole_type == "blind")
         for (row=[0:1])
-            for (i=[0:mixed_bay_shelf_pin_count()-1])
-                if (mixed_shelf_pin_kept_on_side(side,row,i))
+            for (zz=mixed_bay_side_pin_zs(side))
+                if (mixed_shelf_pin_kept_on_side(side,row,zz))
                 round_hole_2d(
                     shelf_pin_y(row),
-                    mixed_bay_shelf_pin_z(i),
+                    zz,
                     adjustable_shelf_hole_diameter
                 );
 }
 
 module mixed_bay_side_hinge_plate_holes_3d(x0,side) {
     if (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
-        for (j=[0:hinge_count-1])
+        for (hz=mixed_bay_side_hinge_zs(side))
             if (hinge_plate_holes_enabled)
             for (dz=[
                 -effective_hinge_plate_hole_spacing/2,
@@ -3369,7 +3516,7 @@ module mixed_bay_side_hinge_plate_holes_3d(x0,side) {
                 round_hole_x_3d(
                     x0-1,
                     effective_hinge_plate_center_from_front,
-                    mixed_bay_hinge_z(j)+dz,
+                    hz+dz,
                     material_thickness+2,
                     effective_hinge_plate_hole_diameter
                 );
@@ -3377,7 +3524,7 @@ module mixed_bay_side_hinge_plate_holes_3d(x0,side) {
 
 module mixed_bay_side_hinge_plate_holes_cut_2d(side) {
     if (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
-        for (j=[0:hinge_count-1])
+        for (hz=mixed_bay_side_hinge_zs(side))
             if (hinge_plate_holes_enabled)
             for (dz=[
                 -effective_hinge_plate_hole_spacing/2,
@@ -3385,7 +3532,7 @@ module mixed_bay_side_hinge_plate_holes_cut_2d(side) {
             ])
                 round_hole_2d(
                     effective_hinge_plate_center_from_front,
-                    mixed_bay_hinge_z(j)+dz,
+                    hz+dz,
                     effective_hinge_plate_hole_diameter
                 );
 }
@@ -3430,39 +3577,41 @@ module adjustable_door_shelf_cut(b=0) {
 
 
 // ---------------------------
-// MIXED-BAY FIXED-SHELF RECEIVERS IN OUTER CABINET SIDES
+// MIXED-BAY FIXED SHELVES AND SECTION DIVIDERS IN OUTER CABINET SIDES
 // ---------------------------
 
-module mixed_bay_side_fixed_shelf_joinery_3d(x0,side) {
-    bb = mixed_bay_side_fixed_bay(side);
+// Horizontal members entering an outer side: [z, y0, depth] of each fixed
+// shelf of a bay against that side and each section divider ending there.
+function side_horizontal_entries(side) =
+    concat(
+        [for (bb=mixed_bay_side_bays(side))
+            if (mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    [mixed_bay_shelf_z(bb,s),shelf_front_y,shelf_depth]],
+        [for (h=[0:max(0,section_divider_count()-1)])
+            if (section_divider_count() > 0
+                && (side == "left"
+                    ? section_divider_left_end(h)
+                    : section_divider_right_end(h)) == -1)
+                [section_divider_z(h),section_divider_y0(h),section_divider_depth(h)]]
+    );
 
-    if (mixed_bay_side_has_fixed_shelves(side)
-        && carcass_joint_geometry != "butt")
-        for (s=[1:mixed_bay_shelf_count(bb)])
-            side_horizontal_joint_cut_3d(
-                side,
-                shelf_front_y,
-                shelf_depth,
-                mixed_bay_shelf_z(bb,s),
-                "shelf"
-            );
+module mixed_bay_side_fixed_shelf_joinery_3d(x0,side) {
+    if (carcass_joint_geometry != "butt")
+        for (e=side_horizontal_entries(side))
+            side_horizontal_joint_cut_3d(side,e[1],e[2],e[0],"shelf");
 }
 
 module mixed_bay_side_fixed_shelf_through_2d(side) {
-    bb = mixed_bay_side_fixed_bay(side);
     c = joint_fit_clearance;
 
-    if (mixed_bay_side_has_fixed_shelves(side)
-        && carcass_joint_geometry == "tab_slot")
-        for (s=[1:mixed_bay_shelf_count(bb)])
-            for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
-                sy = shelf_front_y+tab_start_for_location(shelf_depth,n,"shelf")-c/2;
-                sw = tab_width_for(shelf_depth)+c;
+    if (carcass_joint_geometry == "tab_slot")
+        for (e=side_horizontal_entries(side))
+            for (n=[0:tab_count_for_location(e[2],"shelf")-1]) {
+                sy = e[1]+tab_start_for_location(e[2],n,"shelf")-c/2;
+                sw = tab_width_for(e[2])+c;
 
-                translate([
-                    sy,
-                    mixed_bay_shelf_z(bb,s)-c/2
-                ])
+                translate([sy,e[0]-c/2])
                     slot_shape_2d(
                         sw,
                         material_thickness+c
@@ -3471,51 +3620,29 @@ module mixed_bay_side_fixed_shelf_through_2d(side) {
 }
 
 module mixed_bay_side_fixed_shelf_dado_pockets_2d(side) {
-    bb = mixed_bay_side_fixed_bay(side);
     c = dado_fit_clearance;
 
-    if (mixed_bay_side_has_fixed_shelves(side)
-        && carcass_joint_geometry == "dado")
-        for (s=[1:mixed_bay_shelf_count(bb)])
-            translate([
-                shelf_front_y-c/2,
-                mixed_bay_shelf_z(bb,s)-c/2
-            ])
+    if (carcass_joint_geometry == "dado")
+        for (e=side_horizontal_entries(side))
+            translate([e[1]-c/2,e[0]-c/2])
                 square([
-                    shelf_depth+c,
+                    e[2]+c,
                     material_thickness+c
                 ]);
 }
 
 module mixed_bay_side_fixed_shelf_butt_registration_3d(x0,side) {
-    bb = mixed_bay_side_fixed_bay(side);
-
-    if (mixed_bay_side_has_fixed_shelves(side)
-        && carcass_joint_geometry == "butt"
+    if (carcass_joint_geometry == "butt"
         && carcass_registration_enabled)
-        for (s=[1:mixed_bay_shelf_count(bb)])
-            side_horizontal_butt_registration_3d(
-                x0,
-                shelf_front_y,
-                shelf_depth,
-                mixed_bay_shelf_z(bb,s),
-                "shelf"
-            );
+        for (e=side_horizontal_entries(side))
+            side_horizontal_butt_registration_3d(x0,e[1],e[2],e[0]);
 }
 
 module mixed_bay_side_fixed_shelf_butt_registration_2d(side) {
-    bb = mixed_bay_side_fixed_bay(side);
-
-    if (mixed_bay_side_has_fixed_shelves(side)
-        && carcass_joint_geometry == "butt"
+    if (carcass_joint_geometry == "butt"
         && carcass_registration_enabled)
-        for (s=[1:mixed_bay_shelf_count(bb)])
-            side_horizontal_butt_registration_2d(
-                shelf_front_y,
-                shelf_depth,
-                mixed_bay_shelf_z(bb,s),
-                "shelf"
-            );
+        for (e=side_horizontal_entries(side))
+            side_horizontal_butt_registration_2d(e[1],e[2],e[0]);
 }
 
 
@@ -3852,7 +3979,6 @@ module ganging_side_holes_3d(x0=0,side="left") {
 // ---------------------------
 
 module cabinet_side_panel_3d(x0=0,side="left") {
-    side_bank = side == "left" ? 0 : active_drawer_bank_count()-1;
 
     difference() {
         translate([x0,0,side_panel_bottom_z])
@@ -3888,6 +4014,7 @@ module cabinet_side_panel_3d(x0=0,side="left") {
         mixed_bay_side_fixed_shelf_butt_registration_3d(x0,side);
 
         // Matching holes for the fixed cabinet-side portions of wood slides.
+        for (side_bank=side_drawer_banks(side))
         if (has_drawers
             && drawer_bank_drawer_count(side_bank) > 0
             && drawer_mount == "wood_rails"
@@ -3934,6 +4061,7 @@ module cabinet_side_panel_3d(x0=0,side="left") {
         mixed_bay_side_hinge_plate_holes_3d(x0,side);
 
         // Optional commercial-slide holes.
+        for (side_bank=side_drawer_banks(side))
         if (has_drawers
             && drawer_bank_drawer_count(side_bank) > 0
             && drawer_mount == "metal_slides"
@@ -3951,7 +4079,6 @@ module cabinet_side_panel_3d(x0=0,side="left") {
 }
 
 module cabinet_side_panel_cut_features(side="left") {
-    side_bank = side == "left" ? 0 : active_drawer_bank_count()-1;
 
     if (side_has_toe_cutout(side))
         translate([-0.01,-0.01])
@@ -3969,6 +4096,7 @@ module cabinet_side_panel_cut_features(side="left") {
     all_side_butt_registration_2d();
     mixed_bay_side_fixed_shelf_butt_registration_2d(side);
 
+    for (side_bank=side_drawer_banks(side))
     if (has_drawers
         && drawer_bank_drawer_count(side_bank) > 0
         && drawer_mount == "wood_rails"
@@ -4004,6 +4132,7 @@ module cabinet_side_panel_cut_features(side="left") {
 
     mixed_bay_side_hinge_plate_holes_cut_2d(side);
 
+    for (side_bank=side_drawer_banks(side))
     if (has_drawers
         && drawer_bank_drawer_count(side_bank) > 0
         && drawer_mount == "metal_slides"
@@ -5238,13 +5367,13 @@ module carcass() {
     }
 
     if (show_shelves && mixed_bay_mode) {
-        for (b=[0:active_mixed_bay_count-1])
+        for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
                 for (s=[1:mixed_bay_shelf_count(b)])
                     paint("shelf",mixed_bay_shelf_part_index(b,s))
                         if (mixed_bay_shelf_style(b) == "fixed")
                             mixed_bay_fixed_shelf_3d(
-                                b,mixed_bay_shelf_z(b,s));
+                                b,mixed_bay_shelf_z(b,s),s);
                         else
                             mixed_bay_adjustable_shelf_3d(
                                 b,mixed_bay_shelf_z(b,s));
@@ -5255,6 +5384,14 @@ module carcass() {
         for (p=[0:mixed_bay_partition_count()-1])
             paint("mixed_bay_partition",p)
                 mixed_bay_partition_3d(p);
+    }
+
+    // Section dividers are horizontal dividers (shown with the combo divider).
+    if (show_combo_divider
+        && section_divider_count() > 0) {
+        for (h=[0:section_divider_count()-1])
+            paint("section_divider",h)
+                section_divider_3d(h);
     }
 
     if (show_door_hinge_partitions

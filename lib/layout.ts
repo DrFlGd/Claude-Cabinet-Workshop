@@ -9,8 +9,10 @@
 //               side-by-side drawer banks (joined partitions and dividers)
 //   mixed_bays  up to four full-height bays of drawers, doors or open shelves
 //               (joined bay partitions)
-//   sections    kitchen only: any nested arrangement (interior dividers are
-//               butt-fit blanks; see docs/SECTION_LAYOUTS.md)
+//   sections    shop carts, utility and kitchen cabinets: any nested
+//               arrangement; dividers are joined like bay partitions and each
+//               opening's hardware is drilled into the members around it
+//               (see docs/SECTION_LAYOUTS.md)
 // The current construction is kept whenever it can still build the edited
 // layout, so an edit never silently changes how an existing design is joined.
 import {schemas,thickness,type Values} from './cabinet';
@@ -35,8 +37,8 @@ export type Profile={family:number;contents:Contents[];columnContents:Contents[]
 export function profile(family:number):Profile|null{
  const all:Contents[]=['drawers','doors','open'];
  switch(family){
-  case 0:return {family,contents:all,columnContents:all,maxColumns:4,combo:true,nested:false,maxDrawers:12,maxBayDrawers:8,maxDoors:4,maxBayDoors:2,maxShelves:6,hinge:true,name:'shop cart'};
-  case 1:return {family,contents:all,columnContents:all,maxColumns:4,combo:true,nested:false,maxDrawers:8,maxBayDrawers:8,maxDoors:4,maxBayDoors:2,maxShelves:6,hinge:true,name:'utility cabinet'};
+  case 0:return {family,contents:all,columnContents:all,maxColumns:4,combo:true,nested:true,maxDrawers:12,maxBayDrawers:8,maxDoors:4,maxBayDoors:2,maxShelves:6,hinge:true,name:'shop cart'};
+  case 1:return {family,contents:all,columnContents:all,maxColumns:4,combo:true,nested:true,maxDrawers:8,maxBayDrawers:8,maxDoors:4,maxBayDoors:2,maxShelves:6,hinge:true,name:'utility cabinet'};
   case 2:return {family,contents:['drawers'],columnContents:['drawers'],maxColumns:4,combo:false,nested:false,maxDrawers:12,maxBayDrawers:12,maxDoors:0,maxBayDoors:0,maxShelves:0,hinge:false,name:'benchtop unit'};
   case 3:return {family,contents:all,columnContents:['drawers'],maxColumns:4,combo:false,nested:false,maxDrawers:8,maxBayDrawers:8,maxDoors:1,maxBayDoors:1,maxShelves:6,hinge:false,name:'stackable module'};
   case 4:return {family,contents:all,columnContents:all,maxColumns:4,combo:true,nested:true,maxDrawers:8,maxBayDrawers:8,maxDoors:4,maxBayDoors:2,maxShelves:8,hinge:true,name:'kitchen cabinet'};
@@ -88,7 +90,7 @@ export function drawerWeights(n:Leaf){
  return Array.from({length:n.count},(_,i)=>n.heightMode==='graduated'?Math.max(0.05,1+i*n.step):n.heightMode==='custom_weights'?Math.max(0.05,n.weights[i]??1):1);
 }
 export function currentMode(family:number,v:Values):Mode{
- if(family===4&&v.cabinet_layout_mode==='sections')return 'sections';
+ if([0,1,4].includes(family)&&v.cabinet_layout_mode==='sections')return 'sections';
  if([0,1,4].includes(family)&&v.cabinet_layout_mode==='mixed_bays')return 'mixed_bays';
  return 'legacy';
 }
@@ -99,7 +101,7 @@ export function currentMode(family:number,v:Values):Mode{
 export function fromValues(family:number,v:Values,report?:LayoutReport,frame?:Frame):LayoutNode|null{
  if(!profile(family))return null;
  const mode=currentMode(family,v);
- if(mode==='sections'&&!treeErrors(v.section_nodes).length)return fromSections(v.section_nodes);
+ if(mode==='sections'&&!treeErrors(v.section_nodes).length)return fromSections(v.section_nodes,v);
  if(mode==='mixed_bays')return fromBays(v);
  return fromLegacy(family,v,report,frame??frameFor(family,v,report));
 }
@@ -166,12 +168,15 @@ function fromLegacy(family:number,v:Values,report:LayoutReport|undefined,frame:F
  return {kind:'z',divider:'panel',children:[top,bottom],size:1,fixed:false,auto:!(num(v.combo_door_height,0)>0)};
 }
 
-export function fromSections(nodes:SectionNode[]):LayoutNode{
+// Rows saved before the hinge-side and shelf-style columns use the cabinet's
+// single-door hinge side and fixed shelves, which is how the engine reads them.
+export function fromSections(nodes:SectionNode[],v:Values={}):LayoutNode{
  const build=(i:number):LayoutNode=>{
   const n=nodes[i],kids=nodes.map((c,j)=>({c,j})).filter(x=>x.c[0]===i).sort((a,b)=>a.c[1]-b.c[1]);
   if(n[2]==='leaf'){
    const c=n[5];
-   return leaf(c,c==='open'?0:n[6],{shelves:c==='open'?n[6]:c==='doors'?n[11]:0,heightMode:n[7],step:n[8],weights:row(n[9],n[6]),size:n[4],fixed:n[3]==='mm',ref:{section:i}});
+   const hinge=n.length>12?n[12]:v.single_door_hinge_side,shelfStyle=n.length>13?n[13]:'fixed';
+   return leaf(c,c==='open'?0:n[6],{shelves:c==='open'?n[6]:c==='doors'?n[11]:0,shelfStyle:shelfStyle==='fixed'?'fixed':'adjustable',hinge:hinge==='right'?'right':'left',heightMode:n[7],step:n[8],weights:row(n[9],n[6]),size:n[4],fixed:n[3]==='mm',ref:{section:i}});
   }
   return {kind:n[2],divider:n[10],children:kids.map(x=>build(x.j)),size:n[4],fixed:n[3]==='mm',ref:{section:i}};
  };
@@ -184,9 +189,9 @@ export function toSections(root:LayoutNode):SectionNode[]{
   const i=out.length;
   if(n.kind==='leaf'){
    const count=n.contents==='open'?Math.min(8,n.shelves):n.count;
-   out.push([parent,order,'leaf',n.fixed?'mm':'weight',r3(n.size),n.contents,count,n.heightMode,n.step,row(n.weights,Math.max(1,n.contents==='drawers'?n.count:1)).map(r3),'panel',n.contents==='doors'?n.shelves:0]);
+   out.push([parent,order,'leaf',n.fixed?'mm':'weight',r3(n.size),n.contents,count,n.heightMode,n.step,row(n.weights,Math.max(1,n.contents==='drawers'?n.count:1)).map(r3),'panel',n.contents==='doors'?n.shelves:0,n.hinge,n.shelfStyle]);
   }else{
-   out.push([parent,order,n.kind,n.fixed?'mm':'weight',r3(n.size),'open',0,'equal',0.25,[1],n.kind==='x'&&n.divider==='rail'?'panel':n.divider,0]);
+   out.push([parent,order,n.kind,n.fixed?'mm':'weight',r3(n.size),'open',0,'equal',0.25,[1],n.kind==='x'&&n.divider==='rail'?'panel':n.divider,0,'left','adjustable']);
    n.children.forEach((c,k)=>add(c,i,k));
   }
  };
@@ -305,15 +310,15 @@ function bayMapping(family:number,v:Values,root:LayoutNode):Mapping|Failure{
 }
 
 function sectionMapping(family:number,root:LayoutNode):Mapping|Failure{
- if(family!==4)return {error:'nested'};
+ if(!profile(family)?.nested)return {error:'nested'};
  const nodes=toSections(root),errors=treeErrors(nodes);
  if(errors.length)return {error:errors[0]};
  const leafCount=nodes.filter(n=>n[2]==='leaf').length;
- return {patch:{cabinet_layout_mode:'sections',section_nodes:nodes,width_basis:'outside',depth_basis:'outside'},mode:'sections',label:`Sections · ${leafCount} opening${leafCount===1?'':'s'}`,notes:['Interior section dividers and shelves are butt-fit blanks: fit cleats, brackets or shop-drilled fasteners.']};
+ return {patch:{cabinet_layout_mode:'sections',section_nodes:nodes,width_basis:'outside',depth_basis:'outside'},mode:'sections',label:`Sections · ${leafCount} opening${leafCount===1?'':'s'}`,notes:[]};
 }
 
 const explain:Record<string,string>={
- nested:'This cabinet type cannot stack openings inside a bay. Use side-by-side bays, or drawers over doors across the full width. Kitchen cabinets support any arrangement.',
+ nested:'This cabinet type cannot stack openings inside a bay. Use side-by-side drawer columns. Shop carts, utility and kitchen cabinets support any arrangement.',
  open:'Open openings need the bay layout.',
  'frame-ends':'Behind a face frame, drawers cannot sit in the first or last bay.',
  'frame-inset':'Inset fronts cannot be used for bays behind a face frame.',
@@ -385,7 +390,7 @@ export function geometry(family:number,v:Values,root:LayoutNode,frame:Frame,repo
   if(report&&ref){
    const bay=ref.bay!==undefined?report.bays.find(b=>b.index===ref.bay):undefined;
    const bank=ref.bank!==undefined?report.banks.find(b=>b.index===ref.bank):undefined;
-   const sec=ref.section!==undefined?report.sections.find(s=>s.index===ref.section):undefined;
+   const sec=ref.section!==undefined?report.bays.find(b=>b.section===ref.section)??report.sections.find(s=>s.index===ref.section):undefined;
    if(bay)r={...r,x:bay.x,w:bay.w};
    if(bank)r={...r,x:bank.x,w:bank.w};
    if(sec)r={x:sec.x,z:sec.z,w:sec.w,h:sec.h};
@@ -426,8 +431,9 @@ export function childSizes(g:Geometry,root:LayoutNode,path:Path):number[]{
 export type Front={id:string;kind:'drawer'|'door';x:number;z:number;w:number;h:number;nominal:number;hinge?:string;exact:boolean};
 export function frontsFor(cell:Cell,v:Values,report?:LayoutReport,mode:Mode='legacy'):Front[]{
  const n=cell.node,r=cell.rect;
- if(report&&n.ref&&mode!=='sections'){
-  const bayNo=n.ref.bay!==undefined?n.ref.bay+1:n.ref.bank!==undefined?n.ref.bank+1:n.ref.doors?0:undefined;
+ if(report&&n.ref){
+  const secBay=n.ref.section!==undefined?report.bays.find(b=>b.section===n.ref!.section):undefined;
+  const bayNo=mode==='sections'?(secBay?secBay.index+1:undefined):n.ref.bay!==undefined?n.ref.bay+1:n.ref.bank!==undefined?n.ref.bank+1:n.ref.doors?0:undefined;
   if(bayNo!==undefined){
    const kind=n.contents==='drawers'?'drawer':'door';
    const list=report.fronts.filter(f=>f.kind===kind&&f.bay===bayNo).sort((a,b)=>a.index-b.index);

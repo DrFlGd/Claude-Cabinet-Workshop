@@ -1,25 +1,111 @@
-// Rectangular section tree. Public rows remain ordinary editable SCAD arrays.
-// parent,order,axis,size_mode,size,contents,count,height_mode,step,weights,separator,shelves
-function sec_children(i) = [for(k=[0:len(section_nodes)-1]) if(section_nodes[k][0]==i) k];
+// Section layout tree (cabinet_layout_mode = "sections").
+//
+// section_nodes is a flat list of rows, parents before children:
+//   [parent, order, axis, size_mode, size, contents, count, height_mode, step,
+//    weights, separator, shelves, hinge_side, shelf_style]
+// axis is "leaf", "x" (children side by side, left to right) or "z" (children
+// stacked, top to bottom). A split's separator is "panel", "rail" (stacked
+// splits only: a front rail) or "none". A leaf holds "drawers" (count drawers
+// sized by height_mode/step/weights), "doors" (count = 1 or 2 doors, with
+// `shelves` shelves behind them) or "open" (count = shelves). hinge_side
+// (single doors) and shelf_style ("fixed"/"adjustable") are optional; designs
+// saved with twelve columns use single_door_hinge_side and fixed shelves.
+//
+// Every leaf is one bay of the shared bay construction in core/resolve.scad.
+// The geometry below is resolved once into sec_rects, sec_bounds, sec_vmembers
+// and sec_hmembers there.
+
+function sec_n() = len(sec_rows);
+function sec_children(i) =
+    sec_n()==0 ? [] : [for(k=[0:sec_n()-1]) if(sec_rows[k][0]==i) k];
+function sec_child_at(i,order) =
+    let(k=[for(c=sec_children(i)) if(sec_rows[c][1]==order) c]) len(k)>0 ? k[0] : -1;
 function sec_sum(a,i=0) = i>=len(a)?0:a[i]+sec_sum(a,i+1);
-function sec_gap(i) = section_nodes[i][10]=="none"?0:material_thickness;
-function sec_root() = [face_frame_active?face_frame_inner_left_x:material_thickness,front_opening_bottom_z,face_frame_active?face_frame_clear_width:inner_width,front_opening_top_z-front_opening_bottom_z];
-function sec_span(i,parent) = let(k=sec_children(section_nodes[i][0]),axis=section_nodes[section_nodes[i][0]][2],available=(axis=="x"?parent[2]:parent[3])-sec_gap(section_nodes[i][0])*(len(k)-1),fixed=sec_sum([for(c=k) section_nodes[c][3]=="mm"?section_nodes[c][4]:0]),weights=sec_sum([for(c=k) section_nodes[c][3]=="weight"?section_nodes[c][4]:0])) section_nodes[i][3]=="mm"?section_nodes[i][4]:(available-fixed)*section_nodes[i][4]/max(0.001,weights);
-function sec_rect(i,depth=0) = assert(depth<=8,"Section nesting exceeds eight levels") i==0?sec_root():let(p=section_nodes[i][0],r=sec_rect(p,depth+1),axis=section_nodes[p][2],before=[for(c=sec_children(p)) if(section_nodes[c][1]<section_nodes[i][1]) c],offset=sec_sum([for(c=before) sec_span(c,r)+sec_gap(p)]),span=sec_span(i,r)) axis=="x"?[r[0]+offset,r[1],span,r[3]]:[r[0],r[1]+r[3]-offset-span,r[2],span];
-function sec_leaves() = [for(i=[0:len(section_nodes)-1]) if(section_nodes[i][2]=="leaf") i];
-function sec_dividers() = [for(i=[0:len(section_nodes)-1]) if(section_nodes[i][2]!="leaf" && sec_gap(i)>0) for(c=sec_children(i)) if(section_nodes[c][1]>0) let(p=sec_rect(i),r=sec_rect(c),vertical=section_nodes[i][2]=="x") [str("SEC-",i+1,"-DIV-",section_nodes[c][1]),vertical?r[0]-material_thickness:p[0],vertical?p[1]:r[1]+r[3],vertical?material_thickness:p[2],vertical?p[3]:material_thickness,section_nodes[i][10]=="rail"?min(80,usable_depth):usable_depth,vertical]];
-function sec_shelves() = [for(i=sec_leaves()) if(section_nodes[i][5]!="drawers") let(r=sec_rect(i),n=section_nodes[i][5]=="open"?section_nodes[i][6]:section_nodes[i][11]) if(n>0) for(s=[1:n]) [str("SEC-",i+1,"-SH-",s),r[0],r[1]+r[3]*s/(n+1)-material_thickness/2,r[2],material_thickness,max(1,usable_depth-10),false]];
-function sec_panels() = concat(sec_dividers(),sec_shelves());
-// Separate registered bands; deliberately not an optimized sheet nest.
-function sec_band() = 12*(cabinet_height+resolved_cabinet_width+resolved_cabinet_depth+layout_gap);
-function sec_panel_y(i) = (len(sec_leaves())+1)*sec_band()+i*(max(cabinet_height,resolved_cabinet_width,resolved_cabinet_depth)+layout_gap);
+function sec_gap(i) = sec_rows[i][10]=="none"?0:material_thickness;
+function sec_root() = [
+    face_frame_active?face_frame_inner_left_x:material_thickness,
+    front_opening_bottom_z,
+    face_frame_active?face_frame_clear_width:inner_width,
+    front_opening_top_z-front_opening_bottom_z
+];
+function sec_span(i,parent) =
+    let(
+        k=sec_children(sec_rows[i][0]),
+        axis=sec_rows[sec_rows[i][0]][2],
+        available=(axis=="x"?parent[2]:parent[3])-sec_gap(sec_rows[i][0])*(len(k)-1),
+        fixed=sec_sum([for(c=k) sec_rows[c][3]=="mm"?sec_rows[c][4]:0]),
+        weights=sec_sum([for(c=k) sec_rows[c][3]=="weight"?sec_rows[c][4]:0])
+    )
+    sec_rows[i][3]=="mm"?sec_rows[i][4]:(available-fixed)*sec_rows[i][4]/max(0.001,weights);
+function sec_rect(i,depth=0) =
+    assert(depth<=8,"Section nesting exceeds eight levels")
+    i==0?sec_root():
+    let(
+        p=sec_rows[i][0],
+        r=sec_rect(p,depth+1),
+        axis=sec_rows[p][2],
+        before=[for(c=sec_children(p)) if(sec_rows[c][1]<sec_rows[i][1]) c],
+        offset=sec_sum([for(c=before) sec_span(c,r)+sec_gap(p)]),
+        span=sec_span(i,r)
+    )
+    axis=="x"?[r[0]+offset,r[1],span,r[3]]:[r[0],r[1]+r[3]-offset-span,r[2],span];
+
+// Dividers: one between each pair of neighbouring children of a split that has
+// a separator. [node, k] is the divider before child k (left of it in a side by
+// side split, above it in a stacked split).
+function sec_member_nodes(axis) =
+    sec_n()==0 ? [] : [
+        for(i=[0:sec_n()-1])
+            if(sec_rows[i][2]==axis && sec_gap(i)>0)
+                let(n=len(sec_children(i)))
+                    for(k=[1:max(1,n-1)]) if(k<n) [i,k]
+    ];
+function sec_find(list,i,k) =
+    len(list)==0 ? -2 :
+    let(m=[for(j=[0:len(list)-1]) if(list[j][0]==i && list[j][1]==k) j]) len(m)>0?m[0]:-2;
+
+// [left, right, bottom, top] of node i: -1 the carcass, -2 a split without a
+// divider, otherwise a vertical (left/right) or horizontal (bottom/top) divider.
+function sec_bound(i) =
+    i==0 ? [-1,-1,-1,-1] :
+    let(
+        p=sec_rows[i][0],
+        pb=sec_bound(p),
+        k=sec_rows[i][1],
+        last=k==len(sec_children(p))-1,
+        divided=sec_gap(p)>0
+    )
+    sec_rows[p][2]=="x"
+        ? [k==0?pb[0]:divided?sec_find(sec_vm_nodes,p,k):-2,
+           last?pb[1]:divided?sec_find(sec_vm_nodes,p,k+1):-2,
+           pb[2],pb[3]]
+        : [pb[0],pb[1],
+           last?pb[2]:divided?sec_find(sec_hm_nodes,p,k+1):-2,
+           k==0?pb[3]:divided?sec_find(sec_hm_nodes,p,k):-2];
+
+// Structural extent [x0,z0,x1,z1] of node i: its opening, widened to the carcass
+// sides, bottom and top where it meets them (they differ behind a face frame).
+function sec_struct(i) =
+    let(r=sec_rects[i],b=sec_bounds[i])
+    [
+        b[0]==-1 ? material_thickness : r[0],
+        b[2]==-1 ? carcass_interior_bottom_z() : r[1],
+        b[1]==-1 ? resolved_cabinet_width-material_thickness : r[0]+r[2],
+        b[3]==-1 ? carcass_interior_top_z() : r[1]+r[3]
+    ];
+
+function sec_leaf_shelf_style(row) =
+    len(row)>13 && (row[13]=="fixed"||row[13]=="adjustable") ? row[13] : "fixed";
+function sec_leaf_hinge_side(row) =
+    len(row)>12 && (row[12]=="left"||row[12]=="right") ? row[12] : single_door_hinge_side;
+
 module sec_validate(){
  assert(len(section_nodes)>0 && len(section_nodes)<=31,"Use 1 to 31 section nodes");
  assert(section_nodes[0][0]==-1,"Root section must have parent -1");
  assert(width_basis=="outside" && depth_basis=="outside","Section layout requires outside-envelope sizing");
  for(i=[0:len(section_nodes)-1]){
-  n=section_nodes[i];r=sec_rect(i);children=sec_children(i);
-  assert(len(n)==12,str("Invalid section row ",i+1));
+  n=section_nodes[i];r=sec_rects[i];children=sec_children(i);
+  assert(len(n)==12||len(n)==14,str("Invalid section row ",i+1));
   assert(i==0 || (n[0]>=0 && n[0]<i),"Parents must precede children");
   assert(n[2]=="leaf"||n[2]=="x"||n[2]=="z","Unknown split axis");
   assert(n[3]=="weight"||n[3]=="mm","Unknown section size mode");
@@ -42,89 +128,4 @@ module sec_validate(){
    echo(str("DIM|SECTION|S",i+1,"|X=",r[0],"|Z=",r[1],"|W=",r[2],"|H=",r[3],"|CONTENTS=",n[5]));
   }
  }
- echo("WARN|SECTION_SUPPORTS|Interior section panels/rails/shelves use butt-fit blanks; provide suitable cleats, brackets or shop-drilled fasteners. Cabinet-side slide/hinge mounting holes are transferred during fitting; drawer/door machining remains in the exports.");
-}
-module sec_leaf(i,mode,section_depth){
- r=sec_rect(i);n=section_nodes[i];
- // Re-resolve existing drawer/door geometry in a virtual opening. No duplicate carcass is emitted.
- cabinet_width=r[2]+2*material_thickness;
- cabinet_height=r[3]+2*material_thickness;
- cabinet_depth=section_depth;
- active_cabinet_layout_mode="legacy";
- cabinet_contents=n[5]=="drawers"?"drawers":n[5]=="doors"?"doors":"open";
- front_facing_style="none";
- front_width_style="inset";
- fronts_cover_bottom_lip=false;
- extend_top_drawer_face_to_top=false;
- bottom_above_toe=0;has_toe_kick=false;base_hardware_active=false;worktop_active=false;
- drawer_bank_count=1;drawer_bank_layout_mode="shared";
- drawer_count=n[5]=="drawers"?n[6]:1;door_count=n[5]=="doors"?n[6]:0;door_shelf_count=0;
- drawer_height_mode=n[7];drawer_graduated_step=n[8];drawer_height_weights=n[9];
- include_drawer_separators=false;include_door_hinge_partitions=false;
- width_basis="outside";depth_basis="outside";
- top_style="full";
- $section_id=str("SEC-",i+1);
- include <core.scad>
- include <layouts_modules.scad>
- if(has_drawers){
-  echo(str("DIM|SECTION_MACHINING|",$section_id,"|DRAWER_DADO_DEPTH=",drawer_joint_geometry=="dado"?effective_drawer_dado_depth():0,"|BOTTOM_GROOVE_DEPTH=",drawer_bottom_joinery=="dado"?effective_drawer_bottom_dado_depth():0,"|FACE_REGISTRATION_DEPTH=",active_drawer_face_registration?drawer_face_registration_blind_depth():0));
-  assert(drawer_outer_width(0)>2*drawer_material_thickness+20 && drawer_box_depth>2*drawer_material_thickness+20,"Section is too small for its drawer hardware");
-  for(d=[0:drawer_count-1])assert(drawer_face_nominal_height(d)>2*drawer_vertical_clearance+40,"Drawer fronts are too short for safe box clearance");
- }
- if(has_doors)echo(str("DIM|SECTION_MACHINING|",$section_id,"|HINGE_CUP_DEPTH=",effective_hinge_style=="euro_35mm"?effective_hinge_cup_depth:0,"|MACHINING_FACE=door_back"));
- if(has_doors)assert(door_each_width(0)>40 && door_face_height>40,"Door opening is too small");
- if(mode=="assembly"||mode=="drawers_only"){all_drawers();if(mode=="assembly")doors();}
- else if(mode=="bom")bom_report();
- else if(mode=="cut_layout"){drawer_cut_layout();door_cut_layout();}
- else if(mode=="engrave_layout"){drawer_engrave_labels();door_engrave_labels();}
- else if(mode=="flat_3d"||mode=="print_layout"){
-  if(has_drawers)standalone_drawer_print_layout();
-  if(has_doors)for(d=[0:door_count-1])translate([door_layout_part_x(d),door_layout_y,0])door_print_part(d);
- }
- else {
-  if(mode=="pocket_layout"||mode=="pocket_drawer_dados")drawer_dado_operation_geometry_2d();
-  if(mode=="pocket_layout"||mode=="pocket_bottom_grooves")drawer_bottom_operation_geometry_2d();
-  if(mode=="pocket_layout"||mode=="pocket_divider_bottom_grooves")drawer_divider_bottom_operation_geometry_2d();
-  if(mode=="pocket_layout"||mode=="pocket_divider_perimeter_grooves")drawer_divider_perimeter_operation_geometry_2d();
-  if(mode=="pocket_layout"||mode=="pocket_hinge_cups")hinge_cup_operation_geometry_2d();
-  if(mode=="pocket_layout"||mode=="pocket_face_registration")face_registration_operation_geometry_2d();
- }
-}
-module sec_registration(){
- if(include_shared_export_bounding_box)translate([-export_bounding_box_margin,-export_bounding_box_margin])difference(){
-  square([sec_band()+2*export_bounding_box_margin,sec_panel_y(len(sec_panels()))+2*export_bounding_box_margin]);
-  translate([export_bounding_box_frame_width,export_bounding_box_frame_width])square([sec_band()+2*export_bounding_box_margin-2*export_bounding_box_frame_width,sec_panel_y(len(sec_panels()))+2*export_bounding_box_margin-2*export_bounding_box_frame_width]);
- }
-}
-module section_layout_output(){
- sec_validate();leaves=sec_leaves();panels=sec_panels();
- if(output_mode=="assembly"||output_mode=="carcass_only"||output_mode=="drawers_only"){
-  if(output_mode!="drawers_only"){
-   carcass();face_frame_assembly_3d();
-   for(p=panels)color([0.72,0.52,0.32])translate([p[1],0,p[2]])cube([p[3],p[5],p[4]]);
-  }
-  if(output_mode!="carcass_only")for(i=leaves)let(r=sec_rect(i))translate([r[0]-material_thickness,front_reference_y,r[1]-material_thickness])sec_leaf(i,output_mode,resolved_cabinet_depth);
- }else if(output_mode=="bom"){
-  bom_report();for(i=leaves)sec_leaf(i,"bom",resolved_cabinet_depth);
-  for(p=panels)bom_row(p[0],p[6]?"section_partition":"section_shelf","CARCASS",material_thickness,p[6]?p[5]:p[3],p[6]?p[4]:p[5],"butt_fit_blank; shop_install_supports");
- }else if(output_mode=="flat_3d"||output_mode=="print_layout"){
-  print_layout();
-  for(j=[0:len(leaves)-1])translate([0,(j+1)*sec_band(),0])sec_leaf(leaves[j],output_mode,resolved_cabinet_depth);
-  if(len(panels)>0)for(j=[0:len(panels)-1])let(p=panels[j])translate([0,sec_panel_y(j),0])linear_extrude(material_thickness)cut_part(p[6]?p[5]:p[3],p[6]?p[4]:p[5]);
- }else if(output_mode=="cut_layout"||output_mode=="engrave_layout"||substr_category(output_mode)=="pocket"){
-  sec_registration();
-  if(output_mode=="cut_layout"){carcass_cut_layout();accessory_cut_layout();}
-  else if(output_mode=="engrave_layout"){carcass_engrave_labels();face_frame_engrave_labels();accessory_engrave_labels();}
-  else if(output_mode=="pocket_layout")blind_operation_geometry_2d();
-  else if(output_mode=="pocket_carcass_dados")carcass_dado_operation_geometry_2d();
-  else if(output_mode=="pocket_base_hardware")base_hardware_operation_geometry_2d();
-  else if(output_mode=="pocket_worktop_registration")worktop_registration_operation_geometry_2d();
-  else if(output_mode=="pocket_face_frame_dados")face_frame_dado_operation_geometry_2d();
-  else if(output_mode=="pocket_ganging")ganging_operation_geometry_2d();
-  for(j=[0:len(leaves)-1])translate([0,(j+1)*sec_band()])sec_leaf(leaves[j],output_mode,resolved_cabinet_depth);
-  if(len(panels)>0)for(j=[0:len(panels)-1])let(p=panels[j])translate([0,sec_panel_y(j)]){
-   if(output_mode=="cut_layout")cut_part(p[6]?p[5]:p[3],p[6]?p[4]:p[5]);
-   if(output_mode=="engrave_layout")engraving_label(p[0],p[6]?p[5]:p[3],p[6]?p[4]:p[5]);
-  }
- }else assert(false,"This output mode is not supported by section layout");
 }

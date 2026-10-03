@@ -312,13 +312,42 @@ sized_wood_drawer_runner_depth =
     );
 
 // ---------------------------
-// GENERALIZED MIXED-BAY MODE
+// BAY LAYOUTS: MIXED BAYS AND SECTIONS
 // ---------------------------
+//
+// Mixed bays and section layouts share one construction. Every bay is a
+// rectangular opening bounded by carcass members or interior dividers and
+// holds drawers, doors or open shelves; the hardware of a bay (slides, hinge
+// plates, shelf pins, fixed-shelf joints) is machined into the members around
+// it. Mixed bays are full-height columns separated by full-height partitions.
+// A section layout (sections.scad) is a tree of side-by-side and stacked
+// splits: each leaf is a bay, vertical dividers ("partitions" below) run
+// between the horizontal members above and below them, and horizontal
+// dividers ("section dividers") run between the vertical members beside them.
+// Every divider is joined with the cabinet's carcass joinery.
 
-mixed_bay_mode = active_cabinet_layout_mode == "mixed_bays";
+mixed_bay_mode =
+    active_cabinet_layout_mode == "mixed_bays"
+    || section_layout_active;
+
+sec_rows = section_layout_active ? section_nodes : [];
+
+sec_leaf_ids =
+    len(sec_rows) == 0
+        ? []
+        : [for (i=[0:len(sec_rows)-1]) if (sec_rows[i][2] == "leaf") i];
+
+layout_bay_count =
+    section_layout_active
+        ? len(sec_leaf_ids)
+        : active_mixed_bay_count;
+
+function sec_leaf_row(b) = sec_rows[sec_leaf_ids[b]];
 
 function mixed_bay_type(b=0) =
-    b < len(active_mixed_bay_types)
+    section_layout_active
+        ? (b < len(sec_leaf_ids) ? sec_leaf_row(b)[5] : "open")
+    : b < len(active_mixed_bay_types)
         ? active_mixed_bay_types[b]
         : "open";
 
@@ -332,18 +361,18 @@ function mixed_bay_type_normalized(b=0) =
 
 function mixed_bay_is_type(b,type) =
     b >= 0
-    && b < active_mixed_bay_count
+    && b < layout_bay_count
     && mixed_bay_type_normalized(b) == type;
 
 function mixed_bay_has_type(type,i=0) =
-    i >= active_mixed_bay_count
+    i >= layout_bay_count
         ? false
         : mixed_bay_type_normalized(i) == type
             ? true
             : mixed_bay_has_type(type,i+1);
 
 function mixed_bay_type_count(type,i=0) =
-    i >= active_mixed_bay_count
+    i >= layout_bay_count
         ? 0
         : (mixed_bay_type_normalized(i) == type ? 1 : 0)
           + mixed_bay_type_count(type,i+1);
@@ -355,7 +384,9 @@ function mixed_bay_door_count(b=0) =
             2,
             max(
                 1,
-                b < len(active_mixed_bay_door_counts)
+                section_layout_active
+                    ? round(sec_leaf_row(b)[6])
+                : b < len(active_mixed_bay_door_counts)
                     ? round(active_mixed_bay_door_counts[b])
                     : 1
             )
@@ -369,17 +400,17 @@ function mixed_bay_door_count_prefix(b,j=0) =
           + mixed_bay_door_count_prefix(b,j+1);
 
 function mixed_bay_total_door_count() =
-    mixed_bay_door_count_prefix(active_mixed_bay_count);
+    mixed_bay_door_count_prefix(layout_bay_count);
 
 function mixed_bay_door_part_index(b,leaf=0) =
     mixed_bay_door_count_prefix(b)+leaf;
 
-has_drawers = section_layout_active ? false :
+has_drawers =
     mixed_bay_mode
         ? mixed_bay_has_type("drawers")
         : cabinet_contents == "drawers" || combo_contents_active;
 
-has_doors = section_layout_active ? false :
+has_doors =
     mixed_bay_mode
         ? mixed_bay_has_type("door")
         : cabinet_contents == "doors" || combo_contents_active;
@@ -400,7 +431,7 @@ function mixed_bay_width_weight(b=0) =
         : 1;
 
 function mixed_bay_width_weight_sum(i=0) =
-    i >= active_mixed_bay_count
+    i >= layout_bay_count
         ? 0
         : mixed_bay_width_weight(i)
           + mixed_bay_width_weight_sum(i+1);
@@ -408,8 +439,10 @@ function mixed_bay_width_weight_sum(i=0) =
 mixed_bay_width_weight_total =
     max(0.05,mixed_bay_width_weight_sum());
 
+// Section dividers are always carcass material; mixed bays may omit partitions.
 mixed_bay_partition_thickness =
-    mixed_bay_mode && include_mixed_bay_partitions
+    section_layout_active
+    || (mixed_bay_mode && include_mixed_bay_partitions)
         ? material_thickness
         : 0;
 
@@ -417,16 +450,22 @@ mixed_bay_available_opening_width =
     max(
         1,
         inner_width
-        - max(0,active_mixed_bay_count-1)*mixed_bay_partition_thickness
+        - max(0,layout_bay_count-1)*mixed_bay_partition_thickness
     );
 
+// Bay opening: the clear opening a drawer box passes through. For a section
+// bay at the carcass perimeter this is limited by a face frame; the bay's
+// structural extent (mixed_bay_shelf_x / mixed_bay_shelf_span) always reaches
+// the carcass sides.
 function mixed_bay_opening_width(b=0) =
-    max(
-        1,
-        mixed_bay_available_opening_width
-        *mixed_bay_width_weight(b)
-        /mixed_bay_width_weight_total
-    );
+    section_layout_active
+        ? sec_rects[sec_leaf_ids[b]][2]
+        : max(
+            1,
+            mixed_bay_available_opening_width
+            *mixed_bay_width_weight(b)
+            /mixed_bay_width_weight_total
+        );
 
 function mixed_bay_opening_width_prefix(b,j=0) =
     j >= b
@@ -435,21 +474,97 @@ function mixed_bay_opening_width_prefix(b,j=0) =
           + mixed_bay_opening_width_prefix(b,j+1);
 
 function mixed_bay_opening_x(b=0) =
-    material_thickness
-    + mixed_bay_opening_width_prefix(b)
-    + b*mixed_bay_partition_thickness;
+    section_layout_active
+        ? sec_rects[sec_leaf_ids[b]][0]
+        : material_thickness
+          + mixed_bay_opening_width_prefix(b)
+          + b*mixed_bay_partition_thickness;
+
+// [left, right, bottom, top] boundary of a bay: -1 the carcass, -2 an
+// undivided split (no member), otherwise the index of the partition
+// (left/right) or section divider (bottom/top) that bounds it.
+function mixed_bay_bound(b=0) =
+    section_layout_active
+        ? sec_bounds[sec_leaf_ids[b]]
+        : [
+            b <= 0 ? -1 : include_mixed_bay_partitions ? b-1 : -2,
+            b >= layout_bay_count-1 ? -1 : include_mixed_bay_partitions ? b : -2,
+            -1,
+            -1
+          ];
+
+function mixed_bay_opening_bottom_z(b=0) =
+    section_layout_active
+        ? sec_rects[sec_leaf_ids[b]][1]
+        : front_opening_bottom_z;
+
+function mixed_bay_opening_top_z(b=0) =
+    section_layout_active
+        ? sec_rects[sec_leaf_ids[b]][1]+sec_rects[sec_leaf_ids[b]][3]
+        : front_opening_top_z;
+
+function mixed_bay_content_bottom_z(b=0) =
+    section_layout_active
+        ? mixed_bay_opening_bottom_z(b)+front_edge_reveal
+        : content_bottom_z;
+
+function mixed_bay_content_top_z(b=0) =
+    section_layout_active
+        ? mixed_bay_opening_top_z(b)-front_edge_reveal
+        : content_top_z;
+
+function mixed_bay_content_height(b=0) =
+    section_layout_active
+        ? max(0,mixed_bay_content_top_z(b)-mixed_bay_content_bottom_z(b))
+        : content_height;
+
+// Structural extent of a bay along X, between the members that bound it.
+function mixed_bay_shelf_x(b=0) =
+    section_layout_active
+        ? sec_struct(sec_leaf_ids[b])[0]
+        : mixed_bay_opening_x(b);
+
+function mixed_bay_shelf_span(b=0) =
+    section_layout_active
+        ? sec_struct(sec_leaf_ids[b])[2]-sec_struct(sec_leaf_ids[b])[0]
+        : mixed_bay_opening_width(b);
 
 function mixed_bay_partition_x(p) =
-    mixed_bay_opening_x(p)
-    + mixed_bay_opening_width(p);
+    section_layout_active
+        ? sec_vmembers[p][0]
+        : mixed_bay_opening_x(p)
+          + mixed_bay_opening_width(p);
 
 function mixed_bay_partition_center_x(p) =
     mixed_bay_partition_x(p) + mixed_bay_partition_thickness/2;
 
 function mixed_bay_partition_count() =
-    mixed_bay_mode && include_mixed_bay_partitions
-        ? max(0,active_mixed_bay_count-1)
+    section_layout_active
+        ? len(sec_vmembers)
+    : mixed_bay_mode && include_mixed_bay_partitions
+        ? max(0,layout_bay_count-1)
         : 0;
+
+// Bays on each face of a partition. A section partition can border several
+// stacked bays on each face.
+function mixed_bay_partition_left_bays(p) =
+    section_layout_active
+        ? [for (b=[0:max(0,layout_bay_count-1)])
+            if (layout_bay_count > 0 && mixed_bay_bound(b)[1] == p) b]
+        : [p];
+
+function mixed_bay_partition_right_bays(p) =
+    section_layout_active
+        ? [for (b=[0:max(0,layout_bay_count-1)])
+            if (layout_bay_count > 0 && mixed_bay_bound(b)[0] == p) b]
+        : [p+1];
+
+function mixed_bay_partition_bays(p) =
+    concat(
+        mixed_bay_partition_left_bays(p),
+        mixed_bay_partition_right_bays(p)
+    );
+
 // A thin applied back sits behind the carcass and does not consume interior
 // depth. A structural back is carcass-thickness material captured flush with
 // the rear edge, so drawer/partition/shelf depth stops at its front face.
@@ -762,6 +877,36 @@ content_bottom_z = front_opening_bottom_z + front_edge_reveal;
 content_top_z = front_opening_top_z - front_edge_reveal;
 content_height = max(0, content_top_z - content_bottom_z);
 
+// Section layout geometry (functions in sections.scad), resolved once.
+// sec_rects: opening rectangle [x,z,w,h] of every node.
+// sec_bounds: [left,right,bottom,top] member of every node (see mixed_bay_bound).
+// sec_vmembers: vertical dividers [x, z0, z1, bottom_end, top_end].
+// sec_hmembers: horizontal dividers [z, x0, x1, left_end, right_end, style].
+sec_rects =
+    len(sec_rows) == 0 ? [] : [for (i=[0:len(sec_rows)-1]) sec_rect(i)];
+sec_vm_nodes = sec_member_nodes("x");
+sec_hm_nodes = sec_member_nodes("z");
+sec_bounds =
+    len(sec_rows) == 0 ? [] : [for (i=[0:len(sec_rows)-1]) sec_bound(i)];
+sec_vmembers = [
+    for (m=sec_vm_nodes)
+        let(
+            i=m[0],
+            c=sec_child_at(i,m[1]),
+            s=sec_struct(i)
+        )
+        [sec_rects[c][0]-material_thickness,s[1],s[3],sec_bounds[i][2],sec_bounds[i][3]]
+];
+sec_hmembers = [
+    for (m=sec_hm_nodes)
+        let(
+            i=m[0],
+            c=sec_child_at(i,m[1]),
+            s=sec_struct(i)
+        )
+        [sec_rects[c][1]+sec_rects[c][3],s[0],s[2],sec_bounds[i][0],sec_bounds[i][1],sec_rows[i][10]]
+];
+
 // Visible fronts can optionally extend downward across the front edge of the
 // raised bottom panel.
 front_panel_bottom_z =
@@ -788,12 +933,14 @@ drawer_only_front_height =
 // Legacy drawer-bank settings remain available, while mixed-bay mode maps the
 // existing drawer geometry engine onto the generalized bay indices.
 function active_drawer_bank_count() =
-    mixed_bay_mode ? active_mixed_bay_count : drawer_bank_count;
+    mixed_bay_mode ? layout_bay_count : drawer_bank_count;
 
 function drawer_bank_drawer_count(b=0) =
     mixed_bay_mode
         ? mixed_bay_is_type(b,"drawers")
-            ? (b < len(active_mixed_bay_drawer_counts)
+            ? section_layout_active
+                ? max(1,round(sec_leaf_row(b)[6]))
+            : (b < len(active_mixed_bay_drawer_counts)
                 ? max(1,round(active_mixed_bay_drawer_counts[b]))
                 : max(1,drawer_count))
             : 0
@@ -803,7 +950,9 @@ function drawer_bank_drawer_count(b=0) =
             : max(1,drawer_count);
 
 function drawer_bank_height_mode_for(b=0) =
-    mixed_bay_mode
+    section_layout_active
+        ? sec_leaf_row(b)[7]
+    : mixed_bay_mode
         ? (b < len(active_mixed_bay_drawer_height_modes)
             ? active_mixed_bay_drawer_height_modes[b]
             : drawer_height_mode)
@@ -813,7 +962,9 @@ function drawer_bank_height_mode_for(b=0) =
             : drawer_height_mode;
 
 function drawer_bank_graduated_step_for(b=0) =
-    mixed_bay_mode
+    section_layout_active
+        ? sec_leaf_row(b)[8]
+    : mixed_bay_mode
         ? (b < len(active_mixed_bay_drawer_graduated_steps)
             ? active_mixed_bay_drawer_graduated_steps[b]
             : drawer_graduated_step)
@@ -823,7 +974,9 @@ function drawer_bank_graduated_step_for(b=0) =
             : drawer_graduated_step;
 
 function drawer_bank_custom_weight(b,i) =
-    mixed_bay_mode
+    section_layout_active
+        ? (i < len(sec_leaf_row(b)[9]) ? max(0.05,sec_leaf_row(b)[9][i]) : 1)
+    : mixed_bay_mode
         ? (b < len(active_mixed_bay_drawer_height_weights)
            && i < len(active_mixed_bay_drawer_height_weights[b])
             ? max(0.05,active_mixed_bay_drawer_height_weights[b][i])
@@ -917,7 +1070,7 @@ function drawer_height_unit_for_bank(b=0) =
         ? max(
             0,
             (
-                drawer_only_front_height
+                mixed_bay_drawer_front_height(b)
                 - drawer_gap*max(0,drawer_bank_drawer_count(b)-1)
             )
             / drawer_bank_weight_total(b)
@@ -1124,11 +1277,18 @@ front_panel_width =
                 : inner_width - 2*front_edge_reveal;
 
 // Mixed-bay decorative front boundaries are centered over the structural
-// partitions, just like the weighted drawer-bank front logic.
+// partitions, just like the weighted drawer-bank front logic. A section bay's
+// fronts meet the neighbouring fronts at the centre of each divider (overlay)
+// or sit inside its own opening (inset).
 function mixed_bay_front_left_x(b=0) =
     fronts_inset_flush
         ? mixed_bay_opening_x(b)
           + front_edge_reveal
+    : section_layout_active
+        ? let(e=mixed_bay_bound(b)[0])
+          e == -1 ? front_panel_x
+          : e >= 0 ? mixed_bay_partition_center_x(e)+mixed_bay_front_gap/2
+          : mixed_bay_opening_x(b)+mixed_bay_front_gap/2
         : b <= 0
             ? front_panel_x
             : mixed_bay_partition_center_x(b-1)
@@ -1139,7 +1299,12 @@ function mixed_bay_front_right_x(b=0) =
         ? mixed_bay_opening_x(b)
           + mixed_bay_opening_width(b)
           - front_edge_reveal
-        : b >= active_mixed_bay_count-1
+    : section_layout_active
+        ? let(e=mixed_bay_bound(b)[1])
+          e == -1 ? front_panel_x+front_panel_width
+          : e >= 0 ? mixed_bay_partition_center_x(e)-mixed_bay_front_gap/2
+          : mixed_bay_opening_x(b)+mixed_bay_opening_width(b)-mixed_bay_front_gap/2
+        : b >= layout_bay_count-1
             ? front_panel_x+front_panel_width
             : mixed_bay_partition_center_x(b)
               - mixed_bay_front_gap/2;
@@ -1149,8 +1314,61 @@ function mixed_bay_front_width(b=0) =
 
 function mixed_bay_front_x(b=0) = mixed_bay_front_left_x(b);
 
+// Vertical extent of a bay's drawer fronts and doors. Full-height mixed bays
+// use the cabinet-wide values; a section bay below or above a section divider
+// ends at the divider's centre (overlay) or inside its opening (inset).
+function section_divider_front_z(h) =
+    section_divider_z(h)+material_thickness/2;
+
+function mixed_bay_drawer_front_top_z(b=0) =
+    !section_layout_active ? content_top_z
+    : fronts_inset_flush ? mixed_bay_content_top_z(b)
+    : let(e=mixed_bay_bound(b)[3])
+      e == -1 ? content_top_z
+      : e >= 0 ? section_divider_front_z(e)-mixed_bay_front_gap/2
+      : mixed_bay_opening_top_z(b)-mixed_bay_front_gap/2;
+
+function mixed_bay_drawer_front_bottom_z(b=0) =
+    !section_layout_active ? drawer_stack_bottom_z
+    : fronts_inset_flush ? mixed_bay_content_bottom_z(b)
+    : let(e=mixed_bay_bound(b)[2])
+      e == -1 ? drawer_stack_bottom_z
+      : e >= 0 ? section_divider_front_z(e)+mixed_bay_front_gap/2
+      : mixed_bay_opening_bottom_z(b)+mixed_bay_front_gap/2;
+
+function mixed_bay_drawer_front_height(b=0) =
+    !section_layout_active
+        ? drawer_only_front_height
+        : max(0,mixed_bay_drawer_front_top_z(b)-mixed_bay_drawer_front_bottom_z(b));
+
+function mixed_bay_door_bottom_z(b=0) =
+    !section_layout_active ? door_face_bottom_z
+    : fronts_inset_flush ? mixed_bay_content_bottom_z(b)
+    : let(e=mixed_bay_bound(b)[2])
+      e == -1 ? door_face_bottom_z
+      : e >= 0 ? section_divider_front_z(e)+mixed_bay_front_gap/2
+      : mixed_bay_opening_bottom_z(b)+mixed_bay_front_gap/2;
+
+function mixed_bay_door_top_z(b=0) =
+    !section_layout_active ? door_face_top_z
+    : fronts_inset_flush ? mixed_bay_content_top_z(b)
+    : let(e=mixed_bay_bound(b)[3])
+      e == -1 ? door_face_top_z
+      : e >= 0 ? section_divider_front_z(e)-mixed_bay_front_gap/2
+      : mixed_bay_opening_top_z(b)-mixed_bay_front_gap/2;
+
+function mixed_bay_door_height(b=0) =
+    !section_layout_active
+        ? door_face_height
+        : max(0,mixed_bay_door_top_z(b)-mixed_bay_door_bottom_z(b));
+
+function mixed_bay_door_handle_local_z(b=0) =
+    mixed_bay_door_height(b)-door_handle_from_top;
+
 function mixed_bay_door_hinge_side(b=0) =
-    b < len(active_mixed_bay_door_hinge_sides)
+    section_layout_active
+        ? sec_leaf_hinge_side(sec_leaf_row(b))
+    : b < len(active_mixed_bay_door_hinge_sides)
         ? active_mixed_bay_door_hinge_sides[b]
         : "left";
 
@@ -1213,28 +1431,47 @@ function mixed_bay_needs_boundary(b,side) =
 
 // First interior boundary (between bay p and p+1) that needs a partition, or -1.
 function mixed_bay_unsupported_boundary(p=0) =
-    !mixed_bay_mode || include_mixed_bay_partitions
-    || p >= active_mixed_bay_count-1
+    section_layout_active || !mixed_bay_mode || include_mixed_bay_partitions
+    || p >= layout_bay_count-1
         ? -1
         : mixed_bay_needs_boundary(p,"right")
           || mixed_bay_needs_boundary(p+1,"left")
             ? p
             : mixed_bay_unsupported_boundary(p+1);
 
-function mixed_bay_hinge_z(j) =
+// Section bays whose drawers, shelves or hinges need a member on a side where
+// the split has no divider.
+function section_unsupported_bays() =
+    !section_layout_active || layout_bay_count == 0 ? [] : [
+        for (b=[0:layout_bay_count-1])
+            if ((mixed_bay_bound(b)[0] == -2 && mixed_bay_needs_boundary(b,"left"))
+                || (mixed_bay_bound(b)[1] == -2 && mixed_bay_needs_boundary(b,"right")))
+                b
+    ];
+
+function mixed_bay_hinge_z(j,b=0) =
     hinge_count <= 1
-        ? door_face_bottom_z + door_face_height/2
-        : door_face_bottom_z
+        ? mixed_bay_door_bottom_z(b) + mixed_bay_door_height(b)/2
+        : mixed_bay_door_bottom_z(b)
           + hinge_end_offset
-          + j*(door_face_height-2*hinge_end_offset)/(hinge_count-1);
+          + j*(mixed_bay_door_height(b)-2*hinge_end_offset)/(hinge_count-1);
 
 function mixed_bay_shelf_count(b=0) =
-    b < len(active_mixed_bay_shelf_counts)
+    section_layout_active
+        ? (b < len(sec_leaf_ids)
+            ? max(0,round(
+                sec_leaf_row(b)[5] == "open" ? sec_leaf_row(b)[6]
+                : sec_leaf_row(b)[5] == "doors" ? sec_leaf_row(b)[11]
+                : 0))
+            : 0)
+    : b < len(active_mixed_bay_shelf_counts)
         ? max(0,round(active_mixed_bay_shelf_counts[b]))
         : 0;
 
 function mixed_bay_shelf_style(b=0) =
-    b < len(active_mixed_bay_shelf_styles)
+    section_layout_active
+        ? sec_leaf_shelf_style(sec_leaf_row(b))
+    : b < len(active_mixed_bay_shelf_styles)
         ? active_mixed_bay_shelf_styles[b]
         : "adjustable";
 
@@ -1252,72 +1489,154 @@ function mixed_bay_has_adjustable_shelves(b=0) =
     && mixed_bay_shelf_style(b) != "fixed";
 
 function mixed_bay_any_fixed_shelves(i=0) =
-    i >= active_mixed_bay_count
+    i >= layout_bay_count
         ? false
         : mixed_bay_has_fixed_shelves(i)
             ? true
             : mixed_bay_any_fixed_shelves(i+1);
 
 function mixed_bay_any_adjustable_shelves(i=0) =
-    i >= active_mixed_bay_count
+    i >= layout_bay_count
         ? false
         : mixed_bay_has_adjustable_shelves(i)
             ? true
             : mixed_bay_any_adjustable_shelves(i+1);
 
 function mixed_bay_shelf_z(b,s) =
-    content_bottom_z
-    + s*(content_height/(mixed_bay_shelf_count(b)+1))
+    mixed_bay_content_bottom_z(b)
+    + s*(mixed_bay_content_height(b)/(mixed_bay_shelf_count(b)+1))
     - material_thickness/2;
 
 function mixed_bay_adjustable_shelf_width(b=0) =
     max(
         10,
-        mixed_bay_opening_width(b)
+        mixed_bay_shelf_span(b)
         - 2*adjustable_shelf_side_clearance
     );
 
 function mixed_bay_adjustable_shelf_x(b=0) =
-    mixed_bay_opening_x(b)+adjustable_shelf_side_clearance;
+    mixed_bay_shelf_x(b)+adjustable_shelf_side_clearance;
 
 function mixed_bay_fixed_shelf_dado_depth() = effective_dado_depth();
 
-function mixed_bay_fixed_shelf_cut_width(b=0) =
+// A fixed shelf (or section divider) entering a vertical member is "opposed"
+// when another horizontal member enters the other face of that member at an
+// overlapping height. Opposed tabs share one through-slot and are each made
+// half as long; opposed dados are kept shallow enough to leave a web.
+function horizontal_joint_length(opposed=false) =
     carcass_joint_geometry == "dado"
-        ? mixed_bay_opening_width(b)+2*mixed_bay_fixed_shelf_dado_depth()
+        ? (opposed
+            ? min(mixed_bay_fixed_shelf_dado_depth(),(material_thickness-1)/2)
+            : mixed_bay_fixed_shelf_dado_depth())
         : carcass_joint_geometry == "tab_slot"
-            ? mixed_bay_opening_width(b)+2*material_thickness
-            : mixed_bay_opening_width(b);
-
-function mixed_bay_fixed_shelf_cut_body_offset() =
-    carcass_joint_geometry == "dado"
-        ? mixed_bay_fixed_shelf_dado_depth()
-        : carcass_joint_geometry == "tab_slot"
-            ? material_thickness
+            ? (opposed
+                ? (material_thickness-joint_fit_clearance)/2
+                : material_thickness)
             : 0;
 
+// Heights (member bottom faces) of horizontal members entering one face of
+// partition p: face "left" is entered from the bays to its left.
+function mixed_bay_partition_face_entries(p,face="left") =
+    concat(
+        [for (bb=face == "left"
+                ? mixed_bay_partition_left_bays(p)
+                : mixed_bay_partition_right_bays(p))
+            if (mixed_bay_has_fixed_shelves(bb))
+                for (s=[1:mixed_bay_shelf_count(bb)])
+                    mixed_bay_shelf_z(bb,s)],
+        [for (h=[0:max(0,section_divider_count()-1)])
+            if (section_divider_count() > 0
+                && (face == "left"
+                    ? section_divider_right_end(h)
+                    : section_divider_left_end(h)) == p)
+                section_divider_z(h)]
+    );
+
+function mixed_bay_partition_entry_opposed(p,face,z) =
+    p < 0 ? false :
+    len([
+        for (zz=mixed_bay_partition_face_entries(
+                p,face == "left" ? "right" : "left"))
+            if (abs(zz-z) < material_thickness+max(dado_fit_clearance,joint_fit_clearance))
+                1
+    ]) > 0;
+
+// Joint length at one end of a fixed shelf of bay b: end "left" enters the
+// member on the bay's left (from its right face).
+function mixed_bay_fixed_shelf_end_length(b,s,end="left") =
+    let(m=mixed_bay_bound(b)[end == "left" ? 0 : 1])
+    horizontal_joint_length(
+        mixed_bay_partition_entry_opposed(
+            m,end == "left" ? "right" : "left",mixed_bay_shelf_z(b,s)));
+
+function mixed_bay_fixed_shelf_cut_width(b=0,s=1) =
+    carcass_joint_geometry == "dado" || carcass_joint_geometry == "tab_slot"
+        ? mixed_bay_shelf_span(b)
+          + mixed_bay_fixed_shelf_end_length(b,s,"left")
+          + mixed_bay_fixed_shelf_end_length(b,s,"right")
+        : mixed_bay_shelf_span(b);
+
+function mixed_bay_fixed_shelf_cut_body_offset(b=0,s=1) =
+    carcass_joint_geometry == "dado" || carcass_joint_geometry == "tab_slot"
+        ? mixed_bay_fixed_shelf_end_length(b,s,"left")
+        : 0;
+
+// Bays against each outer cabinet side.
+function mixed_bay_side_bays(side) =
+    !mixed_bay_mode || layout_bay_count == 0 ? []
+    : section_layout_active
+        ? [for (b=[0:layout_bay_count-1])
+            if (mixed_bay_bound(b)[side == "left" ? 0 : 1] == -1) b]
+        : [side == "left" ? 0 : layout_bay_count-1];
+
 function mixed_bay_side_fixed_bay(side) =
-    side == "left" ? 0 : active_mixed_bay_count-1;
+    side == "left" ? 0 : layout_bay_count-1;
 
 function mixed_bay_side_has_fixed_shelves(side) =
     mixed_bay_mode
-    && mixed_bay_has_fixed_shelves(mixed_bay_side_fixed_bay(side));
+    && len([for (b=mixed_bay_side_bays(side)) if (mixed_bay_has_fixed_shelves(b)) b]) > 0;
 
-function mixed_bay_shelf_pin_count() =
-    content_top_z-adjustable_shelf_hole_top_margin
-        < content_bottom_z+adjustable_shelf_hole_bottom_margin
+function mixed_bay_shelf_pin_count(b=0) =
+    mixed_bay_content_top_z(b)-adjustable_shelf_hole_top_margin
+        < mixed_bay_content_bottom_z(b)+adjustable_shelf_hole_bottom_margin
         ? 0
         : floor(
             (
-                content_top_z-adjustable_shelf_hole_top_margin
-                - (content_bottom_z+adjustable_shelf_hole_bottom_margin)
+                mixed_bay_content_top_z(b)-adjustable_shelf_hole_top_margin
+                - (mixed_bay_content_bottom_z(b)+adjustable_shelf_hole_bottom_margin)
             ) / max(1,adjustable_shelf_hole_spacing)
           ) + 1;
 
-function mixed_bay_shelf_pin_z(i) =
-    content_bottom_z
+function mixed_bay_shelf_pin_z(i,b=0) =
+    mixed_bay_content_bottom_z(b)
     + adjustable_shelf_hole_bottom_margin
     + i*adjustable_shelf_hole_spacing;
+
+// Distinct values of a list, in order.
+function distinct_values(v) =
+    [for (i=[0:max(0,len(v)-1)])
+        if (len(v) > 0 && (i == 0 || len([for (j=[0:i-1]) if (v[j] == v[i]) 1]) == 0))
+            v[i]];
+
+// Shelf-pin heights drilled through a member or into a side for a list of bays.
+function mixed_bay_pin_zs(bays) =
+    distinct_values([
+        for (b=bays)
+            if (mixed_bay_has_adjustable_shelves(b))
+                for (i=[0:max(0,mixed_bay_shelf_pin_count(b)-1)])
+                    if (mixed_bay_shelf_pin_count(b) > 0)
+                        mixed_bay_shelf_pin_z(i,b)
+    ]);
+
+// Hinge heights of the door bays in a list.
+function mixed_bay_hinge_zs(bays) =
+    distinct_values([
+        for (b=bays)
+            if (mixed_bay_is_type(b,"door"))
+                for (j=[0:max(0,hinge_count-1)])
+                    if (hinge_count > 0)
+                        mixed_bay_hinge_z(j,b)
+    ]);
 
 function door_width_weight(i=0) =
     i < len(door_width_weights)
@@ -1581,34 +1900,77 @@ function door_adjustable_shelf_layout_x(b=0) =
 // GENERALIZED MIXED-BAY PARTITIONS / SHELVES
 // ---------------------------
 
-function mixed_bay_partition_bottom_z() = carcass_interior_bottom_z();
-function mixed_bay_partition_top_z() = carcass_interior_top_z();
-function mixed_bay_partition_body_height() =
-    max(1,mixed_bay_partition_top_z()-mixed_bay_partition_bottom_z());
+// A mixed-bay partition runs between the carcass bottom and top. A section
+// partition runs between the members below and above its split: the carcass
+// or a section divider (bottom_end / top_end: -1 carcass, else a divider).
+function mixed_bay_partition_bottom_z(p=0) =
+    section_layout_active ? sec_vmembers[p][1] : carcass_interior_bottom_z();
+function mixed_bay_partition_top_z(p=0) =
+    section_layout_active ? sec_vmembers[p][2] : carcass_interior_top_z();
+function mixed_bay_partition_bottom_end(p=0) =
+    section_layout_active ? sec_vmembers[p][3] : -1;
+function mixed_bay_partition_top_end(p=0) =
+    section_layout_active ? sec_vmembers[p][4] : -1;
+function mixed_bay_partition_body_height(p=0) =
+    max(1,mixed_bay_partition_top_z(p)-mixed_bay_partition_bottom_z(p));
 
 mixed_bay_partition_depth = usable_depth;
 
 function mixed_bay_partition_dado_depth() =
     min(effective_dado_depth(),material_thickness-0.2);
 
-function mixed_bay_partition_cut_height() =
+// A partition end is "opposed" when another partition enters the other face of
+// the same section divider at an overlapping position.
+function mixed_bay_partition_end_opposed(p,end="bottom") =
+    let(e=end == "bottom" ? mixed_bay_partition_bottom_end(p) : mixed_bay_partition_top_end(p))
+    e < 0 ? false :
+    len([
+        for (q=[0:max(0,mixed_bay_partition_count()-1)])
+            if (q != p
+                && (end == "bottom"
+                    ? mixed_bay_partition_top_end(q)
+                    : mixed_bay_partition_bottom_end(q)) == e
+                && abs(mixed_bay_partition_x(q)-mixed_bay_partition_x(p))
+                   < material_thickness+max(dado_fit_clearance,joint_fit_clearance))
+                q
+    ]) > 0;
+
+// Length of the tongue (dado) or tabs (tab-and-slot) at one partition end.
+function mixed_bay_partition_end_length(p=0,end="bottom") =
     carcass_joint_geometry == "dado"
+        ? (mixed_bay_partition_end_opposed(p,end)
+            ? min(mixed_bay_partition_dado_depth(),(material_thickness-1)/2)
+            : mixed_bay_partition_dado_depth())
+        : carcass_joint_geometry == "tab_slot"
+            ? (mixed_bay_partition_end_opposed(p,end)
+                ? (material_thickness-joint_fit_clearance)/2
+                : material_thickness)
+            : 0;
+
+function mixed_bay_partition_cut_height(p=0) =
+    section_layout_active
+        ? mixed_bay_partition_body_height(p)
+          + mixed_bay_partition_end_length(p,"bottom")
+          + mixed_bay_partition_end_length(p,"top")
+    : carcass_joint_geometry == "dado"
         ? mixed_bay_partition_body_height()
           + 2*mixed_bay_partition_dado_depth()
         : carcass_joint_geometry == "tab_slot"
             ? mixed_bay_partition_body_height()+2*material_thickness
             : mixed_bay_partition_body_height();
 
-function mixed_bay_partition_cut_body_offset() =
-    carcass_joint_geometry == "dado"
+function mixed_bay_partition_cut_body_offset(p=0) =
+    section_layout_active
+        ? mixed_bay_partition_end_length(p,"bottom")
+    : carcass_joint_geometry == "dado"
         ? mixed_bay_partition_dado_depth()
         : carcass_joint_geometry == "tab_slot"
             ? material_thickness
             : 0;
 
-function mixed_bay_partition_cut_global_bottom_z() =
-    mixed_bay_partition_bottom_z()
-    - mixed_bay_partition_cut_body_offset();
+function mixed_bay_partition_cut_global_bottom_z(p=0) =
+    mixed_bay_partition_bottom_z(p)
+    - mixed_bay_partition_cut_body_offset(p);
 
 function mixed_bay_depth_overlap_start(panel_y0) = max(0,panel_y0);
 function mixed_bay_depth_overlap_end(panel_y0,panel_depth) =
@@ -1620,30 +1982,104 @@ function mixed_bay_depth_overlap_length(panel_y0,panel_depth) =
         - mixed_bay_depth_overlap_start(panel_y0)
     );
 
-function mixed_bay_partition_has_hinge_plates(p) =
-    effective_hinge_style != "none"
-    && (
-        mixed_bay_door_uses_right_boundary(p)
-        || mixed_bay_door_uses_left_boundary(p+1)
+// Door bays hinged on partition p, and on an outer side.
+function mixed_bay_partition_hinged_bays(p) =
+    concat(
+        [for (b=mixed_bay_partition_left_bays(p))
+            if (mixed_bay_door_uses_right_boundary(b)) b],
+        [for (b=mixed_bay_partition_right_bays(p))
+            if (mixed_bay_door_uses_left_boundary(b)) b]
     );
 
+function mixed_bay_side_hinged_bays(side) =
+    [for (b=mixed_bay_side_bays(side))
+        if (side == "left"
+            ? mixed_bay_door_uses_left_boundary(b)
+            : mixed_bay_door_uses_right_boundary(b)) b];
+
+function mixed_bay_partition_has_hinge_plates(p) =
+    effective_hinge_style != "none"
+    && len(mixed_bay_partition_hinged_bays(p)) > 0;
+
+function mixed_bay_partition_hinge_zs(p) =
+    mixed_bay_hinge_zs(mixed_bay_partition_hinged_bays(p));
+
 function mixed_bay_partition_has_shelf_pins(p) =
-    mixed_bay_has_adjustable_shelves(p)
-    || mixed_bay_has_adjustable_shelves(p+1);
+    len([for (b=mixed_bay_partition_bays(p))
+        if (mixed_bay_has_adjustable_shelves(b)) b]) > 0;
+
+function mixed_bay_partition_pin_zs(p) =
+    mixed_bay_pin_zs(mixed_bay_partition_bays(p));
 
 function mixed_bay_side_has_hinge_plates(side) =
     effective_hinge_style != "none"
-    && (
-        (side == "left" && mixed_bay_door_uses_left_boundary(0))
-        ||
-        (side == "right"
-         && mixed_bay_door_uses_right_boundary(active_mixed_bay_count-1))
-    );
+    && len(mixed_bay_side_hinged_bays(side)) > 0;
+
+function mixed_bay_side_hinge_zs(side) =
+    mixed_bay_hinge_zs(mixed_bay_side_hinged_bays(side));
 
 function mixed_bay_side_has_shelf_pins(side) =
-    side == "left"
-        ? mixed_bay_has_adjustable_shelves(0)
-        : mixed_bay_has_adjustable_shelves(active_mixed_bay_count-1);
+    len([for (b=mixed_bay_side_bays(side))
+        if (mixed_bay_has_adjustable_shelves(b)) b]) > 0;
+
+function mixed_bay_side_pin_zs(side) =
+    mixed_bay_pin_zs(mixed_bay_side_bays(side));
+
+// ---------------------------
+// SECTION DIVIDERS (HORIZONTAL MEMBERS OF A SECTION LAYOUT)
+// ---------------------------
+//
+// A divider between stacked section bays is a full-depth panel (or a front
+// rail) running between the members beside it. Its ends are joined into the
+// carcass sides or partitions like a fixed shelf, and the partitions above and
+// below it are joined into its faces like partitions into the carcass bottom.
+
+function section_divider_count() = len(sec_hmembers);
+function section_divider_z(h) = sec_hmembers[h][0];
+function section_divider_x0(h) = sec_hmembers[h][1];
+function section_divider_x1(h) = sec_hmembers[h][2];
+function section_divider_width(h) = max(1,section_divider_x1(h)-section_divider_x0(h));
+function section_divider_left_end(h) = sec_hmembers[h][3];
+function section_divider_right_end(h) = sec_hmembers[h][4];
+function section_divider_is_rail(h) = sec_hmembers[h][5] == "rail";
+function section_divider_y0(h=0) = shelf_front_y;
+function section_divider_depth(h) =
+    section_divider_is_rail(h) ? min(80,shelf_depth) : shelf_depth;
+
+function section_divider_end_length(h,end="left") =
+    let(m=end == "left" ? section_divider_left_end(h) : section_divider_right_end(h))
+    horizontal_joint_length(
+        mixed_bay_partition_entry_opposed(
+            m,end == "left" ? "right" : "left",section_divider_z(h)));
+
+function section_divider_cut_width(h) =
+    section_divider_width(h)
+    + section_divider_end_length(h,"left")
+    + section_divider_end_length(h,"right");
+
+// Partitions entering a divider's top face (from above) or bottom face.
+function section_divider_partitions(h,face="top") =
+    [for (p=[0:max(0,mixed_bay_partition_count()-1)])
+        if (mixed_bay_partition_count() > 0
+            && (face == "top"
+                ? mixed_bay_partition_bottom_end(p)
+                : mixed_bay_partition_top_end(p)) == h)
+            p];
+
+// Dividers whose ends land on a split without a divider have nothing to join.
+function section_floating_dividers() =
+    concat(
+        [for (p=[0:max(0,mixed_bay_partition_count()-1)])
+            if (section_layout_active && mixed_bay_partition_count() > 0
+                && (mixed_bay_partition_bottom_end(p) == -2
+                    || mixed_bay_partition_top_end(p) == -2))
+                str("V",p+1)],
+        [for (h=[0:max(0,section_divider_count()-1)])
+            if (section_divider_count() > 0
+                && (section_divider_left_end(h) == -2
+                    || section_divider_right_end(h) == -2))
+                str("H",h+1)]
+    );
 
 function mixed_bay_shelf_count_prefix(b,j=0) =
     j >= b
@@ -1652,7 +2088,7 @@ function mixed_bay_shelf_count_prefix(b,j=0) =
           + mixed_bay_shelf_count_prefix(b,j+1);
 
 function mixed_bay_total_shelf_count() =
-    mixed_bay_shelf_count_prefix(active_mixed_bay_count);
+    mixed_bay_shelf_count_prefix(layout_bay_count);
 
 function mixed_bay_shelf_part_index(b,s) =
     mixed_bay_shelf_count_prefix(b)+s-1;
@@ -1815,7 +2251,7 @@ function drawer_face_height_prefix(i,b=0,j=0) =
 function drawer_face_z(i,b=0) =
     standalone_drawer_active
         ? standalone_drawer_face_z
-        : content_top_z
+        : (mixed_bay_mode ? mixed_bay_drawer_front_top_z(b) : content_top_z)
           - drawer_face_height_prefix(i,b)
           - i*drawer_gap;
 
@@ -1826,6 +2262,7 @@ function drawer_face_top_extension(i,b=0) =
     && extend_top_drawer_face_to_top
     && !fronts_inset_flush
     && i == 0
+    && (!section_layout_active || mixed_bay_bound(b)[3] == -1)
         ? max(0,cabinet_height-content_top_z)
         : 0;
 
@@ -1866,12 +2303,22 @@ function face_frame_mid_rail_band() =
           ]
         : [];
 
+// A drawer box stays inside its bay's content opening even where the face
+// overlaps the carcass bottom lip or a section divider.
 function drawer_face_opening_bottom_z(i,b=0) =
-    max(drawer_face_z(i,b), content_bottom_z);
+    max(
+        drawer_face_z(i,b),
+        mixed_bay_mode ? mixed_bay_content_bottom_z(b) : content_bottom_z
+    );
 
 function drawer_face_opening_top_z(i,b=0) =
-    drawer_face_z(i,b)
-    + drawer_face_nominal_height(i,b);
+    section_layout_active
+        ? min(
+            drawer_face_z(i,b)+drawer_face_nominal_height(i,b),
+            mixed_bay_content_top_z(b)
+          )
+        : drawer_face_z(i,b)
+          + drawer_face_nominal_height(i,b);
 
 // True when the mid rail crosses this drawer's face span and the drawer lies
 // mostly above (or below) the rail's center line.
@@ -2243,7 +2690,7 @@ function drawer_vertical_clearance_per_side(b=0) =
 function mixed_bay_clear_height(b=0) =
     max(
         0,
-        front_opening_top_z-front_opening_bottom_z
+        mixed_bay_opening_top_z(b)-mixed_bay_opening_bottom_z(b)
     );
 
 // Drawer box-front <-> decorative-face registration pattern.
@@ -2666,9 +3113,6 @@ function shelf_pin_hits_hinge_plate(y,z,hinge_zs) =
 function legacy_hinge_plate_zs() =
     [for (j=[0:max(0,hinge_count-1)]) if (hinge_count > 0) hinge_z(j)];
 
-function mixed_bay_hinge_plate_zs() =
-    [for (j=[0:max(0,hinge_count-1)]) if (hinge_count > 0) mixed_bay_hinge_z(j)];
-
 // Outer cabinet side, full-width (legacy) layouts. An unknown side is treated
 // conservatively as a door side.
 function shelf_pin_kept_on_side(side,row,i) =
@@ -2688,18 +3132,20 @@ function shelf_pin_kept_on_door_partition(row,i) =
             shelf_pin_y(row),shelf_pin_z(i),legacy_hinge_plate_zs())
     );
 
-function mixed_shelf_pin_kept_on_side(side,row,i) =
+// Shelf pins of a partition or side, omitted where they would meet a hinge
+// plate hole on that member. z is the pin height.
+function mixed_shelf_pin_kept_on_side(side,row,z) =
     !(
         mixed_bay_side_has_hinge_plates(side)
         && shelf_pin_hits_hinge_plate(
-            shelf_pin_y(row),mixed_bay_shelf_pin_z(i),mixed_bay_hinge_plate_zs())
+            shelf_pin_y(row),z,mixed_bay_side_hinge_zs(side))
     );
 
-function mixed_shelf_pin_kept_on_partition(p,row,i) =
+function mixed_shelf_pin_kept_on_partition(p,row,z) =
     !(
         mixed_bay_partition_has_hinge_plates(p)
         && shelf_pin_hits_hinge_plate(
-            shelf_pin_y(row),mixed_bay_shelf_pin_z(i),mixed_bay_hinge_plate_zs())
+            shelf_pin_y(row),z,mixed_bay_partition_hinge_zs(p))
     );
 
 
@@ -3153,33 +3599,14 @@ function ganging_legacy_fixed_shelf_conflict(z,r) =
                 1
     ]) > 0;
 
-function ganging_side_mixed_bay_index(side="left") =
-    side == "left"
-        ? 0
-        : max(0,active_mixed_bay_count-1);
-
+// Fixed shelves and section dividers entering an outer side.
 function ganging_mixed_fixed_shelf_conflict(z,r,side="left") =
     mixed_bay_mode
-    && (
-        let(
-            b=ganging_side_mixed_bay_index(side)
-        )
-        (
-            mixed_bay_has_fixed_shelves(b)
-            && len([
-        for (s=[0:max(0,mixed_bay_shelf_count(b)-1)])
-            if (
-                mixed_bay_shelf_count(b) > 0
-                && ganging_near(
-                    z,
-                    mixed_bay_shelf_z(b,s),
-                    r+material_thickness/2
-                )
-            )
+    && len([
+        for (e=side_horizontal_entries(side))
+            if (ganging_near(z,e[0]+material_thickness/2,r+material_thickness/2))
                 1
-            ]) > 0
-        )
-    );
+    ]) > 0;
 
 function ganging_legacy_shelf_pin_conflict(y,z,r) =
     !mixed_bay_mode
@@ -3212,17 +3639,16 @@ function ganging_mixed_shelf_pin_conflict(
     && mixed_bay_side_has_shelf_pins(side)
     && len([
         for (row=[0:1])
-            for (i=[0:max(0,mixed_bay_shelf_pin_count()-1)])
+            for (zz=mixed_bay_side_pin_zs(side))
                 if (
-                    mixed_bay_shelf_pin_count() > 0
-                    && ganging_near(
+                    ganging_near(
                         y,
                         shelf_pin_y(row),
                         r+adjustable_shelf_hole_diameter/2
                     )
                     && ganging_near(
                         z,
-                        mixed_bay_shelf_pin_z(i),
+                        zz,
                         r+adjustable_shelf_hole_diameter/2
                     )
                 )
@@ -3262,22 +3688,21 @@ function ganging_mixed_hinge_conflict(
     mixed_bay_mode
     && mixed_bay_side_has_hinge_plates(side)
     && len([
-        for (j=[0:max(0,hinge_count-1)])
+        for (hz=mixed_bay_side_hinge_zs(side))
             if (hinge_plate_holes_enabled)
             for (dz=[
                 -effective_hinge_plate_hole_spacing/2,
                 effective_hinge_plate_hole_spacing/2
             ])
                 if (
-                    hinge_count > 0
-                    && ganging_near(
+                    ganging_near(
                         y,
                         effective_hinge_plate_center_from_front,
                         r+effective_hinge_plate_hole_diameter/2
                     )
                     && ganging_near(
                         z,
-                        mixed_bay_hinge_z(j)+dz,
+                        hz+dz,
                         r+effective_hinge_plate_hole_diameter/2
                     )
                 )
@@ -3290,8 +3715,7 @@ function ganging_metal_slide_conflict(
     has_drawers
     && drawer_mount == "metal_slides"
     && include_metal_slide_holes
-    && (
-        let(b = side == "left" ? 0 : active_drawer_bank_count()-1)
+    && len([for (b=side_drawer_banks(side)) if (
         drawer_bank_drawer_count(b) > 0
         && len([
             for (i=[0:drawer_bank_drawer_count(b)-1])
@@ -3310,8 +3734,7 @@ function ganging_metal_slide_conflict(
                         )
                     )
                         1
-        ]) > 0
-    );
+        ]) > 0) 1]) > 0;
 
 function ganging_wood_slide_conflict(
     y,z,r,side="left"
@@ -3319,13 +3742,7 @@ function ganging_wood_slide_conflict(
     has_drawers
     && drawer_mount == "wood_rails"
     && include_wood_slide_registration_holes
-    && (
-        let(
-            b = side == "left"
-                ? 0
-                : active_drawer_bank_count()-1
-        )
-        (
+    && len([for (b=side_drawer_banks(side)) if (
             drawer_bank_drawer_count(b) > 0
             && len([
         for (i=[0:drawer_bank_drawer_count(b)-1])
@@ -3345,9 +3762,7 @@ function ganging_wood_slide_conflict(
                     )
                 )
                     1
-            ]) > 0
-        )
-    );
+            ]) > 0) 1]) > 0;
 
 function ganging_point_conflicts(
     y,z,side="left",is_dowel=false
@@ -3639,9 +4054,9 @@ function mo_has_fixed_shelf_interface() =
     || (
         mixed_bay_mode
         && len([
-            for (b=[0:max(0,active_mixed_bay_count-1)])
+            for (b=[0:max(0,layout_bay_count-1)])
                 if (
-                    active_mixed_bay_count > 0
+                    layout_bay_count > 0
                     && mixed_bay_has_fixed_shelves(b)
                     && mixed_bay_shelf_count(b) > 0
                 ) 1
@@ -4166,14 +4581,28 @@ function mo_side_carcass_joint_features(side="left") =
                       ))]
             : [],
         (mixed_bay_mode && mixed_bay_side_has_fixed_shelves(side))
-            ? let(bb=mixed_bay_side_fixed_bay(side)) [
-                for(s=[1:mixed_bay_shelf_count(bb)]) each
-                    mo_side_horizontal_features(
-                        side,shelf_front_y,shelf_depth,mixed_bay_shelf_z(bb,s),
-                        "shelf",str("mixed_fixed_shelf.",side,".",s),
-                        "carcass.shelf")
+            ? [
+                for(bb=mixed_bay_side_bays(side))
+                    if(mixed_bay_has_fixed_shelves(bb))
+                        for(s=[1:mixed_bay_shelf_count(bb)]) each
+                            mo_side_horizontal_features(
+                                side,shelf_front_y,shelf_depth,mixed_bay_shelf_z(bb,s),
+                                "shelf",
+                                section_layout_active
+                                    ? str("mixed_fixed_shelf.",side,".B",bb+1,".",s)
+                                    : str("mixed_fixed_shelf.",side,".",s),
+                                "carcass.shelf")
               ]
             : [],
+        [for(h=[0:max(0,section_divider_count()-1)])
+            if(section_divider_count() > 0
+                && (side == "left"
+                    ? section_divider_left_end(h)
+                    : section_divider_right_end(h)) == -1)
+                each mo_side_horizontal_features(
+                    side,section_divider_y0(h),section_divider_depth(h),
+                    section_divider_z(h),"shelf",
+                    str("section_divider.",side,".",h+1),"carcass.shelf")],
         mo_side_toe_features(side),
         mo_side_back_stretcher_features(side),
         mo_side_structural_back_features(side)
@@ -4197,13 +4626,14 @@ function mo_side_shelf_pin_features(side="left") =
                     dm,dd,op,"adjustable_shelf_pin")]
             : [],
         (mixed_bay_mode && mixed_bay_side_has_shelf_pins(side))
-            ? [for(row=[0:1]) for(i=[0:max(0,mixed_bay_shelf_pin_count()-1)])
-                if(mixed_bay_shelf_pin_count()>0
-                    && mixed_shelf_pin_kept_on_side(side,row,i))
+            ? let(zs=mixed_bay_side_pin_zs(side))
+              [for(row=[0:1]) for(i=[0:max(0,len(zs)-1)])
+                if(len(zs)>0
+                    && mixed_shelf_pin_kept_on_side(side,row,zs[i]))
                 mo_side_circle_feature(
                     str("mixed_shelf_pin.",side,".",row,".",i+1),side,
                     blind ? "blind_hole" : "through_hole","storage.shelf_grid",
-                    shelf_pin_y(row),mixed_bay_shelf_pin_z(i),
+                    shelf_pin_y(row),zs[i],
                     adjustable_shelf_hole_diameter,dm,dd,op,"mixed_shelf_pin")]
             : []
     );
@@ -4223,20 +4653,33 @@ function mo_side_hinge_features(side="left") =
                         "through",0,"cut_layout","hinge_plate")]
             : [],
         (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
-            ? [for(j=[0:max(0,hinge_count-1)]) if(hinge_count>0)
+            ? let(zs=mixed_bay_side_hinge_zs(side))
+              [for(j=[0:max(0,len(zs)-1)]) if(len(zs)>0)
                 for(dz=[-effective_hinge_plate_hole_spacing/2,
                          effective_hinge_plate_hole_spacing/2])
                     mo_side_circle_feature(
                         str("mixed_hinge_plate.",side,".",j+1,".",dz<0?1:2),side,
                         "through_hole","hardware.hinge",
                         effective_hinge_plate_center_from_front,
-                        mixed_bay_hinge_z(j)+dz,effective_hinge_plate_hole_diameter,
+                        zs[j]+dz,effective_hinge_plate_hole_diameter,
                         "through",0,"cut_layout","mixed_hinge_plate")]
             : []
     );
 
+// Drawer bays against an outer side: every bay touching it in a section
+// layout, otherwise the first or last bank/bay.
+function side_drawer_banks(side="left") =
+    section_layout_active
+        ? [for(b=mixed_bay_side_bays(side)) if(drawer_bank_drawer_count(b)>0) b]
+        : [side == "left" ? 0 : active_drawer_bank_count()-1];
+
+function side_slide_id(side,b,i) =
+    section_layout_active ? str(side,".B",b+1,".",i+1) : str(side,".",i+1);
+
 function mo_side_slide_features(side="left") =
-    let(b=side == "left" ? 0 : active_drawer_bank_count()-1)
+    [for(b=side_drawer_banks(side)) each mo_side_bank_slide_features(side,b)];
+
+function mo_side_bank_slide_features(side="left",b=0) =
     concat(
         (has_drawers && drawer_bank_drawer_count(b)>0
             && drawer_mount == "metal_slides" && include_metal_slide_holes)
@@ -4244,7 +4687,7 @@ function mo_side_slide_features(side="left") =
                 for(hx=active_slide_cabinet_holes())
                     if(cabinet_slide_hole_is_valid(hx,resolved_cabinet_depth))
                         mo_side_circle_feature(
-                            str("metal_slide.",side,".",i+1,".",hx),side,
+                            str("metal_slide.",side_slide_id(side,b,i),".",hx),side,
                             "through_hole","hardware.slide",
                             slide_cabinet_hole_depth(hx),
                             drawer_box_z(i,b)+effective_metal_slide_cabinet_hole_z,
@@ -4257,7 +4700,7 @@ function mo_side_slide_features(side="left") =
                 for(n=[0:max(0,wood_slide_registration_hole_count-1)])
                     if(wood_slide_registration_hole_count>0)
                         mo_side_circle_feature(
-                            str("wood_slide.",side,".",i+1,".",n+1),side,
+                            str("wood_slide.",side_slide_id(side,b,i),".",n+1),side,
                             "registration_hole","hardware.slide",
                             effective_wood_rail_front_setback
                                 +wood_slide_reg_pos(resolved_wood_rail_depth,n),
@@ -4445,15 +4888,52 @@ mixed_bay_partition_layout_base_y =
             : 0
       );
 
+// Uniform row pitch of full-height mixed-bay partitions (unused by sections).
 mixed_bay_partition_layout_row_height =
-    mixed_bay_partition_cut_height()+layout_gap;
+    section_layout_active
+        ? layout_gap
+        : mixed_bay_partition_cut_height()+layout_gap;
 
-drawer_bank_partition_layout_base_y =
+// Section partitions differ in height, so their rows are stacked one by one.
+function mixed_bay_partition_layout_prefix(p,j=0) =
+    j >= p
+        ? 0
+        : mixed_bay_partition_cut_height(j)+layout_gap
+          + mixed_bay_partition_layout_prefix(p,j+1);
+
+function mixed_bay_partition_layout_y(p) =
+    mixed_bay_partition_layout_base_y
+    + (section_layout_active
+        ? mixed_bay_partition_layout_prefix(p)
+        : p*mixed_bay_partition_layout_row_height);
+
+section_divider_layout_base_y =
     mixed_bay_partition_layout_base_y
     + (
         mixed_bay_partition_count() > 0
-            ? mixed_bay_partition_count()
-              *mixed_bay_partition_layout_row_height
+            ? (section_layout_active
+                ? mixed_bay_partition_layout_prefix(mixed_bay_partition_count())
+                : mixed_bay_partition_count()
+                  *mixed_bay_partition_layout_row_height)
+              + layout_gap
+            : 0
+      );
+
+function section_divider_layout_prefix(h,j=0) =
+    j >= h
+        ? 0
+        : section_divider_depth(j)+layout_gap
+          + section_divider_layout_prefix(h,j+1);
+
+function section_divider_layout_y(h) =
+    section_divider_layout_base_y
+    + section_divider_layout_prefix(h);
+
+drawer_bank_partition_layout_base_y =
+    section_divider_layout_base_y
+    + (
+        section_divider_count() > 0
+            ? section_divider_layout_prefix(section_divider_count())
               + layout_gap
             : 0
       );
@@ -4736,9 +5216,19 @@ function worktop_registration_worktop_local_x(i) =
 function worktop_registration_worktop_local_y(r) =
     worktop_registration_row_y(r)-worktop_y;
 
+// Section doors differ in height; the door row is as tall as the tallest.
+door_layout_row_height =
+    section_layout_active
+        ? max(concat([0],[
+            for (b=[0:max(0,layout_bay_count-1)])
+                if (layout_bay_count > 0 && mixed_bay_is_type(b,"door"))
+                    mixed_bay_door_height(b)
+          ]))
+        : door_face_height;
+
 accessory_layout_y =
     door_layout_y
-    + (has_doors ? door_face_height : 0)
+    + (has_doors ? door_layout_row_height : 0)
     + layout_gap;
 
 base_mounting_plate_layout_y = accessory_layout_y;
@@ -4752,7 +5242,7 @@ worktop_layout_y =
 accessory_layout_end_y =
     max([
         door_layout_y
-            + (has_doors ? door_face_height : 0)
+            + (has_doors ? door_layout_row_height : 0)
             + layout_gap,
         base_mounting_plate_active
             ? base_mounting_plate_layout_y

@@ -14,7 +14,8 @@ async function scad(files,main,args){
  for(const [n,d] of Object.entries(files)){const dir='/'+n.split('/').slice(0,-1).join('/');if(dir!=='/')e.FS.mkdirTree(dir);e.FS.writeFile('/'+n,d)}
  try{e.callMain(['/'+main,'--backend=Manifold',...args])}catch{}
  let out=null;try{out=e.FS.readFile('/o.stl')}catch{}
- return {logs,out};
+ let echo='';try{echo=e.FS.readFile('/o.echo',{encoding:'utf8'})}catch{}
+ return {logs,out,echo};
 }
 function volume(buf){
  if(!buf||buf.length<84)return 0;const dv=new DataView(buf.buffer,buf.byteOffset,buf.byteLength),n=dv.getUint32(80,true);let v=0;
@@ -39,9 +40,30 @@ const GROUPS={
  drawersB:{on:['show_drawer_slide_parts'],code:drawers(1)},
  doors:{on:[],code:'doors();'},
 };
-async function overlaps(f,values){
+// Interior members of bay and section layouts, from the engine's LAYOUT report.
+async function members(f,values){
+ const files=Object.fromEntries(Object.entries(bundle).filter(([n])=>n.endsWith('.scad'))),main=schema[f].file;
+ files[main]=configure(f,{...values,output_mode:'bom'});
+ const t=(await scad(files,main,['-o','/o.echo'])).echo;
+ const ids=re=>[...new Set([...t.matchAll(re)].map(m=>+m[1]-1))];
+ return {vm:ids(/LAYOUT\|MEMBER\|MB(\d+)/g),hm:ids(/LAYOUT\|MEMBER\|SD(\d+)/g),fs:ids(/LAYOUT\|SHELF\|B(\d+)-SH\d+\|[^"]*STYLE=fixed/g)};
+}
+async function overlaps(f,values,split=false){
  const files=Object.fromEntries(Object.entries(bundle).filter(([n])=>n.endsWith('.scad'))),main=schema[f].file,stl={};
- for(const [g,def] of Object.entries(GROUPS)){
+ const groups={...GROUPS};
+ if(split){
+  // Each partition, section divider and bay's fixed shelves on its own, so members
+  // that meet from opposite faces of another member are checked against each other.
+  const m=await members(f,values);
+  groups.verticals={on:['show_door_hinge_partitions','show_drawer_bank_partitions'],code:'carcass();'};
+  groups.horizontals={on:['show_drawer_separators'],code:'carcass();'};
+  groups.shelves={on:[],code:'for (b=[0:layout_bay_count-1]) if (mixed_bay_has_adjustable_shelves(b)) for (s=[1:mixed_bay_shelf_count(b)]) mixed_bay_adjustable_shelf_3d(b,mixed_bay_shelf_z(b,s));'};
+  for(const p of m.vm)groups['partition'+p]={on:[],code:`mixed_bay_partition_3d(${p});`};
+  for(const h of m.hm)groups['divider'+h]={on:[],code:`section_divider_3d(${h});`};
+  for(const b of m.fs)groups['fixedShelves'+b]={on:[],code:`for (s=[1:mixed_bay_shelf_count(${b})]) mixed_bay_fixed_shelf_3d(${b},mixed_bay_shelf_z(${b},s),s);`};
+  assert(m.vm.length+m.hm.length+m.fs.length>0,'split check found no members');
+ }
+ for(const [g,def] of Object.entries(groups)){
   const v={...values,output_mode:'__probe__',show_metal_slide_envelopes:false};
   for(const k of FLAGS)if(schema[f].fields.some(x=>x.key===k))v[k]=def.on.includes(k);
   files[main]=configure(f,v)+'\n'+def.code+'\n';
@@ -56,6 +78,22 @@ async function overlaps(f,values){
  }
  return bad;
 }
+// Section trees: a 2x2 grid whose dividers meet a partition (or divider) from both
+// faces at the same place, and a nested layout with doors, open shelves and a rail.
+function grid(axis){
+ const r=(parent,order,kind,contents='open',count=0,shelves=0,hinge='left',style='adjustable')=>[parent,order,kind,'weight',1,contents,count,'equal',.25,Array(Math.max(1,contents==='drawers'?count:1)).fill(1),'panel',shelves,hinge,style];
+ const other=axis==='x'?'z':'x';
+ return [r(-1,0,axis),r(0,0,other),r(0,1,other),r(1,0,'leaf','drawers',2),r(1,1,'leaf','doors',1,1,'left','fixed'),r(2,0,'leaf','drawers',2),r(2,1,'leaf','doors',1,2,'right','adjustable')];
+}
+const nested=[
+ [-1,0,'x','weight',1,'open',0,'equal',.25,[1],'panel',0,'left','adjustable'],
+ [0,0,'leaf','weight',2,'doors',2,'equal',.25,[1],'panel',2,'left','adjustable'],
+ [0,1,'z','weight',1,'open',0,'equal',.25,[1],'rail',0,'left','adjustable'],
+ [2,0,'leaf','weight',1,'drawers',3,'equal',.25,[1,1,1],'panel',0,'left','adjustable'],
+ [2,1,'x','weight',1,'open',0,'equal',.25,[1],'panel',0,'left','adjustable'],
+ [4,0,'leaf','weight',1,'open',2,'equal',.25,[1],'panel',0,'left','fixed'],
+ [4,1,'leaf','weight',1,'doors',1,'equal',.25,[1],'panel',1,'right','adjustable'],
+];
 const valuesFor=(f,starter,patch={})=>({...Object.fromEntries(schema[f].fields.map(x=>[x.key,x.value])),...schema[f].starters.find(s=>s.id===(starter??schema[f].defaultStarter)).values,...patch});
 const cases=[
  [0,undefined,{}],[0,undefined,{drawer_mount:'metal_slides',back_style:'stretchers'}],
@@ -72,10 +110,17 @@ const cases=[
  // Door region set by the layout editor (combo_door_height), overlay and inset behind a face frame.
  [1,undefined,{combo_door_height:400}],
  [4,'kitchen_standard_B36',{combo_door_height:450,front_mount_style:'inset_flush'}],
+ // Bay and section layouts, every interior member checked on its own (fourth entry).
+ // Fixed shelves at equal heights on both faces of a partition share half-length tabs.
+ [0,'shop_cart_open_service_cart',{joinery_style:'tab_slot'},true],
+ [4,'photo_section_cabinet',{},true],
+ [0,undefined,{cabinet_layout_mode:'sections',section_nodes:grid('x'),joinery_style:'tab_slot',drawer_mount:'wood_rails'},true],
+ [1,undefined,{cabinet_layout_mode:'sections',section_nodes:grid('z'),joinery_style:'dado',top_style:'full',back_style:'stretchers',hinge_style:'euro_35mm',drawer_mount:'metal_slides',include_metal_slide_holes:true},true],
+ [4,'photo_section_cabinet',{section_nodes:nested,front_facing_style:'face_frame',front_mount_style:'inset_flush',joinery_style:'tab_slot',hinge_style:'euro_35mm'},true],
 ];
 const only=process.env.CASES?JSON.parse(process.env.CASES):null;
-for(const [f,starter,patch] of only??cases){
- const bad=await overlaps(f,valuesFor(f,starter,patch));
+for(const [f,starter,patch,split] of only??cases){
+ const bad=await overlaps(f,valuesFor(f,starter,patch),split);
  assert.deepEqual(bad,{},`${schema[f].id}:${starter??'default'} ${JSON.stringify(patch)} has overlapping parts`);
 }
 console.log('Engine interference: '+(only??cases).length+' configurations render with no overlapping parts (carcass sides, bottom/top, rear construction, shelves, dividers, partitions, rails, face frame, drawers and doors).');

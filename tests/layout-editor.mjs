@@ -46,7 +46,8 @@ function sameFronts(a,b,label){
 
 // 1-2. Every starter: lossless round trip and engine-matching openings.
 const jobs=[];
-for(let f=0;f<5;f++)for(const st of schema[f].starters)jobs.push({f,id:st.id});
+// EDITS_ONLY=1 skips the starter round trip while working on the edit checks below.
+if(!process.env.EDITS_ONLY)for(let f=0;f<5;f++)for(const st of schema[f].starters)jobs.push({f,id:st.id});
 let next=0,checked=0,bound=0;
 async function lane(){
  while(next<jobs.length){
@@ -63,8 +64,8 @@ async function lane(){
   const v2=cabinet.normalizeValues(f,{...v,...map.patch});
   const b=await bom(f,v2);
   assert.equal(b.type,'result',label);
-  if(report.mode!=='sections')sameFronts(report,b.plan.layout,label);
-  else for(const s of report.sections){const t=b.plan.layout.sections.find(x=>x.index===s.index);assert(t&&['x','z','w','h'].every(k=>close(s[k],t[k])),label+': section '+s.index)}
+  sameFronts(report,b.plan.layout,label);
+  if(report.mode==='sections')for(const s of report.sections){const t=b.plan.layout.sections.find(x=>x.index===s.index);assert(t&&['x','z','w','h'].every(k=>close(s[k],t[k])),label+': section '+s.index)}
   // Openings computed by the editor from the tree alone must match the engine.
   const g=L.geometry(f,v,tree,L.frameFor(f,v,report),undefined);
   for(const c of g.cells){
@@ -130,15 +131,18 @@ const p0=L.profile(0);
  const bad=await edit(3,r.v2,({tree})=>L.splitColumns(tree,[]));
  assert(bad.error&&/must all be drawers/.test(bad.error),String(bad.error));
 }
-// Shop cart: stacking inside a bay is refused (kitchen only), and a fifth bay is refused.
+// Benchtop: stacking inside a drawer column and a fifth column are refused.
 {
- const v=valuesFor(0);
- const nested=await edit(0,v,({tree})=>L.splitRows(tree,[1],p0,600));
+ const nested=await edit(2,valuesFor(2,undefined,{drawer_bank_count:2}),({tree})=>{const t=JSON.parse(JSON.stringify(tree));t.children[1]={kind:'z',divider:'panel',children:[L.leaf('drawers',1),L.leaf('drawers',1)],size:t.children[1].size,fixed:false};return t});
  assert(nested.error&&/cannot stack/.test(nested.error),String(nested.error));
+ const v=valuesFor(0);
  let tree=L.fromValues(0,v);for(let i=0;i<2;i++)tree=L.splitColumns(tree,[0]);
  assert(!('error' in L.toValues(0,v,tree)),'four bays allowed');
+ // A fifth column is beyond mixed bays and is built as a section layout instead.
  const five=L.toValues(0,v,L.splitColumns(tree,[0]));
- assert(five.error,'fifth bay refused');
+ assert.equal(five.mode,'sections','fifth bay built as sections');
+ let bench=L.splitColumns(L.fromValues(2,valuesFor(2)),[]);for(let i=0;i<3;i++)bench=L.splitColumns(bench,[0]);
+ assert(L.toValues(2,valuesFor(2),bench).error,'fifth benchtop drawer column refused');
 }
 // Kitchen: splitting the doors below the drawer side by side needs sections; the layout still builds.
 {
@@ -155,6 +159,35 @@ const p0=L.profile(0);
  const r=await edit(4,v,({tree})=>{let t=L.changeContents(L.fromValues(4,v),[],'drawers',L.profile(4),false,900);t=L.changeContents(t,[1],'doors',L.profile(4),false,900);return L.splitColumns(L.splitColumns(L.removeOpening(t,[1]),[]),[0])});
  assert.deepEqual(errorsOf(r.plan),[]);
 }
+// Shop cart and utility: stacking inside a bay builds a section layout with joined
+// dividers; the editor's fronts are the engine's own, and typed heights land exactly.
+{
+ const v=valuesFor(0);
+ const r=await edit(0,v,({tree})=>L.splitRows(tree,[1],p0,600));
+ assert.equal(r.map.mode,'sections');
+ assert.deepEqual(errorsOf(r.plan),[]);
+ assert(r.plan.cut.some(c=>c.category==='section_divider'),'section divider in the cut list');
+ const tree=L.fromValues(0,r.v2,r.report),g=L.geometry(0,r.v2,tree,L.frameFor(0,r.v2,r.report),r.report);
+ for(const c of g.cells){const fr=L.frontsFor(c,r.v2,r.report,'sections');assert(fr.every(f=>f.exact),'exact section fronts');if(c.node.contents!=='open')assert(fr.length>0,'fronts for '+c.path)}
+ // Single door hinged right with fixed shelves behind it.
+ const doorCell=g.cells.find(c=>c.node.contents==='doors');
+ const t=await edit(0,r.v2,({tree})=>L.setLeaf(L.setLeaf(tree,doorCell.path,{count:1,hinge:'right',shelves:2}),doorCell.path,{shelfStyle:'fixed'}));
+ assert.equal(t.map.mode,'sections');
+ assert.equal(t.report.fronts.find(f=>f.kind==='door').hinge,'right');
+ assert.equal(t.report.shelves.filter(s=>s.style==='fixed').length,2);
+ assert.deepEqual(errorsOf(t.plan),[]);
+ // Type the lower opening's height.
+ const h=await edit(0,t.v2,({tree,g})=>L.setChildSize(tree,[1],1,300,L.childSizes(g,tree,[1]),true));
+ const lower=L.nodeAt(L.fromValues(0,h.v2),[1,1]),bay=h.report.bays.find(b=>b.section===lower.ref.section);
+ assert(bay&&close(bay.h,300),'typed section height '+bay?.h);
+ assert.deepEqual(errorsOf(h.plan),[]);
+}
+{
+ const v=valuesFor(1,'utility_door_base');
+ const r=await edit(1,v,({tree})=>L.splitColumns(L.splitRows(tree,[],L.profile(1),700),[1]));
+ assert.equal(r.map.mode,'sections');
+ assert.deepEqual(errorsOf(r.plan),[]);
+}
 // Mixed bays: changing a bay to doors keeps the bay construction and hinge choice.
 {
  const v=valuesFor(0);
@@ -163,4 +196,4 @@ const p0=L.profile(0);
  assert.equal(r.report.fronts.find(f=>f.kind==='door').hinge,'right');
  assert.deepEqual(errorsOf(r.plan),[]);
 }
-console.log('Layout editor edits: typed bay widths, drawer fronts and door heights land exactly; drags, column splits, module contents, kitchen sections and refusals behave as described.');
+console.log('Layout editor edits: typed bay widths, drawer fronts and door heights land exactly; drags, column splits, module contents, section layouts on shop carts, utility and kitchen cabinets, and refusals behave as described.');

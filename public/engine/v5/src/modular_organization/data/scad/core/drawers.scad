@@ -1270,11 +1270,11 @@ module door_panel_cut(i=0) {
 module mixed_bay_door_panel_3d(b=0,leaf=0) {
     dw = mixed_bay_door_leaf_width(b);
     x0 = mixed_bay_door_leaf_x(b,leaf);
-    z0 = door_face_bottom_z;
+    z0 = mixed_bay_door_bottom_z(b);
 
     difference() {
         sheet_box(
-            [dw,door_thickness,door_face_height],
+            [dw,door_thickness,mixed_bay_door_height(b)],
             [x0,decorative_front_y(door_thickness),z0]
         );
 
@@ -1282,7 +1282,7 @@ module mixed_bay_door_panel_3d(b=0,leaf=0) {
             hx = x0 + mixed_bay_door_hinge_local_x(b,leaf);
 
             for (j=[0:hinge_count-1]) {
-                hz = mixed_bay_hinge_z(j);
+                hz = mixed_bay_hinge_z(j,b);
 
                 if (effective_hinge_style == "euro_35mm")
                     round_hole_y_3d(
@@ -1312,7 +1312,7 @@ module mixed_bay_door_panel_3d(b=0,leaf=0) {
 
         if (include_door_handle_holes) {
             hx = x0 + mixed_bay_door_handle_local_x(b,leaf);
-            hz = z0 + door_handle_local_z();
+            hz = z0 + mixed_bay_door_handle_local_z(b);
 
             if (handle_hole_pattern == "single_hole") {
                 round_hole_y_3d(
@@ -1354,13 +1354,13 @@ module mixed_bay_door_panel_cut(b=0,leaf=0) {
     dw = mixed_bay_door_leaf_width(b);
 
     difference() {
-        cut_part(dw,door_face_height);
+        cut_part(dw,mixed_bay_door_height(b));
 
         if (effective_hinge_style != "none") {
             hx = mixed_bay_door_hinge_local_x(b,leaf);
 
             for (j=[0:hinge_count-1]) {
-                hz = mixed_bay_hinge_z(j)-door_face_bottom_z;
+                hz = mixed_bay_hinge_z(j,b)-mixed_bay_door_bottom_z(b);
 
                 if (hinge_door_fixing_enabled)
                 for (dz=[
@@ -1376,7 +1376,7 @@ module mixed_bay_door_panel_cut(b=0,leaf=0) {
 
         if (include_door_handle_holes) {
             hx = mixed_bay_door_handle_local_x(b,leaf);
-            hz = door_handle_local_z();
+            hz = mixed_bay_door_handle_local_z(b);
 
             if (handle_hole_pattern == "single_hole")
                 round_hole_2d(hx,hz,handle_hole_diameter);
@@ -1393,7 +1393,7 @@ module mixed_bay_door_panel_cut(b=0,leaf=0) {
 module door_hinge_pocket_layout() {
     if (has_doors && effective_hinge_style == "euro_35mm") {
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
+            for (b=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(b,"door"))
                     for (leaf=[0:mixed_bay_door_count(b)-1]) {
                         door_layout_x = mixed_bay_door_layout_x(b,leaf);
@@ -1404,8 +1404,8 @@ module door_hinge_pocket_layout() {
                             round_hole_2d(
                                 hx,
                                 door_layout_y
-                                    + mixed_bay_hinge_z(j)
-                                    - door_face_bottom_z,
+                                    + mixed_bay_hinge_z(j,b)
+                                    - mixed_bay_door_bottom_z(b),
                                 effective_hinge_cup_diameter
                             );
                     }
@@ -1430,8 +1430,8 @@ module door_hinge_pocket_layout() {
 module doors() {
     if (has_doors && show_doors && door_face_height > 20) {
         if (mixed_bay_mode) {
-            for (b=[0:active_mixed_bay_count-1])
-                if (mixed_bay_is_type(b,"door"))
+            for (b=[0:layout_bay_count-1])
+                if (mixed_bay_is_type(b,"door") && mixed_bay_door_height(b) > 20)
                     for (leaf=[0:mixed_bay_door_count(b)-1])
                         paint("door",mixed_bay_door_part_index(b,leaf))
                             mixed_bay_door_panel_3d(b,leaf);

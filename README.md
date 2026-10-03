@@ -63,10 +63,11 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    divider between openings, or the line between two drawers, to resize them
    (sizes snap to 1 mm or 1/16 in), or type exact widths, heights and drawer
    front heights. **Split side by side** adds a bay or drawer column, **Drawers
-   over doors** adds a drawer row above doors, and kitchen cabinets can split any
-   opening top/bottom or left/right. The editor picks the engine construction
-   that can build the arrangement (single column, side-by-side bays or kitchen
-   sections), keeps the current one when it still can, and says why an
+   over doors** adds a drawer row above doors, and shop carts, utility and
+   kitchen cabinets can split any opening top/bottom or left/right. The editor
+   picks the engine construction that can build the arrangement (single column,
+   side-by-side bays or sections), keeps the current one when it still can, and
+   says why an
    arrangement is not possible for a cabinet type. Fronts are drawn at the
    positions the engine reports; dashed fronts are estimates while it
    recalculates.
@@ -100,11 +101,14 @@ explicit units: `23 1/2`, `23-1/2"`, `3/4 in`, `600 mm`, `60 cm`, `2' 3"`. In
 inch mode the cut list shows sizes to the nearest 1/32 in; hover a size for the
 exact millimeter value. CSV exports keep full millimeter precision.
 
-### Kitchen layouts
+### Section layouts
 
-Kitchen cabinets support a single column, side-by-side bays and **Sections**
-(nested top/bottom and left/right splits with independent drawers, doors and
-shelves, made in the Layout tab; see the [section layout guide](docs/SECTION_LAYOUTS.md)). Face frames
+Shop carts, utility and kitchen cabinets support a single column, side-by-side
+bays and **Sections**: nested top/bottom and left/right splits with independent
+drawers, doors and shelves, made in the Layout tab. Section dividers are joined
+with the carcass joinery and each opening's slides, hinges and shelf pins are
+drilled into the members around it; see the
+[section layout guide](docs/SECTION_LAYOUTS.md). On kitchen cabinets, face frames
 are supported for single-column and section layouts. Behind a face frame,
 independent bays may hold open shelves, overlay doors, or drawers in a middle
 bay; for other arrangements behind a face frame the Layout tab builds the

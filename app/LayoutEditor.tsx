@@ -19,7 +19,7 @@ type Live={x:number;z:number;text:string}|null;
 const modeNotes:Record<L.Mode,string>={
  legacy:'Openings share the full width; partitions and dividers are joined to the carcass.',
  mixed_bays:'Full-height bays separated by joined partitions.',
- sections:'Kitchen sections: interior dividers and shelves are butt-fit blanks (fit cleats or fasteners).',
+ sections:'Openings in any arrangement. Dividers are joined like bay partitions, and each opening’s slides, hinges and shelf pins are drilled into the members around it.',
 };
 
 export default function LayoutEditor({family,values,units,analysis,apply}:{family:number;values:Values;units:Units;analysis:Analysis;apply:(patch:Values)=>void}){
@@ -74,7 +74,7 @@ export default function LayoutEditor({family,values,units,analysis,apply}:{famil
   if('error' in m){toast.error(m.error);return}
   apply(m.patch);
   for(const n of m.notes)toast.info(n);
-  if(m.mode!==mode)toast.info(m.mode==='sections'?'This arrangement is built as kitchen sections. Interior dividers are butt-fit blanks.':m.mode==='mixed_bays'?'Built as side-by-side bays with joined partitions.':'Built as a single cabinet layout with joined dividers.');
+  if(m.mode!==mode)toast.info(m.mode==='sections'?'Built as a section layout: openings in any arrangement with joined dividers.':m.mode==='mixed_bays'?'Built as side-by-side bays with joined partitions.':'Built as a single cabinet layout with joined dividers.');
   if(select)setSelected(L.pathKey(select));
  }
 
@@ -245,8 +245,8 @@ export default function LayoutEditor({family,values,units,analysis,apply}:{famil
 
    {node.contents!=='open'&&<Stepper label={node.contents==='drawers'?'Drawers':'Doors'} value={node.count} min={1} max={node.contents==='drawers'?maxDrawers:maxDoors} make={count} can={can} commit={n=>commit(n,path)}/>}
    {node.contents!=='drawers'&&p.maxShelves>0&&<Stepper label={node.contents==='doors'?'Shelves behind the doors':'Shelves'} value={node.shelves} min={0} max={mode==='sections'?8:p.maxShelves} make={shelves} can={can} commit={n=>commit(n,path)}/>}
-   {node.contents!=='drawers'&&node.shelves>0&&mode!=='sections'&&family!==3&&<div className='lay-field'><span>Shelf type</span><div className='segmented'>{(['adjustable','fixed'] as const).map(s=><button key={s} aria-pressed={node.shelfStyle===s} className={node.shelfStyle===s?'is-active':''} onClick={()=>node.shelfStyle!==s&&commit(L.setLeaf(tree,path,{shelfStyle:s}),path)}>{s==='fixed'?'Fixed':'Adjustable'}</button>)}</div></div>}
-   {node.contents==='doors'&&node.count===1&&p.hinge&&mode!=='sections'&&<div className='lay-field'><span>Hinge side</span><div className='segmented'>{(['left','right'] as const).map(s=><button key={s} aria-pressed={node.hinge===s} className={node.hinge===s?'is-active':''} onClick={()=>node.hinge!==s&&commit(L.setLeaf(tree,path,{hinge:s}),path)}>{s==='left'?'Left':'Right'}</button>)}</div></div>}
+   {node.contents!=='drawers'&&node.shelves>0&&family!==3&&<div className='lay-field'><span>Shelf type</span><div className='segmented'>{(['adjustable','fixed'] as const).map(s=><button key={s} aria-pressed={node.shelfStyle===s} className={node.shelfStyle===s?'is-active':''} onClick={()=>node.shelfStyle!==s&&commit(L.setLeaf(tree,path,{shelfStyle:s}),path)}>{s==='fixed'?'Fixed':'Adjustable'}</button>)}</div></div>}
+   {node.contents==='doors'&&node.count===1&&p.hinge&&<div className='lay-field'><span>Hinge side</span><div className='segmented'>{(['left','right'] as const).map(s=><button key={s} aria-pressed={node.hinge===s} className={node.hinge===s?'is-active':''} onClick={()=>node.hinge!==s&&commit(L.setLeaf(tree,path,{hinge:s}),path)}>{s==='left'?'Left':'Right'}</button>)}</div></div>}
 
    {node.contents==='drawers'&&node.count>1&&<div className='lay-field'>
     <span>Drawer heights</span>
@@ -303,8 +303,9 @@ function openingName(tree:L.LayoutNode,path:L.Path,mode:L.Mode,combo:boolean){
 function shelfLines(c:L.Cell,report:LayoutReport|undefined,t:number,mode:L.Mode):number[]{
  const n=c.node.shelves;
  if(!n)return [];
- if(report&&mode!=='sections'&&c.node.ref){
-  const bay=c.node.ref.bay!==undefined?c.node.ref.bay+1:c.node.ref.doors?0:undefined;
+ if(report&&c.node.ref){
+  const sec=c.node.ref.section!==undefined?report.bays.find(b=>b.section===c.node.ref!.section):undefined;
+  const bay=mode==='sections'?(sec?sec.index+1:undefined):c.node.ref.bay!==undefined?c.node.ref.bay+1:c.node.ref.doors?0:undefined;
   const list=bay===undefined?[]:report.shelves.filter(s=>s.bay===bay).map(s=>s.z);
   if(list.length===n)return list;
  }
