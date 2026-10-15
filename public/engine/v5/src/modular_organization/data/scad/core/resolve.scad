@@ -4988,9 +4988,12 @@ function drawer_layout_box_parts_y(b,i) =
     + drawer_layout_header_height(i,b)
     + layout_gap;
 
+// The bottom gets its own row below the box front and back. It used to share
+// the back's row beside the box parts, where any drawer wider than about
+// twice its depth fused the two outlines in the exported cut file.
 function drawer_layout_bottom_y(b,i) =
     drawer_layout_box_parts_y(b,i)
-    + drawer_box_height(i,b)
+    + 2*drawer_box_height(i,b)
     + 2*layout_gap;
 
 function drawer_layout_divider_base_y(b,i) =
@@ -5014,11 +5017,9 @@ function drawer_layout_divider_extra_height(b,i) =
 
 function drawer_layout_row_height_for(i,b=0) =
     drawer_layout_header_height(i,b)
-    + max(
-        2*drawer_box_height(i,b)+layout_gap,
-        drawer_box_height(i,b)+2*layout_gap+drawer_box_depth
-      )
-    + 2*layout_gap
+    + 2*drawer_box_height(i,b)
+    + drawer_bottom_depth()
+    + 4*layout_gap
     + drawer_layout_divider_extra_height(b,i);
 
 function drawer_layout_prefix_height(b,i,j=0) =
@@ -5050,9 +5051,11 @@ function drawer_layout_all_banks_height() =
     drawer_layout_bank_prefix_height(active_drawer_bank_count())
     - (active_drawer_bank_count() > 0 ? layout_gap : 0);
 
+// Without drawers the bank functions still describe one phantom bank, so the
+// door row follows the drawer region only when drawers are actually cut.
 door_layout_y =
     drawer_layout_base_y
-    + max(0,drawer_layout_all_banks_height())
+    + (has_drawers ? max(0,drawer_layout_all_banks_height()) : 0)
     + layout_gap;
 
 

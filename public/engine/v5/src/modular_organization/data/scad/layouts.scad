@@ -1294,6 +1294,15 @@ if (validation_enabled()) {
                 )
             );
 
+    for (o=layout_overlaps())
+        validation_check(
+            "ERROR","LAYOUT_OVERLAP",
+            str(
+                "Parts ",o[0]," and ",o[1]," overlap by ",
+                o[2]," x ",o[3]," mm in the flat cut layout."
+            )
+        );
+
     for (c=organization_feature_feature_conflicts())
         validation_check(
             "ERROR","MACHINING_FEATURE_COLLISION",

@@ -17,16 +17,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|478|120|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|400.6|120|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|400.6|120|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=478|H=120",
+   "PLACE|D1-SR|X=498|Y=20|W=478|H=120",
+   "PLACE|D1-FR|X=996|Y=20|W=400.6|H=120",
+   "PLACE|D1-BK|X=996|Y=160|W=400.6|H=120",
+   "PLACE|D1-BOT|X=0|Y=300|W=400.6|H=454"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "35c6fda40a39e635f43cc4af",
+    "sha256": "7eff359fa58ad908413d8938",
     "bytes": 7676,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "7f9969b7584e6575808ef1ae",
+    "sha256": "01717eb6a27d265de805abf7",
     "bytes": 460,
     "paths": 1
    }
@@ -50,16 +55,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|478|120|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|400.6|120|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|400.6|120|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|400.6|454|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=478|H=120",
+   "PLACE|D1-SR|X=498|Y=20|W=478|H=120",
+   "PLACE|D1-FR|X=996|Y=20|W=400.6|H=120",
+   "PLACE|D1-BK|X=996|Y=160|W=400.6|H=120",
+   "PLACE|D1-BOT|X=0|Y=300|W=400.6|H=454"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "35c6fda40a39e635f43cc4af",
+    "sha256": "7eff359fa58ad908413d8938",
     "bytes": 7676,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "7f9969b7584e6575808ef1ae",
+    "sha256": "01717eb6a27d265de805abf7",
     "bytes": 460,
     "paths": 1
    }
@@ -83,16 +93,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|511.4|127|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|407.8|127|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|407.8|127|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|407.8|487.4|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|407.8|487.4|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=511.4|H=127",
+   "PLACE|D1-SR|X=531.4|Y=20|W=511.4|H=127",
+   "PLACE|D1-FR|X=1062.8|Y=20|W=407.8|H=127",
+   "PLACE|D1-BK|X=1062.8|Y=167|W=407.8|H=127",
+   "PLACE|D1-BOT|X=0|Y=314|W=407.8|H=487.4"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "f150625e39fa40fa9f27dc57",
+    "sha256": "fc29e4906104da9ee72d5f8a",
     "bytes": 7726,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "3b85b322e617bff3aea7d8fb",
+    "sha256": "73afcaeb4d7c786eabf72d81",
     "bytes": 464,
     "paths": 1
    }
@@ -116,16 +131,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|450|120|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|376|120|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|376|120|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|376|426|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|376|426|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=450|H=120",
+   "PLACE|D1-SR|X=470|Y=20|W=450|H=120",
+   "PLACE|D1-FR|X=940|Y=20|W=376|H=120",
+   "PLACE|D1-BK|X=940|Y=160|W=376|H=120",
+   "PLACE|D1-BOT|X=0|Y=300|W=376|H=426"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "8c977ac21a8b1866121f2701",
+    "sha256": "813bbf320db72fdc127670fa",
     "bytes": 7660,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "889cf0ab45feb0e933cc14f7",
+    "sha256": "3c22bba69ed06dbd24f57b60",
     "bytes": 456,
     "paths": 1
    }
@@ -149,16 +169,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|360|99|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|420|99|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|420|99|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|420|336|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|420|336|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=360|H=99",
+   "PLACE|D1-SR|X=380|Y=20|W=360|H=99",
+   "PLACE|D1-FR|X=760|Y=20|W=420|H=99",
+   "PLACE|D1-BK|X=760|Y=139|W=420|H=99",
+   "PLACE|D1-BOT|X=0|Y=258|W=420|H=336"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "8a73e7f7f23da84643e4e04c",
+    "sha256": "261f20806691abd58a0a0a4f",
     "bytes": 7660,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "272a3b72b593978ebd54cfcc",
+    "sha256": "fff1363d367a789cbd345061",
     "bytes": 456,
     "paths": 1
    }
@@ -182,16 +207,21 @@
    "BOM|D1-SR|1|drawer_side|DRAWER_WALL|12|362|99|butt",
    "BOM|D1-FR|1|drawer_front_box|DRAWER_WALL|12|422|99|butt",
    "BOM|D1-BK|1|drawer_back_box|DRAWER_WALL|12|422|99|butt",
-   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|422|338|butt"
+   "BOM|D1-BOT|1|drawer_bottom|DRAWER_BOTTOM|6|422|338|butt",
+   "PLACE|D1-SL|X=0|Y=20|W=362|H=99",
+   "PLACE|D1-SR|X=382|Y=20|W=362|H=99",
+   "PLACE|D1-FR|X=764|Y=20|W=422|H=99",
+   "PLACE|D1-BK|X=764|Y=139|W=422|H=99",
+   "PLACE|D1-BOT|X=0|Y=258|W=422|H=338"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "711d5496a24f5e6233a4e0f8",
+    "sha256": "efec94733a713485568ea3fc",
     "bytes": 7660,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "0ede9d0c4d473d5078e65f8a",
+    "sha256": "677ffd64eee6636ecc1325de",
     "bytes": 456,
     "paths": 1
    }
@@ -220,16 +250,26 @@
    "BOM|D1-DIV-L2|1|drawer_divider_longitudinal|DRAWER_DIVIDER|6|460|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
    "BOM|D1-DIV-L3|1|drawer_divider_longitudinal|DRAWER_DIVIDER|6|460|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
    "BOM|D1-DIV-T1|1|drawer_divider_transverse|DRAWER_DIVIDER|6|406.6|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
-   "BOM|D1-DIV-T2|1|drawer_divider_transverse|DRAWER_DIVIDER|6|406.6|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter"
+   "BOM|D1-DIV-T2|1|drawer_divider_transverse|DRAWER_DIVIDER|6|406.6|62.5|MOI-DIVIDER-GRID-1;bottom_and_perimeter",
+   "PLACE|D1-SL|X=0|Y=20|W=478|H=120",
+   "PLACE|D1-SR|X=498|Y=20|W=478|H=120",
+   "PLACE|D1-FR|X=996|Y=20|W=400.6|H=120",
+   "PLACE|D1-BK|X=996|Y=160|W=400.6|H=120",
+   "PLACE|D1-BOT|X=0|Y=300|W=400.6|H=454",
+   "PLACE|D1-DIV-L1|X=0|Y=774|W=460|H=62.5",
+   "PLACE|D1-DIV-L2|X=0|Y=856.5|W=460|H=62.5",
+   "PLACE|D1-DIV-L3|X=0|Y=939|W=460|H=62.5",
+   "PLACE|D1-DIV-T1|X=0|Y=1021.5|W=406.6|H=62.5",
+   "PLACE|D1-DIV-T2|X=0|Y=1104|W=406.6|H=62.5"
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "0764dad5f81acecb55d10e9f",
-    "bytes": 8727,
+    "sha256": "595987bfce98e63271b11462",
+    "bytes": 8757,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "1195dad27dcd63fe93b4cf2b",
+    "sha256": "32292bae65ec2f6773efdbdf",
     "bytes": 1769,
     "paths": 1
    }

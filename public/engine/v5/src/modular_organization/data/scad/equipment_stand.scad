@@ -599,8 +599,13 @@ module reports() {
    for(s=[0:1]) echo(str("FEATURE_OWNER|ID=slide.",i+1,".",s,"|PART=",s==0 ? "SIDE_L" : "SIDE_R","|INTERFACE=tray.",i+1));
   }
  }
+ // The flat layouts place every part in one row, layout_gap apart; a gap that is
+ // not positive would fuse neighbours, so it is reported as a layout overlap.
+ check(layout_gap>0,"LAYOUT_OVERLAP",str("layout_gap is ",layout_gap," mm; parts of the flat cut layout would overlap."));
  if(output_mode=="bom") {
   for(p=parts) echo(str("BOM|",p[0],"|1|",p[1],"|plywood|",p[4],"|",p[2],"|",p[3],"|",p[1]=="cleat_stand" || p[1]=="cleat_wall" ? str("SECONDARY BEVEL ",cleat_angle,"deg; blank dimensions; see machining guide") : p[1]=="cheek" ? "outside face up; pilot depth from outside" : "inside face up"));
+  // PLACE records: where each part sits in the flat layouts (lower-left corner, mm).
+  for(k=[0:len(parts)-1]) echo(str("PLACE|",parts[k][0],"|X=",px(k),"|Y=0|W=",parts[k][2],"|H=",parts[k][3]));
   echo(str("HARDWARE|ID=slides|QTY=",slide_type=="side_mount" ? N : 0,"|UNIT=pair|LENGTH=",metal_slide_length,"|RATING_KG=",slide_load_rating_kg));
   if(slide_type=="fixed_runner") echo(str("HARDWARE|ID=runner_retention_screws|QTY=",2*N,"|NOTE=remove for service tray; field drill runner vertically through tray holes"));
   echo(str("HARDWARE|ID=assembly_screws|QTY=",8+N*14+(upper_bay_enabled ? 4 : 0),"|UNIT=minimum estimate|NOTE=choose length for actual stock and joints"));
