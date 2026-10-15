@@ -52,11 +52,11 @@ custom_drawer_divider_thickness = 6.00; // [0.01:0.01:100]
 // Circle/cylinder smoothness. Mostly affects round drill holes and CNC corner relief.
 circle_segments = 48; // [12:4:96]
 
-cnc_tool_diameter = 3.175;
+cnc_tool_diameter = 3.175; // [0.1:0.01:50]
 
 apply_kerf_compensation = false;
 
-kerf = 0.15;
+kerf = 0.15; // [0:0.01:10]
 
 /* [Machining / Shared Slot Relief] */
 
@@ -136,11 +136,11 @@ drawer_divider_perimeter_groove_depth = 3;
 /* [Sizing / Envelope] */
 
 // Direct drawers-only benchtop configuration.
-cabinet_width = 320;
+cabinet_width = 320; // [50:1:3000]
 
-cabinet_height = 320;
+cabinet_height = 320; // [50:1:3000]
 
-cabinet_depth = 280;
+cabinet_depth = 280; // [50:1:3000]
 
 /* [Sizing / Fit Targets] */
 
@@ -644,13 +644,13 @@ show_metal_slide_envelopes = true;
 
 /* [Output / Flat Layout] */
 
-layout_gap = 12;
+layout_gap = 12; // [1:1:200]
 
 layout_show_stock = false;
 
-stock_width = 1220;
+stock_width = 1220; // [100:1:5000]
 
-stock_height = 610;
+stock_height = 610; // [100:1:5000]
 
 /* [Output / Labels] */
 

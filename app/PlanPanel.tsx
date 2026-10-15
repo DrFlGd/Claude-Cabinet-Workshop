@@ -12,9 +12,9 @@ export function sheetEstimate(area:number,values:Values){
  return Math.max(1,Math.ceil(area/(w*h*0.8)));
 }
 // What the engine's validation pass does and does not establish. Shown with every passing result.
-export const COVERAGE_SHORT='OpenSCAD checked envelope and opening sizes, drawer and shelf fit, joinery limits, hardware conflicts and the flat cut layout. Parts intersecting in 3D are not checked yet.';
+export const COVERAGE_SHORT='OpenSCAD checked envelope and opening sizes, drawer and shelf fit, joinery limits, hardware conflicts and the flat cut layout. Parts intersecting in 3D are checked for every starter and for randomized designs in the test suite, not for this exact design.';
 const COVERED=['Envelope, opening and section sizes against minimums','Drawer box fit: side, top and bottom running clearances','Shelf, door and face reveals; face-frame and mid-rail rules','Joinery depth, tab counts and web limits for the chosen stock','Hardware drilling conflicts (slides, hinges, ganging, registration holes)','Stackable interface keep-outs','Flat cut layout: every part has its own place and no two outlines overlap'];
-const NOT_COVERED=['Parts intersecting each other in 3D (worktop, base hardware and casters included)','Sheet nesting: sheet counts here are area estimates','Grain direction and edge banding'];
+const NOT_COVERED=['Parts intersecting each other in 3D for this exact design (every starter and randomized designs, worktop, base hardware and slides included, are swept in the test suite)','Machining features colliding on panels other than the two sides','Sheet nesting: sheet counts here are area estimates','Grain direction and edge banding'];
 function areaText(mm2:number,units:Units){return units==='in'?(mm2/92903.04).toFixed(1)+' ft²':(mm2/1e6).toFixed(2)+' m²'}
 
 export function StatusChip({analysis,onClick}:{analysis:Analysis;onClick?:()=>void}){

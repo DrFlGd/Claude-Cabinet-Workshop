@@ -1636,7 +1636,8 @@ module calibration_coupon_engrave_geometry() {
 
 module calibration_coupon_cut() {
     calibration_coupon_registration_frame();
-    calibration_coupon_cut_geometry();
+    kerf_compensated()
+        calibration_coupon_cut_geometry();
 
     if (show_calibration_pockets_over_cut)
         %calibration_coupon_pocket_geometry();
@@ -1951,6 +1952,18 @@ function layout_overlaps() =
              min(a[0]+a[2],b[0]+b[2])-max(a[0],b[0]),
              min(a[1]+a[3],b[1]+b[3])-max(a[1],b[1])]];
 
+// Kerf compensation for through-cut geometry: the finished 2D part (outline
+// minus its holes, slots and notches) is offset outward by half the kerf, so
+// outlines grow and every opening shrinks by the same amount. A cutter that
+// removes `kerf` along the path then leaves each part and each joint at its
+// nominal size. Pocket and engrave layouts are not offset; CAM owns those.
+module kerf_compensated() {
+    if (apply_kerf_compensation && kerf > 0)
+        offset(delta=kerf/2) children();
+    else
+        children();
+}
+
 // Paints and positions one cut-layout part from the table.
 module placed(id) {
     i = placement_index(id);
@@ -1958,7 +1971,8 @@ module placed(id) {
     p = cut_layout_placement_table[i];
     paint(p[5],p[6])
         translate([p[1],p[2]])
-            children();
+            kerf_compensated()
+                children();
 }
 
 // PLACE records: where each part sits in the flat cut layout (mm, part origin

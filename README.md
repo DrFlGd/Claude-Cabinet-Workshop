@@ -88,7 +88,8 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    **Cut list & fit** tab says what those checks cover (sizes, drawer and shelf
    fit, joinery limits, hardware conflicts, and the flat cut layout, where
    every part has its own place and no two outlines may overlap) and what they
-   do not yet cover (parts intersecting in 3D, sheet nesting).
+   do not yet cover for your exact design (parts intersecting in 3D, which the
+   test suite sweeps for every starter and randomized designs; sheet nesting).
 5. **Read the plans.** The **Cut list & fit** tab lists every part grouped by
    material and thickness, sheet-goods totals with an approximate sheet count,
    a drawer fit table (opening, box, usable inside size and clearances), doors,

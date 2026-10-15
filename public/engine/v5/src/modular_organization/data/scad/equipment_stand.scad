@@ -17,7 +17,7 @@ cleat_thickness = 18.00; // [0.01:0.01:100]
 
 /* [Machining / Tool and Kerf] */
 
-router_bit_diameter = 6.35;
+router_bit_diameter = 6.35; // [0.1:0.01:50]
 
 /* [Machining / Shared Slot Relief] */
 
@@ -59,11 +59,11 @@ top_clearance = 80;
 
 service_clearance = 500;
 
-overall_width = 600;
+overall_width = 600; // [50:1:3000]
 
-overall_depth = 620;
+overall_depth = 620; // [50:1:3000]
 
-overall_height = 750;
+overall_height = 750; // [50:1:3000]
 
 /* [Structure / Layout] */
 
@@ -241,7 +241,7 @@ show_wall_rails = true;
 
 /* [Output / Flat Layout] */
 
-layout_gap = 25;
+layout_gap = 25; // [1:1:200]
 
 /* [Output / Labels] */
 

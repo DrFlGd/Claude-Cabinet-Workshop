@@ -70,6 +70,13 @@ export function outerContours(svg,{registrationFrame=true}={}){
  return outer.filter(p=>p!==frame).map(p=>p.box);
 }
 
+// Inner contours (holes, slots, notches cut into parts): subpaths enclosed an odd number of times.
+export function innerContours(svg){
+ const polys=svgPolygons(svg).map(pts=>({pts,box:bbox(pts)}));
+ const encloses=(q,p)=>q!==p&&q.box.x0<=p.box.x0+TOL&&q.box.y0<=p.box.y0+TOL&&q.box.x1>=p.box.x1-TOL&&q.box.y1>=p.box.y1-TOL&&(q.box.x1-q.box.x0)*(q.box.y1-q.box.y0)>(p.box.x1-p.box.x0)*(p.box.y1-p.box.y0)&&inside(p.pts[0],q.pts);
+ return polys.filter(p=>polys.filter(q=>encloses(q,p)).length%2===1).map(p=>p.box);
+}
+
 const overlap=(a,b)=>a.x<b.x+b.w-0.001&&b.x<a.x+a.w-0.001&&a.y<b.y+b.h-0.001&&b.y<a.y+a.h-0.001;
 const same=(a,b)=>Math.abs(a-b)<=tol(a,b);
 
@@ -139,11 +146,37 @@ if(process.argv[1]&&import.meta.url===new URL(process.argv[1],'file://').href){
  const overlaps=recs.filter(r=>r.startsWith('CHECK|ERROR|LAYOUT_OVERLAP|'));
  if(!overlaps.length)fail('layout_gap = -30 produced no CHECK|ERROR|LAYOUT_OVERLAP record');
  else console.log(`layout_gap = -30: ${overlaps.length} LAYOUT_OVERLAP error(s), e.g. ${overlaps[0].split('|').slice(3).join('|')}`);
+ if(!recs.some(r=>r.startsWith('CHECK|ERROR|LAYOUT_GAP|')))fail('layout_gap = -30 produced no CHECK|ERROR|LAYOUT_GAP record (the 1 mm floor)');
  const jsOverlaps=checkCutLayout({records:recs}).filter(p=>p.includes('overlaps'));
  if(!jsOverlaps.length)fail('the placement table shows no overlap at layout_gap = -30');
  const cutBad=await run(f,bad,'cut_layout');
  if(cutBad.type!=='error'||!/Design Health/.test(cutBad.error))fail('the cut export was not blocked at layout_gap = -30: '+(cutBad.type==='error'?cutBad.error:'exported'));
  else console.log('cut export blocked: '+cutBad.error);
+ // 3. Kerf compensation offsets the whole part: outlines grow by the kerf, every opening shrinks by it.
+ // 1 mm: this starter's only openings are 3 mm registration holes, which must shrink, not vanish.
+ const kerf=1,comp=valuesFor(f,id,{apply_kerf_compensation:true,kerf});
+ const bomComp=await run(f,comp,'bom'),cutComp=await run(f,comp,'cut_layout');
+ if(cutComp.type!=='result')fail('kerf-compensated cut_layout failed: '+cutComp.error);
+ else{
+  const problems=checkCutLayout({records:recordsOf(bomComp),svg:cutComp.output,kerf});
+  for(const p of problems)fail('kerf '+kerf+' mm: '+p);
+  // Openings cut into parts; the registration frame's own hole (wider than any part) is not one.
+  const partHole=c=>(c.x1-c.x0)<2000;
+  const plain=innerContours(cut.output).filter(partHole),shrunk=innerContours(cutComp.output).filter(partHole);
+  if(plain.length!==shrunk.length)fail(`kerf changed the number of openings: ${plain.length} -> ${shrunk.length}`);
+  const centre=c=>[(c.x0+c.x1)/2,(c.y0+c.y1)/2];
+  let matched=0,wrong=0;
+  for(const c of plain){
+   const [cx,cy]=centre(c);
+   const d=shrunk.find(s=>{const [sx,sy]=centre(s);return Math.abs(sx-cx)<0.3&&Math.abs(sy-cy)<0.3});
+   if(!d)continue;
+   matched++;
+   const dw=(c.x1-c.x0)-(d.x1-d.x0),dh=(c.y1-c.y0)-(d.y1-d.y0);
+   if(Math.abs(dw-kerf)>0.3||Math.abs(dh-kerf)>0.3)wrong++;
+  }
+  if(!matched||wrong)fail(`kerf ${kerf} mm: ${wrong} of ${matched} matched openings did not shrink by the kerf`);
+  else console.log(`kerf ${kerf} mm: ${shrunk.length} openings each shrank by ${kerf} mm, outlines grew by ${kerf} mm, one contour per part.`);
+ }
  if(failures){console.log(`Cut layout check: ${failures} failure(s).`);process.exitCode=1}
  else console.log('Cut layout check passed.');
 }
