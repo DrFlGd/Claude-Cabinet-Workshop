@@ -155,5 +155,5 @@ design files are migrated where supported.
 [CHANGELOG.md](CHANGELOG.md) contains the consolidated history, validation
 performed and known limits. Pushing a new version to `main` builds and tests the
 site, tags `v<version>` and publishes a GitHub release with the portable web
-build; the Windows workflow then adds its smoke-tested portable Windows build to
-the same release.
+build; the release job then requests the Windows workflow for that tag, which
+adds its smoke-tested portable Windows build to the same release.

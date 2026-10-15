@@ -111,6 +111,15 @@ themselves had passed. The crash never reproduced locally on a CPU without
 memory protection keys, so the flag is a mitigation, not a verified root-cause
 fix: if CI crashes again the fallback is pinning Node 22.
 
+CI change (no application change): the release job now requests the Windows
+workflow for the tag it just created, and the Windows workflow attaches its ZIP
+only on such a request; pushes are test builds. Before this, a push attached
+the ZIP only when the release was tagged from that same commit, so v0.9.0 was
+first published with the web build alone (the release was tagged from the CI
+fix commit, which changed no desktop file). For v0.9.0 the Windows workflow
+was run manually for the tag to attach the ZIP. Validation: the workflow files
+parse as YAML; the dispatch path is the one used manually for v0.9.0.
+
 Remaining limits: the advanced classification is a hand-written rule list, so
 a setting someone changes often may still sit behind the switch; the visible
 counts above are at each type's default starter; the Exact view renders only

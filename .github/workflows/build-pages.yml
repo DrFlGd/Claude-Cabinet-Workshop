@@ -121,6 +121,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: write
     steps:
       - uses: actions/checkout@v6
       - uses: actions/download-artifact@v4
@@ -149,3 +150,17 @@ jobs:
             --title "Claude Cabinet Workshop v$version" \
             --notes-file release-notes.md \
             --verify-tag
+      # The Windows build is requested for the tag itself, not left to the push
+      # that happened to change VERSION: a release can be tagged from a later
+      # commit than that push (for example after a CI-only fix), and the Windows
+      # workflow attaches its ZIP only to a release built from the same sources.
+      - name: Request the Windows build for this release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          gh api -X POST "repos/$GITHUB_REPOSITORY/actions/workflows/build-windows.yml/dispatches" \
+            -f ref=main -f "inputs[tag]=v$version"
+          echo "Requested the Windows build for v$version."
