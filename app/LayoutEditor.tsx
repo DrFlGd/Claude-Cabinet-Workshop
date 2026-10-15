@@ -16,6 +16,7 @@ import * as L from '@/lib/layout';
 type Drag={kind:'split'|'drawer';path:L.Path;index:number;axis:'x'|'z';start:number;mmPerPx:number;sizes:number[];tree:L.LayoutNode;moved:boolean};
 type Live={x:number;z:number;text:string}|null;
 
+const modeNames:Record<L.Mode,string>={legacy:'Single column',mixed_bays:'Side-by-side bays',sections:'Sections'};
 const modeNotes:Record<L.Mode,string>={
  legacy:'Openings share the full width; partitions and dividers are joined to the carcass.',
  mixed_bays:'Full-height bays separated by joined partitions.',
@@ -38,6 +39,8 @@ export default function LayoutEditor({family,values,units,analysis,apply}:{famil
  const committed=useMemo(()=>L.fromValues(family,values,current,frame),[family,values,current,frame]);
  const tree=draft??committed;
  const mode=L.currentMode(family,values);
+ const [switched,setSwitched]=useState<{from:L.Mode;to:L.Mode}|null>(null);
+ useEffect(()=>{if(switched&&switched.to!==mode)setSwitched(null)},[mode]);
  const report=draft?undefined:current;
  const g=useMemo(()=>tree?L.geometry(family,values,tree,frame,report):null,[family,values,tree,frame,report]);
  const [selected,setSelected]=useState('');
@@ -74,7 +77,8 @@ export default function LayoutEditor({family,values,units,analysis,apply}:{famil
   if('error' in m){toast.error(m.error);return}
   apply(m.patch);
   for(const n of m.notes)toast.info(n);
-  if(m.mode!==mode)toast.info(m.mode==='sections'?'Built as a section layout: openings in any arrangement with joined dividers.':m.mode==='mixed_bays'?'Built as side-by-side bays with joined partitions.':'Built as a single cabinet layout with joined dividers.');
+  // A change of construction is kept in the header, where it can be read after the edit.
+  setSwitched(m.mode!==mode?{from:mode,to:m.mode}:null);
   if(select)setSelected(L.pathKey(select));
  }
 
@@ -149,7 +153,9 @@ export default function LayoutEditor({family,values,units,analysis,apply}:{famil
  return <div className='lay'>
   <div className='lay-stage'>
    <div className='lay-head'>
-    <div><strong>{label||'Layout'}</strong><span>{modeNotes[mode]}</span></div>
+    <div><strong>{label||'Layout'}</strong><span><b className='lay-mode' title={modeNotes[mode]}>Built as: {modeNames[mode]}</b> {modeNotes[mode]}</span>
+     {switched&&<span className='lay-switched' role='status'><Info size={13}/>Construction changed from {modeNames[switched.from].toLowerCase()} to {modeNames[switched.to].toLowerCase()} to build this arrangement. The engine chooses the simplest construction that fits the openings.<button type='button' onClick={()=>setSwitched(null)} aria-label='Dismiss'>Got it</button></span>}
+    </div>
     <span className={'lay-state'+(busy?' is-busy':'')}>{busy?<><LoaderCircle size={14} className='spin'/>Recalculating exact sizes…</>:current?<>Sizes from the engine</>:<>Waiting for the engine</>}</span>
    </div>
    <svg ref={svg} className='lay-svg' viewBox={`${-pad} ${-pad} ${W+2*pad+band} ${H+2*pad+band}`} role='group' aria-label='Cabinet front layout. Select an opening to edit it.'

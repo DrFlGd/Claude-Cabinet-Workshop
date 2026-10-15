@@ -1,6 +1,11 @@
 import manifest from './engine-v5-files.js';
-// One engine instance per job. Terminating this worker cancels synchronous WASM work.
+// One engine instance per job, built from a module compiled once per worker. Terminating the
+// worker cancels synchronous WASM work. A 'warm' message compiles the engine before the first job.
+let compiled=null;
+const compiling=(async()=>{if(typeof WebAssembly==='undefined'||typeof fetch!=='function')return;try{const r=await fetch(new URL('./openscad.wasm',self.location.href));compiled=await (WebAssembly.compileStreaming?WebAssembly.compileStreaming(r.clone()).catch(async()=>WebAssembly.compile(await r.arrayBuffer())):WebAssembly.compile(await r.arrayBuffer()))}catch{compiled=null}})();
+async function engineOptions(options){await compiling;return compiled?{...options,instantiateWasm:(info,receive)=>{WebAssembly.instantiate(compiled,info).then(instance=>receive(instance,compiled));return {}}}:options}
 self.onmessage = async ({data}) => {
+ if(data&&data.type==='warm'){try{await compiling;await import('./openscad.js')}catch{}self.postMessage({type:'warm'});return}
  if(typeof data.filename==='string'&&/^(modular_organization_.*_v3|modular_storage_.*_v(29|32)|parametric_.*)\.scad$/.test(data.filename)){await import('./render-worker-legacy.js');return self.onmessage({data});}
  const started=performance.now();const logs=[];
  const log=(line)=>{line=String(line).slice(0,2000);logs.push(line);if(logs.length>150)logs.shift();self.postMessage({type:'log',line})};
@@ -11,7 +16,7 @@ self.onmessage = async ({data}) => {
   const sources=data.sources;
   if(!Array.isArray(sources)||sources.length!==manifest.files.length||!manifest.files.every(name=>sources.some(f=>f.name===name&&typeof f.text==='string'&&f.text.length<2000000)))throw Error('Invalid engine snapshot. Refresh the app and try again.');
   const {default:OpenSCAD}=await import('./openscad.js');
-  const engine=await OpenSCAD({noInitialRun:true,locateFile:path=>new URL(path,self.location.href).href,print:log,printErr:log});
+  const engine=await OpenSCAD(await engineOptions({noInitialRun:true,locateFile:path=>new URL(path,self.location.href).href,print:log,printErr:log}));
   for(const f of sources){engine.FS.mkdirTree('/'+f.name.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+f.name,f.text);}
   engine.FS.writeFile('/'+filename,source);
   self.postMessage({type:'stage',stage:'Rendering cabinet…'});

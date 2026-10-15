@@ -1,8 +1,24 @@
 export type Field={key:string;value:any;expression?:string;section:string;description:string;options:string[]|null;bounds:number[]|null;advanced:boolean;unit?:string;step?:number;visibleIf?:Record<string,any>};
 // Workflow order: describe the cabinet first (size, layout, contents), then shop details.
-export const sectionOrder=['Sizing','Structure','Drawers','Doors','Shelves','Dividers','Trays','Mounting','Materials','Hardware','Machining','Output','System'];
+export const sectionOrder=['Sizing','Structure','Drawers','Doors','Shelves','Dividers','Trays','Mounting','Materials','Hardware','Machining','Engine'];
 // Sections that describe how the parts are made rather than what the cabinet is.
-export const shopSections=['Materials','Hardware','Machining','Output','System'];
+export const shopSections=['Materials','Hardware','Machining','Engine'];
+// Display names and one-line descriptions for the section rail.
+export const sectionTitles:Record<string,string>={Engine:'Engine & export'};
+export const sectionBlurbs:Record<string,string>={
+ Sizing:'Overall size, or the drawer interior the cabinet must fit.',
+ Structure:'Carcass joinery, base, top and worktop.',
+ Drawers:'Drawer boxes, fronts and running clearances.',
+ Doors:'Door fronts, gaps and face frame.',
+ Shelves:'Fixed and adjustable shelf details.',
+ Dividers:'Drawer divider grids.',
+ Trays:'Pull-out trays and cable openings.',
+ Mounting:'Floor, wall or stacked mounting and rear construction.',
+ Materials:'Sheet stock and measured thicknesses.',
+ Hardware:'Slides, hinges, handles, casters and drilling.',
+ Machining:'Cutter diameter, fit clearances, dados and corner relief.',
+ Engine:'Render visibility, cut-layout export, labels, calibration and reports. Rarely needed.',
+};
 // Companion edits that keep a choice buildable. Each returns only the keys it changes.
 export function linkedChanges(key:string,value:unknown,v:Record<string,any>):Record<string,any>{
  // Fixed runners only carry a removable service tray; the engine rejects any travel.
@@ -22,6 +38,10 @@ export const hasLayoutEditor=(family:unknown)=>typeof family==='number'&&family>
 
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
  if(['cabinet_mount_style','mount_mode'].includes(f.key))return [{...f,section:'Mounting / Mount Style'}];
+ // Sheet size belongs with the materials it describes; everything else the engine exposes about
+ // rendering, exports, labels, calibration and reports lives in one "Engine & export" section.
+ if(['stock_width','stock_height','layout_show_stock'].includes(f.key))return [{...f,section:'Materials / Sheet stock'}];
+ if(f.section.startsWith('Output /')||f.section.startsWith('System /'))return [{...f,section:'Engine / '+f.section.split(' / ')[1]}];
  if(f.section==='Structure / Back and Braces')return [{...f,section:'Mounting / Rear Mounting',description:f.key==='back_style'?'Rear construction: choose a back panel or structural rear stretchers. Stretcher dimensions appear when Stretchers is selected. These controls define rear geometry, not a separate wall-fastener or French-cleat system.':f.description}];
  if(f.key==='face_frame_mid_rail_mode')f={...f,description:'Controls the horizontal crosspiece between the face frame’s top and bottom rails. None omits it. Automatic places it on the boundary between the lower doors and the upper drawers, so it is used only for drawers-over-doors contents. Custom positions its center at the height entered in Face frame custom mid rail Z, measured from the cabinet base; drawer boxes are kept clear of it, and inset fronts must not cross it. Requires face-frame construction.'};
  if(!f.section.startsWith('Fronts /'))return [f];
@@ -41,7 +61,27 @@ export function settingsGroup(f:Field){
  }
  return f.section;
 }
-export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)}
+// Settings most people never change are hidden behind "Show advanced" so a section shows the
+// decisions that shape the cabinet first. The engine's own advanced flag is kept as well.
+const ADVANCED=[
+ // Engine & export: only the cut-layout gap, part labels and the shared bounding box stay in view.
+ /^(show_|calibration_|engrave_label_min_size|export_bounding_box_|design_name|color_mode|output_mode|preview_extension|dimension_report|validation_report|system_contract_report|interface_keepout_policy)/,
+ // Hardware: hole patterns, plate insets, ratings and registration details.
+ /_registration_(hole_count|hole_diameter|hole_spacing|end_margin|blind_depth|vertical_offset|face_hole)$/,
+ /^(caster_hole_|caster_mount_plate_|base_hardware_inset_|base_mounting_plate_|leveler_(hole|plate|mount)|ganging_(conflict|connector_hole|pair|front_setback|rear_setback|vertical_margin|vertical_pattern))/,
+ /^(wood_drawer_runner_(bottom_offset|depth|front_setback|thickness)|wood_rail_(depth|side_clearance|vertical_clearance)|custom_wood_)/,
+ /^(metal_slide_(envelope_height|front_setback|cabinet_holes|drawer_holes|hole_)|slide_(load_rating|supported_travel)|equipment_mass_kg|hinge_(plate_|door_fixing_))/,
+ // Machining: fit tuning beneath the shared cutter and clearance.
+ /^(custom_(dado|drawer_dado|drawer_bottom_dado)_depth|(dado|drawer_dado|drawer_bottom_dado)_depth_mode|dado_fit_clearance|drawer_dado_fit_clearance|face_frame_back_dado_clearance|circle_segments|router_bit_diameter|side_relief|minimum_joint_web|max_auto_tab_count|target_tab_spacing)/,
+ /_tab_(custom_centers|placement|count|width|edge_margin)$/,
+ // Structure, mounting, shelves, fronts and trays: offsets and margins with sensible defaults.
+ /^(back_stretcher_(edge_margin|inset)|back_inset|stack_(interface_|preview_)|mirror_sides|custom_bottom_above_toe|cutout_corner_radius|minimum_rib_width|side_frame_margin)/,
+ /^adjustable_shelf_(front_setback|rear_setback|side_clearance|hole_(top|bottom)_margin|hole_depth)/,
+ /^(face_frame_construction|door_hinge_partition_shelf_clearance|front_setback|extend_top_drawer_face_to_top|drawer_face_size_mode|fronts_cover_bottom_lip|front_edge_reveal|inset_front_back_clearance|drawer_face_back_clearance|cable_opening_|tray_cheek_height|tray_inset|service_clearance|drawer_bank_face_gap|drawer_bank_partition_rear_clearance)/,
+ /^(divider_|drawer_divider_(thickness|slot|mounting|clearance|notch))/,
+ /^(layout_show_stock|bottom_width_style|custom_side_toe_kick_cutout)$/,
+];
+export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)||ADVANCED.some(r=>r.test(f.key))}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(hasLayoutEditor(v._family)&&LAYOUT_KEYS.has(f.key))return LAYOUT_REASON;
@@ -68,6 +108,8 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(k.startsWith('custom_toe_kick_')||['custom_bottom_above_toe','custom_side_toe_kick_cutout'].includes(k)){if(v.base_style!=='toe_kick'||v.cabinet_mount_style==='wall')return 'Select a floor-mounted toe-kick base';}
  if(['drawer_bank_face_gap','drawer_bank_partition_rear_clearance','drawer_bank_partition_joinery'].includes(k)&&Number(v.drawer_bank_count)<=1)return 'Requires multiple drawer banks';
  if(k==='base_style'&&v.cabinet_mount_style==='wall')return 'Floor bases are disabled for wall mounting';
+ if(k==='wall_doors_flush_top'&&v.cabinet_mount_style!=='wall')return 'Used for wall-hung cabinets';
+ if(k.startsWith('ganging_')&&k!=='ganging_style'&&(v.ganging_style??'none')==='none')return 'Select a ganging style';
  if(k.startsWith('base_mounting_plate_')&&!v.include_base_mounting_plate)return 'Enable the base mounting plate';
  if(k==='include_drawer_face_registration_holes'&&!v.include_drawer_faces)return 'Enable drawer faces';
  if(k.startsWith('drawer_face_registration_')&&!v.include_drawer_faces)return 'Enable drawer faces';

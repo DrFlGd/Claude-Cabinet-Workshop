@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.8.0**) are separate from the bundled
+Application versions (currently **0.9.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,94 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.9.0 — 2026-10-15
+
+A settings panel that shows the decisions that shape the cabinet first, explains
+every setting, and says why a setting is out of use instead of hiding it. This is
+the "intuitive package" roadmap (B) from the October 2026 codebase review; the
+engine, exports and reliability checks are unchanged.
+
+- **Section rail.** The section buttons became a rail beside the settings:
+  cabinet sections first (Sizing, Structure, Drawers, Doors, Shelves, Dividers,
+  Trays, Mounting), then **Shop details** (Materials, Hardware, Machining,
+  Engine & export) collapsed until opened, or opened automatically when a part
+  click or search lands there. Each entry shows the number of settings in use
+  and how many more sit behind **Show advanced**; while searching it shows the
+  number of matches instead. Every section has a one-line description.
+- **Fewer settings in the default view.** The engine's render visibility
+  toggles, calibration coupons, export frame, label sizes, reports and other
+  knobs moved out of the separate Output and System sections into one
+  **Engine & export** section where only the cut-layout gap and the label size
+  are shown by default. Sheet width and height moved to Materials, next to the
+  stock they describe. Hole patterns, plate insets, registration details, fit
+  tuning, margins and similar settings are now flagged advanced
+  (`lib/settings.ts`, `ADVANCED`). Default-visible settings per type at the
+  default starter: shop cart 124 → 55, utility 128 → 62, benchtop 87 → 35,
+  stackable 111 → 45, kitchen 136 → 72, drawer 52 → 34, equipment stand
+  59 → 36. Two settings gained dependency rules: ganging settings need a ganging
+  style, and "wall doors flush top" needs a wall-hung cabinet.
+- **Settings not in use are shown, not hidden.** Each section ends with a
+  collapsed list of the settings that do not apply to the current configuration,
+  each disabled and followed by the change that brings it into use ("Select
+  metal drawer slides", "Requires tab-and-slot carcass joinery"). Searching
+  includes them, open, so "why can't I find X" has an answer. Settings owned by
+  the Layout tab are listed only in search results, with "Set in the Layout
+  tab". Saved values are kept as before.
+- **Help for every setting.** 227 settings had neither a tooltip nor an engine
+  description (hole patterns, slide drilling, French cleats, calibration, tab
+  placement, equipment-stand sizing, drawer fit targets and more). They now have
+  plain-language help, written from the engine's parameter definitions,
+  defaults and resolve logic rather than measured against dimension reports;
+  render visibility toggles and measured thicknesses are described by rule.
+  Option labels were added for 30 more choices (relief styles, tab placement,
+  drilling mode, ganging, drawer face styles, report levels) and clearer titles
+  for the engine and sheet settings.
+- **Lists are edited one entry at a time.** Width weights, custom tab centers,
+  slide hole positions and other lists show one input per entry with a remove
+  button and an **Add** button; entries tied to a bay or column count can only
+  be edited. The JSON editor remains only for nested lists.
+- **One 3D model tab.** Preview and Exact 3D merged into **3D model** with an
+  **Instant** / **Exact** switch. Instant keeps interior, exploded and dimension
+  controls; Exact keeps the OpenSCAD render with its mode and auto-update, and
+  only renders while it is showing. The exact view's result survives switching
+  tabs.
+- **Engine kept warm.** The background check worker and the exact-render worker
+  now stay alive between runs and reuse the compiled OpenSCAD module (a `warm`
+  message compiles it during the first debounce), instead of spawning a worker
+  and compiling 9.6 MB of WebAssembly on every edit. An edit that lands during
+  a run still terminates that run. Headless Chromium on the shop cart starter:
+  first check 1.1 s, following checks 0.8 s.
+- **Honest status.** The status chip says **Engine checks passed** (or
+  *Checks passed · n notes*) instead of *Parts fit · checked by OpenSCAD*, and
+  its tooltip says what was checked. The Cut list & fit tab gained **What this
+  check does and does not cover**: sizes, drawer and shelf fit, joinery limits
+  and hardware conflicts are checked; parts intersecting in 3D, overlaps in the
+  cut layout, sheet nesting, grain and edge banding are not.
+- **Construction switch in the layout header.** When an arrangement makes the
+  engine change construction (single column, side-by-side bays, sections), the
+  Layout tab header now says **Built as: …** permanently and shows the change
+  as a dismissible notice instead of a toast that disappears.
+- Documentation: README walkthrough updated for the rail, the merged 3D tab and
+  the coverage list.
+
+### Validation performed
+
+TypeScript, `tests/units.cjs`, `tests/settings-visibility.cjs`,
+`tests/v5-integration.cjs`, `tests/desktop-assets.cjs`, `tests/section-wasm.mjs`,
+`tests/engine-fit.mjs`, `tests/layout-editor.mjs`, `tests/golden.mjs` and
+`tests/engine-interference.mjs` pass; the parity table and embedded engine
+sources are current; the static build succeeds. Screenshots at 1600 px and
+700 px of the rail, inactive lists, search, both 3D modes, the cut list and the
+layout header were reviewed with no console errors. `tests/source-loading.cjs`
+and `tests/usability.cjs` already fail on 0.8.0 (missing fixture and module)
+and are not in CI.
+
+Remaining limits: the advanced classification is a hand-written rule list, so
+a setting someone changes often may still sit behind the switch; the visible
+counts above are at each type's default starter; the Exact view renders only
+while it is showing, so switching to it after edits still waits for a render;
+the engine worker is recycled after any failed or cancelled run.
 
 ## 0.8.0 — 2026-10-02
 

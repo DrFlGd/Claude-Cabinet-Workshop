@@ -37,7 +37,11 @@ export default function OpenSCADView({family,values,active,selected,parts,onSele
  const [mode,setMode]=useState('assembly'),[result,setResult]=useState<Result|null>(null),[running,setRunning]=useState(false),[stage,setStage]=useState(''),[error,setError]=useState(''),[logs,setLogs]=useState<string[]>([]),[elapsed,setElapsed]=useState(0);
  const worker=useRef<Worker|null>(null),controller=useRef<AbortController|null>(null),sequence=useRef(0),timeout=useRef<ReturnType<typeof setTimeout>|null>(null);
  const key=JSON.stringify({family,values,mode}),stale=!!result&&result.key!==key,errors=validate(values);
- const stop=()=>{sequence.current++;worker.current?.terminate();worker.current=null;controller.current?.abort();controller.current=null;if(timeout.current)clearTimeout(timeout.current);timeout.current=null};
+ // The render worker stays warm between renders; cancelling a render in progress discards it.
+ const busy=useRef(false);
+ const spawn=()=>{const w=new Worker(assetUrl('/openscad/render-worker.js'),{type:'module'});w.postMessage({type:'warm'});return w};
+ const stop=(keep=false)=>{sequence.current++;if(!keep||busy.current){worker.current?.terminate();worker.current=null}busy.current=false;controller.current?.abort();controller.current=null;if(timeout.current)clearTimeout(timeout.current);timeout.current=null};
+ useEffect(()=>{if(active&&!worker.current)worker.current=spawn();return ()=>{}},[active]);
  useEffect(()=>()=>stop(),[]);
  const supported=schemas[family].fields.find(f=>f.key==='output_mode')?.options??[];
  useEffect(()=>{if(!supported.includes(mode))setMode('assembly')},[family,mode]);
@@ -51,14 +55,14 @@ export default function OpenSCADView({family,values,active,selected,parts,onSele
  },[auto,active,key,running,result,stale,errors.length]);
  useEffect(()=>{if(!running)return;setElapsed(0);const start=Date.now();const id=setInterval(()=>setElapsed(Math.floor((Date.now()-start)/1000)),1000);return()=>clearInterval(id)},[running]);
  async function render(){
-  attempted.current=key;stop();const id=sequence.current;const snapshot={family,key,mode};controller.current=new AbortController();setRunning(true);setError('');setLogs([]);setStage('Preparing cabinet…');
+  attempted.current=key;stop(true);const id=sequence.current;const snapshot={family,key,mode};controller.current=new AbortController();setRunning(true);setError('');setLogs([]);setStage('Preparing cabinet…');
  timeout.current=setTimeout(()=>{if(sequence.current!==id)return;stop();setRunning(false);setError('Rendering stopped after 3 minutes. Try carcass only, or reduce circle segments in Advanced.')},180000);
  try{const source=await configuredSource(family,values,controller.current.signal);if(sequence.current!==id)return;
- const job=new Worker(assetUrl('/openscad/render-worker.js'),{type:'module'});worker.current=job;
+ const job=worker.current??spawn();worker.current=job;busy.current=true;
  job.onmessage=({data})=>{if(sequence.current!==id)return;
  if(data.type==='stage')setStage(data.stage);
  if(data.type==='log')setLogs(l=>[...l.slice(-149),data.line]);
- if(data.type==='result'){const bytes=data.output as ArrayBuffer;if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<84){setError('OpenSCAD returned an empty model.')}else{setResult({bytes,key:snapshot.key,family:snapshot.family,mode:snapshot.mode,seconds:data.elapsed/1000,warnings:(data.logs??[]).filter((s:string)=>/^WARNING:/.test(s)).length})}stop();setRunning(false)}
+ if(data.type==='result'){const bytes=data.output as ArrayBuffer;if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<84){setError('OpenSCAD returned an empty model.')}else{setResult({bytes,key:snapshot.key,family:snapshot.family,mode:snapshot.mode,seconds:data.elapsed/1000,warnings:(data.logs??[]).filter((s:string)=>/^WARNING:/.test(s)).length})}busy.current=false;stop(true);setRunning(false)}
  if(data.type==='error'){setError(data.error||'Rendering failed.');setLogs(data.logs??[]);stop();setRunning(false)}
  };
  job.onerror=()=>{if(sequence.current!==id)return;setError('Could not run OpenSCAD. Check your connection and try again.');stop();setRunning(false)};

@@ -71,24 +71,32 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    arrangement is not possible for a cabinet type. Fronts are drawn at the
    positions the engine reports; dashed fronts are estimates while it
    recalculates.
-3. **Work through the settings.** The section buttons follow the order you
-   would design in: Sizing, Structure, Drawers, Doors, Shelves and so on, then
-   the shop details (Materials, Hardware, Machining, Output). Each button shows
-   how many settings apply to the current layout; sections with nothing to set
-   are hidden. **Find any setting** searches names and help text; counts, bays
-   and drawer heights are set in the Layout tab and the search points there.
-   Advanced settings stay behind the per-section switch.
+3. **Work through the settings.** The section rail follows the order you
+   would design in: Sizing, Structure, Drawers, Doors, Shelves and so on. The
+   shop details (Materials, Hardware, Machining, Engine & export) are collapsed
+   under **Shop details** until you need them. Each section shows how many
+   settings apply to the current layout and how many more are behind its
+   **Show advanced** switch; sections with nothing to set are hidden. Settings
+   that do not apply to the current configuration are listed at the end of each
+   section, disabled, with the change that would bring them into use.
+   **Find any setting** searches names and help text across every section,
+   including settings not in use; counts, bays and drawer heights are set in
+   the Layout tab and the search points there.
 4. **Watch the checks.** After every change OpenSCAD recalculates the design
-   in the background. The status chip above the preview says whether all parts
-   fit, lists notes, or names the problems to fix.
+   in the background. The status chip above the preview says whether the
+   engine's checks passed, lists notes, or names the problems to fix. The
+   **Cut list & fit** tab says what those checks cover (sizes, drawer and shelf
+   fit, joinery limits, hardware conflicts) and what they do not yet cover
+   (parts intersecting in 3D, overlaps in the cut layout, sheet nesting).
 5. **Read the plans.** The **Cut list & fit** tab lists every part grouped by
    material and thickness, sheet-goods totals with an approximate sheet count,
    a drawer fit table (opening, box, usable inside size and clearances), doors,
    shelves and any hardware the engine reports. Copy or download the list as
    CSV, or print it.
-6. **Check the geometry.** **Preview** is an instant schematic for orientation
-   and part selection. **Exact 3D** is the real OpenSCAD model, including
-   joinery, holes and grooves; it re-renders automatically after edits.
+6. **Check the geometry.** The **3D model** tab has two modes. **Instant** is a
+   schematic that updates as you type, for orientation and part selection.
+   **Exact** is the real OpenSCAD model, including joinery, holes and grooves;
+   it re-renders automatically after edits while it is showing.
 7. **Export.** **Export** generates the operation SVGs (through cuts, pockets,
    engraving), reports, a printable assembly packet and the editable OpenSCAD
    project. Exports are blocked while the engine reports an error.
