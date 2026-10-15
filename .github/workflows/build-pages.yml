@@ -37,7 +37,7 @@ jobs:
       - name: Parity table is current
         run: node scripts/parity.mjs --check
       - name: Unit and settings tests
-        run: node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
+        run: node tests/units.cjs && node tests/nesting.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
         run: node tests/stackable-controls.cjs && node tests/sections.cjs
       # The engine suites run OpenSCAD WebAssembly inside worker threads; they

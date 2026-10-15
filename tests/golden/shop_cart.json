@@ -162,7 +162,8 @@
     "bytes": 20091,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6.35 mm, 2 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm, 1 × WORKTOP 38 mm"
  },
  "shop_cart_compact_mixed_cart": {
   "records": [
@@ -327,7 +328,8 @@
     "bytes": 20091,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6.35 mm, 2 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm, 1 × WORKTOP 38 mm"
  },
  "shop_cart_3_section_drawer_workbench": {
   "records": [
@@ -699,7 +701,8 @@
     "bytes": 19994,
     "paths": 1
    }
-  }
+  },
+  "sheets": "12 sheets: 1 × BACK 6.35 mm, 3 × CARCASS 19.05 mm, 2 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 2 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm, 1 × WORKTOP 38 mm"
  },
  "shop_cart_4_section_drawer_workbench": {
   "records": [
@@ -1181,7 +1184,8 @@
     "bytes": 20174,
     "paths": 1
    }
-  }
+  },
+  "sheets": "13 sheets: 1 × BACK 6.35 mm, 4 × CARCASS 19.05 mm, 2 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 2 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm, 1 × WORKTOP 38 mm"
  },
  "shop_cart_machine_stand": {
   "records": [
@@ -1316,7 +1320,8 @@
     "bytes": 20091,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6.35 mm, 2 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm, 1 × WORKTOP 38 mm"
  },
  "shop_cart_open_service_cart": {
   "records": [
@@ -1384,6 +1389,7 @@
     "bytes": 19807,
     "paths": 1
    }
-  }
+  },
+  "sheets": "4 sheets: 1 × BACK 6.35 mm, 2 × CARCASS 19.05 mm, 1 × WORKTOP 38 mm"
  }
 }
