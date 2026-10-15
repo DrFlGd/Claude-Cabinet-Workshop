@@ -40,7 +40,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_freestanding_single_printer_stand": {
   "records": [
@@ -83,7 +84,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_wall_mounted_pull_out_printer_stand": {
   "records": [
@@ -139,7 +141,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_stacked_dual_bay_printer_tower": {
   "records": [
@@ -194,7 +197,8 @@
     "bytes": 447,
     "paths": 1
    }
-  }
+  },
+  "sheets": "3 sheets: 3 × plywood 18 mm"
  },
  "equipment_stand_skeletonized_wall_stand": {
   "records": [
@@ -250,7 +254,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_solid_side_utility_stand": {
   "records": [
@@ -295,7 +300,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_compact_desktop_printer": {
   "records": [
@@ -338,7 +344,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_medium_enclosed_printer": {
   "records": [
@@ -381,7 +388,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_fixed_runner_service_shelf": {
   "records": [
@@ -428,7 +436,8 @@
     "bytes": 440,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × plywood 18 mm, 1 × plywood 20 mm"
  },
  "equipment_stand_wall_printer_tower": {
   "records": [
@@ -492,7 +501,8 @@
     "bytes": 461,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 2 × plywood 18 mm"
  },
  "equipment_stand_housed_joint_printer_stand": {
   "records": [
@@ -535,7 +545,8 @@
     "bytes": 7000,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_tab_slot_full_back_stand": {
   "records": [
@@ -578,7 +589,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 2 × plywood 18 mm"
  },
  "equipment_stand_applied_panel_back_stand": {
   "records": [
@@ -621,7 +633,8 @@
     "bytes": 448,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × plywood 18 mm, 1 × plywood 6.35 mm"
  },
  "equipment_stand_three_stretcher_stand": {
   "records": [
@@ -668,7 +681,8 @@
     "bytes": 440,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × plywood 18 mm"
  },
  "equipment_stand_fractional_stock_stand": {
   "records": [
@@ -711,6 +725,7 @@
     "bytes": 456,
     "paths": 1
    }
-  }
+  },
+  "sheets": "3 sheets: 1 × plywood 12.7 mm, 2 × plywood 18.35 mm"
  }
 }

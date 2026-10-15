@@ -89,7 +89,7 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    fit, joinery limits, hardware conflicts, and the flat cut layout, where
    every part has its own place and no two outlines may overlap) and what they
    do not yet cover for your exact design (parts intersecting in 3D, which the
-   test suite sweeps for every starter and randomized designs; sheet nesting).
+   test suite sweeps for every starter and randomized designs).
 5. **Read the plans.** The **Cut list & fit** tab lists every part grouped by
    material and thickness, sheet-goods totals with an approximate sheet count,
    a drawer fit table (opening, box, usable inside size and clearances), doors,
@@ -100,8 +100,11 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    **Exact** is the real OpenSCAD model, including joinery, holes and grooves;
    it re-renders automatically after edits while it is showing.
 7. **Export.** **Export** generates the operation SVGs (through cuts, pockets,
-   engraving), reports, a printable assembly packet and the editable OpenSCAD
-   project. Exports are blocked while the engine reports an error.
+   engraving), the same operations nested per stock sheet (one folder per sheet
+   with an SVG and a DXF per operation, using the sheet size and layout gap
+   from the settings; parts keep their drawn orientation unless you allow
+   them to turn), reports, a printable assembly packet and the editable
+   OpenSCAD project. Exports are blocked while the engine reports an error.
 
 ### Units and dimensions
 

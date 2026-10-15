@@ -3,7 +3,9 @@
 // Records the engine's parts list and reports (BOM, PLACE, DIM, LAYOUT, CHECK,
 // WARN, HARDWARE, TARGET records) and fingerprints of the through-cut and pocket
 // SVG layouts. Every starter's cut layout is also checked against its placement
-// table (tests/cut-layout-check.mjs): one outer contour per part, no overlaps. Refactors must reproduce them exactly; an intended change is accepted
+// table (tests/cut-layout-check.mjs): one outer contour per part, no overlaps, and
+// nested onto the design's stock sheets (lib/nesting.ts): every part placed, gaps and
+// margins kept, one outline per part per sheet. Refactors must reproduce them exactly; an intended change is accepted
 // with `node tests/golden.mjs --update`, and the diff of tests/golden/*.json shows
 // exactly which parts or dimensions changed.
 //
@@ -15,6 +17,7 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import {Worker} from 'node:worker_threads';
 import {checkCutLayout} from './cut-layout-check.mjs';
+import ts from 'typescript';
 const root=new URL('../',import.meta.url);
 const read=n=>JSON.parse(fs.readFileSync(new URL(n,root)));
 const schema=read('lib/schema.json'),bundle=read('lib/engine-sources.json');
@@ -23,6 +26,8 @@ const update=process.argv.includes('--update');
 const families=(process.env.FAMILIES??'0,1,2,3,4,5,6').split(',').map(Number);
 const only=process.env.STARTERS?new Set(process.env.STARTERS.split(',')):null;
 const dir=new URL('tests/golden/',root);
+// lib/nesting.ts, transpiled the way the other Node suites load the app's TypeScript.
+const nesting=(()=>{const m={exports:{}};new Function('require','module','exports',ts.transpileModule(fs.readFileSync(new URL('lib/nesting.ts',root),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(()=>{throw Error('no deps')},m,m.exports);return m.exports})();
 const configure=(f,values)=>{let s=bundle[schema[f].file];for(const fl of schema[f].fields){const v=values[fl.key];if(v!==undefined&&v!==null)s=s.replace(new RegExp('^('+fl.key+'\\s*=\\s*)[^;]+;','m'),(_m,p)=>p+JSON.stringify(v)+';')}return s};
 const valuesFor=(f,id)=>({...Object.fromEntries(schema[f].fields.map(x=>[x.key,x.value])),...schema[f].starters.find(s=>s.id===id).values});
 function run(f,values,mode){
@@ -50,7 +55,18 @@ async function snapshot(f,id){
   const r=await run(f,v,mode);
   const svg=r.type==='result'&&typeof r.output==='string'?r.output:'';
   snap.svg[mode]=r.type==='result'?{sha256:crypto.createHash('sha256').update(svg).digest('hex').slice(0,24),bytes:Buffer.byteLength(svg),paths:(svg.match(/<path/g)??[]).length}:{error:String(r.error).slice(0,200)};
-  if(mode==='cut_layout')layout.push(...(r.type==='result'?checkCutLayout({records:snap.records,svg,kerf:v.apply_kerf_compensation?Number(v.kerf)||0:0,registrationFrame:v.include_shared_export_bounding_box!==false}):['cut_layout export failed: '+r.error]));
+  if(mode==='cut_layout'){
+   const kerf=v.apply_kerf_compensation?Number(v.kerf)||0:0;
+   layout.push(...(r.type==='result'?checkCutLayout({records:snap.records,svg,kerf,registrationFrame:v.include_shared_export_bounding_box!==false}):['cut_layout export failed: '+r.error]));
+   // Per-sheet gate: every part nests on the design's own stock sheet, parts keep their
+   // gap, nothing leaves the margin, and each part has exactly one outline per sheet.
+   if(r.type==='result'){
+    const parts=nesting.partRecords(snap.records),places=nesting.placementRecords(snap.records);
+    const result=nesting.nest(parts,places,nesting.nestOptions(v));
+    layout.push(...nesting.checkNesting(result,parts,svg,kerf/2).map(x=>'nesting: '+x));
+    snap.sheets=nesting.nestingSummary(result);
+   }
+  }
  }
  return {snap,layout};
 }
@@ -77,9 +93,10 @@ for(const f of families){
   if(!was){console.log(`${schema[f].id}:${id} has no snapshot; run with --update`);problems++;continue}
   const lines=diff(was.records,snap.records);
   const svgChanged=Object.keys({...was.svg,...snap.svg}).filter(m=>JSON.stringify(was.svg[m])!==JSON.stringify(snap.svg[m]));
-  if(lines.length||svgChanged.length){
+  const sheetsChanged=(was.sheets??'')!==(snap.sheets??'');
+  if(lines.length||svgChanged.length||sheetsChanged){
    problems++;
-   console.log(`${schema[f].id}:${id} changed`+(svgChanged.length?` (SVG: ${svgChanged.join(', ')})`:''));
+   console.log(`${schema[f].id}:${id} changed`+(svgChanged.length?` (SVG: ${svgChanged.join(', ')})`:'')+(sheetsChanged?` (sheets: ${was.sheets??'none'} -> ${snap.sheets})`:''));
    for(const l of lines)console.log(l);
   }
  }

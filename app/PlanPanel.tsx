@@ -1,7 +1,8 @@
 'use client';
 import {useState} from 'react';
 import {AlertTriangle,Check,ClipboardCopy,Download,Info,LoaderCircle,Printer,XCircle} from 'lucide-react';
-import {cutListCsv,MATERIAL_NAMES,Plan} from '@/lib/analysis';
+import {cutListCsv,MATERIAL_NAMES,Plan,records} from '@/lib/analysis';
+import {nest,nestOptions,partRecords,placementRecords} from '@/lib/nesting';
 import {download,Values} from '@/lib/cabinet';
 import {formatShop,Units} from '@/lib/units';
 import type {Analysis} from './useEngineAnalysis';
@@ -11,10 +12,21 @@ export function sheetEstimate(area:number,values:Values){
  const w=Number(values.stock_width)||2440,h=Number(values.stock_height)||1220;
  return Math.max(1,Math.ceil(area/(w*h*0.8)));
 }
+// Real sheet counts: the engine's placement records nested on the design's stock
+// (lib/nesting.ts), keyed by material and thickness. Null when the log carries no
+// placements (an older engine run), so callers fall back to the area estimate.
+export function sheetCounts(log:string,values:Values){
+ const recs=records(log),parts=partRecords(recs),places=placementRecords(recs);
+ if(!places.length)return null;
+ const result=nest(parts,places,nestOptions(values)),counts=new Map<string,number>();
+ for(const s of result.sheets){const k=s.material+'|'+s.thickness.toFixed(3);counts.set(k,(counts.get(k)??0)+1)}
+ return {counts,unplaced:result.unplaced.length,options:result.options};
+}
+const sheetKey=(m:{material:string;thickness:number})=>m.material+'|'+m.thickness.toFixed(3);
 // What the engine's validation pass does and does not establish. Shown with every passing result.
 export const COVERAGE_SHORT='OpenSCAD checked envelope and opening sizes, drawer and shelf fit, joinery limits, hardware conflicts and the flat cut layout. Parts intersecting in 3D are checked for every starter and for randomized designs in the test suite, not for this exact design.';
-const COVERED=['Envelope, opening and section sizes against minimums','Drawer box fit: side, top and bottom running clearances','Shelf, door and face reveals; face-frame and mid-rail rules','Joinery depth, tab counts and web limits for the chosen stock','Hardware drilling conflicts (slides, hinges, ganging, registration holes)','Stackable interface keep-outs','Flat cut layout: every part has its own place and no two outlines overlap'];
-const NOT_COVERED=['Parts intersecting each other in 3D for this exact design (every starter and randomized designs, worktop, base hardware and slides included, are swept in the test suite)','Machining features colliding on panels other than the two sides','Sheet nesting: sheet counts here are area estimates','Grain direction and edge banding'];
+const COVERED=['Envelope, opening and section sizes against minimums','Drawer box fit: side, top and bottom running clearances','Shelf, door and face reveals; face-frame and mid-rail rules','Joinery depth, tab counts and web limits for the chosen stock','Hardware drilling conflicts (slides, hinges, ganging, registration holes)','Stackable interface keep-outs','Flat cut layout: every part has its own place and no two outlines overlap','Sheet nesting: every part placed on the stock sheet with the layout gap, one SVG and DXF per sheet in the package'];
+const NOT_COVERED=['Parts intersecting each other in 3D for this exact design (every starter and randomized designs, worktop, base hardware and slides included, are swept in the test suite)','Machining features colliding on panels other than the two sides','Grain direction and edge banding'];
 function areaText(mm2:number,units:Units){return units==='in'?(mm2/92903.04).toFixed(1)+' ft²':(mm2/1e6).toFixed(2)+' m²'}
 
 export function StatusChip({analysis,onClick}:{analysis:Analysis;onClick?:()=>void}){
@@ -37,11 +49,11 @@ function Dim({mm,units}:{mm:number;units:Units}){
  return <span className='dim' title={Number.isFinite(mm)?mm.toFixed(2)+' mm':''}>{Number.isFinite(mm)?formatShop(mm,units):'—'}</span>;
 }
 
-export function printablePlan(plan:Plan,name:string,units:Units,values:Values){
+export function printablePlan(plan:Plan,name:string,units:Units,values:Values,counts?:Map<string,number>|null){
  const f=(mm:number)=>esc(formatShop(mm,units));
  const rows=plan.cut.map(c=>`<tr><td>${esc(c.name)}<small>${esc(c.ids.join(', '))}</small></td><td>${c.qty}</td><td>${esc(MATERIAL_NAMES[c.material]??c.material)}</td><td>${f(c.thickness)}</td><td>${f(c.width)}</td><td>${f(c.height)}</td><td><small>${esc(c.notes)}</small></td></tr>`).join('');
  const drawers=plan.drawers.map(d=>`<tr><td>${esc(d.id)}</td><td>${f(d.opening.w)} × ${f(d.opening.h)}</td><td>${f(d.box.w)} × ${f(d.box.h)} × ${f(d.box.d)}</td><td>${f(d.inside.w)} × ${f(d.inside.h)} × ${f(d.inside.d)}</td><td>${f(d.side)} / ${f(d.vertical)}</td></tr>`).join('');
- const mats=plan.materials.map(m=>`<li>${esc(MATERIAL_NAMES[m.material]??m.material)} · ${f(m.thickness)}: ${m.parts} parts, ${areaText(m.area,units)}, about ${sheetEstimate(m.area,values)} sheet(s)</li>`).join('');
+ const mats=plan.materials.map(m=>`<li>${esc(MATERIAL_NAMES[m.material]??m.material)} · ${f(m.thickness)}: ${m.parts} parts, ${areaText(m.area,units)}, ${counts?.get(sheetKey(m))??sheetEstimate(m.area,values)} sheet(s)${counts?'':' (area estimate)'}</li>`).join('');
  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(name)} · cut list</title><style>
  body{font:12px/1.4 Arial,sans-serif;color:#1d343d;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:14px;margin:18px 0 6px}
  table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #ccd5d8;padding:4px 6px;text-align:left;vertical-align:top}th{background:#eef2f3}
@@ -56,6 +68,7 @@ export function printablePlan(plan:Plan,name:string,units:Units,values:Values){
 
 export default function PlanPanel({analysis,units,name,values}:{analysis:Analysis;units:Units;name:string;values:Values}){
  const plan=analysis.plan,stale=analysis.planKey!==analysis.key;
+ const nested=plan&&analysis.log?sheetCounts(analysis.log,values):null;
  const [copied,setCopied]=useState(false);
  if(analysis.state==='invalid')return <div className='plan-empty'><XCircle/><h2>Fix the dimensions first</h2><p>{analysis.error}</p></div>;
  if(!plan)return <div className='plan-empty'>{analysis.state==='failed'?<><XCircle/><h2>The engine check could not run</h2><p>{analysis.error}</p></>:<><LoaderCircle className='render-spinner'/><h2>Building the cut list…</h2><p>OpenSCAD is calculating every part from your settings. This usually takes a few seconds.</p></>}</div>;
@@ -72,7 +85,7 @@ export default function PlanPanel({analysis,units,name,values}:{analysis:Analysi
    </div>
    <button onClick={async()=>{try{await navigator.clipboard.writeText(cutListCsv(plan));setCopied(true);setTimeout(()=>setCopied(false),1600)}catch{}}}><ClipboardCopy size={15}/>{copied?'Copied':'Copy CSV'}</button>
    <button onClick={()=>download(new Blob([cutListCsv(plan)],{type:'text/csv'}),filename+'-cut-list.csv')}><Download size={15}/>CSV</button>
-   <button onClick={()=>{const url=URL.createObjectURL(new Blob([printablePlan(plan,name,units,values)],{type:'text/html'}));window.open(url,'_blank');setTimeout(()=>URL.revokeObjectURL(url),60000)}}><Printer size={15}/>Print</button>
+   <button onClick={()=>{const url=URL.createObjectURL(new Blob([printablePlan(plan,name,units,values,nested?.counts)],{type:'text/html'}));window.open(url,'_blank');setTimeout(()=>URL.revokeObjectURL(url),60000)}}><Printer size={15}/>Print</button>
   </div>
   {errors.length>0&&<section className='plan-issues is-error' role='alert'>
    <h3><XCircle size={17}/> Fix before building</h3>
@@ -96,12 +109,12 @@ export default function PlanPanel({analysis,units,name,values}:{analysis:Analysi
    {plan.materials.map(m=><div key={m.material+m.thickness}>
     <strong>{MATERIAL_NAMES[m.material]??m.material}</strong>
     <span><Dim mm={m.thickness} units={units}/> thick · {m.parts} part{m.parts>1?'s':''}</span>
-    <small>{areaText(m.area,units)} · about {sheetEstimate(m.area,values)} sheet{sheetEstimate(m.area,values)>1?'s':''}</small>
+    <small>{areaText(m.area,units)} · {(()=>{const n=nested?.counts.get(sheetKey(m))??sheetEstimate(m.area,values);return `${nested?'':'about '}${n} sheet${n>1?'s':''}`})()}</small>
    </div>)}
   </div>
   {(()=>{const byT=new Map<number,number>();for(const m of plan.materials)byT.set(m.thickness,(byT.get(m.thickness)??0)+m.area);
    return byT.size<plan.materials.length?<p className='sheet-totals'><strong>If cut from the same sheets:</strong> {[...byT.entries()].sort((a,b)=>b[1]-a[1]).map(([t,a])=>formatShop(t,units)+(units==='mm'?' mm':'')+' ≈ '+sheetEstimate(a,values)).join(' · ')}</p>:null})()}
-  <p className='field-note'>Sheet counts are area estimates with 20% waste on {Number(values.stock_width)||2440} × {Number(values.stock_height)||1220} mm stock (Sheet width and height under Materials), not a nested layout.</p>
+  {nested?<p className='field-note'>Sheet counts come from nesting every part on {nested.options.sheetW} × {nested.options.sheetH} mm stock (Sheet width and height under Materials) with the layout gap as margin and spacing, parts in the orientation shown in the cut layout.{nested.unplaced?` ${nested.unplaced} part${nested.unplaced>1?'s do':' does'} not fit the sheet.`:''} The manufacturing package contains the per-sheet files.</p>:<p className='field-note'>Sheet counts are area estimates with 20% waste on {Number(values.stock_width)||2440} × {Number(values.stock_height)||1220} mm stock (Sheet width and height under Materials), not a nested layout.</p>}
   <h3 className='plan-heading'>Cut list</h3>
   <div className='review-table cut-table'>
    <table>

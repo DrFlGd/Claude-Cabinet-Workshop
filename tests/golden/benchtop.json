@@ -109,7 +109,8 @@
     "bytes": 10439,
     "paths": 1
    }
-  }
+  },
+  "sheets": "5 sheets: 1 × BACK 3.175 mm, 1 × CARCASS 9.525 mm, 1 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_micro_2_drawer": {
   "records": [
@@ -185,7 +186,8 @@
     "bytes": 5573,
     "paths": 1
    }
-  }
+  },
+  "sheets": "5 sheets: 1 × BACK 3.175 mm, 1 × CARCASS 9.525 mm, 1 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_mini_3_drawer": {
   "records": [
@@ -279,7 +281,8 @@
     "bytes": 8029,
     "paths": 1
    }
-  }
+  },
+  "sheets": "5 sheets: 1 × BACK 3.175 mm, 1 × CARCASS 9.525 mm, 1 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_compact_4_drawer": {
   "records": [
@@ -391,7 +394,8 @@
     "bytes": 10439,
     "paths": 1
    }
-  }
+  },
+  "sheets": "5 sheets: 1 × BACK 3.175 mm, 1 × CARCASS 9.525 mm, 1 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_parts_5_drawer": {
   "records": [
@@ -521,7 +525,8 @@
     "bytes": 12893,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × BACK 3.175 mm, 2 × CARCASS 9.525 mm, 1 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_shallow_parts_6_drawer": {
   "records": [
@@ -669,7 +674,8 @@
     "bytes": 15405,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × BACK 3.175 mm, 1 × CARCASS 9.525 mm, 2 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 1 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_wide_6_drawer": {
   "records": [
@@ -817,7 +823,8 @@
     "bytes": 15403,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 3.175 mm, 2 × CARCASS 9.525 mm, 3 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 2 × DRAWER_WALL 6.35 mm"
  },
  "benchtop_wide_8_drawer": {
   "records": [
@@ -1001,6 +1008,7 @@
     "bytes": 20247,
     "paths": 1
    }
-  }
+  },
+  "sheets": "14 sheets: 1 × BACK 3.175 mm, 2 × CARCASS 9.525 mm, 8 × DRAWER_BOTTOM 3.175 mm, 1 × DRAWER_FRONT 9.525 mm, 2 × DRAWER_WALL 6.35 mm"
  }
 }

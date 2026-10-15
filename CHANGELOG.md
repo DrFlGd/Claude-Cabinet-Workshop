@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.11.0**) are separate from the bundled
+Application versions (currently **0.12.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,62 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.12.0 — 2026-10-15
+
+Roadmap A, gate 3: cut files come per stock sheet, and every starter proves it
+nests.
+
+- **Per-sheet nesting.** `lib/nesting.ts` takes the engine's placement records
+  (one per through-cut part), groups parts by material and thickness, and packs
+  them onto the design's stock sheet (`stock_width` × `stock_height`) with a
+  maximal-rectangles packer: largest part first, best short-side fit, the
+  layout gap as the sheet margin, and max(layout gap, kerf, cutter diameter) as
+  the spacing between parts. Parts keep the orientation the engine drew them
+  in; a part that cannot fit as drawn is turned 90°, and the export offers
+  "never turn" (grain as drawn) and "turn freely" as alternatives. A part that
+  fits no sheet is reported, never dropped.
+- **Sheet files in the manufacturing package.** Every operation layout (cut,
+  pockets, engraving) is re-mapped from the strip onto each sheet, so the
+  package gains `sheets/<nn>-<material>-<thickness>/<operation>.svg` and
+  `.dxf` (closed polylines, one layer per operation, the stock outline on
+  `STOCK`), `sheets/nesting.json` with every placement, and `PROBLEMS.txt`
+  only when something did not fit. The SVGs use the engine's conventions
+  (millimetres, y negated, a stock frame) and carry one path per part with the
+  part id. The review shows the sheet count per material and the sheet
+  previews; the READ-ME describes the folder.
+- **Real sheet counts.** The cut list panel and the printable cut list now
+  show the nested sheet count per material instead of an area estimate (the
+  estimate remains the fallback for a log without placement records), and say
+  how the count was obtained.
+- **Golden gate 3.** `tests/golden.mjs` nests every starter at its own default
+  stock and fails on an unplaced part, two parts closer than the gap, a part
+  outside the usable area, a part that changed size, or a part with more or
+  fewer than one outline on its sheet; each snapshot records the sheet summary,
+  so a change in nesting shows up in the diff. `tests/nesting.cjs` covers
+  grouping, spacing, margins, the three rotation modes, oversize parts and the
+  re-mapping of an engine-style layout (frame dropped, holes travelling with
+  their part, rotation applied) in SVG and DXF; it runs in CI with the unit
+  tests.
+- **Coverage text.** The plan panel and README list sheet nesting as checked.
+
+Validation performed: `tests/golden.mjs --update` nested all 110 starters at their
+default stock with no unplaced part, no two parts closer than the gap, nothing
+outside the margin and one outline per part per sheet (the first run found two
+real problems, fixed before the re-bless: tall pantry and storage sides did not
+fit as drawn, hence the turn-when-needed default, and contours more than ten
+metres up the strip missed their part by the engine's 0.1 mm rounding, hence
+the magnitude-scaled tolerance); every snapshot gained its sheet summary and
+nothing else changed. `tests/nesting.cjs`, the unit, settings-visibility,
+v5-integration, parity and engine-source sync checks pass; `tsc` is clean.
+
+Remaining limitations: the packer is a heuristic (no rotation search beyond 0°
+and 90°, no remnant reuse, no grain data from the engine, so "grain as drawn"
+is only as good as the strip layout); re-mapped coordinates keep the engine's
+SVG precision (six significant digits, so parts more than ten metres up the
+strip carry up to 0.1 mm of rounding, exactly as in the strip files); the 3D
+interference sweep and the machining-feature ledger limits of 0.11.0 still
+apply.
 
 ## 0.11.0 — 2026-10-15
 

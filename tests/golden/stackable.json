@@ -100,7 +100,8 @@
     "bytes": 471,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm"
  },
  "stackable_1_deep_drawer": {
   "records": [
@@ -177,7 +178,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm"
  },
  "stackable_2_drawer": {
   "records": [
@@ -280,7 +282,8 @@
     "bytes": 471,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm"
  },
  "stackable_4_shallow_drawer": {
   "records": [
@@ -435,7 +438,8 @@
     "bytes": 471,
     "paths": 1
    }
-  }
+  },
+  "sheets": "6 sheets: 1 × CARCASS 19.05 mm, 1 × DRAWER_BOTTOM 6.35 mm, 1 × DRAWER_FRONT 19.05 mm, 1 × DRAWER_WALL 12.7 mm, 1 × WOOD_RAIL 19.05 mm, 1 × WOOD_RUNNER 19.05 mm"
  },
  "stackable_open_module": {
   "records": [
@@ -489,7 +493,8 @@
     "bytes": 471,
     "paths": 1
    }
-  }
+  },
+  "sheets": "1 sheet: 1 × CARCASS 19.05 mm"
  },
  "stackable_door_module": {
   "records": [
@@ -547,6 +552,7 @@
     "bytes": 467,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × DOOR 19.05 mm"
  }
 }

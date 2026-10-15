@@ -35,7 +35,8 @@
     "bytes": 460,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_450_mm_opening_metal_slides": {
   "records": [
@@ -73,7 +74,8 @@
     "bytes": 460,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_18_in_opening_metal_slides": {
   "records": [
@@ -111,7 +113,8 @@
     "bytes": 464,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_copy_400_x_450_x_120_box": {
   "records": [
@@ -149,7 +152,8 @@
     "bytes": 456,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_420_x_336_x_85_inside_clear": {
   "records": [
@@ -187,7 +191,8 @@
     "bytes": 456,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_42_mm_grid_10_x_8": {
   "records": [
@@ -225,7 +230,8 @@
     "bytes": 456,
     "paths": 1
    }
-  }
+  },
+  "sheets": "2 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_WALL 12 mm"
  },
  "drawer_450_mm_opening_4x3_divider_grid": {
   "records": [
@@ -273,6 +279,7 @@
     "bytes": 1769,
     "paths": 1
    }
-  }
+  },
+  "sheets": "3 sheets: 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_DIVIDER 6 mm, 1 × DRAWER_WALL 12 mm"
  }
 }

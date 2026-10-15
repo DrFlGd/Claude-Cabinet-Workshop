@@ -110,7 +110,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6 mm, 2 × CARCASS 18 mm, 1 × DOOR 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 1 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_3_drawer_base": {
   "records": [
@@ -232,7 +233,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "7 sheets: 1 × BACK 6 mm, 1 × CARCASS 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 1 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_4_drawer_base": {
   "records": [
@@ -380,7 +382,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "7 sheets: 1 × BACK 6 mm, 1 × CARCASS 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 1 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_door_base": {
   "records": [
@@ -435,7 +438,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "4 sheets: 1 × BACK 6 mm, 2 × CARCASS 18 mm, 1 × DOOR 18 mm"
  },
  "utility_2_drawer_2_door": {
   "records": [
@@ -548,7 +552,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6 mm, 2 × CARCASS 18 mm, 1 × DOOR 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 1 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_1_drawer_2_door": {
   "records": [
@@ -635,7 +640,8 @@
     "bytes": 467,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6 mm, 2 × CARCASS 18 mm, 1 × DOOR 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 1 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_wide_3_section_drawers": {
   "records": [
@@ -1003,7 +1009,8 @@
     "bytes": 470,
     "paths": 1
    }
-  }
+  },
+  "sheets": "9 sheets: 1 × BACK 6 mm, 2 × CARCASS 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 2 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_wide_4_section_drawers": {
   "records": [
@@ -1481,7 +1488,8 @@
     "bytes": 470,
     "paths": 1
    }
-  }
+  },
+  "sheets": "12 sheets: 1 × BACK 6 mm, 3 × CARCASS 18 mm, 2 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 3 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_wide_mixed_base": {
   "records": [
@@ -1730,7 +1738,8 @@
     "bytes": 470,
     "paths": 1
    }
-  }
+  },
+  "sheets": "11 sheets: 1 × BACK 6 mm, 3 × CARCASS 18 mm, 1 × DOOR 18 mm, 1 × DRAWER_BOTTOM 6 mm, 1 × DRAWER_FRONT 18 mm, 2 × DRAWER_WALL 12 mm, 1 × WOOD_RAIL 18 mm, 1 × WOOD_RUNNER 18 mm"
  },
  "utility_tall_2_door_storage": {
   "records": [
@@ -1797,7 +1806,8 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "5 sheets: 1 × BACK 6 mm, 3 × CARCASS 18 mm, 1 × DOOR 18 mm"
  },
  "utility_2_door_wall": {
   "records": [
@@ -1852,6 +1862,7 @@
     "bytes": 463,
     "paths": 1
    }
-  }
+  },
+  "sheets": "3 sheets: 1 × BACK 6 mm, 1 × CARCASS 18 mm, 1 × DOOR 18 mm"
  }
 }
