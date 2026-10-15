@@ -2,7 +2,10 @@ import manifest from './engine-v5-files.js';
 // One worker serves jobs in sequence so the compiled engine is reused; terminating it still
 // cancels synchronous WASM work. A 'warm' message compiles the engine before the first job.
 let compiled=null;
-const compiling=(async()=>{if(typeof WebAssembly==='undefined'||typeof fetch!=='function')return;try{const r=await fetch(new URL('./openscad.wasm',self.location.href));compiled=await (WebAssembly.compileStreaming?WebAssembly.compileStreaming(r.clone()).catch(async()=>WebAssembly.compile(await r.arrayBuffer())):WebAssembly.compile(await r.arrayBuffer()))}catch{compiled=null}})();
+// Pre-compilation is a browser-only optimisation: the Node test harness runs many short-lived
+// workers in parallel, where an ahead-of-time compiled module can trip a V8 JIT-page check on
+// worker termination; there the engine loads exactly as it did before.
+const compiling=(async()=>{if(typeof WorkerGlobalScope==='undefined'||typeof WebAssembly==='undefined'||typeof fetch!=='function')return;try{const r=await fetch(new URL('./openscad.wasm',self.location.href));compiled=await (WebAssembly.compileStreaming?WebAssembly.compileStreaming(r.clone()).catch(async()=>WebAssembly.compile(await r.arrayBuffer())):WebAssembly.compile(await r.arrayBuffer()))}catch{compiled=null}})();
 async function engineOptions(options){await compiling;return compiled?{...options,instantiateWasm:(info,receive)=>{WebAssembly.instantiate(compiled,info).then(instance=>receive(instance,compiled));return {}}}:options}
 self.onmessage=async({data})=>{
  if(data&&data.type==='warm'){try{await compiling;await import('./openscad.js')}catch{}self.postMessage({type:'warm'});return}

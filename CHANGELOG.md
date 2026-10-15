@@ -73,7 +73,10 @@ engine, exports and reliability checks are unchanged.
   message compiles it during the first debounce), instead of spawning a worker
   and compiling 9.6 MB of WebAssembly on every edit. An edit that lands during
   a run still terminates that run. Headless Chromium on the shop cart starter:
-  first check 1.1 s, following checks 0.8 s.
+  first check 1.1 s, following checks 0.6–0.8 s. The pre-compilation is
+  browser-only: under Node (the test harness runs four short-lived workers in
+  parallel) an ahead-of-time compiled module tripped a V8 JIT-page check on
+  worker termination in CI on Node 24, so there the engine loads as before.
 - **Honest status.** The status chip says **Engine checks passed** (or
   *Checks passed · n notes*) instead of *Parts fit · checked by OpenSCAD*, and
   its tooltip says what was checked. The Cut list & fit tab gained **What this
