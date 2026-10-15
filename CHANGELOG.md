@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.10.0**) are separate from the bundled
+Application versions (currently **0.11.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,69 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.11.0 — 2026-10-15
+
+Roadmap A, gate 2: no release ships parts that intersect in 3D, kerf
+compensation is complete, and settings with physical limits now carry them.
+
+- **3D interference sweep over everything.** `tests/engine-interference.mjs`
+  renders the engine's part groups as solids (Manifold backend) and fails on any
+  pair sharing more than 0.05 cm³. It now covers the worktop, base hardware
+  (casters and levelers with their mounting plate), the stackable base and the
+  metal-slide envelopes as their own groups, the standalone drawer family and
+  the equipment stand by part kind, and runs three job lists: the hand-written
+  cases (now 27, four of them hardware combinations), every one of the 110
+  starters, and 24 randomized designs built from a seeded generator that
+  patches choices, toggles, counts and sizes (`SEED`, default 20261015, so CI
+  is reproducible). A design the engine itself rejects is skipped, since the
+  app blocks its export. Flags: `--starters`, `--random N`, `--all`,
+  `SHARD=i/n`; an STL extent pre-filter keeps the pairwise test affordable.
+- **CI shards.** The sweep runs as its own six-shard matrix job (`sweep`) on
+  every push and pull request, and the release tag now needs both `build` and
+  `sweep` green. The 23-case run is no longer repeated inside `build`.
+- **Kerf compensation completed.** `apply_kerf_compensation` now offsets every
+  finished through-cut part by half the kerf in `placed()`: outlines grow,
+  holes, slots, notches and dado openings shrink, so the parts and their
+  joints come out at the listed sizes. Before, only outer rectangles and the
+  metal-slide holes were compensated, so compensated slots and dados came out
+  wide. Pockets and engraving are not offset. The help text for `kerf` and
+  `apply_kerf_compensation` says what the switch does and when to leave it off.
+- **Limits for settings that have them.** The OpenSCAD front ends declare
+  customizer ranges for the overall size (50–3000 mm), stock sheet size
+  (100–5000 mm), `layout_gap` (1–200 mm), `kerf` (0–10 mm) and the cutter
+  diameter (0.1–50 mm); the engine schema and the app schema carry the same
+  ranges. Lengths that cannot be negative (diameters, thicknesses, spacings,
+  gaps, clearances, margins, sizes) get a floor of zero in the app; offsets,
+  overhangs and reveals stay free. A typed value outside the range is clamped
+  on commit and the field's tooltip states the range.
+- **Layout gap floor in the engine.** `LAYOUT_GAP` is a Design Health error
+  when `layout_gap` is under 1 mm, since touching outlines merge into one
+  contour in the SVG even though no placement overlaps.
+- **Coverage text.** The plan panel and README now say that
+  3D intersections are swept for every starter and randomized designs in the
+  test suite rather than checked for the exact design on screen, and list
+  machining-feature collisions on panels other than the two sides as not yet
+  checked.
+
+Validation performed: `node tests/engine-interference.mjs --all` ran locally in
+2,322 s single-threaded: 160 configurations (27 cases, all 110 starters, 23
+randomized designs; one randomized design was skipped because the engine rejects
+it) rendered with no overlapping parts across 1,759 intersected group pairs;
+`tests/golden.mjs` still matches all 110
+starters (the kerf refactor changes nothing at the default, compensation off);
+`tests/cut-layout-check.mjs` adds a kerf case (1 mm kerf: 16 openings shrink by
+1 mm, outlines grow by 1 mm, one contour per part) and asserts the `LAYOUT_GAP`
+error at a negative gap; `tests/units.cjs` covers clamping and the derived
+floors; the unit, settings-visibility, v5-integration, parity and
+engine-source sync checks pass; `tsc` is clean.
+
+Remaining limitations: the machining-feature collision ledger still covers only
+the two side panels (bottoms, tops, partitions and drawer fronts are not
+checked for colliding holes, dados and slots); the 3D sweep runs in the test
+suite, not in the app for the design on screen; ranges exist only for the
+settings listed above, the other numeric settings have a floor at most; cut
+files are still one strip per operation, not sheets (gate 3).
 
 ## 0.10.0 — 2026-10-15
 

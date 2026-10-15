@@ -59,12 +59,12 @@ material_thickness =
 // Circle/cylinder smoothness. Mostly affects round drill holes and CNC corner relief.
 circle_segments = 48; // [12:4:96]
 
-cnc_tool_diameter = 6.35;
+cnc_tool_diameter = 6.35; // [0.1:0.01:50]
 
 // Usually leave this OFF and compensate in CAM.
 apply_kerf_compensation = false;
 
-kerf = 0.15;
+kerf = 0.15; // [0:0.01:10]
 
 /* [Machining / Shared Slot Relief] */
 
@@ -140,11 +140,11 @@ drawer_divider_perimeter_groove_depth = 3;
 
 /* [Sizing / Envelope] */
 
-cabinet_width = 500;
+cabinet_width = 500; // [50:1:3000]
 
-cabinet_height = 360;
+cabinet_height = 360; // [50:1:3000]
 
-cabinet_depth = 500;
+cabinet_depth = 500; // [50:1:3000]
 
 /* [Sizing / Fit Targets] */
 
@@ -870,13 +870,13 @@ show_metal_slide_envelopes = true;
 
 /* [Output / Flat Layout] */
 
-layout_gap = 20;
+layout_gap = 20; // [1:1:200]
 
 layout_show_stock = false;
 
-stock_width = 2440;
+stock_width = 2440; // [100:1:5000]
 
-stock_height = 1220;
+stock_height = 1220; // [100:1:5000]
 
 /* [Output / Labels] */
 

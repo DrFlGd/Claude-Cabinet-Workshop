@@ -2405,9 +2405,6 @@ function slide_drawer_hole_depth(hx) = effective_metal_slide_front_setback + hx;
 function cabinet_slide_hole_is_valid(hx,available_depth) = slide_cabinet_hole_depth(hx) <= min(active_slide_length(),available_depth)-effective_metal_slide_rear_margin;
 function drawer_slide_hole_is_valid(hx,available_depth) = slide_drawer_hole_depth(hx) <= min(active_slide_length(),available_depth)-effective_metal_slide_rear_margin;
 
-function compensated_hole_diameter(d) =
-    max(0.1, d - (apply_kerf_compensation ? kerf : 0));
-
 function effective_dado_depth() =
     min(max(0.1,dado_depth), material_thickness);
 
@@ -5529,11 +5526,10 @@ module sheet_box(size=[10,10,10], pos=[0,0,0]) {
     translate(pos) cube(size);
 }
 
+// Nominal cut rectangle. Kerf compensation is applied to the whole finished
+// part by kerf_compensated() in the cut layout, not per feature.
 module cut_rect(w,h) {
-    if (apply_kerf_compensation)
-        offset(delta=kerf/2) square([w,h]);
-    else
-        square([w,h]);
+    square([w,h]);
 }
 
 module cut_part(w,h) {
@@ -5542,7 +5538,7 @@ module cut_part(w,h) {
 }
 
 module metal_hole_2d(xpos,zpos,diameter=effective_metal_slide_cabinet_hole_diameter) {
-    translate([xpos,zpos]) circle(d=compensated_hole_diameter(diameter));
+    translate([xpos,zpos]) circle(d=diameter);
 }
 
 module metal_hole_x_3d(xstart,ypos,zpos,depth,diameter=effective_metal_slide_cabinet_hole_diameter) {

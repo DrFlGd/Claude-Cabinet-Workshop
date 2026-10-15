@@ -1294,6 +1294,15 @@ if (validation_enabled()) {
                 )
             );
 
+    if (layout_gap < 1)
+        validation_check(
+            "ERROR","LAYOUT_GAP",
+            str(
+                "layout_gap is ",layout_gap," mm; the flat cut layout needs at least ",
+                "1 mm between parts so their outlines stay separate."
+            )
+        );
+
     for (o=layout_overlaps())
         validation_check(
             "ERROR","LAYOUT_OVERLAP",

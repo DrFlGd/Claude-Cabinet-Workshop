@@ -47,8 +47,6 @@ jobs:
         run: node --no-memory-protection-keys tests/section-wasm.mjs
       - name: Engine fit suite
         run: node --no-memory-protection-keys tests/engine-fit.mjs
-      - name: Engine interference suite
-        run: node --no-memory-protection-keys tests/engine-interference.mjs
       - name: Layout editor suite
         run: node --no-memory-protection-keys tests/layout-editor.mjs
       - name: Golden outputs and cut-layout gate of every starter
@@ -76,6 +74,27 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: web-dist
+  # 3D interference sweep: the hand-written cases, every starter and a seeded set
+  # of randomized designs (about 40 minutes single-threaded), split across
+  # runners so each shard finishes well inside the build's own time. A pair of parts that share volume fails
+  # the shard, so nothing is released with intersecting parts.
+  sweep:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --global pnpm@11.25.0
+      - run: pnpm install --frozen-lockfile
+      - name: Engine interference sweep (shard ${{ matrix.shard }} of 6)
+        run: node --no-memory-protection-keys tests/engine-interference.mjs --all
+        env:
+          SHARD: ${{ matrix.shard }}/6
   deploy:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy
     needs: build
@@ -92,7 +111,7 @@ jobs:
         id: deployment
   version:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, sweep]
     runs-on: ubuntu-latest
     permissions:
       contents: write

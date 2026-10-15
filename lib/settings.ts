@@ -198,3 +198,15 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(k.startsWith('toe_kick_')&&v.base_style!=='toe_kick')return 'Toe kick is disabled';
  return null;
 }
+// Limits for a numeric setting: the engine's declared customizer range, otherwise a
+// floor of zero for lengths that cannot be negative (diameters, thicknesses, gaps,
+// clearances, margins, sizes). Offsets, overhangs and reveals stay unbounded.
+export function fieldBounds(f:Field):number[]|null{
+ if(f.bounds)return f.bounds;
+ if(f.unit==='mm'&&/(diameter|thickness|spacing|length|radius|gap|clearance|margin|width|height|depth|size|travel)$/.test(f.key))return [0,Number.POSITIVE_INFINITY,f.step??0.01];
+ return null;
+}
+// Keeps a typed value inside the field's limits.
+export function clampToBounds(value:number,bounds:number[]|null|undefined){
+ return bounds?Math.min(Math.max(value,bounds[0]),bounds[1]):value;
+}
