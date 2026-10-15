@@ -36,16 +36,20 @@ jobs:
         run: node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
         run: node tests/stackable-controls.cjs && node tests/sections.cjs
+      # The engine suites run OpenSCAD WebAssembly inside worker threads. On the
+      # hosted runners Node 24 has twice crashed while unregistering a worker's
+      # wasm code pages (V8 ThreadIsolation / memory protection keys), so the
+      # suites run with that feature off; it has no effect on the browser build.
       - name: Production worker section test
-        run: node tests/section-wasm.mjs
+        run: node --no-memory-protection-keys tests/section-wasm.mjs
       - name: Engine fit suite
-        run: node tests/engine-fit.mjs
+        run: node --no-memory-protection-keys tests/engine-fit.mjs
       - name: Engine interference suite
-        run: node tests/engine-interference.mjs
+        run: node --no-memory-protection-keys tests/engine-interference.mjs
       - name: Layout editor suite
-        run: node tests/layout-editor.mjs
+        run: node --no-memory-protection-keys tests/layout-editor.mjs
       - name: Golden outputs of every starter
-        run: node tests/golden.mjs
+        run: node --no-memory-protection-keys tests/golden.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:

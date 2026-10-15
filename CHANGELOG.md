@@ -102,6 +102,15 @@ layout header were reviewed with no console errors. `tests/source-loading.cjs`
 and `tests/usability.cjs` already fail on 0.8.0 (missing fixture and module)
 and are not in CI.
 
+CI change (no application change): the five engine suites in
+`.github/workflows/build-pages.yml` now run with `--no-memory-protection-keys`.
+After the 0.9.0 merge the hosted Node 24 runner crashed twice in V8's
+`ThreadIsolation::UnregisterWasmAllocation` while tearing down a test worker
+(once in the layout-editor suite, once in the golden suite); the suites
+themselves had passed. The crash never reproduced locally on a CPU without
+memory protection keys, so the flag is a mitigation, not a verified root-cause
+fix: if CI crashes again the fallback is pinning Node 22.
+
 Remaining limits: the advanced classification is a hand-written rule list, so
 a setting someone changes often may still sit behind the switch; the visible
 counts above are at each type's default starter; the Exact view renders only
