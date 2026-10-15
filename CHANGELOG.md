@@ -86,6 +86,12 @@ right extent but wrong interior features is caught by the golden fingerprint,
 not by this check. Strips are still one tall column per design; per-sheet
 nesting is the next gate.
 
+CI change after the 0.10.0 merge: the first main build of 0.10.0 crashed in the
+golden step with the same Node 24 V8 wasm-teardown failure as before, this time
+despite `--no-memory-protection-keys`, so `build-pages.yml` now pins Node 22 for
+the build job (the flag stays on as a second guard). The release is cut from the
+same sources; no application code changed.
+
 ## 0.9.0 — 2026-10-15
 
 A settings panel that shows the decisions that shape the cabinet first, explains

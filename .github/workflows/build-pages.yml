@@ -19,9 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      # Node 22: Node 24 on the hosted runners crashed V8 three times while
+      # tearing down the OpenSCAD WebAssembly workers of the engine suites
+      # (ThreadIsolation::UnregisterWasmAllocation), the third time even with
+      # memory protection keys switched off. Node 22 has never crashed there.
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
       - run: npm install --global pnpm@11.25.0
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit --incremental false
@@ -36,10 +40,9 @@ jobs:
         run: node tests/units.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
         run: node tests/stackable-controls.cjs && node tests/sections.cjs
-      # The engine suites run OpenSCAD WebAssembly inside worker threads. On the
-      # hosted runners Node 24 has twice crashed while unregistering a worker's
-      # wasm code pages (V8 ThreadIsolation / memory protection keys), so the
-      # suites run with that feature off; it has no effect on the browser build.
+      # The engine suites run OpenSCAD WebAssembly inside worker threads; they
+      # keep running with V8 memory protection keys off as a second guard
+      # against the wasm teardown crash (no effect on the browser build).
       - name: Production worker section test
         run: node --no-memory-protection-keys tests/section-wasm.mjs
       - name: Engine fit suite
