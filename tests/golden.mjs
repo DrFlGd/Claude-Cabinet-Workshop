@@ -1,8 +1,9 @@
 // Golden engine outputs for every starter of every cabinet type.
 //
-// Records the engine's parts list and reports (BOM, DIM, LAYOUT, CHECK, WARN,
-// HARDWARE, TARGET records) and fingerprints of the through-cut and pocket SVG
-// layouts. Refactors must reproduce them exactly; an intended change is accepted
+// Records the engine's parts list and reports (BOM, PLACE, DIM, LAYOUT, CHECK,
+// WARN, HARDWARE, TARGET records) and fingerprints of the through-cut and pocket
+// SVG layouts. Every starter's cut layout is also checked against its placement
+// table (tests/cut-layout-check.mjs): one outer contour per part, no overlaps. Refactors must reproduce them exactly; an intended change is accepted
 // with `node tests/golden.mjs --update`, and the diff of tests/golden/*.json shows
 // exactly which parts or dimensions changed.
 //
@@ -13,6 +14,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import {Worker} from 'node:worker_threads';
+import {checkCutLayout} from './cut-layout-check.mjs';
 const root=new URL('../',import.meta.url);
 const read=n=>JSON.parse(fs.readFileSync(new URL(n,root)));
 const schema=read('lib/schema.json'),bundle=read('lib/engine-sources.json');
@@ -32,7 +34,7 @@ function run(f,values,mode){
   worker.postMessage({filename:schema[f].file,source:configure(f,values),mode,sources});
  });
 }
-const RECORD=/^ECHO: "((?:BOM|DIM|LAYOUT|CHECK|WARN|HARDWARE|TARGET)\|.*|WARNING: .*)"\s*$/;
+const RECORD=/^ECHO: "((?:BOM|PLACE|DIM|LAYOUT|CHECK|WARN|HARDWARE|TARGET)\|.*|WARNING: .*)"\s*$/;
 function records(m){
  const text=(m.logs??[]).join('\n')+'\n'+(typeof m.output==='string'?m.output:'');
  const out=[],seen=new Set();
@@ -43,23 +45,27 @@ const svgModes=f=>{const modes=schema[f].fields.find(x=>x.key==='output_mode').o
 async function snapshot(f,id){
  const v=valuesFor(f,id),bom=await run(f,v,'bom');
  const snap={records:bom.type==='result'?records(bom):['ERROR: '+bom.error],svg:{}};
+ const layout=[];
  for(const mode of svgModes(f)){
   const r=await run(f,v,mode);
   const svg=r.type==='result'&&typeof r.output==='string'?r.output:'';
   snap.svg[mode]=r.type==='result'?{sha256:crypto.createHash('sha256').update(svg).digest('hex').slice(0,24),bytes:Buffer.byteLength(svg),paths:(svg.match(/<path/g)??[]).length}:{error:String(r.error).slice(0,200)};
+  if(mode==='cut_layout')layout.push(...(r.type==='result'?checkCutLayout({records:snap.records,svg,kerf:v.apply_kerf_compensation?Number(v.kerf)||0:0,registrationFrame:v.include_shared_export_bounding_box!==false}):['cut_layout export failed: '+r.error]));
  }
- return snap;
+ return {snap,layout};
 }
 function diff(a,b){
  const removed=a.filter(x=>!b.includes(x)),added=b.filter(x=>!a.includes(x));
  return [...removed.slice(0,8).map(x=>'  - '+x),...added.slice(0,8).map(x=>'  + '+x),...(removed.length+added.length>16?[`  … ${removed.length} removed, ${added.length} added in total`]:[])];
 }
 const jobs=families.flatMap(f=>schema[f].starters.filter(s=>!only||only.has(s.id)).map(s=>({f,id:s.id})));
-const results=new Map();let next=0;
+const results=new Map(),layoutProblems=[];let next=0;
 const started=Date.now();
-await Promise.all(Array.from({length:Math.max(1,Math.min(4,os.cpus().length))},async()=>{while(next<jobs.length){const j=jobs[next++];results.set(j.f+':'+j.id,await snapshot(j.f,j.id))}}));
+await Promise.all(Array.from({length:Math.max(1,Math.min(4,os.cpus().length))},async()=>{while(next<jobs.length){const j=jobs[next++];const {snap,layout}=await snapshot(j.f,j.id);results.set(j.f+':'+j.id,snap);for(const p of layout)layoutProblems.push(`${schema[j.f].id}:${j.id}: ${p}`)}}));
 fs.mkdirSync(dir,{recursive:true});
 let problems=0;
+// The cut-layout gate is independent of the snapshots: --update never blesses an overlap or a fused part.
+for(const p of layoutProblems)console.log('cut layout: '+p);
 for(const f of families){
  const file=new URL(schema[f].id+'.json',dir);
  const old=fs.existsSync(file)?JSON.parse(fs.readFileSync(file)):{};
@@ -80,6 +86,7 @@ for(const f of families){
  if(!only)for(const id of Object.keys(old))if(!now[id]){console.log(`${schema[f].id}:${id} snapshot has no starter`);problems++}
 }
 const seconds=Math.round((Date.now()-started)/1000);
+if(layoutProblems.length){console.log(`Cut layouts: ${layoutProblems.length} problem(s) in the placement tables or exported outlines.`);process.exitCode=1}
 if(update)console.log(`Golden outputs: wrote snapshots for ${jobs.length} starters in ${seconds} s.`);
 else if(problems){console.log(`Golden outputs: ${problems} starter(s) differ from tests/golden. If the change is intended, run node tests/golden.mjs --update and review the diff.`);process.exitCode=1}
 else console.log(`Golden outputs: ${jobs.length} starters match their recorded parts, reports and cut/pocket layouts (${seconds} s).`);

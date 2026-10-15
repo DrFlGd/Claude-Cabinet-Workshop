@@ -86,8 +86,9 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    in the background. The status chip above the preview says whether the
    engine's checks passed, lists notes, or names the problems to fix. The
    **Cut list & fit** tab says what those checks cover (sizes, drawer and shelf
-   fit, joinery limits, hardware conflicts) and what they do not yet cover
-   (parts intersecting in 3D, overlaps in the cut layout, sheet nesting).
+   fit, joinery limits, hardware conflicts, and the flat cut layout, where
+   every part has its own place and no two outlines may overlap) and what they
+   do not yet cover (parts intersecting in 3D, sheet nesting).
 5. **Read the plans.** The **Cut list & fit** tab lists every part grouped by
    material and thickness, sheet-goods totals with an approximate sheet count,
    a drawer fit table (opening, box, usable inside size and clearances), doors,

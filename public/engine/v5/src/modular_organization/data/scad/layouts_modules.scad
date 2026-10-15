@@ -457,7 +457,7 @@ module drawer_engrave_labels() {
                         drawer_cross_panel_width(bb),bh
                     );
 
-                    bottom_y = side_y+bh+2*g;
+                    bottom_y = drawer_layout_bottom_y(bb,i);
 
                     engraving_label_at(
                         0,bottom_y,
@@ -1166,6 +1166,7 @@ module bom_report() {
     }
 
     echo("BOM_END");
+    placement_report();
 
     // Tiny valid object keeps command-line export workflows happy.
     square([0.01,0.01]);
@@ -1655,109 +1656,395 @@ module calibration_coupon_engrave() {
 }
 
 
+// ---------------------------
+// CUT-LAYOUT PLACEMENT TABLE
+// ---------------------------
+//
+// Every part of the flat through-cut layout is placed from this table:
+// [id, x, y, width, height, paint name, paint index]. The cut-layout modules
+// below look their positions up here (placed()), the BOM echoes the table as
+// PLACE records, and layout_overlaps() reports any two rectangles that touch,
+// which layouts.scad turns into CHECK|ERROR|LAYOUT_OVERLAP. Sizes are the
+// nominal cut rectangles that bom_report() lists; kerf compensation widens the
+// exported outline by kerf/2 on every side, which placement_rect() includes.
+
+function carcass_layout_placements() =
+    let(g = layout_gap)
+    concat(
+        [
+            [id_side("left"),0,0,
+             resolved_cabinet_depth,side_panel_cut_height,"side_left",0],
+            [id_side("right"),resolved_cabinet_depth+g,0,
+             resolved_cabinet_depth,side_panel_cut_height,"side_right",0],
+            [id_bottom(),0,layout_y2,
+             bottom_panel_width,resolved_cabinet_depth,"bottom",0]
+        ],
+        top_style == "full"
+            ? [[id_top_full(),top_layout_x,layout_y2,
+                joined_w,resolved_cabinet_depth,"top_full",0]]
+            : [[id_top_front(),top_layout_x,layout_y2,
+                joined_w,top_stretcher_depth,"top_front",0],
+               [id_top_rear(),top_layout_x,layout_y2+top_stretcher_depth+g,
+                joined_w,top_stretcher_depth,"top_rear",0]],
+        back_style == "panel" || back_style == "structural_panel"
+            ? [[id_back(),0,layout_y3,back_cut_width,back_cut_height,"back",0]]
+            : back_style == "stretchers" && back_stretcher_count > 0
+                ? [for (b=[0:back_stretcher_count-1])
+                    [id_back_stretcher(b),0,layout_y3+b*(back_stretcher_height+g),
+                     joined_w,back_stretcher_height,"back_stretcher",b]]
+                : [],
+        has_toe_kick
+            ? [[id_toe_kick(),back_cut_width+g,layout_y3,
+                joined_w,toe_kick_height,"toe_kick",0]]
+            : [],
+        !mixed_bay_mode && has_doors && door_shelf_count > 0
+            ? [for (s=[0:door_shelf_count-1])
+                let(shelf_y = layout_y4+s*(shelf_depth+g))
+                each (shelf_style == "fixed"
+                    ? [[id_legacy_shelf(s),0,shelf_y,
+                        joined_w,shelf_depth,"shelf",s]]
+                    : [for (b=[0:door_adjustable_shelf_piece_count()-1])
+                        [id_legacy_shelf(s,b),door_adjustable_shelf_layout_x(b),shelf_y,
+                         door_adjustable_shelf_piece_width(b),shelf_depth,"shelf",s*10+b]])]
+            : [],
+        !mixed_bay_mode && combo_contents_active
+            ? [[id_combo_divider(),0,
+                layout_y4+(has_doors ? door_shelf_count : 0)*(shelf_depth+g),
+                joined_w,shelf_depth,"divider",0]]
+            : [],
+        mixed_bay_mode && mixed_bay_total_shelf_count() > 0
+            ? [for (b=[0:layout_bay_count-1])
+                if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
+                    for (s=[1:mixed_bay_shelf_count(b)])
+                        [id_mixed_shelf(b,s),0,mixed_bay_shelf_layout_y(b,s),
+                         mixed_bay_shelf_style(b) == "fixed"
+                            ? mixed_bay_fixed_shelf_cut_width(b,s)
+                            : mixed_bay_adjustable_shelf_width(b),
+                         shelf_depth,"shelf",mixed_bay_shelf_part_index(b,s)]]
+            : [],
+        mixed_bay_partition_count() > 0
+            ? [for (p=[0:mixed_bay_partition_count()-1])
+                [id_mixed_partition(p),0,mixed_bay_partition_layout_y(p),
+                 mixed_bay_partition_depth,mixed_bay_partition_cut_height(p),
+                 "mixed_bay_partition",p]]
+            : [],
+        section_divider_count() > 0
+            ? [for (h=[0:section_divider_count()-1])
+                [id_section_divider(h),0,section_divider_layout_y(h),
+                 section_divider_cut_width(h),section_divider_depth(h),
+                 "section_divider",h]]
+            : [],
+        door_hinge_partition_count() > 0
+            ? [for (p=[0:door_hinge_partition_count()-1])
+                [id_door_partition(p),0,
+                 door_hinge_partition_layout_base_y
+                    + p*door_hinge_partition_layout_row_height,
+                 door_hinge_partition_actual_depth,door_hinge_partition_cut_height(),
+                 "door_hinge_partition",p]]
+            : [],
+        has_drawers && drawer_bank_partition_count() > 0
+            ? [for (p=[0:drawer_bank_partition_count()-1])
+                [id_drawer_bank_partition(p),0,
+                 drawer_bank_partition_layout_base_y
+                    + p*drawer_bank_partition_layout_row_height,
+                 drawer_bank_partition_depth,drawer_bank_partition_cut_height(),
+                 "drawer_bank_partition",p]]
+            : [],
+        drawer_separator_count > 0
+            ? [for (s=[0:drawer_separator_count-1])
+                let(sy = drawer_separator_layout_base_y
+                         + s*drawer_separator_layout_row_height)
+                each (drawer_separator_style == "full"
+                    ? [[id_drawer_separator(s),0,sy,
+                        joined_w,drawer_separator_full_depth,"drawer_separator",s]]
+                    : [[id_drawer_separator(s,0),0,sy,
+                        joined_w,drawer_separator_stretcher_actual_depth,
+                        "drawer_separator",s],
+                       [id_drawer_separator(s,1),0,
+                        sy+drawer_separator_stretcher_actual_depth+g,
+                        joined_w,drawer_separator_stretcher_actual_depth,
+                        "drawer_separator",s]])]
+            : []
+    );
+
+function drawer_layout_placements() =
+    let(g = layout_gap, d = drawer_box_depth)
+    !has_drawers ? [] :
+    [for (b=[0:active_drawer_bank_count()-1])
+        if (drawer_bank_drawer_count(b) > 0)
+            for (i=[0:drawer_bank_drawer_count(b)-1])
+                let(
+                    ow = drawer_outer_width(b),
+                    bh = drawer_box_height(i,b),
+                    row_y = drawer_layout_row_y(b,i),
+                    side_y = drawer_layout_box_parts_y(b,i),
+                    pi = drawer_part_index(b,i),
+                    rail_x = max(drawer_face_width(b),ow)+g,
+                    runner_x =
+                        standalone_include_fixed_wood_rails_resolved
+                            ? rail_x+resolved_wood_rail_depth+g
+                            : rail_x
+                )
+                each concat(
+                    include_drawer_faces
+                        ? [[id_drawer_face(b,i),0,row_y,
+                            drawer_face_width(b),drawer_face_height_for(i,b),
+                            "drawer_face",pi]]
+                        : [],
+                    drawer_mount == "wood_rails"
+                      && standalone_include_fixed_wood_rails_resolved
+                        ? [[id_drawer_rail(b,i,0),rail_x,row_y,
+                            resolved_wood_rail_depth,wood_rail_height,"rail",pi],
+                           [id_drawer_rail(b,i,1),rail_x,row_y+wood_rail_height+g,
+                            resolved_wood_rail_depth,wood_rail_height,"rail",pi]]
+                        : [],
+                    drawer_mount == "wood_rails"
+                        ? [[id_drawer_runner(b,i,0),runner_x,row_y,
+                            resolved_wood_drawer_runner_depth,wood_drawer_runner_height,
+                            "drawer_runner",pi],
+                           [id_drawer_runner(b,i,1),runner_x,
+                            row_y+wood_drawer_runner_height+g,
+                            resolved_wood_drawer_runner_depth,wood_drawer_runner_height,
+                            "drawer_runner",pi]]
+                        : [],
+                    [
+                        [id_drawer_side(b,i,"left"),0,side_y,d,bh,"drawer_side_l",pi],
+                        [id_drawer_side(b,i,"right"),d+g,side_y,d,bh,"drawer_side_r",pi],
+                        [id_drawer_cross(b,i,true),2*(d+g),side_y,
+                         drawer_cross_panel_width(b),bh,"drawer_box_front",pi],
+                        [id_drawer_cross(b,i,false),2*(d+g),side_y+bh+g,
+                         drawer_cross_panel_width(b),bh,"drawer_box_back",pi],
+                        [id_drawer_bottom(b,i),0,drawer_layout_bottom_y(b,i),
+                         drawer_bottom_width(b),drawer_bottom_depth(),"drawer_bottom",pi]
+                    ],
+                    drawer_divider_active_for(b,i) && drawer_divider_x_count() > 0
+                        ? [for (n=[0:drawer_divider_x_count()-1])
+                            [id_drawer_divider_longitudinal(b,i,n),0,
+                             drawer_layout_divider_piece_y(b,i,true,n),
+                             drawer_divider_longitudinal_length(),
+                             drawer_divider_part_height(),"drawer_divider",pi]]
+                        : [],
+                    drawer_divider_active_for(b,i) && drawer_divider_y_count() > 0
+                        ? [for (n=[0:drawer_divider_y_count()-1])
+                            [id_drawer_divider_transverse(b,i,n),0,
+                             drawer_layout_divider_piece_y(b,i,false,n),
+                             drawer_divider_transverse_length(b),
+                             drawer_divider_part_height(),"drawer_divider",pi]]
+                        : []
+                )];
+
+function door_layout_placements() =
+    !(has_doors && door_face_height > 20) ? [] :
+    mixed_bay_mode
+        ? [for (b=[0:layout_bay_count-1])
+            if (mixed_bay_is_type(b,"door"))
+                for (leaf=[0:mixed_bay_door_count(b)-1])
+                    [id_mixed_door(b,leaf),mixed_bay_door_layout_x(b,leaf),door_layout_y,
+                     mixed_bay_door_leaf_width(b),mixed_bay_door_height(b),
+                     "door",mixed_bay_door_part_index(b,leaf)]]
+        : [for (i=[0:door_count-1])
+            [id_legacy_door(i),door_layout_part_x(i),door_layout_y,
+             door_each_width(i),door_face_height,"door",i]];
+
+function accessory_layout_placements() =
+    let(
+        g = layout_gap,
+        sw = effective_face_frame_side_stile_width,
+        rail_x = (face_frame_center_stile_enabled ? 3 : 2)*(sw+g),
+        ffy = face_frame_layout_y
+    )
+    concat(
+        base_mounting_plate_active
+            ? [[id_base_mounting_plate(),0,base_mounting_plate_layout_y,
+                base_mounting_plate_width,base_mounting_plate_depth,
+                "base_mounting_plate",0]]
+            : [],
+        worktop_active
+            ? [[id_worktop(),0,worktop_layout_y,
+                worktop_width,worktop_depth,"worktop",0]]
+            : [],
+        face_frame_active
+            ? concat(
+                [
+                    [id_face_frame_stile("left"),0,ffy,
+                     sw,face_frame_stile_cut_height,"face_frame",0],
+                    [id_face_frame_stile("right"),sw+g,ffy,
+                     sw,face_frame_stile_cut_height,"face_frame",0]
+                ],
+                face_frame_center_stile_enabled
+                    ? [[id_face_frame_center_stile(),2*(sw+g),ffy,
+                        effective_face_frame_center_stile_width,
+                        face_frame_center_stile_cut_height,"face_frame",0]]
+                    : [],
+                [
+                    [id_face_frame_top_rail(),rail_x,ffy,
+                     face_frame_rail_cut_width,effective_face_frame_top_rail_width,
+                     "face_frame",0],
+                    [id_face_frame_bottom_rail(),rail_x,
+                     ffy+effective_face_frame_top_rail_width+g,
+                     face_frame_rail_cut_width,effective_face_frame_bottom_rail_width,
+                     "face_frame",0]
+                ],
+                face_frame_mid_rail_active
+                    ? [[id_face_frame_mid_rail(),rail_x,
+                        ffy+effective_face_frame_top_rail_width
+                           +effective_face_frame_bottom_rail_width+2*g,
+                        face_frame_mid_rail_cut_width,effective_face_frame_mid_rail_width,
+                        "face_frame",0]]
+                    : []
+              )
+            : [],
+        stack_base_active
+            ? [
+                [id_stack_base_side("left"),0,stack_base_side_layout_y,
+                 resolved_cabinet_depth,stack_base_height,"stack_base_side",0],
+                [id_stack_base_side("right"),resolved_cabinet_depth+g,
+                 stack_base_side_layout_y,
+                 resolved_cabinet_depth,stack_base_height,"stack_base_side",0],
+                [id_stack_base_cross(true),0,stack_base_cross_layout_y,
+                 stack_base_cross_rail_cut_width(),stack_base_height,"stack_base_cross",0],
+                [id_stack_base_cross(false),stack_base_cross_rail_cut_width()+g,
+                 stack_base_cross_layout_y,
+                 stack_base_cross_rail_cut_width(),stack_base_height,"stack_base_cross",0]
+              ]
+            : []
+    );
+
+function cut_layout_placements() =
+    standalone_drawer_active
+        ? drawer_layout_placements()
+        : concat(
+            carcass_layout_placements(),
+            drawer_layout_placements(),
+            door_layout_placements(),
+            accessory_layout_placements()
+          );
+
+// Evaluated once per run; every placement lookup and the overlap check read it.
+cut_layout_placement_table = cut_layout_placements();
+
+function placement_index(id) =
+    let(
+        t = cut_layout_placement_table,
+        m = len(t) == 0 ? [] : [for (i=[0:len(t)-1]) if (t[i][0] == id) i]
+    )
+    len(m) > 0 ? m[0] : -1;
+
+// Exported rectangle [x, y, w, h] of a placement, including kerf compensation.
+function placement_rect(p) =
+    let(k = apply_kerf_compensation ? kerf : 0)
+    [p[1]-k/2,p[2]-k/2,p[3]+k,p[4]+k];
+
+function placement_rects_overlap(a,b,eps=0.001) =
+    a[0] < b[0]+b[2]-eps && b[0] < a[0]+a[2]-eps
+    && a[1] < b[1]+b[3]-eps && b[1] < a[1]+a[3]-eps;
+
+// Every pair of cut-layout parts whose exported rectangles share area:
+// [id A, id B, overlap width, overlap height].
+function layout_overlaps() =
+    let(t = cut_layout_placement_table, n = len(t))
+    n < 2 ? [] :
+    [for (i=[0:n-2]) for (j=[i+1:n-1])
+        let(a = placement_rect(t[i]), b = placement_rect(t[j]))
+        if (placement_rects_overlap(a,b))
+            [t[i][0],t[j][0],
+             min(a[0]+a[2],b[0]+b[2])-max(a[0],b[0]),
+             min(a[1]+a[3],b[1]+b[3])-max(a[1],b[1])]];
+
+// Paints and positions one cut-layout part from the table.
+module placed(id) {
+    i = placement_index(id);
+    assert(i >= 0,str("No cut-layout placement record for part ",id));
+    p = cut_layout_placement_table[i];
+    paint(p[5],p[6])
+        translate([p[1],p[2]])
+            children();
+}
+
+// PLACE records: where each part sits in the flat cut layout (mm, part origin
+// at its lower-left corner, before kerf compensation).
+module placement_report() {
+    for (p=cut_layout_placement_table)
+        echo(str("PLACE|",p[0],"|X=",p[1],"|Y=",p[2],"|W=",p[3],"|H=",p[4]));
+}
+
+
 module carcass_cut_layout() {
-    g = layout_gap;
-
     // Row 1: side panels.
-    paint("side_left")
-        translate([0,0])
-            cabinet_side_panel_cut("left");
+    placed(id_side("left"))
+        cabinet_side_panel_cut("left");
 
-    paint("side_right")
-        translate([resolved_cabinet_depth+g,0])
-            cabinet_side_panel_cut("right");
+    placed(id_side("right"))
+        cabinet_side_panel_cut("right");
 
     // Row 2: bottom + top parts.
-    paint("bottom")
-        translate([0,layout_y2])
-            cabinet_bottom_cut();
+    placed(id_bottom())
+        cabinet_bottom_cut();
 
     if (top_style == "full") {
-        paint("top_full")
-            translate([top_layout_x,layout_y2])
-                difference() {
-                    joined_horizontal_bank_receiver_cut(
-                        0,resolved_cabinet_depth,"top");
+        placed(id_top_full())
+            difference() {
+                joined_horizontal_bank_receiver_cut(
+                    0,resolved_cabinet_depth,"top");
 
-                    worktop_registration_support_holes_2d(
-                        0,resolved_cabinet_depth);
-                }
+                worktop_registration_support_holes_2d(
+                    0,resolved_cabinet_depth);
+            }
     } else {
-        paint("top_front")
-            translate([top_layout_x,layout_y2])
-                difference() {
-                    joined_horizontal_bank_receiver_cut(
-                        0,top_stretcher_depth,"top");
+        placed(id_top_front())
+            difference() {
+                joined_horizontal_bank_receiver_cut(
+                    0,top_stretcher_depth,"top");
 
-                    worktop_registration_support_holes_2d(
-                        0,top_stretcher_depth);
-                }
+                worktop_registration_support_holes_2d(
+                    0,top_stretcher_depth);
+            }
 
-        paint("top_rear")
-            translate([top_layout_x,
-                       layout_y2+top_stretcher_depth+g])
-                difference() {
-                    joined_horizontal_bank_receiver_cut(
-                        resolved_cabinet_depth-top_stretcher_depth,
-                        top_stretcher_depth,"top");
+        placed(id_top_rear())
+            difference() {
+                joined_horizontal_bank_receiver_cut(
+                    resolved_cabinet_depth-top_stretcher_depth,
+                    top_stretcher_depth,"top");
 
-                    worktop_registration_support_holes_2d(
-                        resolved_cabinet_depth-top_stretcher_depth,
-                        top_stretcher_depth);
-                }
+                worktop_registration_support_holes_2d(
+                    resolved_cabinet_depth-top_stretcher_depth,
+                    top_stretcher_depth);
+            }
     }
 
     // Row 3: back construction + optional toe kick.
     if (back_style == "panel"
         || back_style == "structural_panel") {
-        paint("back")
-            translate([0,layout_y3])
-                back_panel_cut();
+        placed(id_back())
+            back_panel_cut();
     } else if (back_style == "stretchers") {
         for (b=[0:back_stretcher_count-1])
-            paint("back_stretcher",b)
-                translate([
-                    0,
-                    layout_y3
-                    + b*(back_stretcher_height+g)
-                ])
-                    joined_back_stretcher_cut();
+            placed(id_back_stretcher(b))
+                joined_back_stretcher_cut();
     }
 
     if (has_toe_kick)
-        paint("toe_kick")
-            translate([back_cut_width+g,layout_y3])
-                joined_toe_kick_cut();
+        placed(id_toe_kick())
+            joined_toe_kick_cut();
 
     // Row 4+: door-compartment shelves, then optional combo divider.
     if (!mixed_bay_mode && has_doors && door_shelf_count > 0) {
         for (s=[0:door_shelf_count-1]) {
-            shelf_y = layout_y4+s*(shelf_depth+g);
-
             if (shelf_style == "fixed") {
-                paint("shelf",s)
-                    translate([0,shelf_y])
-                        fixed_door_shelf_cut();
+                placed(id_legacy_shelf(s))
+                    fixed_door_shelf_cut();
             } else {
                 for (b=[0:door_adjustable_shelf_piece_count()-1])
-                    paint("shelf",s*10+b)
-                        translate([
-                            door_adjustable_shelf_layout_x(b),
-                            shelf_y
-                        ])
-                            adjustable_door_shelf_cut(b);
+                    placed(id_legacy_shelf(s,b))
+                        adjustable_door_shelf_cut(b);
             }
         }
     }
 
     if (!mixed_bay_mode && combo_contents_active) {
-        divider_y = layout_y4
-                    + (has_doors ? door_shelf_count : 0)*(shelf_depth+g);
-
-        paint("divider")
-            translate([0,divider_y])
-                joined_horizontal_bank_receiver_cut(
-                    0,shelf_depth,"shelf");
+        placed(id_combo_divider())
+            joined_horizontal_bank_receiver_cut(
+                0,shelf_depth,"shelf");
     }
 
     // Generalized mixed-bay shelves. Each bay may choose adjustable or fixed.
@@ -1765,85 +2052,57 @@ module carcass_cut_layout() {
         for (b=[0:layout_bay_count-1])
             if (mixed_bay_is_shelfable(b) && mixed_bay_shelf_count(b) > 0)
                 for (s=[1:mixed_bay_shelf_count(b)])
-                    paint("shelf",mixed_bay_shelf_part_index(b,s))
-                        translate([
-                            0,
-                            mixed_bay_shelf_layout_y(b,s)
-                        ])
-                            if (mixed_bay_shelf_style(b) == "fixed")
-                                mixed_bay_fixed_shelf_cut(b,s);
-                            else
-                                mixed_bay_adjustable_shelf_cut(b);
+                    placed(id_mixed_shelf(b,s))
+                        if (mixed_bay_shelf_style(b) == "fixed")
+                            mixed_bay_fixed_shelf_cut(b,s);
+                        else
+                            mixed_bay_adjustable_shelf_cut(b);
     }
 
     // Full-depth structural partitions between generalized mixed bays.
     if (mixed_bay_partition_count() > 0) {
         for (p=[0:mixed_bay_partition_count()-1])
-            paint("mixed_bay_partition",p)
-                translate([
-                    0,
-                    mixed_bay_partition_layout_y(p)
-                ])
-                    mixed_bay_partition_cut(p);
+            placed(id_mixed_partition(p))
+                mixed_bay_partition_cut(p);
     }
 
     // Section dividers between stacked bays.
     if (section_divider_count() > 0) {
         for (h=[0:section_divider_count()-1])
-            paint("section_divider",h)
-                translate([0,section_divider_layout_y(h)])
-                    section_divider_cut(h);
+            placed(id_section_divider(h))
+                section_divider_cut(h);
     }
 
     // Vertical hinge-mounting partitions for cabinets with >2 doors.
     if (door_hinge_partition_count() > 0) {
         for (p=[0:door_hinge_partition_count()-1])
-            paint("door_hinge_partition",p)
-                translate([
-                    0,
-                    door_hinge_partition_layout_base_y
-                    + p*door_hinge_partition_layout_row_height
-                ])
-                    door_hinge_partition_cut();
+            placed(id_door_partition(p))
+                door_hinge_partition_cut();
     }
 
     // Vertical partitions between equal-width drawer banks.
     if (has_drawers && drawer_bank_partition_count() > 0) {
         for (p=[0:drawer_bank_partition_count()-1])
-            paint("drawer_bank_partition",p)
-                translate([
-                    0,
-                    drawer_bank_partition_layout_base_y
-                    + p*drawer_bank_partition_layout_row_height
-                ])
-                    drawer_bank_partition_cut(p);
+            placed(id_drawer_bank_partition(p))
+                drawer_bank_partition_cut(p);
     }
 
     // Optional drawer separators have their own region immediately before
     // the drawer-box parts.
     if (drawer_separator_count > 0) {
         for (s=[0:drawer_separator_count-1]) {
-            sy = drawer_separator_layout_base_y
-                 + s*drawer_separator_layout_row_height;
-
             if (drawer_separator_style == "full") {
-                paint("drawer_separator",s)
-                    translate([0,sy])
-                        joined_horizontal_panel_cut(
-                            drawer_separator_full_depth,"separator");
+                placed(id_drawer_separator(s))
+                    joined_horizontal_panel_cut(
+                        drawer_separator_full_depth,"separator");
             } else {
-                paint("drawer_separator",s)
-                    translate([0,sy])
-                        joined_horizontal_panel_cut(
-                            drawer_separator_stretcher_actual_depth,"separator");
+                placed(id_drawer_separator(s,0))
+                    joined_horizontal_panel_cut(
+                        drawer_separator_stretcher_actual_depth,"separator");
 
-                paint("drawer_separator",s)
-                    translate([
-                        0,
-                        sy+drawer_separator_stretcher_actual_depth+g
-                    ])
-                        joined_horizontal_panel_cut(
-                            drawer_separator_stretcher_actual_depth,"separator");
+                placed(id_drawer_separator(s,1))
+                    joined_horizontal_panel_cut(
+                        drawer_separator_stretcher_actual_depth,"separator");
             }
         }
     }
@@ -1851,93 +2110,58 @@ module carcass_cut_layout() {
 
 module drawer_cut_layout() {
     if (has_drawers) {
-        g = layout_gap;
-        st = drawer_material_thickness;
         d  = drawer_box_depth;
 
         for (b=[0:active_drawer_bank_count()-1])
             if (drawer_bank_drawer_count(b) > 0)
                 for (i=[0:drawer_bank_drawer_count(b)-1]) {
-                ow = drawer_outer_width(b);
                 bh = drawer_box_height(i,b);
-                row_y = drawer_layout_row_y(b,i);
-                pi = drawer_part_index(b,i);
 
                 if (include_drawer_faces)
-                    paint("drawer_face",pi)
-                        translate([0,row_y])
-                            drawer_face_cut(i,b);
+                    placed(id_drawer_face(b,i))
+                        drawer_face_cut(i,b);
 
                 if (drawer_mount == "wood_rails") {
-                    rail_x = max(drawer_face_width(b),ow) + g;
-                    runner_x =
-                        standalone_include_fixed_wood_rails_resolved
-                            ? rail_x + resolved_wood_rail_depth + g
-                            : rail_x;
-
                     if (standalone_include_fixed_wood_rails_resolved) {
-                        paint("rail",pi)
-                            translate([rail_x,row_y])
-                                wood_fixed_rail_cut();
-                        paint("rail",pi)
-                            translate([rail_x,row_y+wood_rail_height+g])
-                                wood_fixed_rail_cut();
+                        placed(id_drawer_rail(b,i,0))
+                            wood_fixed_rail_cut();
+                        placed(id_drawer_rail(b,i,1))
+                            wood_fixed_rail_cut();
                     }
 
-                    paint("drawer_runner",pi)
-                        translate([runner_x,row_y])
-                            wood_drawer_runner_cut();
-                    paint("drawer_runner",pi)
-                        translate([
-                            runner_x,
-                            row_y+wood_drawer_runner_height+g
-                        ])
-                            wood_drawer_runner_cut();
+                    placed(id_drawer_runner(b,i,0))
+                        wood_drawer_runner_cut();
+                    placed(id_drawer_runner(b,i,1))
+                        wood_drawer_runner_cut();
                 }
 
-                side_y = drawer_layout_box_parts_y(b,i);
+                placed(id_drawer_side(b,i,"left"))
+                    drawer_side_panel_cut(d,bh,i);
 
-                paint("drawer_side_l",pi)
-                    translate([0,side_y])
-                        drawer_side_panel_cut(d,bh,i);
+                placed(id_drawer_side(b,i,"right"))
+                    drawer_side_panel_cut(d,bh,i);
 
-                paint("drawer_side_r",pi)
-                    translate([d+g,side_y])
-                        drawer_side_panel_cut(d,bh,i);
+                placed(id_drawer_cross(b,i,true))
+                    drawer_cross_panel_cut(bh,true,b);
 
-                paint("drawer_box_front",pi)
-                    translate([2*(d+g),side_y])
-                        drawer_cross_panel_cut(bh,true,b);
+                placed(id_drawer_cross(b,i,false))
+                    drawer_cross_panel_cut(bh,false,b);
 
-                paint("drawer_box_back",pi)
-                    translate([2*(d+g),side_y+bh+g])
-                        drawer_cross_panel_cut(bh,false,b);
-
-                bottom_y = side_y + bh + 2*g;
-
-                paint("drawer_bottom",pi)
-                    translate([0,bottom_y])
-                        drawer_bottom_cut(b);
-
+                // The bottom has its own row below both cross panels; wide
+                // drawers used to fuse it with the box back beside it.
+                placed(id_drawer_bottom(b,i))
+                    drawer_bottom_cut(b);
 
                 if (drawer_divider_active_for(b,i)) {
                     for (n=[0:max(0,drawer_divider_x_count()-1)])
                         if (drawer_divider_x_count() > 0)
-                            paint("drawer_divider",pi)
-                                translate([
-                                    0,
-                                    drawer_layout_divider_piece_y(b,i,true,n)
-                                ])
-                                    drawer_divider_longitudinal_cut(b,i,n);
+                            placed(id_drawer_divider_longitudinal(b,i,n))
+                                drawer_divider_longitudinal_cut(b,i,n);
 
                     for (n=[0:max(0,drawer_divider_y_count()-1)])
                         if (drawer_divider_y_count() > 0)
-                            paint("drawer_divider",pi)
-                                translate([
-                                    0,
-                                    drawer_layout_divider_piece_y(b,i,false,n)
-                                ])
-                                    drawer_divider_transverse_cut(b,i,n);
+                            placed(id_drawer_divider_transverse(b,i,n))
+                                drawer_divider_transverse_cut(b,i,n);
                 }
             }
     }
@@ -1949,21 +2173,13 @@ module door_cut_layout() {
             for (b=[0:layout_bay_count-1])
                 if (mixed_bay_is_type(b,"door"))
                     for (leaf=[0:mixed_bay_door_count(b)-1])
-                        paint("door",mixed_bay_door_part_index(b,leaf))
-                            translate([
-                                mixed_bay_door_layout_x(b,leaf),
-                                door_layout_y
-                            ])
-                                mixed_bay_door_panel_cut(b,leaf);
+                        placed(id_mixed_door(b,leaf))
+                            mixed_bay_door_panel_cut(b,leaf);
         }
         else {
             for (i=[0:door_count-1])
-                paint("door",i)
-                    translate([
-                        door_layout_part_x(i),
-                        door_layout_y
-                    ])
-                        door_panel_cut(i);
+                placed(id_legacy_door(i))
+                    door_panel_cut(i);
         }
     }
 }
@@ -2362,96 +2578,47 @@ module blind_operation_geometry_2d() {
 
 module accessory_cut_layout() {
     if (base_mounting_plate_active)
-        paint("base_mounting_plate")
-            translate([0,base_mounting_plate_layout_y])
-                base_mounting_plate_cut();
+        placed(id_base_mounting_plate())
+            base_mounting_plate_cut();
 
     if (worktop_active)
-        paint("worktop")
-            translate([0,worktop_layout_y])
-                worktop_cut();
+        placed(id_worktop())
+            worktop_cut();
 
     if (face_frame_active) {
-        g = layout_gap;
-        sw = effective_face_frame_side_stile_width;
-        rail_x =
-            (
-                face_frame_center_stile_enabled
-                    ? 3
-                    : 2
-            )*(sw+g);
+        placed(id_face_frame_stile("left"))
+            face_frame_stile_cut();
 
-        paint("face_frame")
-            translate([0,face_frame_layout_y])
-                face_frame_stile_cut();
-
-        paint("face_frame")
-            translate([sw+g,face_frame_layout_y])
-                face_frame_stile_cut();
+        placed(id_face_frame_stile("right"))
+            face_frame_stile_cut();
 
         if (face_frame_center_stile_enabled)
-            paint("face_frame")
-                translate([
-                    2*(sw+g),
-                    face_frame_layout_y
-                ])
-                    face_frame_center_stile_cut();
+            placed(id_face_frame_center_stile())
+                face_frame_center_stile_cut();
 
-        paint("face_frame")
-            translate([rail_x,face_frame_layout_y])
-                face_frame_top_rail_cut();
+        placed(id_face_frame_top_rail())
+            face_frame_top_rail_cut();
 
-        paint("face_frame")
-            translate([
-                rail_x,
-                face_frame_layout_y
-                    + effective_face_frame_top_rail_width
-                    + g
-            ])
-                face_frame_bottom_rail_cut();
+        placed(id_face_frame_bottom_rail())
+            face_frame_bottom_rail_cut();
 
         if (face_frame_mid_rail_active)
-            paint("face_frame")
-                translate([
-                    rail_x,
-                    face_frame_layout_y
-                        + effective_face_frame_top_rail_width
-                        + effective_face_frame_bottom_rail_width
-                        + 2*g
-                ])
-                    face_frame_mid_rail_cut();
+            placed(id_face_frame_mid_rail())
+                face_frame_mid_rail_cut();
     }
 
     if (stack_base_active) {
-        g = layout_gap;
+        placed(id_stack_base_side("left"))
+            stack_base_side_rail_cut();
 
-        paint("stack_base_side")
-            translate([
-                0,
-                stack_base_side_layout_y
-            ])
-                stack_base_side_rail_cut();
+        placed(id_stack_base_side("right"))
+            stack_base_side_rail_cut();
 
-        paint("stack_base_side")
-            translate([
-                resolved_cabinet_depth+g,
-                stack_base_side_layout_y
-            ])
-                stack_base_side_rail_cut();
+        placed(id_stack_base_cross(true))
+            stack_base_cross_rail_cut();
 
-        paint("stack_base_cross")
-            translate([
-                0,
-                stack_base_cross_layout_y
-            ])
-                stack_base_cross_rail_cut();
-
-        paint("stack_base_cross")
-            translate([
-                stack_base_cross_rail_cut_width()+g,
-                stack_base_cross_layout_y
-            ])
-                stack_base_cross_rail_cut();
+        placed(id_stack_base_cross(false))
+            stack_base_cross_rail_cut();
     }
 }
 
@@ -2609,7 +2776,7 @@ module standalone_drawer_print_layout() {
                         drawer_cross_panel_print_part(
                             bh,false,b,i);
 
-                bottom_y = side_y+bh+2*g;
+                bottom_y = drawer_layout_bottom_y(b,i);
 
                 paint("drawer_bottom",pi)
                     translate([0,bottom_y,0])
@@ -2762,6 +2929,7 @@ module standalone_drawer_bom_report() {
                 }
 
     echo("BOM_END");
+    placement_report();
     square([0.01,0.01]);
 }
 
@@ -3394,7 +3562,7 @@ module print_layout() {
                         drawer_cross_panel_print_part(
                             bh,false,b,i);
 
-                bottom_y = side_y+bh+2*g;
+                bottom_y = drawer_layout_bottom_y(b,i);
 
                 paint("drawer_bottom",pi)
                     translate([0,bottom_y,0])

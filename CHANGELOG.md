@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.9.0**) are separate from the bundled
+Application versions (currently **0.10.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,75 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.10.0 — 2026-10-15
+
+Roadmap A, gate 1: the flat cut layout can no longer ship fused or overlapping
+parts, and every starter proves it on every push.
+
+- **One placement table for the cut layout.** `layouts_modules.scad` now holds
+  `cut_layout_placements()`, one record per through-cut part (id, position,
+  width, height, colour), and the carcass, drawer, door and accessory layout
+  modules place each part from that table through `placed(id)`; a part without
+  a record stops the render with an assertion instead of landing somewhere
+  unrecorded. The equipment stand engine, which lays its parts out in one row,
+  reports the same records from its own part list.
+- **PLACE records.** The BOM output echoes `PLACE|<id>|X=|Y=|W=|H=` for every
+  part (lower-left corner in the strip, nominal size before kerf compensation).
+  The golden snapshots keep them, and the sheet nester planned for the next
+  gate will read them.
+- **LAYOUT_OVERLAP.** The engine compares every pair of placement rectangles
+  (widened by the kerf when kerf compensation is on) and reports
+  `CHECK|ERROR|LAYOUT_OVERLAP|Parts A and B overlap by w x h mm in the flat cut
+  layout.` in every output mode. The status chip shows it as a problem to fix
+  and the manufacturing export refuses to produce cut, pocket or engrave
+  files while it stands, exactly as for the other engine errors. The equipment
+  stand reports the same code when its layout gap is not positive.
+- **Drawer bottoms on their own row.** The drawer bottom used to share a row
+  with the drawer box back, beside it at x = 0, so any drawer wider than about
+  twice its depth fused the two outlines in the exported cut file: the
+  benchtop wide 8-drawer starter exported 45 outlines for 53 parts while every
+  check passed. The bottom now sits on its own row below both cross panels
+  (`drawer_layout_bottom_y`), and the engrave labels, print layout and pocket
+  overlays follow the same helper. That starter now exports 53 outlines.
+- **No phantom drawer row.** Cabinets without drawers reserved a full drawer
+  row in the strip before the door row; the door row now follows the drawer
+  region only when drawers are cut, so 34 drawerless starters have shorter
+  strips.
+- **Cut-layout gate in the golden suite.** `tests/golden.mjs` now runs
+  `tests/cut-layout-check.mjs` for all 110 starters: every BOM part has one
+  PLACE record of the same size, no two rectangles overlap, and the exported
+  cut SVG has exactly one outer contour per part whose extent equals that
+  part's rectangle (so a fused pair, a drifted position or a part drawn larger
+  than its BOM size all fail). This gate is independent of the snapshots, so
+  `--update` cannot bless an overlap. Run on its own, the file proves the error
+  fires: a negative layout gap produces LAYOUT_OVERLAP records and the cut
+  export is blocked. CI runs both.
+- **Coverage text.** The status chip summary, the "what this check covers"
+  panel, the manufacturing review and the README now list the flat cut layout
+  as checked; 3D part intersections and sheet nesting remain listed as not
+  checked.
+
+### Validation performed
+
+TypeScript, `tests/units.cjs`, `tests/settings-visibility.cjs`,
+`tests/v5-integration.cjs`, `tests/section-wasm.mjs`,
+`tests/cut-layout-check.mjs`, `tests/engine-fit.mjs`, `tests/layout-editor.mjs`,
+`tests/engine-interference.mjs` and `tests/golden.mjs` pass; the parity table
+and embedded engine sources are current; the static build succeeds. The golden
+snapshots were re-blessed: 92 of 110 cut layouts changed (58 starters with
+drawers, where the bottom moved to its own row, and 34 without drawers, where
+the phantom row went away); the equipment stand snapshots only gained PLACE
+records. The cut layouts of a drawerless kitchen wall cabinet were compared
+outline by outline before and after the refactor: identical apart from the
+removed phantom row.
+
+Remaining limits: the placement table covers the through-cut layout; the
+pocket and engrave layouts reuse its positions but are not themselves checked
+for overlap. The gate compares rectangle extents, so a part drawn with the
+right extent but wrong interior features is caught by the golden fingerprint,
+not by this check. Strips are still one tall column per design; per-sheet
+nesting is the next gate.
 
 ## 0.9.0 — 2026-10-15
 
