@@ -16,7 +16,8 @@ local serving and deployment. Application versioning is defined in the
 | Design normalization and source export | lib/cabinet.ts |
 | Local recovery | app/useProjects.tsx, lib/projects.ts |
 | Schematic and exact rendering | app/CabinetView.tsx, app/SchematicScene.tsx, app/OpenSCADView.tsx |
-| Manufacturing review | app/ManufacturingExport.tsx, lib/manufacturing.ts, lib/assembly.ts |
+| Export page and manufacturing review | app/ExportView.tsx, lib/manufacturing.ts, lib/nesting.ts, lib/assembly.ts |
+| Hardware setup, catalog choice and hole view | app/HardwareSetup.tsx, app/HardwareView.tsx, lib/hardware.ts |
 | Static bootstrap | static/, vite.static.config.ts |
 | Browser engine runtime | public/openscad/ |
 | Native engine package | public/engine/v5/ |
@@ -60,6 +61,13 @@ pnpm run build:static
   that alters a starter fails until it is accepted with `pnpm run golden:update`;
   the diff of the JSON files then shows exactly which parts or dimensions changed,
   for review in the same commit. About 2.5 minutes on two cores.
+- `tests/hardware.cjs` (unit) and `tests/hardware-engine.mjs`: the Hardware view's
+  hole model (lib/hardware.ts) against the engine. Every starter of the five
+  cabinet types is evaluated with metal slides, drilling and cup hinges; the
+  engine's side-panel feature ledger (printed with `report:'verbose'`) must give
+  one slide row per drawer at the drawer's height with the holes the view
+  estimates, every mounting plate must be level with its door's cups, and the
+  door fixing-hole offset must move the door's fixing holes toward its center.
 - `scripts/parity.mjs --check`: `docs/PARITY.md`, the generated table of features,
   options and front layouts per cabinet type, must be current (`pnpm run parity`
   regenerates it).
