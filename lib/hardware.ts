@@ -75,9 +75,11 @@ export function slideHoles(v:Values,board:'cabinet'|'drawer'){
 export type Hole={y:number;z:number;d:number;drilled:boolean};
 // Holes on the outside face of a drawer-box side, from the box front (y) and box bottom (z).
 // A hole beyond the slide (or the box) minus the rear margin is not drilled, as in the engine.
+// The slide length the engine works with: the slide, but never longer than the drawer box.
+export const slideLength=(v:Values,boxDepth:number)=>Math.min(Number(v.metal_slide_length),Number.isFinite(boxDepth)?boxDepth:Infinity);
 export function drawerSideHoles(v:Values,boxDepth:number):Hole[]{
  if(!v.include_metal_slide_holes)return [];
- const setback=Number(v.metal_slide_front_setback),limit=Math.min(Number(v.metal_slide_length),boxDepth)-Number(v.metal_slide_hole_rear_margin);
+ const setback=Number(v.metal_slide_front_setback),limit=slideLength(v,boxDepth)-Number(v.metal_slide_hole_rear_margin);
  return slideHoles(v,'drawer').map(x=>({y:setback+x,z:Number(v.metal_slide_drawer_hole_z_from_drawer_bottom),d:Number(v.metal_slide_drawer_hole_diameter),drilled:setback+x<=limit}));
 }
 // Hinge heights from the bottom of a door of height h.
@@ -149,9 +151,10 @@ export type SlideRow={id:string;drawer?:string;bottom:number;z:number;holes:{y:n
 // settings the same way the engine does and marked as estimates.
 export function cabinetSlideRows(v:Values,features:SideFeature[],drawers:DrawerRef[],part:string,sideDepth:number):SlideRow[]{
  const cabZ=Number(v.metal_slide_cabinet_hole_z_from_drawer_bottom),setback=Number(v.metal_slide_front_setback);
- const limit=Math.min(Number(v.metal_slide_length),sideDepth)-Number(v.metal_slide_hole_rear_margin);
+ // The engine never models a slide longer than the drawer box (active_slide_length).
+ const limit=(d:DrawerRef)=>Math.min(slideLength(v,d.box.d),sideDepth)-Number(v.metal_slide_hole_rear_margin);
  const estimated:SlideRow[]=drawersOnSide(drawers,part).filter(d=>Number.isFinite(d.bottom)).map(d=>({id:'estimate.'+d.id,drawer:d.id,bottom:d.bottom,z:d.bottom+cabZ,engine:false,
-  holes:v.include_metal_slide_holes?slideHoles(v,'cabinet').map(x=>setback+x).filter(y=>y<=limit).map(y=>({y,z:d.bottom+cabZ,d:Number(v.metal_slide_cabinet_hole_diameter)})):[]}));
+  holes:v.include_metal_slide_holes?slideHoles(v,'cabinet').map(x=>setback+x).filter(y=>y<=limit(d)).map(y=>({y,z:d.bottom+cabZ,d:Number(v.metal_slide_cabinet_hole_diameter)})):[]}));
  const engine=slideRows(features.filter(f=>f.source==='metal_slide'),part);
  if(!engine.length)return estimated;
  const rows=engine.map(r=>{const bottom=r.z-cabZ,match=estimated.find(e=>Math.abs(e.bottom-bottom)<1);return {id:r.id,drawer:match?.drawer,bottom,z:r.z,engine:true,holes:r.holes.map(h=>({y:h.y,z:h.z,d:h.d}))}});

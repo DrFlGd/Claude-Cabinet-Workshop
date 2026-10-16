@@ -37,7 +37,7 @@ jobs:
       - name: Parity table is current
         run: node scripts/parity.mjs --check
       - name: Unit and settings tests
-        run: node tests/units.cjs && node tests/nesting.cjs && node tests/settings-visibility.cjs && node tests/v5-integration.cjs
+        run: node tests/units.cjs && node tests/nesting.cjs && node tests/settings-visibility.cjs && node tests/hardware.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
         run: node tests/stackable-controls.cjs && node tests/sections.cjs
       # The engine suites run OpenSCAD WebAssembly inside worker threads; they
@@ -53,6 +53,8 @@ jobs:
         run: node --no-memory-protection-keys tests/golden.mjs
       - name: Cut-layout overlap error fires and blocks the export
         run: node --no-memory-protection-keys tests/cut-layout-check.mjs
+      - name: Hardware view matches the engine's slide holes and hinge plates
+        run: node --no-memory-protection-keys tests/hardware-engine.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:

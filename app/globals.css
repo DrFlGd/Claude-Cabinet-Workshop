@@ -438,7 +438,7 @@
 .export-preview-empty{display:grid;place-items:center;gap:10px;text-align:center;color:#6b8088;font-size:14px;min-height:360px;border:1px dashed #cfdadd;border-radius:10px;padding:24px}
 .export-layout-pickers{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
 .export-layout-pickers label{display:grid;gap:5px;font-size:12px;font-weight:600;color:#4c6670}
-.export-layout-pickers select{border:1px solid #cfdadd;border-radius:7px;padding:7px 9px;background:#fff;font-size:13px;min-width:220px;text-transform:capitalize}
+.export-layout-pickers select{border:1px solid #cfdadd;border-radius:7px;padding:7px 9px;background:#fff;font-size:13px;min-width:220px}
 .export-preview-frame{border:1px solid #e3e9eb;border-radius:10px;background:#fbfcfc;padding:10px;min-height:420px;display:grid;place-items:center}
 .export-preview-frame .svg-review{max-width:100%;max-height:70vh}
 @media(max-width:1100px){.export-grid{grid-template-columns:1fr}.export-preview{position:static}}

@@ -73,13 +73,13 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
  const svgs=result?.entries.filter(e=>(e.name.startsWith('svg/')||e.name.startsWith('sheets/'))&&e.name.endsWith('.svg'))??[],selectedSvg=svgs.find(e=>e.name===svg)??svgs[0];
  const allWarnings=[...new Set(result?.entries.filter(e=>e.name.startsWith('logs/')).flatMap(e=>parseManufacturing(e.data).warnings)??[])];
  const filename=(result?.name.replace(/[^a-z0-9_-]/gi,'-')||'cabinet');
- const opName=(n:string)=>n.replaceAll('_',' ').replace(/ layout$/,'');
+ const cap=(t:string)=>t.charAt(0).toUpperCase()+t.slice(1),opName=(n:string)=>cap(n.replaceAll('_',' ').replace(/ layout$/,''));
  const operationsList=svgs.filter(e=>e.name.startsWith('svg/'));
  const sheets=new Map<string,typeof svgs>();for(const e of svgs.filter(e=>e.name.startsWith('sheets/'))){const folder=e.name.split('/')[1];sheets.set(folder,[...(sheets.get(folder)??[]),e])}
  const sheetOf=(n?:string)=>n?.startsWith('sheets/')?n.split('/')[1]:'';
  const opOf=(n?:string)=>(n?.split('/').pop()??'cut_layout.svg').slice(0,-4);
  const fileFor=(sheet:string,op:string)=>sheet?`sheets/${sheet}/${op}.svg`:`svg/${op}.svg`;
- const sheetLabel=(folder:string)=>{const m=folder.match(/^(\d+)-(.*)-([\d_]+)mm$/);return m?`Sheet ${Number(m[1])} · ${m[2].replaceAll('-',' ')} ${m[3].replace('_','.')} mm`:folder};
+ const sheetLabel=(folder:string)=>{const m=folder.match(/^(\d+)-(.*)-([\d_]+)mm$/);return m?`Sheet ${Number(m[1])} · ${cap(m[2].replaceAll('-',' '))} ${m[3].replace('_','.')} mm`:folder};
  const sheetW=Number(values.stock_width),sheetH=Number(values.stock_height),gap=Number(values.layout_gap);
  const health=result?designHealth(result.text).status:null;
  return <section className='export-view' aria-label='Export'>
