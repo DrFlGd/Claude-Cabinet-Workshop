@@ -1149,6 +1149,7 @@ module door_panel_3d(i=0) {
 
         if (effective_hinge_style != "none") {
             hx = x0 + hinge_local_x(dw,i);
+            fx = x0 + hinge_fixing_local_x(dw,i);
 
             for (j=[0:hinge_count-1]) {
                 hz = hinge_z(j);
@@ -1169,7 +1170,7 @@ module door_panel_3d(i=0) {
                     effective_hinge_door_fixing_hole_spacing/2
                 ])
                     round_hole_y_3d(
-                        hx,
+                        fx,
                         decorative_front_through_drill_start_y(
                             door_thickness),
                         hz+dz,
@@ -1227,6 +1228,7 @@ module door_panel_cut(i=0) {
 
         if (effective_hinge_style != "none") {
             hx = hinge_local_x(dw,i);
+            fx = hinge_fixing_local_x(dw,i);
 
             for (j=[0:hinge_count-1]) {
                 hz = hinge_local_z(j);
@@ -1238,7 +1240,7 @@ module door_panel_cut(i=0) {
                     effective_hinge_door_fixing_hole_spacing/2
                 ])
                     round_hole_2d(
-                        hx,hz+dz,
+                        fx,hz+dz,
                         effective_hinge_door_fixing_hole_diameter
                     );
             }
@@ -1280,6 +1282,7 @@ module mixed_bay_door_panel_3d(b=0,leaf=0) {
 
         if (effective_hinge_style != "none") {
             hx = x0 + mixed_bay_door_hinge_local_x(b,leaf);
+            fx = x0 + mixed_bay_door_fixing_local_x(b,leaf);
 
             for (j=[0:hinge_count-1]) {
                 hz = mixed_bay_hinge_z(j,b);
@@ -1300,7 +1303,7 @@ module mixed_bay_door_panel_3d(b=0,leaf=0) {
                     effective_hinge_door_fixing_hole_spacing/2
                 ])
                     round_hole_y_3d(
-                        hx,
+                        fx,
                         decorative_front_through_drill_start_y(
                             door_thickness),
                         hz+dz,
@@ -1358,6 +1361,7 @@ module mixed_bay_door_panel_cut(b=0,leaf=0) {
 
         if (effective_hinge_style != "none") {
             hx = mixed_bay_door_hinge_local_x(b,leaf);
+            fx = mixed_bay_door_fixing_local_x(b,leaf);
 
             for (j=[0:hinge_count-1]) {
                 hz = mixed_bay_hinge_z(j,b)-mixed_bay_door_bottom_z(b);
@@ -1368,7 +1372,7 @@ module mixed_bay_door_panel_cut(b=0,leaf=0) {
                     effective_hinge_door_fixing_hole_spacing/2
                 ])
                     round_hole_2d(
-                        hx,hz+dz,
+                        fx,hz+dz,
                         effective_hinge_door_fixing_hole_diameter
                     );
             }

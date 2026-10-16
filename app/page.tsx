@@ -1,17 +1,16 @@
 'use client';
 import {useState,useEffect,useRef} from 'react';
-import {Box,Download,Undo2,Redo2,Ruler,Layers,Check,FolderOpen,Save,ArrowUpRight,Search,Info,RotateCcw,ListChecks,FilePlus2,History,XCircle,ChevronDown,ChevronRight,LayoutTemplate,Zap,Plus,X,EyeOff} from 'lucide-react';
+import {Box,Download,Undo2,Redo2,Ruler,Layers,Check,FolderOpen,Save,ArrowUpRight,Search,Info,RotateCcw,ListChecks,FilePlus2,History,XCircle,ChevronDown,ChevronRight,LayoutTemplate,Zap,Plus,X,EyeOff,Wrench} from 'lucide-react';
 import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
-import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {Toaster,toast} from 'sonner';
 import {defaults,schemas,families,label,thickness,validate,exportBundle,download,Values,starterValues,normalizeValues,geometry,Part} from '@/lib/cabinet';
 import LayoutEditor from './LayoutEditor';
 import {convertBays} from '@/lib/sections';
 import CabinetView from './CabinetView';
 import OpenSCADView from './OpenSCADView';
-import ManufacturingExport from './ManufacturingExport';
+import ExportView from './ExportView';
 import FitTargetResult,{solvedDimensions} from './FitTargetResult';
 import DimensionInput from './DimensionInput';
 import SettingHelp from './SettingHelp';
@@ -22,10 +21,12 @@ import {Units,formatDimension,formatInput,formatShop,isLengthField,mapLengths,re
 import {partSection} from '@/lib/selection';
 import useProjects from './useProjects';
 import {parseDesign,Design} from '@/lib/projects';
-import HardwarePicker from './HardwarePicker';
+import HardwareSetup from './HardwareSetup';
+import HardwareView from './HardwareView';
+import {HARDWARE_PANEL_KEYS} from '@/lib/hardware';
 import FitGuide,{guideKeys} from './FitGuide';
 import {helpFor,optionLabel} from '@/lib/help';
-import {sectionOrder,shopSections,sectionTitles,sectionBlurbs,sectionFor,settingsGroup,isAdvanced,inactiveReason,presentFields,linkedChanges,LAYOUT_KEYS,LAYOUT_REASON,hasLayoutEditor,fieldBounds,clampToBounds,Field} from '@/lib/settings';
+import {sectionOrder,shopSections,sectionTitles,sectionBlurbs,sectionFor,settingsGroup,isAdvanced,inactiveReason,presentFields,linkedChanges,LAYOUT_KEYS,LAYOUT_REASON,isAlternative,hasLayoutEditor,fieldBounds,clampToBounds,Field} from '@/lib/settings';
 const titles:Record<string,string>={custom_cabinet_width:'Width',custom_cabinet_height:'Height',custom_cabinet_depth:'Depth',custom_top_style:'Top construction',back_style:'Back construction',joinery_style:'Carcass joinery',carcass_stock:'Carcass stock',custom_carcass_thickness:'Measured thickness',base_style:'Base style',include_worktop:'Add worktop',worktop_thickness:'Worktop thickness',cabinet_layout_mode:'Layout',custom_cabinet_contents:'Contents',custom_drawer_count:'Drawer count',custom_door_count:'Door count',mixed_bay_count:'Number of bays',bottom_width_style:'Bottom panel',cnc_tool_diameter:'CNC cutter diameter',slot_corner_relief:'Shared slot relief',side_relief:'Side-panel relief',router_bit_diameter:'CNC cutter diameter',layout_gap:'Gap between parts in cut layout',stock_width:'Sheet width',stock_height:'Sheet height',layout_show_stock:'Draw sheet outline in cut layout',engrave_label_size:'Engraved label size',engrave_label_min_size:'Smallest label size',engrave_drawer_divider_ids:'Engrave divider IDs',include_shared_export_bounding_box:'Shared export frame',export_bounding_box_margin:'Export frame margin',export_bounding_box_frame_width:'Export frame line width',apply_kerf_compensation:'Compensate for kerf',kerf:'Kerf width',circle_segments:'Circle smoothness (segments)',design_name:'Engine design label',output_mode:'Engine output mode',color_mode:'Render colours',dimension_report:'Dimension report',validation_report:'Validation report',system_contract_report:'Contract report',interface_keepout_policy:'Interface keep-out policy',hardware_drilling_mode:'Hardware drilling',fit_clearance:'Joint fit clearance',metal_slide_clearance_per_side:'Slide clearance per side',equipment_mass_kg:'Equipment mass (kg)',slide_load_rating_kg:'Slide load rating (kg)'};
 const NOMINAL:Record<string,number>={'1/8':3.175,'1/4':6.35,'3/8':9.525,'1/2':12.7,'5/8':15.875,'3/4':19.05,'1':25.4};
 const pretty=(s:string)=>{
@@ -60,7 +61,7 @@ function ArrayField({value,onChange,id,fieldKey,units,length,activeCount,disable
 }
 const DESIGN_META={version:2 as const,engine:5 as const,engineFamily:'modular_organization' as const,bundleRevision:5 as const};
 export default function Home(){
- const [family,setFamily]=useState(0),[values,setValues]=useState<Values>(()=>defaults(0)),[step,setStep]=useState('Sizing'),[interior,setInterior]=useState(false),[exploded,setExploded]=useState(false),[dimensions,setDimensions]=useState(true),[tab,setTab]=useState('layout'),[exact,setExact]=useState(false),[query,setQuery]=useState(''),[exportOpen,setExportOpen]=useState(false),[busy,setBusy]=useState(false),[projectName,setProjectName]=useState('Workshop cart');
+ const [family,setFamily]=useState(0),[values,setValues]=useState<Values>(()=>defaults(0)),[step,setStep]=useState('Sizing'),[interior,setInterior]=useState(false),[exploded,setExploded]=useState(false),[dimensions,setDimensions]=useState(true),[tab,setTab]=useState('layout'),[exact,setExact]=useState(false),[query,setQuery]=useState(''),[view,setView]=useState<'design'|'export'>('design'),[busy,setBusy]=useState(false),[projectName,setProjectName]=useState('Workshop cart');
  const [units,setUnits]=useState<Units>('mm');
  const stockThickness=family===5?thickness(values,'drawer_stock','custom_drawer_material_thickness'):thickness(values);
  const fmt=(n:number)=>formatDimension(n,units);
@@ -68,6 +69,7 @@ export default function Home(){
  const [pickerOpen,setPickerOpen]=useState(false);
  const [advanced,setAdvanced]=useState<Record<string,boolean>>({});
  const [shopOpen,setShopOpen]=useState(false);
+ const [hardwareKind,setHardwareKind]=useState<'slides'|'hinges'>('slides');
  const [past,setPast]=useState<Values[]>([]),[future,setFuture]=useState<Values[]>([]);
  const input=useRef<HTMLInputElement>(null);
  const current=useRef({family,values});
@@ -110,9 +112,9 @@ export default function Home(){
  useEffect(()=>{if(shopSections.includes(step))setShopOpen(true)},[step]);
  const guidedKeys=step==='Sizing'&&family<5?guideKeys(values):new Set<string>();
  // A setting that does not apply stays visible but disabled, with the reason beneath it.
- function field(f:Field,reason:string|null=null){
-  const key=f.key,value=values[key],id='field-'+key+'-'+sectionFor(f),off=!!reason;
-  return <div className={'field '+(isAdvanced(f)?'is-advanced ':'')+(off?'is-inactive ':'')+(typeof value==='boolean'?'toggle-field':'')} key={key} aria-disabled={off||undefined}>
+ function field(f:Field,reason:string|null=null,locked=false){
+  const key=f.key,value=values[key],id='field-'+key+'-'+sectionFor(f),off=!!reason||locked;
+  return <div className={'field '+(isAdvanced(f)?'is-advanced ':'')+(off?'is-inactive ':'')+(typeof value==='boolean'?'toggle-field':'')} key={key} aria-disabled={off||undefined} data-locked={locked||undefined}>
    <SettingHelp advanced={isAdvanced(f)} id={id} title={family===3&&key==='door_shelf_count'?'Shelf count':title(f)} help={[family===3&&key==='door_shelf_count'?'Number of internal shelves. Zero shelves makes one open section; each added shelf creates another section.':helpFor(key,f.description),f.expression?'Leave blank to calculate automatically ('+f.expression+').':''].filter(Boolean).join(' ')}/>
    {isLengthField(f)&&!Array.isArray(value)?<DimensionInput id={id} disabled={off} value={value} units={units} automatic={!!f.expression} bounds={fieldBounds(f)} onChange={v=>change(key,v)}/>:
     typeof value==='boolean'?<Switch id={id} disabled={off} checked={value} onCheckedChange={v=>change(key,v)}/>:
@@ -120,13 +122,13 @@ export default function Home(){
     Array.isArray(value)?<ArrayField id={id} disabled={off} activeCount={key.startsWith('mixed_bay_')?Number(values.mixed_bay_count):key.startsWith('drawer_bank_')?Number(values.drawer_bank_count):undefined} fieldKey={key} units={units} length={isLengthField(f)} value={value} onChange={v=>change(key,v)}/>:
     typeof value==='number'?<div className='number-wrap'><input id={id} disabled={off} type='number' value={value} step={fieldBounds(f)?.[2]??0.1} min={fieldBounds(f)?.[0]} max={Number.isFinite(fieldBounds(f)?.[1])?fieldBounds(f)?.[1]:undefined} onChange={e=>{if(e.target.value!==''&&Number.isFinite(e.target.valueAsNumber))change(key,e.target.valueAsNumber)}} onBlur={e=>{const n=e.target.valueAsNumber;if(Number.isFinite(n)&&clampToBounds(n,fieldBounds(f))!==n)change(key,clampToBounds(n,fieldBounds(f)))}}/></div>:
     <input id={id} disabled={off} value={String(value??'')} onChange={e=>change(key,e.target.value)}/>}
-   {off&&<small className='inactive-reason'>{reason}</small>}
+   {reason&&<small className='inactive-reason'>{reason}</small>}
   </div>;
  }
  async function exportFiles(){
   if(errors.length)return;
   setBusy(true);
-  try{download(await exportBundle(family,values),'cabinet-workshop.zip');toast.success('OpenSCAD project downloaded');setExportOpen(false)}
+  try{download(await exportBundle(family,values),'cabinet-workshop.zip');toast.success('OpenSCAD project downloaded')}
   catch(e){toast.error(String(e))}
   finally{setBusy(false)}
  }
@@ -154,12 +156,14 @@ export default function Home(){
  const activeCount=(name:string)=>visibleFields.filter(f=>sectionFor(f)===name&&!inactiveReason(f,values)&&(advanced[name]||!isAdvanced(f))).length;
  const hiddenAdvanced=(name:string)=>advanced[name]?0:visibleFields.filter(f=>sectionFor(f)===name&&!inactiveReason(f,values)&&isAdvanced(f)).length;
  const matchCount=(name:string)=>visibleFields.filter(f=>sectionFor(f)===name&&matches(f)).length;
- const sectionFields=visibleFields.filter(f=>sectionFor(f)===step&&!guidedKeys.has(f.key));
+ // The hardware panel presents slides, runners and hinges itself; the Hardware section lists the rest.
+ const panelOwned=(f:Field)=>step==='Hardware'&&HARDWARE_PANEL_KEYS(f.key);
+ const sectionFields=visibleFields.filter(f=>sectionFor(f)===step&&!guidedKeys.has(f.key)&&!panelOwned(f));
  const advancedCount=sectionFields.filter(f=>!inactiveReason(f,values)&&isAdvanced(f)).length;
  // Active settings of the chosen section (or every match while searching), then the ones that do not apply.
  const pool=searching?visibleFields.filter(matches):sectionFields;
  const filtered=pool.filter(f=>!inactiveReason(f,values)&&(searching||advanced[sectionFor(f)]||!isAdvanced(f)));
- const inactive=pool.map(f=>[f,inactiveReason(f,values)] as const).filter(([f,r])=>r&&(searching||r!==LAYOUT_REASON));
+ const inactive=pool.map(f=>[f,inactiveReason(f,values)] as const).filter(([f,r])=>r&&(searching||(r!==LAYOUT_REASON&&!isAlternative(r))));
  const groups=Array.from(new Set(filtered.map(settingsGroup)));
  const inactiveGroups=Array.from(new Set(inactive.map(([f])=>settingsGroup(f))));
  const groupTitle=(group:string)=>searching?group.replace(/^Engine \//,'Engine & export /'):group.split(' / ').slice(1).join(' / ');
@@ -179,7 +183,7 @@ export default function Home(){
  const shown={w:outside?.w??previewValues.custom_cabinet_width,h:outside?.h??previewValues.custom_cabinet_height,d:outside?.d??previewValues.custom_cabinet_depth};
  const railButton=(name:string)=><button key={name} data-settings-step={name} aria-current={step===name&&!searching?'step':undefined} className={(step===name&&!searching?'is-active ':'')+(shopSections.includes(name)?'is-shop':'')} onClick={()=>{setStep(name);setQuery('')}} title={sectionBlurbs[name]}>
   <span>{name}</span>
-  {name!=='Hardware'&&<small>{searching?matchCount(name)||'':activeCount(name)}{!searching&&hiddenAdvanced(name)>0&&<i title={hiddenAdvanced(name)+' advanced'}>+{hiddenAdvanced(name)}</i>}</small>}
+  <small>{searching?matchCount(name)||'':activeCount(name)}{!searching&&hiddenAdvanced(name)>0&&<i title={hiddenAdvanced(name)+' advanced'}>+{hiddenAdvanced(name)}</i>}</small>
  </button>;
  const cabinetSteps=steps.filter(s=>!shopSections.includes(s)),shopSteps=steps.filter(s=>shopSections.includes(s));
  const shopTotal=shopSteps.reduce((n,s)=>n+(searching?matchCount(s):activeCount(s)),0);
@@ -198,11 +202,11 @@ export default function Home(){
     <button onClick={projects.openRecent} title='Recent designs on this browser'><History size={17}/><span>Recent</span></button>
     <button onClick={()=>input.current?.click()} title='Open a saved design file'><FolderOpen size={17}/><span>Open</span></button>
     <button onClick={save} title='Download this design as a file'><Save size={17}/><span>Save</span></button>
-    <button className='primary' onClick={()=>setExportOpen(true)}><Download size={17}/><span>Export</span></button>
+    {view==='export'?<button onClick={()=>setView('design')} title='Back to the design'><Box size={17}/><span>Design</span></button>:<button className='primary' onClick={()=>setView('export')}><Download size={17}/><span>Export</span></button>}
    </div>
    <input type='file' accept='.json' ref={input} hidden onChange={e=>load(e.target.files?.[0])}/>
   </header>
-  <div className='workspace cw-workspace'>
+  <div className='workspace cw-workspace' hidden={view==='export'}>
    <aside className='config cw-config' aria-label='Cabinet settings'>
     <div className='config-top'>
      <div className='type-card'>
@@ -233,15 +237,20 @@ export default function Home(){
     </nav>
     <div className='config-main'>
      <div key={step+(searching?'-q':'')} className='config-scroll'>
-      <div className='settings-heading'><h2>{searching?'Search results':sectionTitles[step]??step}</h2><span>{searching?filtered.length+' match'+(filtered.length===1?'':'es')+(inactive.length?' · '+inactive.length+' not in use':''):step==='Hardware'?'Preset library':activeCount(step)+' settings'}</span></div>
+      <div className='settings-heading'><h2>{searching?'Search results':sectionTitles[step]??step}</h2><span>{searching?filtered.length+' match'+(filtered.length===1?'':'es')+(inactive.length?' · '+inactive.length+' not in use':''):activeCount(step)+' settings'}</span></div>
       {!searching&&sectionBlurbs[step]&&<p className='section-blurb'>{sectionBlurbs[step]}</p>}
       {!searching&&advancedCount>0&&<label className='advanced-control'><Switch checked={!!advanced[step]} onCheckedChange={v=>setAdvanced(a=>({...a,[step]:v}))}/>Show advanced <span>{advancedCount}</span></label>}
-      {!searching&&step==='Hardware'&&<HardwarePicker query={query} family={family} apply={patch=>{record(v=>({...v,...patch}));toast.success('Hardware settings applied — all values remain editable')}}/>}
+      {!searching&&step==='Hardware'&&<HardwareSetup family={family} values={values} keys={visibleFields.map(f=>f.key)}
+       options={k=>visibleFields.find(f=>f.key===k)?.options??null}
+       active={k=>{const f=visibleFields.find(x=>x.key===k);return !!f&&!inactiveReason(f,values)}}
+       fieldFor={(k,o)=>{const f=visibleFields.find(x=>x.key===k);if(!f)return null;if(o?.locked)return field(f,null,true);return inactiveReason(f,values)?null:field(f)}}
+       apply={(patch,message)=>{record(v=>({...v,...patch}));toast.success(message)}}
+       onView={kind=>{setHardwareKind(kind);setTab('hardware')}}/>}
       {!searching&&step==='Sizing'&&family<5&&<FitGuide family={family} values={values} units={units} change={change} patch={patch=>record(v=>({...v,...patch}))}/>}
       {!searching&&step==='Machining'&&<p className='field-note'>Shared settings provide defaults. Material-specific relief and cutter diameters appear with the relevant joints below. A diameter of 0 inherits the shared cutter. Use None where CAM adds relief.</p>}
       {hasLayoutEditor(family)&&((!searching&&step==='Structure')||layoutMatches)&&<div className='note layout-link'><LayoutTemplate size={18}/><p>{searching?'Drawer and door counts, bays and opening sizes are set in the Layout tab.':'Openings, bays, drawers and doors are arranged visually in the Layout tab: click an opening, drag dividers, type exact sizes.'}</p><button onClick={()=>setTab('layout')}>Open Layout</button></div>}
       {groups.map(group=><section key={group} className='settings-group'><h3>{groupTitle(group)}</h3>{filtered.filter(f=>settingsGroup(f)===group).map(f=>field(f))}</section>)}
-      {filtered.length===0&&(searching||step!=='Hardware')&&<p className='muted'>{searching?(inactive.length?'Every matching setting is out of use for this configuration; the reasons are listed below.':'No setting matches. Try another word, or a part name such as “hinge” or “runner”.'):step==='Sizing'&&guidedKeys.size?'':'Turn on advanced settings to see the controls in this section.'}</p>}
+      {filtered.length===0&&!(step==='Hardware'&&!searching)&&<p className='muted'>{searching?(inactive.length?'Every matching setting is out of use for this configuration; the reasons are listed below.':'No setting matches. Try another word, or a part name such as “hinge” or “runner”.'):step==='Sizing'&&guidedKeys.size?'':'Turn on advanced settings to see the controls in this section.'}</p>}
       {inactive.length>0&&<details className='inactive-settings' open={searching}>
        <summary><EyeOff size={15}/>{inactive.length} setting{inactive.length===1?'':'s'} not in use for this configuration</summary>
        <p className='field-note'>Each one says what to change to bring it into play. Saved values are kept.</p>
@@ -265,9 +274,10 @@ export default function Home(){
       <TabsList className='view-switch'>
        {hasLayoutEditor(family)&&<TabsTrigger value='layout'><LayoutTemplate size={16}/>Layout</TabsTrigger>}
        <TabsTrigger value='model'><Box size={16}/>3D model</TabsTrigger>
+       <TabsTrigger value='hardware'><Wrench size={16}/>Hardware</TabsTrigger>
        <TabsTrigger value='plan'><ListChecks size={16}/>Cut list & fit{issueCount>0&&<span className='tab-badge'>{issueCount}</span>}</TabsTrigger>
       </TabsList>
-      <span className='schematic-label'>{tab==='layout'?'Front view · click, drag, type':tab==='model'?(exact?'OpenSCAD geometry · joinery, holes and grooves':'Instant schematic · approximate'):'Engine-calculated parts'}</span>
+      <span className='schematic-label'>{tab==='layout'?'Front view · click, drag, type':tab==='hardware'?'Hole positions on both mating boards':tab==='model'?(exact?'OpenSCAD geometry · joinery, holes and grooves':'Instant schematic · approximate'):'Engine-calculated parts'}</span>
      </div>
      {hasLayoutEditor(family)&&<TabsContent value='layout' className='layout-content'>
       {errors.length?<div className='validation-panel'><Info/><h2>Check your dimensions</h2>{errors.map(e=><p key={e}>{e}</p>)}</div>:<LayoutEditor family={family} values={values} units={units} analysis={analysis} apply={patch=>record(v=>({...v,...patch}))}/>}
@@ -294,6 +304,9 @@ export default function Home(){
       </div>
       {!exact&&<div className='model-caption'><span className='material-dot'/>{formatShop(stockThickness,units)}{units==='mm'?' mm':''} {family===5?'drawer wall':'carcass'} stock<span className='caption-divider'/> {pretty(family===5?values.drawer_joinery_style:(values.joinery_style??'butt'))}<button className='link-button' onClick={()=>setExact(true)}>Joinery, holes and grooves are in the Exact view <ArrowUpRight size={14}/></button></div>}
      </TabsContent>
+     <TabsContent value='hardware' className='hardware-content'>
+      <HardwareView family={family} values={values} units={units} analysis={analysis} kind={hardwareKind} setKind={setHardwareKind}/>
+     </TabsContent>
      <TabsContent value='plan' className='plan-content'>
       <PlanPanel analysis={analysis} units={units} name={projectName} values={values}/>
      </TabsContent>
@@ -307,15 +320,9 @@ export default function Home(){
     </div>
    </section>
   </div>
-  <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-   <DialogContent className='export-dialog'>
-    <DialogHeader><span className='export-icon'><Download/></span><DialogTitle>Take your design to the workshop</DialogTitle><DialogDescription>Generate manufacturing files or download your editable OpenSCAD project. Sources, SVGs and manufacturing reports use millimeters.</DialogDescription></DialogHeader>
-    <ManufacturingExport units={units} family={family} values={values} name={projectName} invalid={!!errors.length}/>
-    <div className='export-includes'><h3>OpenSCAD project · ZIP</h3><p><Check size={16}/> Your selected cabinet and all current settings</p><p><Check size={16}/> Shared geometry and manufacturing layouts</p><p><Check size={16}/> BOM export script and editable design file</p></div>
-    <div className='note'><Info size={18}/><p>Open the included .scad file in OpenSCAD to render exact geometry and export cut, pocket, engraving, or BOM outputs. The cut list tab and the manufacturing package above evaluate the same engine directly in your browser.</p></div>
-    {errors.map(e=><p className='error' key={e}>{e}</p>)}
-    <button className='primary download-button' disabled={busy||!!errors.length} onClick={exportFiles}><Download size={18}/>{busy?'Preparing project…':'Download project'}</button>
-   </DialogContent>
-  </Dialog>
+  <div className='export-page' hidden={view!=='export'}>
+   <ExportView units={units} family={family} values={values} name={projectName} errors={errors} projectBusy={busy} onDownloadProject={exportFiles}
+    onBack={()=>setView('design')} onEditSheets={()=>{setView('design');setShopOpen(true);setStep('Materials');setQuery('')}}/>
+  </div>
  </main>;
 }
