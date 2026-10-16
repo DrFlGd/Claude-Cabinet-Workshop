@@ -22,7 +22,7 @@ self.onmessage=async({data})=>{
   for(const f of sources){engine.FS.mkdirTree('/'+f.name.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+f.name,f.text);}
   engine.FS.writeFile('/'+filename,source);
   const path=mode==='bom'?'/report.echo':'/layout.svg';
-  const code=engine.callMain(['/'+filename,'-D','output_mode='+JSON.stringify(mode),'-D','dimension_report="full"','-D','system_contract_report="summary"','-D','validation_report="verbose"','-D','interface_keepout_policy="enforce"','-o',path]);
+  const code=engine.callMain(['/'+filename,'-D','output_mode='+JSON.stringify(mode),'-D','dimension_report="full"','-D','system_contract_report='+(data.report==='verbose'?'"verbose"':'"summary"'),'-D','validation_report="verbose"','-D','interface_keepout_policy="enforce"','-o',path]);
   let output='';try{output=engine.FS.readFile(path,{encoding:'utf8'})}catch{}
   const all=logs.join('\n')+'\n'+(mode==='bom'?output:'');
   if(/(^|\n)ERROR:|ECHO: "ERROR\|/.test(all)){if(mode==='bom')logs.push(output);throw Error('OpenSCAD rejected '+mode+'. See the export log.');}

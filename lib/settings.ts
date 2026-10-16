@@ -81,12 +81,21 @@ const ADVANCED=[
  /^(divider_|drawer_divider_(thickness|slot|mounting|clearance|notch))/,
  /^(layout_show_stock|bottom_width_style|custom_side_toe_kick_cutout)$/,
 ];
+// Settings of an alternative the user did not choose (wood runners while metal slides are
+// selected, slide drilling while runners are, hinge details with no hinge, …). They are left out
+// of the "not in use" list entirely and come back only through search.
+const UNUSED_REASON='Replaced by the cabinet-side and drawer-side hole diameters';
+export const ALTERNATIVE_REASONS=new Set(['Select metal drawer slides','Select wood drawer runners','Select fixed runners','Select a hinge style','Select a European cup hinge',UNUSED_REASON]);
+export const isAlternative=(reason:string|null)=>!!reason&&ALTERNATIVE_REASONS.has(reason);
 export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)||ADVANCED.some(r=>r.test(f.key))}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(hasLayoutEditor(v._family)&&LAYOUT_KEYS.has(f.key))return LAYOUT_REASON;
  const k=f.key,s=sectionFor(f),sections=[0,1,4].includes(v._family)&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
  if(k==='section_nodes')return 'Use the section layout editor';
+ // The engine drills both even-spacing and listed slide holes with the cabinet-side and
+ // drawer-side diameters; this older single diameter is not read by any front end.
+ if(k==='metal_slide_hole_diameter')return UNUSED_REASON;
  if(sections&&(k.startsWith('mixed_')||k==='include_mixed_bay_partitions'||k.startsWith('drawer_bank_')||['cabinet_contents','drawer_count','door_count','door_shelf_count','drawer_height_mode','drawer_height_weights','drawer_graduated_step','include_drawer_separators','shelf_style','width_basis','depth_basis','include_door_hinge_partitions','face_frame_mid_rail_mode','face_frame_custom_mid_rail_z','include_face_frame_center_stile','face_frame_center_stile_width'].includes(k)))return 'Controlled by section layout';
  const drawerTypes=sections?(v.section_nodes??[]).filter((n:any[])=>n[2]==='leaf').map((n:any[])=>n[5]):v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];
  if(v._family===3){
@@ -161,7 +170,7 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
   if((k.startsWith('hinge_')||k==='single_door_hinge_side'||k==='mixed_bay_door_hinge_sides')&&!hasDoors)return 'This layout has no doors';
  }
  if((k.startsWith('metal_slide_')||k==='include_metal_slide_holes'||k==='show_metal_slide_envelopes')&&!metal)return 'Select metal drawer slides';
- if((k.startsWith('wood_')||k==='include_wood_slide_registration_holes')&&!wood)return 'Select wood drawer runners';
+ if((/^(wood_|custom_wood_|standalone_.*wood)/.test(k)||k==='include_wood_slide_registration_holes')&&!wood)return 'Select wood drawer runners';
  if(f.section==='Hardware / Slide Drilling'&&k!=='include_metal_slide_holes'&&k!=='hardware_drilling_mode'&&!v.include_metal_slide_holes)return 'Enable slide drilling';
  if(k.startsWith('wood_slide_registration_')&&!v.include_wood_slide_registration_holes)return 'Enable wood-slide registration holes';
  if(k.startsWith('hinge_')&&k!=='hinge_style'&&v.hinge_style==='none')return 'Select a hinge style';
@@ -181,7 +190,9 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
   if(!adjustable)return 'Add adjustable shelves';
   if(k==='adjustable_shelf_hole_depth'&&v.adjustable_shelf_hole_type==='through')return 'Select blind shelf holes';
  }
- if(f.visibleIf){const unmet=Object.entries(f.visibleIf).filter(([key,value])=>Array.isArray(value)?!value.includes(v[key]):v[key]!==value);if(unmet.length)return 'Requires '+unmet.map(([k,x])=>k.replaceAll('_',' ')+' = '+String(x)).join(', ')}
+ // The engine drills even-spaced and listed slide holes alike with these two diameters, so they
+ // apply in both pattern modes whatever the engine schema's visibility rule says.
+ if(f.visibleIf&&!['metal_slide_cabinet_hole_diameter','metal_slide_drawer_hole_diameter'].includes(k)){const unmet=Object.entries(f.visibleIf).filter(([key,value])=>Array.isArray(value)?!value.includes(v[key]):v[key]!==value);if(unmet.length)return 'Requires '+unmet.map(([k,x])=>k.replaceAll('_',' ')+' = '+String(x)).join(', ')}
  if(v._family===6){if(k.startsWith('overall_')&&v.sizing_mode!=='manual')return 'Used for manual sizing';if(/^(device_|side_clearance|top_clearance)/.test(k)&&v.sizing_mode!=='equipment')return 'Used for equipment sizing';if(k.startsWith('cleat_')&&v.mount_mode!=='wall_mount_french_cleat')return 'Requires French-cleat mounting';if(/^(side_frame_margin|minimum_rib_width|cutout_corner_radius|side_window_count|brace_style)$/.test(k)&&v.side_style!=='skeletonized')return 'Requires skeletonized sides';}
  if(k.startsWith('custom_')&&k.includes('thickness')){const stockKey=k==='custom_carcass_thickness'?'carcass_stock':k==='custom_drawer_material_thickness'?'drawer_stock':k.replace(/^custom_/,'').replace(/_thickness$/,'_stock');if(v[stockKey]&&v[stockKey]!=='custom_mm')return 'Choose measured stock (custom mm) to use this thickness';}
  const types=sections?drawerTypes:v._family===3?[v.module_type]:mixed?(v.mixed_bay_types??[]).slice(0,v.mixed_bay_count):[v.custom_cabinet_contents??v.cabinet_contents??v.module_type??'drawers'];

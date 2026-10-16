@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.12.0**) are separate from the bundled
+Application versions (currently **0.13.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,86 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.13.0 — 2026-10-16
+
+Hardware setup starts from one choice, a new Hardware view draws the holes on
+both boards a slide or hinge joins, and export has its own page.
+
+- **Only the chosen drawer method is shown.** With metal slides selected, the
+  wood-runner settings (runner sizes, registration holes, custom runner
+  geometry) are no longer listed as disabled alternatives, and the reverse
+  with wood runners; the same holds for fixed runners and for hinge settings
+  when a cabinet has no hinges. Searching still finds them, with the change
+  that would bring them into use. The unused `metal_slide_hole_diameter`
+  (superseded by the cabinet-side and drawer-side diameters) is no longer
+  shown, and those two diameters now show in the legacy spacing mode too.
+- **Hardware panel: method, then model.** The Hardware step opens with a
+  Drawer slides (Tray slides on equipment stands) card and a Hinges card. Each
+  starts with how drawers run (metal slides, wood runners, none) or the hinge
+  type, then the model. **Generic** keeps every dimension editable (slide
+  length, setback, clearance, height, hole pattern, count, spacing, first hole,
+  height and diameter on each side; hinge count, end offset, cup diameter,
+  depth and edge distance, fixing holes, mounting plate position) and can be
+  filled from the two generic templates. A **catalog model** (72 slides from
+  Accuride, Knape & Vogt and Hettich; 8 cup hinges from Blum, Hettich, Salice and GRASS) applies the maker's
+  dimensions and shows them locked under *From the maker*, with the maker's
+  notes and drawing; **Adjust dimensions**, or editing a value, turns it into a
+  generic model "based on" that one. Designs saved before this release are
+  matched against the catalog. Reference-only models without drilling data are
+  listed but cannot be selected.
+- **Hardware view.** A new **Hardware** tab beside the 3D model draws, with
+  dimensions, the cabinet side and the drawer box side for a chosen drawer
+  (left or right), or the cabinet side's mounting plate and the door for a
+  chosen door. Cabinet-side slide holes and hinge plates are the positions the
+  engine drills, read from its side-panel feature ledger (the background check
+  now asks the engine for its verbose report); the drawer box side and the
+  door are drawn from the settings with the engine's formulas. The view says
+  which holes the slide length or panel depth leaves out, when the slide is
+  longer than the box, whether cabinet and drawer holes line up, and whether
+  plates are level with the door's cups. "Show on the boards" in the panel
+  opens it.
+- **Door fixing-hole offset (engine patch).** New setting
+  `hinge_door_fixing_hole_offset` (0–30 mm, default 0, shop cart, utility,
+  stackable and kitchen) moves the door's fixing screw holes from the cup
+  center line toward the door center, so a screw-on cup hinge whose two screws
+  sit beside the cup (commonly 9.5 mm off, 45 mm apart) is drilled correctly.
+  Applied to single doors and mixed-bay doors, in 3D and in the door cut
+  layout. The default keeps every existing output unchanged.
+- **Export page.** **Export** in the header replaces the configurator with a
+  full export page (**Design** returns, keeping the generated results):
+  1 Manufacturing package, 2 Review (health, parts, sheets, engine warnings,
+  materials, part table, warnings, machining depths), 3 Download, plus the
+  editable OpenSCAD project, beside a sticky preview with a sheet (or full
+  strip) picker and an operation picker. Sheet nesting is a choice of three
+  described options with the sheet size and gap, and a link to change them.
+
+Validation performed: `pnpm exec tsc`, the engine-source and
+parity checks, units, nesting, settings visibility (alternatives hidden,
+diameters visible in legacy mode) and the new `tests/hardware.cjs` (catalog
+choice, generic edits, panel keys, hole patterns, hinge heights and door
+drilling, ledger parsing) passed. The new `tests/hardware-engine.mjs` evaluated
+the 88 starters of the five cabinet types with metal slides, drilling and cup
+hinges: 271 engine slide rows matched the drawers and the view's holes, 180
+mounting plates were level with their doors' cups, and a 9.5 mm offset moved
+the door cut layout's fixing holes 9.5 mm toward the door center (the first run
+found the engine shortening slides to the drawer box depth, which the view now
+does too). Section, engine-fit, layout-editor and cut-layout suites passed, and
+golden outputs of all 110 starters are unchanged, so the default offset alters
+nothing. Both new tests run in CI. Checked in Chromium at 1500 and 390 px:
+the panel's catalog and generic flows, wood runners, search showing hidden
+alternatives, the Hardware view for slides and hinges, and the export page
+generating a package, previewing sheets and keeping results when returning
+to the design, without console errors or horizontal scrolling. Not run here:
+the native OpenSCAD stackable and section tests (no native OpenSCAD in this
+environment; CI runs them) and the 3D interference sweep (CI).
+
+Remaining limitations: the feature ledger covers the cabinet side panels only,
+so slides or hinges mounted on a partition or divider are drawn from the
+settings and the view says so; drawer-side holes for wood runners are not
+drawn; the catalog slides all leave automatic drilling off (the makers offer
+several hole and slot choices), so their view shows the slide envelope without
+holes until the model is adjusted to a generic one with drilling on.
 
 ## 0.12.0 — 2026-10-15
 

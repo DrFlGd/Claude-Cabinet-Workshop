@@ -3056,6 +3056,23 @@
         "advanced": false
       },
       {
+        "key": "hinge_door_fixing_hole_offset",
+        "value": 0,
+        "expression": null,
+        "section": "Hardware / Hinges",
+        "description": "Moves the two door fixing holes sideways from the cup center, toward the middle of the door. Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center; 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.",
+        "options": null,
+        "bounds": [
+          0.0,
+          30.0,
+          0.1
+        ],
+        "step": 0.1,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "hinge_plate_hole_diameter",
         "value": 5,
         "expression": null,
@@ -10739,6 +10756,23 @@
         "options": null,
         "bounds": null,
         "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "hinge_door_fixing_hole_offset",
+        "value": 0,
+        "expression": null,
+        "section": "Hardware / Hinges",
+        "description": "Moves the two door fixing holes sideways from the cup center, toward the middle of the door. Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center; 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.",
+        "options": null,
+        "bounds": [
+          0.0,
+          30.0,
+          0.1
+        ],
+        "step": 0.1,
         "unit": "mm",
         "visibleIf": null,
         "advanced": false
@@ -26250,6 +26284,23 @@
         "advanced": false
       },
       {
+        "key": "hinge_door_fixing_hole_offset",
+        "value": 0,
+        "expression": null,
+        "section": "Hardware / Hinges",
+        "description": "Moves the two door fixing holes sideways from the cup center, toward the middle of the door. Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center; 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.",
+        "options": null,
+        "bounds": [
+          0.0,
+          30.0,
+          0.1
+        ],
+        "step": 0.1,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "hinge_plate_hole_diameter",
         "value": 5,
         "expression": null,
@@ -33388,6 +33439,23 @@
         "options": null,
         "bounds": null,
         "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "hinge_door_fixing_hole_offset",
+        "value": 0,
+        "expression": null,
+        "section": "Hardware / Hinges",
+        "description": "Moves the two door fixing holes sideways from the cup center, toward the middle of the door. Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center; 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.",
+        "options": null,
+        "bounds": [
+          0.0,
+          30.0,
+          0.1
+        ],
+        "step": 0.1,
         "unit": "mm",
         "visibleIf": null,
         "advanced": false

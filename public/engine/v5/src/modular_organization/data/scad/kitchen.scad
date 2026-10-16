@@ -666,6 +666,7 @@ hinge_cup_center_from_door_edge = 22.5;
 hinge_door_fixing_hole_diameter = 3;
 
 hinge_door_fixing_hole_spacing = 45;
+hinge_door_fixing_hole_offset = 0; // [0:0.1:30]
 
 // Cabinet-side mounting-plate geometry.
 // 37 mm front setback and 32 mm vertical spacing are common Euro-system

@@ -11,7 +11,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.7.1**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.13.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -21,7 +21,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.7.1
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.13.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -82,6 +82,14 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    **Find any setting** searches names and help text across every section,
    including settings not in use; counts, bays and drawer heights are set in
    the Layout tab and the search points there.
+   **Hardware** starts with one choice per kind: how drawers run (metal
+   slides, wood runners or none) and which hinge. Only the settings of the
+   chosen method are shown; runner settings stay out of the way while metal
+   slides are selected (search still finds them). Then pick a slide or hinge
+   model: a catalog model fills in and locks the maker's dimensions (**Adjust
+   dimensions** unlocks them), and **Generic** makes every dimension editable:
+   hole spacing, count, setback, height, diameters, hinge positions, cup and
+   fixing-hole drilling and the mounting plate.
 4. **Watch the checks.** After every change OpenSCAD recalculates the design
    in the background. The status chip above the preview says whether the
    engine's checks passed, lists notes, or names the problems to fix. The
@@ -99,12 +107,21 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    schematic that updates as you type, for orientation and part selection.
    **Exact** is the real OpenSCAD model, including joinery, holes and grooves;
    it re-renders automatically after edits while it is showing.
-7. **Export.** **Export** generates the operation SVGs (through cuts, pockets,
+   The **Hardware** tab draws the slide or hinge holes on both boards they
+   join, with dimensions: the cabinet side and the drawer box side for a
+   slide, the cabinet side (mounting plate) and the door for a hinge. Choose
+   the left or right side and the drawer or door; the cabinet-side holes are
+   the positions the engine drills, and the view flags holes that the slide
+   length or panel depth leaves out and plates that do not line up with the
+   door's cups.
+7. **Export.** **Export** in the header opens the export page (**Design**
+   returns to the configurator with the results kept). It generates the operation SVGs (through cuts, pockets,
    engraving), the same operations nested per stock sheet (one folder per sheet
    with an SVG and a DXF per operation, using the sheet size and layout gap
    from the settings; parts keep their drawn orientation unless you allow
    them to turn), reports, a printable assembly packet and the editable
-   OpenSCAD project. Exports are blocked while the engine reports an error.
+   OpenSCAD project. The page shows the review (health, parts, sheets,
+   warnings) beside a preview of each sheet or the full strip per operation. Exports are blocked while the engine reports an error.
 
 ### Units and dimensions
 

@@ -63,6 +63,11 @@ effective_hinge_cup_depth = hinge_cup_depth;
 effective_hinge_cup_center_from_door_edge = hinge_cup_center_from_door_edge;
 effective_hinge_door_fixing_hole_diameter = hinge_door_fixing_hole_diameter;
 effective_hinge_door_fixing_hole_spacing = hinge_door_fixing_hole_spacing;
+// Screw-on cup hinges fix to the door beside the cup, toward the door's center
+// (commonly 45 mm apart and 9.5 mm from the cup center). 0 keeps the fixing holes
+// on the cup's center line, as before this setting existed.
+effective_hinge_door_fixing_hole_offset =
+    is_undef(hinge_door_fixing_hole_offset) ? 0 : hinge_door_fixing_hole_offset;
 effective_hinge_plate_hole_diameter = hinge_plate_hole_diameter;
 effective_hinge_plate_center_from_front = hinge_plate_center_from_front;
 effective_hinge_plate_hole_spacing = hinge_plate_hole_spacing;
@@ -1395,6 +1400,10 @@ function mixed_bay_door_leaf_handle_side(b=0,leaf=0) =
         ? "right"
         : "left";
 
+function mixed_bay_door_fixing_local_x(b=0,leaf=0) =
+    mixed_bay_door_hinge_local_x(b,leaf)
+    + (mixed_bay_door_leaf_hinge_side(b,leaf) == "left" ? 1 : -1)*effective_hinge_door_fixing_hole_offset;
+
 function mixed_bay_door_hinge_local_x(b=0,leaf=0) =
     mixed_bay_door_leaf_hinge_side(b,leaf) == "left"
         ? effective_hinge_cup_center_from_door_edge
@@ -1719,6 +1728,10 @@ function hinge_z(j) =
 
 function hinge_local_z(j) =
     hinge_z(j)-door_face_bottom_z;
+
+function hinge_fixing_local_x(door_w,i) =
+    hinge_local_x(door_w,i)
+    + (door_hinge_side(i) == "left" ? 1 : -1)*effective_hinge_door_fixing_hole_offset;
 
 function hinge_local_x(door_w,i) =
     door_hinge_side(i) == "left"

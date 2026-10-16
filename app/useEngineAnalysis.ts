@@ -45,7 +45,9 @@ export default function useEngineAnalysis(family:number,values:Values,delay=650)
      const plan=analyse(text);
      finish({state:data.type==='result'?'ready':'failed',plan,planKey:key,log:text,error:data.type==='error'?data.error:''},data.type==='result');
     };
-    job.postMessage({filename:schemas[family].file,source,sources:renderSources,mode:'bom'});
+    // The verbose system report adds the side-panel feature ledger (every hole the engine
+    // drills in a cabinet side), which the Hardware view draws.
+    job.postMessage({filename:schemas[family].file,source,sources:renderSources,mode:'bom',report:'verbose'});
    }catch(e){if(id===generation.current)setState(s=>({...s,state:'failed',error:String(e)}))}
   },delay);
   return ()=>{clearTimeout(timer);if(timeout)clearTimeout(timeout)};

@@ -16,7 +16,13 @@ check('hinge_cup_depth',true,{cabinet_contents:'doors',hinge_style:'none'});chec
 check('drawer_screw_hole_diameter',false,{drawer_joinery_style:'screw'});check('drawer_screw_hole_diameter',true,{drawer_joinery_style:'dado'});
 check('drawer_bottom_dado_depth',false,{drawer_bottom_joinery:'dado'});check('kerf',true,{apply_kerf_compensation:false});
 check('metal_slide_length',true,{slide_type:'fixed_runner'},6);check('metal_slide_length',false,{slide_type:'side_mount'},6);
-const picker=fs.readFileSync('app/HardwarePicker.tsx','utf8');assert(!picker.includes('hardware-category'));assert(picker.includes("['drawer_slide','hinge']"));
+// Unchosen alternatives (wood runners under metal slides and the reverse, hinge details with no
+// hinge, the unwired single slide-hole diameter) are left out of the "not in use" list.
+for(const [key,patch] of [['wood_rail_height',{drawer_mount:'metal_slides'}],['include_wood_slide_registration_holes',{drawer_mount:'metal_slides'}],['metal_slide_length',{drawer_mount:'wood_rails'}],['hinge_cup_depth',{cabinet_contents:'doors',hinge_style:'none'}],['metal_slide_hole_diameter',{drawer_mount:'metal_slides'}]]){const s=schema[0],f=s.fields.find(x=>x.key===key);assert(f,key);const r=inactiveReason(f,{...Object.fromEntries(s.fields.map(x=>[x.key,x.value])),_family:0,cabinet_layout_mode:'legacy',cabinet_contents:'drawers',...patch});assert(m.exports.isAlternative(r),key+': '+r)}
+for(const key of ['drawer_handle_vertical_offset','caster_height'])assert(!m.exports.isAlternative(inactiveReason(schema[0].fields.find(x=>x.key===key),{...Object.fromEntries(schema[0].fields.map(x=>[x.key,x.value])),_family:0,include_drawer_handle_holes:false,base_style:'flat'})),key);
+// The engine drills even-spaced slide holes with the cabinet-side and drawer-side diameters.
+check('metal_slide_cabinet_hole_diameter',false,{drawer_mount:'metal_slides',metal_slide_hole_pattern_mode:'legacy_spacing'});check('metal_slide_drawer_hole_diameter',false,{drawer_mount:'metal_slides',metal_slide_hole_pattern_mode:'legacy_spacing'});
+const setup=fs.readFileSync('app/HardwareSetup.tsx','utf8');assert(setup.includes("category='drawer_slide'")&&setup.includes("category='hinge'"));
 const page=fs.readFileSync('app/page.tsx','utf8');assert(page.includes('<SettingHelp'));assert(!page.includes("<p className='field-note'>{f.description}"));
 console.log('Conditional controls: joinery, drawer modes, hardware, nested drilling and presets/help regressions passed.');
 
