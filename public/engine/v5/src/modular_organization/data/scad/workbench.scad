@@ -94,7 +94,8 @@ cell_size = 400; // [250:1:600]
 
 /* [Structure / Layout] */
 
-// One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers]. Later rows stack on earlier ones.
+// One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers, drawer columns 1|2]. Later rows stack on earlier ones.
+// Drawer columns 2 puts two drawers side by side on every level of a drawers module at least two cells wide, beside a centre partition.
 modules = [[0,0,1,1,730,"door",1,"front","left"],[1,0,2,1,730,"door",1,"front","right"],[0,1,1,1,730,"door",1,"back","right"],[1,1,1,1,730,"door",1,"back","right"],[2,1,1,1,730,"door",1,"back","right"]];
 
 /* [Structure / Stacking] */
@@ -295,6 +296,12 @@ metal_slide_drawer_hole_diameter = 5; // [1:0.1:10]
 // Depth of the pilot holes in the module sides.
 slide_drill_depth = 8; // [1:0.5:30]
 
+// Holes closer than this to the rear end of the slide are left out.
+metal_slide_hole_rear_margin = 10; // [0:1:100]
+
+// Through holes in a drawer partition: one binding post (sex bolt) fixes the slides on both faces; match the post's barrel.
+partition_slide_hole_diameter = 6; // [3:0.1:12]
+
 /* [Hardware / Handles] */
 
 // Plywood pulls cut from handle stock; none leaves the doors undrilled.
@@ -397,7 +404,7 @@ function norm_contents(c)=len([for(x=CONTENTS) if(x==c) 1])>0 ? c : "door";
 function norm_module(m)=[max(0,floor(mget(m,0,0))),max(0,floor(mget(m,1,0))),max(1,floor(mget(m,2,1))),max(1,floor(mget(m,3,1))),
  mget(m,4,730),norm_contents(mget(m,5,"door")),max(0,min(8,floor(mget(m,6,1)))),
  let(f=mget(m,7,"front")) (f=="back" || f=="left" || f=="right") ? f : "front",mget(m,8,"right")=="left" ? "left" : "right",
- max(1,min(8,floor(mget(m,9,3))))];
+ max(1,min(8,floor(mget(m,9,3)))),mget(m,10,1)==2 ? 2 : 1];
 MODS=[for(m=modules) if(is_list(m)) norm_module(m)];
 NM=len(MODS);
 function mcol(k)=MODS[k][0];
@@ -410,6 +417,7 @@ function mshelves(k)=MODS[k][6];
 function mfacing(k)=MODS[k][7];
 function mhinge(k)=MODS[k][8];
 function mdrawers(k)=MODS[k][9];
+function mdcols(k)=MODS[k][10];
 function msideways(k)=mfacing(k)=="left" || mfacing(k)=="right";
 // Local module frame: X across the front (width), Y from the front face to the back, Z up.
 function mW(k)=(msideways(k) ? mspy(k) : mspx(k))*C;
@@ -464,8 +472,15 @@ VC=drawer_vertical_clearance;
 SC=metal_slide_clearance_per_side;
 function dbox_z(k,j)=max(tc,drawer_band(k,j)[0])+VC/2;
 function dbox_h(k,j)=min(mH(k)-tc,drawer_band(k,j)[1])-max(tc,drawer_band(k,j)[0])-VC;
-function dbox_x0(k)=tc+SC;
-function dbox_w(k)=mWi(k)-2*SC;
+// Drawer columns: two side by side beside a centre partition, on all-drawer modules two or more cells wide.
+function dcols(k)=mcontents(k)=="drawers" && mdcols(k)==2 && mW(k)>=2*C-0.01 ? 2 : 1;
+function has_partition(k)=dcols(k)==2;
+function PX(k)=mW(k)/2;                                          // partition centre
+function dcell_w(k)=dcols(k)==2 ? (mWi(k)-tc)/2 : mWi(k);       // opening of one column
+function dbox_x0(k,c=0)=c==1 ? PX(k)+tc/2+SC : tc+SC;
+function dbox_w(k)=dcell_w(k)-2*SC;
+function pcol(p)=len(p)>9 ? p[9] : 0;
+function dsuffix(k,c)=dcols(k)==2 ? (c==0 ? "L" : "R") : "";
 SLIDES=[250,300,350,400,450,500,550,600,650,700];
 // Room for a slide (and so the box) between the module's front edge and the back panel.
 function slide_room(k)=mDc(k)-tc-drawer_rear_clearance;
@@ -474,9 +489,16 @@ function slide_len(k)=metal_slide_length>0 ? metal_slide_length : slide_auto(k);
 // Box depth (the slide length), never below 100 mm so a failing design still draws.
 function dbox_d(k)=max(100,slide_len(k));
 function dfront_h(k,j)=drawer_band(k,j)[1]-drawer_band(k,j)[0]-door_gap;
-function dfront_w(k)=mW(k)-door_gap;
+function dfront_w(k)=mW(k)/dcols(k)-door_gap;
+function dfront_x0(k,c)=c*mW(k)/dcols(k)+door_gap/2;
 function dslide_z(k,j)=dbox_z(k,j)+dbox_h(k,j)/2;
-function dslide_holes(k,list)=[for(x=list) if(x>=10 && x<=slide_len(k)-10) x];
+function dslide_holes(k,list)=[for(x=list) if(x>=10 && x<=slide_len(k)-metal_slide_hole_rear_margin) x];
+// Partition tenons, in local y: one through the bottom in the middle half of each cell row (clear of
+// the registration pockets), and one through each top rail.
+function partition_tenons_bottom(k)=[for(j=[0:1:mD(k)/C-1]) let(a=max(j*C+C/4,td+10),b=min(j*C+3*C/4,mD(k)-tc-10)) if(b-a>=20) [a,b]];
+function partition_tenons_top(k)=[for(y0=[td,back_rail_y0(k)]) [y0+15,y0+RW-15]];
+function partition_mortise(k,t)=[PX(k)-(tc+cl)/2,t[0]-cl/2,PX(k)+(tc+cl)/2,t[1]+cl/2];
+function rail_mortises(k)=has_partition(k) ? [for(t=partition_tenons_top(k)) partition_mortise(k,t)] : [];
 // Handle on a drawer front: centred across it, handle_top_offset below its top or half way down.
 function dhandle_v(k,j)=dfront_h(k,j)-min(handle_top_offset,dfront_h(k,j)/2);
 // Corner finger joints of the drawer boxes: an odd number of equal fields up the box height.
@@ -507,6 +529,10 @@ function hinge_vs(Hd)=let(n=hinge_count(Hd)) [for(i=[0:n-1]) hinge_end_offset+i*
 // Every handle in the set screws on at 140 mm centres from the back of the door, into 15 mm pilot
 // holes drilled in the ends of its two legs. The profiles are generated from the reference set's
 // dimensions (lengths, leg widths, radii, chamfer angle and arc radii); see docs/MODULAR_WORKBENCH.md.
+// Every profile dimension lies in the plane of the handle stock, so none depends on handle_thickness:
+// thicker stock makes the same profile taller across the door. What does depend on it scales with
+// th: the pull's placement on its hole line, the pilot holes at th/2, and the jig (block thickness,
+// fence height th+7, guide holes th/2 above the plate).
 // Each profile is drawn with the feet on y = 0 and is the solid minus handle_air(): the finger
 // recess between the legs and, on the traditional pull, the notches under its wings.
 HSP=140;
@@ -700,7 +726,7 @@ function rects_meet(a,b,m)=a[0]<b[2]+m && b[0]<a[2]+m && a[1]<b[3]+m && b[1]<a[3
 function slot_centre_y(k,back)=back ? mD(k)-dog_hole_pitch/2 : dog_hole_pitch/2;
 function slot_rects(k,back)=include_hand_slots ? [for(i=[0:mW(k)/C-1]) for(x=[i*C+C/4,i*C+3*C/4])
  [x-hand_slot_length/2,slot_centre_y(k,back)-hand_slot_width/2,x+hand_slot_length/2,slot_centre_y(k,back)+hand_slot_width/2]] : [];
-function site_on_rail(k,s,back)=let(r=site_rect(k,s)) rect_inside(r,rail_body(k,back),3) && len([for(h=slot_rects(k,back)) if(rects_meet(r,h,3)) 1])==0;
+function site_on_rail(k,s,back)=let(r=site_rect(k,s)) rect_inside(r,rail_body(k,back),3) && len([for(h=concat(slot_rects(k,back),rail_mortises(k))) if(rects_meet(r,h,3)) 1])==0;
 // [upper module, lower module, world x, world y, axis, in the lower module's back rail]
 KEYS=include_stack_keys ? [for(u=[0:1:NM-1]) if(mz(u)>Zbase+0.01) for(j=[0:1:u-1]) if(share(j,u) && abs(mtop(j)-mz(u))<0.01)
  for(c=cells_of(u)) if(covers(j,c)) for(s=cell_sites(c)) for(b=[false,true]) if(site_on_rail(j,s,b)) [u,j,s[0],s[1],s[2],b]] : [];
@@ -712,13 +738,14 @@ CROSS_COLS=frame_cross_members=="every_column" ? [for(c=[0:cols-1]) c] : cols==1
 LONG_Y=[for(r=[0:rows-1]) for(o=[frame_rail_inset,C-frame_rail_inset]) r*C+o];
 CROSS_X=[for(c=CROSS_COLS) for(o=[frame_rail_inset,C-frame_rail_inset]) c*C+o];
 HT=registration_tab_height;
-function drawer_parts(k)=let(id=str("M",k+1,"-DRAWER-"),Bw=dbox_w(k),Ld=dbox_d(k),Wi=mWi(k))
- [for(j=[0:1:drawer_n(k)-1]) let(d=str(id,j+1,"-"),bh=dbox_h(k,j),tg=drawer_bottom_tongue) each concat(
-  [[str(d,"SIDE-L"),"dr_side_l",k,Ld,bh,tx,0,0,j],[str(d,"SIDE-R"),"dr_side_r",k,Ld,bh,tx,0,0,j],
-   [str(d,"FRONT"),"dr_front",k,Bw,bh,tx,0,0,j],[str(d,"BACK"),"dr_back",k,Bw,bh,tx,0,0,j],
-   [str(d,"BOTTOM"),"dr_bottom",k,Bw-2*tx+2*tg,Ld-2*tx+2*tg,tbb,tx-tg,tx-tg,j],
-   [str(d,"FACE"),"dr_face",k,dfront_w(k),dfront_h(k,j),td,0,0,j]],
-  has_handles ? [[str(d,"HANDLE"),"dr_handle",k,HL,HH,th,0,0,j]] : [])];
+// Drawer parts carry their level j at index 8 and their column c (0 left, 1 right) at index 9.
+function drawer_parts(k)=let(id=str("M",k+1,"-DRAWER-"),Bw=dbox_w(k),Ld=dbox_d(k))
+ [for(j=[0:1:drawer_n(k)-1]) for(c=[0:1:dcols(k)-1]) let(d=str(id,j+1,dsuffix(k,c),"-"),bh=dbox_h(k,j),tg=drawer_bottom_tongue) each concat(
+  [[str(d,"SIDE-L"),"dr_side_l",k,Ld,bh,tx,0,0,j,c],[str(d,"SIDE-R"),"dr_side_r",k,Ld,bh,tx,0,0,j,c],
+   [str(d,"FRONT"),"dr_front",k,Bw,bh,tx,0,0,j,c],[str(d,"BACK"),"dr_back",k,Bw,bh,tx,0,0,j,c],
+   [str(d,"BOTTOM"),"dr_bottom",k,Bw-2*tx+2*tg,Ld-2*tx+2*tg,tbb,tx-tg,tx-tg,j,c],
+   [str(d,"FACE"),"dr_face",k,dfront_w(k),dfront_h(k,j),td,0,0,j,c]],
+  has_handles ? [[str(d,"HANDLE"),"dr_handle",k,HL,HH,th,0,0,j,c]] : [])];
 function module_parts(k)=let(id=str("M",k+1,"-"),W=mW(k),D=mD(k),H=mH(k),Wi=mWi(k),Dc=mDc(k),nd=door_count(k))
  concat(
  [[str(id,"SIDE-L"),"side_l",k,Dc,H,tc,0,0,0],[str(id,"SIDE-R"),"side_r",k,Dc,H,tc,0,0,0],
@@ -730,6 +757,7 @@ function module_parts(k)=let(id=str("M",k+1,"-"),W=mW(k),D=mD(k),H=mH(k),Wi=mWi(
  [for(j=[0:1:nd-1]) [str(id,"DOOR-",j+1),"door",k,door_w(k),door_h(k),td,0,0,j]],
  has_handles ? [for(j=[0:1:nd-1]) [str(id,"HANDLE-",j+1),"handle",k,HL,HH,th,0,0,j]] : [],
  mcontents(k)=="framed" ? [[str(id,"FACE"),"face",k,W-door_gap,H-door_gap,td,0,0,0]] : [],
+ has_partition(k) ? [[str(id,"PARTITION"),"partition",k,Dc-tc,H,tc,0,0,0]] : [],
  drawer_parts(k));
 function panel_bbox(i)=let(R=panel_rect(i)) [max(R[0],-OV),max(R[1],-OV),min(R[2],FL+OV),min(R[3],FD+OV)];
 parts=concat(
@@ -784,10 +812,14 @@ module side_pins(p) {
 // Bottom: u = local x, v = distance from the module's back face (underside up).
 module bottom_outline(p) {
  k=p[2]; W=mW(k); Dc=mDc(k); D=mD(k);
- union() {
-  translate([tc,tc]) square([W-2*tc,Dc-tc]);
-  for(f=bottom_side_fingers(k)) for(x=[tc-fl,W-tc]) translate([x,Dc-f[1]]) square([fl+0.01,f[1]-f[0]]);
-  for(f=bottom_rear_fingers(k)) translate([tc+f[0],0]) square([f[1]-f[0],tc+0.01]);
+ difference() {
+  union() {
+   translate([tc,tc]) square([W-2*tc,Dc-tc]);
+   for(f=bottom_side_fingers(k)) for(x=[tc-fl,W-tc]) translate([x,Dc-f[1]]) square([fl+0.01,f[1]-f[0]]);
+   for(f=bottom_rear_fingers(k)) translate([tc+f[0],0]) square([f[1]-f[0],tc+0.01]);
+  }
+  // mortises for the drawer partition's tenons (v runs from the back)
+  if(has_partition(k)) for(t=partition_tenons_bottom(k)) let(r=partition_mortise(k,t)) pocket_rect(r[0],D-r[3],r[2],D-r[1]);
  }
 }
 module bottom_registration(p) {
@@ -823,6 +855,23 @@ module rail_outline(p) {
    if(back) for(f=rail_rear_fingers(k)) translate([tc+f[0],y0+RW-0.01]) square([f[1]-f[0],tc+0.01]);
   }
   hand_slots(k,back ? D-dog_hole_pitch/2 : dog_hole_pitch/2);
+  for(r=rail_mortises(k)) if(r[1]>=y0 && r[3]<=y0+RW) pocket_rect(r[0],r[1],r[2],r[3]);
+ }
+}
+// Drawer partition: u = depth from the module's front edge, v = height from the module's underside.
+// Tenons pass through the bottom and both top rails and finish flush with their outer faces.
+module partition_outline(p) {
+ k=p[2]; L=p[3]; H=mH(k);
+ difference() {
+  union() {
+   translate([0,tc]) square([L,H-2*tc]);
+   for(t=partition_tenons_bottom(k)) translate([t[0]-td,0]) square([t[1]-t[0],tc+0.01]);
+   for(t=partition_tenons_top(k)) translate([t[0]-td,H-tc-0.01]) square([t[1]-t[0],tc+0.01]);
+  }
+  if(relief_on) {
+   for(t=partition_tenons_bottom(k)) tp_tab_root_reliefs_2d(t[0]-td,t[1]-t[0],tc,router_bit_diameter);
+   for(t=partition_tenons_top(k)) tp_tab_root_reliefs_2d(t[0]-td,t[1]-t[0],H-tc,router_bit_diameter);
+  }
  }
 }
 // Door: u = from the door's right edge (seen from the front), v = height; inside face up.
@@ -908,6 +957,9 @@ module slide_holes(p) {
    translate([side_u(p,metal_slide_front_setback+x),dslide_z(k,j)]) circle(d=metal_slide_cabinet_hole_diameter);
   if(p[1]=="dr_side_l" || p[1]=="dr_side_r") for(x=dslide_holes(k,metal_slide_drawer_holes_x))
    translate([dside_u(p,metal_slide_front_setback+x),p[4]/2]) circle(d=metal_slide_drawer_hole_diameter);
+  // one through hole per screw position takes a binding post for the slides on both faces
+  if(p[1]=="partition") for(j=[0:1:drawer_n(k)-1]) for(x=dslide_holes(k,metal_slide_cabinet_holes_x))
+   translate([metal_slide_front_setback+x,dslide_z(k,j)]) circle(d=partition_slide_hole_diameter);
  }
 }
 // Pockets in a top rail for the stacking keys of the module above.
@@ -927,7 +979,8 @@ function screw_marks(p)=let(k=p[1],m=p[2]) !include_screw_marks ? [] :
   [for(y0=[0,back_rail_y0(m)-td]) for(c=[rail_finger[0]/2,(rail_finger[1]+RW)/2]) [side_u(p,y0+c),H-tc/2]],  // into the top rails
   // hinge mounting plates, on both sides so a single door can be hung either way
   door_count(m)>0 ? [for(v=hinge_vs(door_h(m))) for(s=[-1,1]) [side_u(p,hinge_plate_setback),door_gap/2+v+s*hinge_plate_screw_spacing/2]] : []) :
- k=="back" ? [for(c=web_gaps(bottom_rear_fingers(m),mWi(m))) [tc+c,tc/2]] :                  // into the bottom
+ k=="back" ? concat([for(c=web_gaps(bottom_rear_fingers(m),mWi(m))) [tc+c,tc/2]],                // into the bottom
+  has_partition(m) ? [for(f=[1:3]) [PX(m),tc+(mH(m)-2*tc)*f/4]] : []) :                         // into the partition
  k=="bottom" && on_frame(m) ? let(D=mD(m),i0=frame_rail_inset,o=frame_screw_offset)              // down into the frame strips
   [for(i=[0:mW(m)/C-1]) for(j=[0:mD(m)/C-1]) let(x=i*C,y=j*C) each concat(
    [for(cx=[x+i0,x+C-i0]) for(s=[-1,1]) [cx,D-(y+C/2)+s*o]],
@@ -960,6 +1013,7 @@ module part_outline(p) {
  else if(k=="jig_block") handle_block();
  else if(k=="jig_plate") jig_plate();
  else if(k=="jig_fence") jig_fence();
+ else if(k=="partition") partition_outline(p);
 }
 module part_pockets(p,mode) {
  k=p[1];
@@ -975,10 +1029,10 @@ module part_pockets(p,mode) {
  if(mode=="pocket_screw_marks") screw_mark_holes(p);
 }
 POCKET_MODES=["pocket_carcass_dados","pocket_drawer_dados","pocket_shelf_pins","pocket_hinge_cups","pocket_slide_holes","pocket_screw_marks"];
-// Slide holes go through the drawer box sides and are blind pilots in the module sides.
+// Slide holes go through the drawer box sides and partitions and are blind pilots in the module sides.
 function pocket_depth(mode,p)=mode=="pocket_carcass_dados" ? (p[1]=="side_l" || p[1]=="side_r" ? housing_depth : registration_pocket_depth) :
  mode=="pocket_drawer_dados" ? drawer_bottom_pocket_depth : mode=="pocket_shelf_pins" ? shelf_pin_depth :
- mode=="pocket_slide_holes" ? (p[1]=="dr_side_l" || p[1]=="dr_side_r" ? p[5] : slide_drill_depth) :
+ mode=="pocket_slide_holes" ? (p[1]=="dr_side_l" || p[1]=="dr_side_r" || p[1]=="partition" ? p[5] : slide_drill_depth) :
  mode=="pocket_screw_marks" ? screw_mark_depth : hinge_cup_depth;
 
 // ---------- 3D ----------
@@ -996,13 +1050,14 @@ function part_matrix(p)=let(k=p[1],m=p[2],t=p[5])
  k=="handle" ? let(j=p[8],u=door_hinge_left(m,j) ? handle_edge_offset : door_w(m)-handle_edge_offset,xc=door_x0(m,j)+door_w(m)-u)
   [[1,0,0,xc-HL/2],[0,-1,0,0],[0,0,-1,door_gap/2+door_h(m)-handle_top_offset+th/2],[0,0,0,1]] :
  k=="face" ? [[-1,0,0,door_gap/2+p[3]],[0,0,1,0],[0,1,0,door_gap/2],[0,0,0,1]] :
- k=="dr_face" ? [[-1,0,0,door_gap/2+p[3]],[0,0,1,0],[0,1,0,drawer_band(m,p[8])[0]+door_gap/2],[0,0,0,1]] :
- k=="dr_handle" ? [[1,0,0,mW(m)/2-HL/2],[0,-1,0,0],[0,0,-1,drawer_band(m,p[8])[0]+door_gap/2+dhandle_v(m,p[8])+th/2],[0,0,0,1]] :
- k=="dr_side_l" ? [[0,0,1,dbox_x0(m)],[1,0,0,td],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
- k=="dr_side_r" ? [[0,0,-1,dbox_x0(m)+dbox_w(m)],[-1,0,0,td+dbox_d(m)],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
- k=="dr_front" ? [[-1,0,0,dbox_x0(m)+dbox_w(m)],[0,0,1,td],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
- k=="dr_back" ? [[1,0,0,dbox_x0(m)],[0,0,-1,td+dbox_d(m)],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
- k=="dr_bottom" ? [[1,0,0,dbox_x0(m)],[0,1,0,td],[0,0,1,dbox_z(m,p[8])+drawer_bottom_inset],[0,0,0,1]] :
+ k=="partition" ? [[0,0,1,PX(m)-tc/2],[1,0,0,td],[0,1,0,0],[0,0,0,1]] :
+ k=="dr_face" ? [[-1,0,0,dfront_x0(m,pcol(p))+p[3]],[0,0,1,0],[0,1,0,drawer_band(m,p[8])[0]+door_gap/2],[0,0,0,1]] :
+ k=="dr_handle" ? [[1,0,0,dfront_x0(m,pcol(p))+dfront_w(m)/2-HL/2],[0,-1,0,0],[0,0,-1,drawer_band(m,p[8])[0]+door_gap/2+dhandle_v(m,p[8])+th/2],[0,0,0,1]] :
+ k=="dr_side_l" ? [[0,0,1,dbox_x0(m,pcol(p))],[1,0,0,td],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
+ k=="dr_side_r" ? [[0,0,-1,dbox_x0(m,pcol(p))+dbox_w(m)],[-1,0,0,td+dbox_d(m)],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
+ k=="dr_front" ? [[-1,0,0,dbox_x0(m,pcol(p))+dbox_w(m)],[0,0,1,td],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
+ k=="dr_back" ? [[1,0,0,dbox_x0(m,pcol(p))],[0,0,-1,td+dbox_d(m)],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
+ k=="dr_bottom" ? [[1,0,0,dbox_x0(m,pcol(p))],[0,1,0,td],[0,0,1,dbox_z(m,p[8])+drawer_bottom_inset],[0,0,0,1]] :
  k=="stack_key" ? let(q=p[8],z=mtop(q[1])-HT) q[4]=="x" ? [[1,0,0,q[2]-p[3]/2],[0,0,-1,q[3]+t/2],[0,1,0,z],[0,0,0,1]] : [[0,0,1,q[2]-t/2],[1,0,0,q[3]-p[3]/2],[0,1,0,z],[0,0,0,1]] :
  k=="jig_plate" ? [[1,0,0,JX],[0,1,0,0],[0,0,1,0],[0,0,0,1]] :
  k=="jig_block" ? [[1,0,0,JX+JIG_L/2-HL/2],[0,1,0,JIG_FY+tj],[0,0,1,tj],[0,0,0,1]] :
@@ -1027,7 +1082,7 @@ function part_colour(k)=k=="frame_long" || k=="frame_cross" || k=="stack_key" ? 
 function is_front_part(k)=k=="door" || k=="handle" || k=="dr_face" || k=="dr_handle" || k=="face";
 // Side-mount slides as reference hardware: cabinet and drawer members, closed.
 module slides() {
- for(k=[0:1:NM-1]) multmatrix(mmatrix(k)) for(j=[0:1:drawer_n(k)-1]) for(x=[tc,mW(k)-tc-SC])
+ for(k=[0:1:NM-1]) multmatrix(mmatrix(k)) for(j=[0:1:drawer_n(k)-1]) for(c=[0:1:dcols(k)-1]) for(x=[dbox_x0(k,c)-SC,dbox_x0(k,c)+dbox_w(k)])
   translate([x+SC*0.1,td+metal_slide_front_setback,dslide_z(k,j)-metal_slide_envelope_height/2]) cube([SC*0.8,slide_len(k),metal_slide_envelope_height]);
 }
 module casters() {
@@ -1068,7 +1123,7 @@ module layout(mode) {
 
 // ---------- validation and reports ----------
 function bom_category(k)=k=="dr_side_l" || k=="dr_side_r" ? "drawer_side" : k=="dr_front" ? "drawer_front_box" : k=="dr_back" ? "drawer_back_box" :
- k=="dr_bottom" ? "drawer_bottom" : k=="dr_face" ? "drawer_face" : k=="dr_handle" ? "handle" : k=="face" ? "face_panel" : is_jig_part(k) ? "handle_jig" : k;
+ k=="dr_bottom" ? "drawer_bottom" : k=="dr_face" ? "drawer_face" : k=="dr_handle" ? "handle" : k=="face" ? "face_panel" : is_jig_part(k) ? "handle_jig" : k=="partition" ? "drawer_partition" : k;
 function bom_note(p)=let(n=bom_note_base(p)) len(screw_marks(p))==0 ? n : n=="through cuts only" ? "machined face up: screw marks" : str(n,"; screw marks");
 function bom_note_base(p)=let(k=p[1]) k=="bottom" ? "underside up: registration pockets" : k=="door" ? "inside face up: hinge cups" :
  k=="side_l" || k=="side_r" ? str("inside face up: housings",len(pin_heights(p[2]))>0 ? " and shelf pins" : "",drawer_n(p[2])>0 && include_metal_slide_holes ? " and slide pilot holes" : "") :
@@ -1077,7 +1132,8 @@ function bom_note_base(p)=let(k=p[1]) k=="bottom" ? "underside up: registration 
  k=="dr_side_l" || k=="dr_side_r" ? str("inside face up: bottom pockets",include_metal_slide_holes ? "; slide holes through" : "") :
  k=="dr_front" || k=="dr_back" ? "inside face up: bottom pockets" : k=="stack_key" ? "stands in a top-rail pocket and the registration pocket above" :
  k=="jig_block" ? "cut from handle stock; dowel holes through" : k=="jig_plate" ? "fence mortise, dowel and mounting holes through" :
- k=="jig_fence" ? "drill the pull's leg pilots through its guide holes" : "through cuts only";
+ k=="jig_fence" ? "drill the pull's leg pilots through its guide holes" :
+ k=="partition" ? (include_metal_slide_holes ? "tenons through the bottom and top rails; slide binding-post holes through" : "tenons through the bottom and top rails") : "through cuts only";
 module check(ok,code,msg) { if(!ok) echo(str("CHECK|ERROR|",code,"|",msg)); }
 module warn(ok,code,msg) { if(!ok) echo(str("CHECK|WARN|",code,"|",msg)); }
 module validate() {
@@ -1099,6 +1155,9 @@ module validate() {
   check(frame_screw_offset>=KEY_L/2+screw_mark_diameter/2+2 && frame_screw_offset<=C/2-frame_rail_inset-tf/2-screw_mark_diameter/2,"FRAME_SCREWS","Frame screw marks must sit between a registration pocket and the crossing strip");
  }
  if(include_handle_jig) warn(has_handles,"HANDLE_JIG","No pull is selected, so the drilling jig is left out");
+ // The pull's profile lies in the plane of its stock; the stock thickness is the pull's height across
+ // the door, and the leg pilot holes sit half way through it.
+ if(has_handles) check(th>=handle_pilot_diameter+6,"HANDLE_STOCK",str("Pull stock of ",th," mm leaves less than 3 mm around the ",handle_pilot_diameter," mm leg pilot holes"));
  check(NM>0 || !include_worksurface,"WORKSURFACE_SUPPORT","The worksurface needs at least one module to rest on");
  for(k=[0:1:NM-1]) {
   id=str("M",k+1);
@@ -1126,6 +1185,13 @@ module validate() {
    }
    check(mcontents(k)!="drawer_door" || door_band(k)[1]>=tc+2*RW,"DRAWER_DOOR",str(id," has no room for a door below its ",drawer_n(k)," drawers"));
    warn(dbox_w(k)<=900,"DRAWER_WIDE",str(id," drawers are ",dbox_w(k)," mm wide; check the slide rating"));
+   check(dbox_w(k)>=2*tx+50,"DRAWER_NARROW",str(id," drawer boxes are only ",dbox_w(k)," mm wide"));
+  }
+  if(mdcols(k)==2 && !has_partition(k)) warn(false,"DRAWER_COLUMNS",str(id,mcontents(k)!="drawers" ? " is not an all-drawer module" : " is one cell wide",", so its drawers stay one wide"));
+  if(has_partition(k)) {
+   check(RW-30>=20 && len(partition_tenons_bottom(k))>0,"PARTITION_TENONS",str(id," partition has no room for its tenons in the top rails or the bottom"));
+   for(b=[false,true]) for(h=slot_rects(k,b)) for(r=rail_mortises(k)) check(!rects_meet(h,r,3),"PARTITION_RAIL",str(id," hand slots meet the partition mortises; use shorter hand slots"));
+   if(include_metal_slide_holes) check(partition_slide_hole_diameter<metal_slide_envelope_height-10,"PARTITION_HOLES",str(id," partition holes are too large for the slides"));
   }
   if(mcontents(k)=="framed") check(face_opening_border>=tc+door_gap/2+2 && mW(k)-door_gap-2*face_opening_border>=40 && mH(k)-door_gap-2*face_opening_border>=40,"FACE_OPENING",str(id," face panel border must cover the carcass edges and leave an opening"));
   if(len(shelf_holes(k))>0) warn(mWi(k)<=600 || ts>=18,"SHELF_SPAN",str(id," shelves span ",mWi(k)," mm in ",ts," mm stock; expect sag under load"));
@@ -1159,13 +1225,14 @@ module reports() {
   echo(str("DIM|CABINET|OUTSIDE|W=",ow,"|H=",oh,"|D=",od));
   echo(str("DIM|FRAME|W=",FL,"|D=",FD,"|H=",hf,"|CELLS=",cols,"x",rows,"|CELL=",C,"|TAB_H=",HT,"|CASTER_H=",Zf));
   for(k=[0:1:NM-1]) echo(str("DIM|MODULE|M",k+1,"|COL=",mcol(k)+1,"|ROW=",mrow(k)+1,"|W=",mW(k),"|D=",mD(k),"|H=",mH(k),"|Z=",mz(k),"|CONTENTS=",mcontents(k),"|FACING=",mfacing(k),"|SHELVES=",len(shelf_holes(k)),"|DRAWERS=",drawer_n(k),mz(k)>Zbase+0.01 ? str("|STACK_KEYS=",keys_under(k)) : ""));
-  for(k=[0:1:NM-1]) for(j=[0:1:drawer_n(k)-1]) let(id=str("M",k+1,"-DRAWER-",j+1),bh=dbox_h(k,j)) {
+  for(k=[0:1:NM-1]) for(j=[0:1:drawer_n(k)-1]) for(c=[0:1:dcols(k)-1]) let(id=str("M",k+1,"-DRAWER-",j+1,dsuffix(k,c)),bh=dbox_h(k,j)) {
    echo(str("DIM|DRAWER|",id,"|OUTSIDE|W=",dbox_w(k),"|H=",bh,"|D=",dbox_d(k)));
    echo(str("DIM|DRAWER|",id,"|INSIDE_CLEAR|W=",dbox_w(k)-2*tx,"|H=",bh-drawer_bottom_inset-tbb,"|D=",dbox_d(k)-2*tx));
-   echo(str("DIM|DRAWER|",id,"|OPENING|W=",mWi(k),"|H=",bh+VC,"|SIDE_CLEAR_PER_SIDE=",SC,"|VERT_CLEAR_PER_SIDE=",VC/2));
+   echo(str("DIM|DRAWER|",id,"|OPENING|W=",dcell_w(k),"|H=",bh+VC,"|SIDE_CLEAR_PER_SIDE=",SC,"|VERT_CLEAR_PER_SIDE=",VC/2));
    echo(str("DIM|DRAWER_FACE|",id,"-FACE|W=",dfront_w(k),"|H=",dfront_h(k,j)));
    echo(str("DIM|SLIDE|",id,"|LENGTH=",slide_len(k),"|CENTRE_Z=",dslide_z(k,j),"|SETBACK=",metal_slide_front_setback));
   }
+  for(k=[0:1:NM-1]) if(has_partition(k)) echo(str("DIM|PARTITION|M",k+1,"-PARTITION|D=",mDc(k)-tc,"|H=",mH(k),"|T=",tc,"|X=",PX(k),"|TENONS_BOTTOM=",len(partition_tenons_bottom(k)),"|TENONS_TOP=2|HOLE_D=",partition_slide_hole_diameter));
   for(k=[0:1:NM-1]) if(mcontents(k)=="framed") echo(str("DIM|FACE_PANEL|M",k+1,"-FACE|W=",mW(k)-door_gap,"|H=",mH(k)-door_gap,"|OPENING_W=",mW(k)-door_gap-2*face_opening_border,"|OPENING_H=",mH(k)-door_gap-2*face_opening_border,"|R=",face_opening_radius));
   if(len(KEYS)>0) echo(str("DIM|STACK_KEYS|QTY=",len(KEYS),"|W=",registration_tab_length,"|H=",2*HT,"|T=",tf,"|POCKET_DEPTH=",registration_pocket_depth));
   for(k=[0:1:NM-1]) for(j=[0:1:door_count(k)-1]) echo(str("DIM|DOOR|M",k+1,"-DOOR-",j+1,"|W=",door_w(k),"|H=",door_h(k),"|MOUNT=full_overlay|HINGE=",door_hinge_left(k,j) ? "left" : "right"));
@@ -1179,7 +1246,7 @@ module reports() {
  if(system_contract_report!="off") {
   echo("SYSTEM|CONTRACT=MOI-4|ENGINE=modular_organization_v5");
   echo(str("MODULE|ID=workbench|KIND=workbench|W=",FL,"|D=",FD,"|H=",Ztop+(include_worksurface ? tw : 0)));
-  echo("COVERAGE|SCOPE=workbench|CHECKS=grid_fit;module_support;stack_keys;facing;shelf_pins;hinge_room;handle_room;drawer_fit;slide_length;screw_marks;hand_slots;dog_holes;puzzle_neck;stock;cut_and_pocket_contours|STRUCTURAL=false");
+  echo("COVERAGE|SCOPE=workbench|CHECKS=grid_fit;module_support;stack_keys;facing;shelf_pins;hinge_room;handle_room;handle_stock;drawer_fit;drawer_partition;slide_length;screw_marks;hand_slots;dog_holes;puzzle_neck;stock;cut_and_pocket_contours|STRUCTURAL=false");
  }
  check(layout_gap>0,"LAYOUT_OVERLAP",str("layout_gap is ",layout_gap," mm; parts of the flat cut layout would overlap."));
  if(output_mode=="bom") {
@@ -1189,11 +1256,16 @@ module reports() {
   echo(str("HARDWARE|ID=casters|QTY=",Zf>0 ? 4 : 0,"|UNIT=plate casters|LENGTH=",Zf,"|NOTE=mounting plates under the outer strip crossings"));
   echo(str("HARDWARE|ID=cup_hinges|QTY=",sum([for(k=[0:1:NM-1]) door_count(k)>0 ? door_count(k)*hinge_count(door_h(k)) : 0]),"|UNIT=full overlay|NOTE=",hinge_cup_diameter," mm cups"));
   echo(str("HARDWARE|ID=shelf_pins|QTY=",4*len([for(p=parts) if(p[1]=="shelf") 1]),"|UNIT=",shelf_pin_diameter," mm pins"));
-  echo(str("HARDWARE|ID=wood_screws_35mm|QTY=",sum([for(k=[0:1:NM-1]) 21+4*(mspx(k)*mspy(k)-1)]),"|UNIT=minimum estimate|NOTE=carcass joints; choose length for the stock"));
-  ndr=sum([for(k=[0:1:NM-1]) drawer_n(k)]);
-  for(L=metal_slide_length>0 ? [metal_slide_length] : SLIDES) let(q=sum([for(k=[0:1:NM-1]) if(slide_len(k)==L) drawer_n(k)])) if(q>0)
+  echo(str("HARDWARE|ID=wood_screws_35mm|QTY=",sum([for(k=[0:1:NM-1]) 21+4*(mspx(k)*mspy(k)-1)+(has_partition(k) ? 3 : 0)]),"|UNIT=minimum estimate|NOTE=carcass joints; choose length for the stock"));
+  // Each drawer (one per column) runs on a pair of slides; beside a partition the cabinet members of
+  // the two neighbouring slides share binding posts through the partition instead of screws.
+  ndr=sum([for(k=[0:1:NM-1]) drawer_n(k)*dcols(k)]);
+  for(L=metal_slide_length>0 ? [metal_slide_length] : SLIDES) let(q=sum([for(k=[0:1:NM-1]) if(slide_len(k)==L) drawer_n(k)*dcols(k)])) if(q>0)
    echo(str("HARDWARE|ID=drawer_slides_",L,"|QTY=",q,"|UNIT=pairs of side-mount full-extension slides|LENGTH=",L,"|NOTE=",SC," mm clearance per side"));
-  echo(str("HARDWARE|ID=wood_screws_15mm|QTY=",doors*(4+(has_handles ? 2 : 0))+ndr*(4+(has_handles ? 2 : 0)+2*len(metal_slide_drawer_holes_x)+2*len(metal_slide_cabinet_holes_x))+4*len([for(p=parts) if(p[1]=="face") 1]),"|UNIT=minimum estimate|NOTE=hinges, handles, slides, drawer faces and face panels"));
+  posts=include_metal_slide_holes ? sum([for(k=[0:1:NM-1]) if(has_partition(k)) drawer_n(k)*len(dslide_holes(k,metal_slide_cabinet_holes_x))]) : 0;
+  if(posts>0) echo(str("HARDWARE|ID=slide_binding_posts|QTY=",posts,"|UNIT=binding posts (sex bolts)|NOTE=fix the slides on both faces of a drawer partition through one ",partition_slide_hole_diameter," mm hole"));
+  cabinet_members=sum([for(k=[0:1:NM-1]) drawer_n(k)*2]);
+  echo(str("HARDWARE|ID=wood_screws_15mm|QTY=",doors*(4+(has_handles ? 2 : 0))+ndr*(4+(has_handles ? 2 : 0)+2*len(metal_slide_drawer_holes_x))+cabinet_members*len(metal_slide_cabinet_holes_x)+4*len([for(p=parts) if(p[1]=="face") 1]),"|UNIT=minimum estimate|NOTE=hinges, handles, slides, drawer faces and face panels"));
   if(len(KEYS)>0) echo(str("HARDWARE|ID=stack_screws|QTY=",2*len([for(k=[0:1:NM-1]) if(mz(k)>Zbase+0.01) 1]),"|UNIT=minimum estimate|NOTE=optional screws down through each stacked module's bottom"));
  }
 }

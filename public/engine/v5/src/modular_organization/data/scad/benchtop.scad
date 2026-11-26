@@ -369,6 +369,14 @@ drawer_separator_style = "stretchers"; // [full, stretchers]
 
 drawer_separator_stretcher_depth = 75;
 
+// One row of custom drawer-height weights per independent drawer bank, top drawer first.
+drawer_bank_height_weights = [
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1]
+];
+
 /* [Drawers / Clearances] */
 
 drawer_vertical_clearance = 4;
@@ -799,12 +807,6 @@ dado_depth =
         : custom_dado_depth;
 
 
-drawer_bank_height_weights = [
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1]
-];
 
 
 drawer_dado_depth =

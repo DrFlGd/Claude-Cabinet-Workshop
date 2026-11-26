@@ -151,6 +151,11 @@ const CASES=[
  [7,undefined,{handle_style:'traditional',include_handle_jig:true,joint_fit_clearance:0.2,registration_clearance:0.3,
   modules:[[0,0,1,2,365,'drawers',0,'left','left',2],[0,0,1,1,365,'framed',1,'front','left'],[0,1,1,1,365,'door',0,'back','left'],[1,0,2,1,365,'door',0,'front','left'],
    [1,0,1,1,365,'drawers',0,'front','left',1],[2,0,1,1,365,'drawers',0,'right','left',3],[1,1,2,1,730,'drawer_door',1,'back','right',2]]}],
+ // Two drawer columns: partitions in two- and three-cell modules, a sideways one, and a split
+ // module stacked on another (keys skip the partition mortises), with fit clearances.
+ [7,undefined,{frame_size:'custom',grid_columns:3,grid_rows:3,handle_style:'straight_bar',joint_fit_clearance:0.2,registration_clearance:0.3,
+  modules:[[0,0,2,1,365,'drawers',0,'front','left',2,2],[0,0,2,1,365,'drawers',0,'front','left',1,2],[2,0,1,2,730,'drawers',0,'right','left',3,2],
+   [0,1,2,1,730,'door',1,'left','left'],[0,2,3,1,730,'drawers',0,'back','left',2,2]]}],
 ];
 // ---- random sweep: construction choices, counts and sizes the engine accepts ----
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
@@ -174,7 +179,8 @@ function randomBench(random){
   for(let i=0;i<w;i++)taken.add((c+i)+','+r);
   const contents=pick(['door','door','door','open','drawers','drawers','drawer_door','framed']),hinge=pick(['left','right']),drawers=1+Math.floor(random()*4);
   if(random()<0.25)modules.push([c,r,w,1,365,contents==='drawer_door'?'drawers':contents,0,face,hinge,Math.min(drawers,2)],[c,r,w,1,365,pick(['door','open','drawers','framed']),0,face,hinge,1]);
-  else modules.push([c,r,w,1,pick([600,730,730,900]),contents,Math.floor(random()*4),face,hinge,drawers]);
+  // Two-cell drawer modules with an odd drawer count get two drawer columns (no extra draw from the generator).
+  else modules.push([c,r,w,1,pick([600,730,730,900]),contents,Math.floor(random()*4),face,hinge,drawers,w===2&&drawers%2?2:1]);
  }
  const patch={frame_size:size,modules,handle_style:pick(['none','square','rounded','chamfered','straight_bar','traditional']),include_worksurface:random()<0.7,frame_cross_members:pick(['ends','every_column'])};
  if(custom)Object.assign(patch,{grid_columns:cols,grid_rows:rows});

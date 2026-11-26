@@ -59,8 +59,9 @@ function ModelPicker({category,props}:{category:Category;props:Props}){
 }
 export default function HardwareSetup(props:Props){
  const {family,values,keys,active}=props;
- const mountKey=family===6?'slide_type':'drawer_mount',slides=keys.includes(mountKey)&&active(mountKey);
- const metal=family===6?values.slide_type!=='fixed_runner':values.drawer_mount==='metal_slides';
+ // The workbench always runs its drawers on side-mount metal slides, so it has no mounting choice.
+ const bench=family===7,mountKey=family===6?'slide_type':'drawer_mount',slides=bench?keys.includes('metal_slide_length')&&active('metal_slide_length'):keys.includes(mountKey)&&active(mountKey);
+ const metal=bench||(family===6?values.slide_type!=='fixed_runner':values.drawer_mount==='metal_slides');
  const hinges=keys.includes('hinge_style')&&active('hinge_style');
  const slideSel=selection(values,family,'drawer_slide'),hingeSel=selection(values,family,'hinge');
  const locked=(s:typeof slideSel,key:string)=>s.mode==='catalog'&&Object.hasOwn(s.profile.apply??{},key);
@@ -68,13 +69,13 @@ export default function HardwareSetup(props:Props){
  if(!slides&&!hinges)return null;
  return <div className='hardware-setup'>
   {slides&&<section className='hw-card'>
-   <header><h3>{family===6?'Tray slides':'Drawer slides'}</h3><button className='link-button' onClick={()=>props.onView('slides')}><Eye size={14}/>Show on the boards</button></header>
-   <Method k={mountKey} props={props} title={family===6?'How trays run':'How drawers run'}/>
+   <header><h3>{family===6?'Tray slides':'Drawer slides'}</h3>{!bench&&<button className='link-button' onClick={()=>props.onView('slides')}><Eye size={14}/>Show on the boards</button>}</header>
+   {bench?<p className='field-note'>Side-mount ball-bearing slides, centred on each drawer box. Beside a drawer partition, one binding post through the partition holds the slides on both faces.</p>:<Method k={mountKey} props={props} title={family===6?'How trays run':'How drawers run'}/>}
    {metal&&<>
     <ModelPicker category='drawer_slide' props={props}/>
     {(()=>{const [bodyFree,bodyLocked]=split(slideSel,SLIDE_BODY),[holesFree,holesLocked]=split(slideSel,SLIDE_HOLES);return <>
      <Fields title='Slide' keys={bodyFree} props={props}/>
-     <Fields title='Mounting holes' keys={holesFree} props={props} note={values.include_metal_slide_holes===false?undefined:'Cabinet-side holes are measured from the front of the side panel; drawer-side holes from the front of the drawer box. Heights are from the bottom of the drawer box.'}/>
+     <Fields title='Mounting holes' keys={holesFree} props={props} note={values.include_metal_slide_holes===false?undefined:bench?'Holes are measured from the front of the slide; every listed hole is drilled, at the slide\'s centre line.':'Cabinet-side holes are measured from the front of the side panel; drawer-side holes from the front of the drawer box. Heights are from the bottom of the drawer box.'}/>
      <Fields title='From the maker' keys={[...bodyLocked,...holesLocked]} props={props} locked/>
     </>})()}
    </>}

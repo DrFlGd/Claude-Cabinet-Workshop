@@ -239,11 +239,13 @@ def main(argv=None) -> int:
 
         statuses=[]
         jobs=[('CUT','cut_layout'),('ENGRAVE','engrave_layout')]+[('POCKET',m) for m in POCKET_MODES if m != "pocket_slide_holes" or "equipment_stand" in scad.name or "workbench" in scad.name]
+        from .schema import parse_frontend
+        offered=next(p.get('enum',[]) for p in parse_frontend(scad) if p['id']=='output_mode')
         if "workbench" in scad.name:
             # Only the operations the workbench offers; it renders nothing for the others.
-            from .schema import parse_frontend
-            offered=next(p.get('enum',[]) for p in parse_frontend(scad) if p['id']=='output_mode')
             jobs=[j for j in jobs if j[1] in offered]
+        # Screw marks are a workbench operation; the other front ends stop on it as an unknown mode.
+        jobs=[j for j in jobs if j[1]!='pocket_screw_marks' or j[1] in offered]
         for folder,mode in jobs:
             for fmt in formats:
                 out=root/folder/f'{mode}.{fmt}'

@@ -11,6 +11,12 @@ assert(templates.length===2&&templates.every(p=>p.manufacturer==='Generic'));
 assert(reference.length>0&&reference.every(p=>!p.apply));
 assert(H.catalogFor(1,'hinge').models.every(p=>p.category==='hinge'));
 assert(H.catalogFor(6,'drawer_slide').models.every(p=>p.targets.includes('equipment_stand')));
+// The workbench offers the side-mount slide models; their settings it does not have are dropped by the app.
+{const wb=H.catalogFor(7,'drawer_slide');assert(wb.models.length>40&&wb.templates.length===2);assert(wb.models.every(p=>p.targets.includes('workbench')&&p.apply.drawer_mount==='metal_slides'));
+ assert(wb.models.every(p=>p.apply.include_metal_slide_holes===false||p.apply.metal_slide_hole_pattern_mode==='explicit_array'));
+ const p=wb.models.find(x=>x.id==='hettich_ka5632_350');const v={metal_slide_length:0,metal_slide_clearance_per_side:12.7,metal_slide_front_setback:3,metal_slide_envelope_height:45,include_metal_slide_holes:true};
+ assert.equal(H.selection(v,7,'drawer_slide').mode,'generic');assert.equal(H.selection({...v,...H.chooseModel('drawer_slide',p)},7,'drawer_slide').mode,'catalog');
+ assert(H.catalogFor(7,'hinge').models.length===0);}
 
 // Choosing a model locks it while its settings match; editing one makes the design generic, based on it.
 const accuride=models.find(p=>p.id==='accuride_3832e_450');

@@ -41,6 +41,9 @@
       "frame_size": "small",
       "handle_style": "rounded",
       "modules": "[[0, 0, 1, 1, 730, \"drawers\", 0, \"front\", \"left\", 3], [1, 0, 1, 1, 365, \"drawers\", 0, \"front\", \"left\", 2], [1, 0, 1, 1, 365, \"drawers\", 0, \"front\", \"left\", 1], [0, 1, 2, 1, 730, \"drawer_door\", 1, \"back\", \"left\", 1]]"
+    },
+    "Side-by-side drawers": {
+      "modules": "[[0, 0, 1, 1, 730, \"drawers\", 0, \"front\", \"left\", 4], [1, 0, 2, 1, 730, \"drawers\", 0, \"front\", \"left\", 3, 2], [0, 1, 1, 1, 730, \"door\", 1, \"back\", \"right\"], [1, 1, 2, 1, 730, \"drawers\", 0, \"back\", \"left\", 2]]"
     }
   }
 }

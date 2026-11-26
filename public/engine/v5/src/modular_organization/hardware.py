@@ -4,7 +4,12 @@ import argparse, copy, json, re, sys
 from .paths import SCAD_DIR, CONFIG_DIR
 ROOT=CONFIG_DIR
 CAT='hardware.json'; RES='hardware_resolved.json'; IDX='hardware_native_presets.json'
-FRONTENDS={'utility':'utility.scad','shop_cart':'shop_cart.scad','benchtop':'benchtop.scad','stackable':'stackable.scad','kitchen':'kitchen.scad','drawer':'drawer.scad'}
+FRONTENDS={'utility':'utility.scad','shop_cart':'shop_cart.scad','benchtop':'benchtop.scad','stackable':'stackable.scad','kitchen':'kitchen.scad','drawer':'drawer.scad','workbench':'workbench.scad'}
+# Slide settings a target has no use for. The workbench always runs drawers on side-mount metal
+# slides, drills every listed hole (explicit arrays only) and centres each slide on its drawer box.
+NOT_APPLICABLE={'workbench':{'drawer_mount','metal_slide_hole_pattern_mode','hardware_drilling_mode','metal_slide_cabinet_hole_z_from_drawer_bottom','metal_slide_drawer_hole_z_from_drawer_bottom'}}
+def applicable(target,apply):
+    return {k:v for k,v in apply.items() if k not in NOT_APPLICABLE.get(target,())}
 
 def merge(a,b):
     o=copy.deepcopy(a)
@@ -50,8 +55,11 @@ def validate(doc,ps,root):
         if not p.get('apply'):raise ValueError('empty apply '+p['id'])
         for target in p.get('targets',[]):
             if target not in FRONTENDS:raise ValueError(f'{p["id"]}: bad target {target}')
-            missing=[k for k in p['apply'] if k not in pubs[target]]
+            missing=[k for k in applicable(target,p['apply']) if k not in pubs[target]]
             if missing:raise ValueError(f'{p["id"]}: apply keys not public in {target}: {missing}')
+            a=p['apply']
+            if target=='workbench' and (a.get('drawer_mount','metal_slides')!='metal_slides' or (a.get('metal_slide_hole_pattern_mode')=='legacy_spacing' and a.get('include_metal_slide_holes'))):
+                raise ValueError(f'{p["id"]}: the workbench takes metal slides with listed holes (or no holes) only')
 
 def preset_value(v):
     if isinstance(v,bool):return 'true' if v else 'false'
