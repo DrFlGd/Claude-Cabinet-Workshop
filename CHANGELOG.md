@@ -95,8 +95,10 @@ Validation run for this release:
   - `engine-interference` (43 configurations, 1,604 pairs) and
     `product-interference` (61 configurations, 1,122 pairs);
   - a static build with `runtime-integrity` and `desktop-assets`.
-- After merging 0.25.0 (the stackable PR), the gates its changes touch were run
-  again; they are listed in the PR.
+- After merging 0.25.0 (the stackable PR) the same full list, apart from the
+  static build, ran again and passed: `engine-interference` with 49
+  configurations and 1,740 pairs, `pocket-overlap` with 121 starters and 6,109
+  pairs.
 - The check driven in Chromium against main and this branch: the shop cart,
   workbench and media cart at 1440 × 900, the shop cart and media cart at
   390 × 844, and Stop then a restart. There was no horizontal scroll and no
