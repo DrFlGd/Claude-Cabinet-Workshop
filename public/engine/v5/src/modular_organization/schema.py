@@ -27,7 +27,7 @@ def unit_for(name):
     if any(tok in n for tok in [
         'width','height','depth','thickness','diameter','spacing','clearance',
         'setback','inset','margin','overhang','reveal','gap','kerf','radius',
-        'offset','projection','length','dado_depth']): return 'mm'
+        'offset','projection','length','dado_depth','skin']): return 'mm'
     return None
 
 def modifier(comment):
@@ -136,9 +136,12 @@ def build(root):
     for kind,fn in FRONTENDS.items():
         doc['frontends'][kind]={'file':fn,'design_type':kind,'parameters':parse_frontend(root/fn)}
     vis={
-      'utility':{'mixed_bay_count':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_types':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_width_weights':{'cabinet_layout_mode':'mixed_bays'}},
-      'shop_cart':{'mixed_bay_count':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_types':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_width_weights':{'cabinet_layout_mode':'mixed_bays'}},
+      'utility':{'mixed_bay_count':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_types':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_width_weights':{'cabinet_layout_mode':'mixed_bays'},
+        'section_nodes':{'cabinet_layout_mode':'sections'},'combo_door_height':{'cabinet_contents':'combo'}},
+      'shop_cart':{'mixed_bay_count':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_types':{'cabinet_layout_mode':'mixed_bays'},'mixed_bay_width_weights':{'cabinet_layout_mode':'mixed_bays'},
+        'section_nodes':{'cabinet_layout_mode':'sections'},'combo_door_height':{'cabinet_contents':'combo'}},
       'kitchen':{
+        'combo_door_height':{'cabinet_contents':'combo'},
         'mixed_bay_count':{'cabinet_layout_mode':'mixed_bays'},
         'mixed_bay_types':{'cabinet_layout_mode':'mixed_bays'},
         'mixed_bay_shelf_counts':{'cabinet_layout_mode':'mixed_bays'},
@@ -154,6 +157,14 @@ def build(root):
       },
       'stackable':{
         'stack_base_height':{'include_stack_base':True},
+        'stack_base_style':{'include_stack_base':True},
+        'stack_base_toe_notch_depth':{'include_stack_base':True},
+        'stack_base_toe_notch_height':{'include_stack_base':True},
+      },
+      'workbench':{
+        'grid_columns':{'frame_size':'custom'},
+        'grid_rows':{'frame_size':'custom'},
+        'worksurface_dog_hole_panels':{'worksurface_dog_holes':'selected'},
       },
       'drawer':{
         'enclosure_opening_width':{'drawer_design_basis':'enclosure'},
@@ -202,6 +213,11 @@ def build(root):
       'top_tab_custom_centers':{'top_tab_placement':'custom'},
       'shelf_tab_custom_centers':{'shelf_tab_placement':'custom'},
       'separator_tab_custom_centers':{'separator_tab_placement':'custom'},
+      'side_tab_style':{'joinery_style':'tab_slot'},
+      'blind_tab_skin':{'joinery_style':'tab_slot'},
+      'blind_tab_end_clearance':{'joinery_style':'tab_slot'},
+      'blind_tab_screw_holes':{'joinery_style':'tab_slot'},
+      'blind_tab_screw_hole_diameter':{'joinery_style':'tab_slot'},
     }
     hardware_rules={
       'metal_slide_first_hole_from_front':{'metal_slide_hole_pattern_mode':'legacy_spacing'},

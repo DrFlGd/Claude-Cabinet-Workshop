@@ -41,6 +41,10 @@ class BoundaryTests(unittest.TestCase):
         self.assertEqual(c['parameters']['modules'][0][9],4)
         with self.assertRaises(ValueError):compile_config('workbench',parameters={'modules':[[0,0,1,1,730,'x'*200]]})
         with self.assertRaises(ValueError):compile_config('workbench',common={'joinery':'screw'})
+        # Two drawer columns, and catalog slides: settings the workbench has no use for are left out.
+        c=compile_config('workbench',parameters={'modules':[[0,0,2,1,730,'drawers',0,'front','left',3,2]]},hardware_id='hettich_ka5632_350')
+        self.assertEqual(c['parameters']['metal_slide_length'],350);self.assertNotIn('drawer_mount',c['parameters']);self.assertEqual(c['parameters']['modules'][0][10],2)
+        with self.assertRaises(ValueError):compile_config('workbench',hardware_id='blum_movento_760h_family')
     def test_legacy_joinery(self):
         c=compile_config('equipment_stand',parameters={'joinery_type':'tab_slot'})
         self.assertEqual(c['parameters']['joinery_style'],'tab_slot');self.assertTrue(c['warnings'])
@@ -89,6 +93,7 @@ class EngineTests(unittest.TestCase):
                 self.assertEqual(r['summary']['errors'],0,r);self.assertEqual(p,before)
     def test_saved_matrix(self):
         matrix=json.loads((ROOT/'docs/validation_matrix.json').read_text())
-        self.assertEqual(len(matrix),82);self.assertFalse([x for x in matrix if x['status']=='ERROR'])
+        self.assertEqual(len(matrix),91);self.assertFalse([x for x in matrix if x['status']=='ERROR'])
+        self.assertEqual({x['module'] for x in matrix},set(FRONTENDS))
 
 if __name__=='__main__':unittest.main()

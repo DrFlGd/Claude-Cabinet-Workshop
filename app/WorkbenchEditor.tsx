@@ -35,13 +35,13 @@ export default function WorkbenchEditor({values,units,apply}:{values:Values;unit
  const benchTop=size.moduleTop;
  // Facing for a new module: towards the nearest open edge of the frame.
  const facingFor=(c:number,r:number):WB.Facing=>r===0?'front':r===g.rows-1?'back':c===0?'left':c===g.cols-1?'right':'front';
- const newRow=(c:number,r:number,height:number):Row=>[c,r,1,1,Math.round(height),'door',1,facingFor(c,r),c<g.cols/2?'left':'right',3];
+ const newRow=(c:number,r:number,height:number):Row=>[c,r,1,1,Math.round(height),'door',1,facingFor(c,r),c<g.cols/2?'left':'right',3,1];
  function addAt(c:number,r:number){commit([...rows,newRow(c,r,list.length?benchTop-WB.baseHeight(values):730)],rows.length)}
  // A module below the bench height gets a module filling the gap; one at the bench height is
  // split into two stacked halves so the worksurface stays where it is.
  function stackOn(k:WB.Module){
   const gap=benchTop-k.top,half=Math.floor(k.height/2);
-  const add=(h:number):Row=>[k.col,k.row,k.spanX,k.spanY,Math.round(h),k.contents,0,k.facing,k.hinge,k.drawers];
+  const add=(h:number):Row=>[k.col,k.row,k.spanX,k.spanY,Math.round(h),k.contents,0,k.facing,k.hinge,k.drawers,k.columns];
   if(gap>=minH)return commit([...rows,add(gap)],rows.length);
   if(half>=minH)return commit([...rows.map((r,j)=>j===k.index?Object.assign([...r],{4:half,6:Math.min(r[6],1)}) as Row:r),add(k.height-half)],rows.length);
   commit([...rows,add(minH)],rows.length);
@@ -67,9 +67,9 @@ export default function WorkbenchEditor({values,units,apply}:{values:Values;unit
  const level=(k:WB.Module)=>list.filter(o=>o.index!==k.index&&o.top<=k.z+0.01&&o.col<k.col+k.spanX&&k.col<o.col+o.spanX&&o.row<k.row+k.spanY&&k.row<o.row+o.spanY).length;
  const order=[...list].sort((a,b)=>a.z-b.z||a.index-b.index);
  const stackHere=m?list.filter(k=>k.col<m.col+m.spanX&&m.col<k.col+k.spanX&&k.row<m.row+m.spanY&&m.row<k.row+k.spanY).sort((a,b)=>a.z-b.z):[];
- const doors=m?WB.doorCount(m,C):0,drawers=m?WB.drawerCount(m):0;
+ const doors=m?WB.doorCount(m,C):0,drawers=m?WB.drawerCount(m):0,columns=m?WB.drawerColumns(m,C):1;
  // Short description of a module's front, for the grid and the inspector.
- const describe=(k:WB.Module)=>k.contents==='drawers'?`${k.drawers} drawer${k.drawers===1?'':'s'}`:k.contents==='drawer_door'?`${k.drawers} drawer${k.drawers===1?'':'s'} + door`:WB.CONTENTS_LABEL[k.contents];
+ const describe=(k:WB.Module)=>k.contents==='drawers'?(WB.drawerColumns(k,C)===2?`${k.drawers} × 2 drawers`:`${k.drawers} drawer${k.drawers===1?'':'s'}`):k.contents==='drawer_door'?`${k.drawers} drawer${k.drawers===1?'':'s'} + door`:WB.CONTENTS_LABEL[k.contents];
  const title=(k:WB.Module)=>k.contents==='door'?(doors===2?'Two-door':'Door')+' cabinet':k.contents==='drawers'?'Drawer cabinet':k.contents==='drawer_door'?'Drawer and door cabinet':k.contents==='framed'?'Framed open cabinet':'Open cabinet';
  return <div className='lay wb'>
   <div className='lay-stage'>
@@ -103,7 +103,9 @@ export default function WorkbenchEditor({values,units,apply}:{values:Values;unit
      <p>{fmt(WB.moduleSize(m,C).w)} wide × {fmt(WB.moduleSize(m,C).d)} deep × {fmt(m.height)} high{m.z>WB.baseHeight(values)+0.01&&<span className='lay-badge'><Layers size={11}/>Stacked</span>}</p></header>
     {stackHere.length>1&&<div className='lay-field'><span>Stack in these cells</span><div className='segmented'>{stackHere.map(k=><button key={k.index} type='button' className={k.index===index?'is-active':''} onClick={()=>setSel(k.index)}>M{k.index+1}</button>)}</div></div>}
     <Segmented label='Contents' className='wb-contents' value={m.contents} options={WB.CONTENTS.map(c=>[c,WB.CONTENTS_LABEL[c]] as [WB.Contents,string])} onChange={v=>edit(index,{5:v})}/>
-    {drawers>0&&<Stepper label='Drawers' value={m.drawers} min={1} max={8} onChange={n=>edit(index,{9:n})}/>}
+    {drawers>0&&<Stepper label={columns===2?'Drawer levels':'Drawers'} value={m.drawers} min={1} max={8} onChange={n=>edit(index,{9:n})}/>}
+    {WB.canSplitDrawers(m,C)&&<Segmented label='Drawers across' value={String(columns) as '1'|'2'} options={[['1','One wide'],['2','Two side by side']]} onChange={v=>edit(index,{10:Number(v)})}/>}
+    {columns===2&&<p className='field-note'>A centre partition carries the inner slides of both drawers on each level.</p>}
     <Segmented label='Faces' value={m.facing} options={WB.FACINGS.map(f=>[f,FACING_LABEL[f]] as [WB.Facing,string])} onChange={v=>edit(index,{7:v})}/>
     {doors===1&&<Segmented label='Hinged on the' value={m.hinge} options={[['left','Left'],['right','Right']]} onChange={v=>edit(index,{8:v})}/>}
     {doors===2&&<p className='field-note'>Two doors, hinged on the outer edges.</p>}

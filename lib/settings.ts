@@ -64,7 +64,9 @@ function workbenchInactive(f:Field,v:Record<string,any>):string|null{
  if(k==='show_doors'&&!fronts&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module has doors, drawers or face panels';
  if((s.startsWith('Drawers /')||s==='Hardware / Slides'||s==='Hardware / Slide Drilling'||k.startsWith('drawer_box')||k==='drawer_bottom_thickness'||k==='show_drawer_slides')&&!drawers)return 'No module has drawers';
  if(k==='combo_drawer_height'&&!mods.some((m:any[])=>kind(m)==='drawer_door'))return 'No module has drawers over a door';
- if(k.startsWith('metal_slide_')&&k.endsWith('holes_x')||k.endsWith('hole_diameter')&&k.startsWith('metal_slide_')||k==='slide_drill_depth')if(v.include_metal_slide_holes===false)return 'Enable slide holes';
+ if(k.startsWith('metal_slide_')&&k.endsWith('holes_x')||k.endsWith('hole_diameter')&&k.startsWith('metal_slide_')||k==='slide_drill_depth'||k==='metal_slide_hole_rear_margin'||k==='partition_slide_hole_diameter')if(v.include_metal_slide_holes===false)return 'Enable slide holes';
+ // Two drawer columns (row index 10) need an all-drawer module at least two cells across its face.
+ if(k==='partition_slide_hole_diameter'&&!mods.some((m:any[])=>kind(m)==='drawers'&&Number(m[10])===2&&cell(m,m[7]==='left'||m[7]==='right'?3:2,1)>=2))return 'No module has two drawer columns';
  if(s==='Structure / Faces'&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module is framed';
  if(k==='include_stack_keys'&&!stacked)return 'No module is stacked';
  if((k.startsWith('handle_')&&k!=='handle_style'||k==='handle_thickness')&&v.handle_style==='none')return 'Select a handle style';

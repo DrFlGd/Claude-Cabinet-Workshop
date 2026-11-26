@@ -35,6 +35,17 @@ assert.deepEqual(s.sectionOrder.slice(0,2),['Sizing','Structure']);assert(s.shop
  assert(s.inactiveReason(field('grid_columns'),v));assert.equal(s.inactiveReason(field('grid_columns'),{...v,frame_size:'custom'}),null);
  assert(s.inactiveReason(field('hand_slot_length'),{...v,include_hand_slots:false}));assert(s.inactiveReason(field('handle_edge_offset'),{...v,handle_style:'none'}));
  assert.equal(s.inactiveReason(field('joint_fit_clearance'),v),null);assert.equal(s.inactiveReason(field('hinge_cup_diameter'),v),null);
+ // Two drawer columns: an all-drawer module two cells wide gets a partition and a left and right drawer per level.
+ assert.equal(w.normalizeRow([0,0,2,1,730,'drawers',0,'front','left',3])[10],1);
+ const sx=c.starterValues(7,'workbench_side_by_side_drawers'),sm=w.modules(sx),C=w.grid(sx).C;
+ assert.deepEqual(sm.map(m=>w.drawerColumns(m,C)),[1,2,1,1]);assert.equal(c.validate(sx).length,0);
+ const sids=c.geometry(sx,false,false).map(p=>p.id);for(const id of ['M2-PARTITION','M2-DRAWER-3L-BOX','M2-DRAWER-3R-FACE','M2-DRAWER-1R-HANDLE','M4-DRAWER-2-BOX'])assert(sids.includes(id),id);
+ assert(!sids.includes('M4-PARTITION'));
+ // One cell wide, or drawers over a door: the columns setting is ignored.
+ assert.equal(w.drawerColumns(w.modules({...v,modules:[[0,0,1,1,730,'drawers',0,'front','left',3,2]]})[0],C),1);
+ assert.equal(w.drawerColumns(w.modules({...v,modules:[[1,0,2,1,730,'drawer_door',0,'front','left',1,2]]})[0],C),1);
+ assert(s.inactiveReason(field('partition_slide_hole_diameter'),dr));assert.equal(s.inactiveReason(field('partition_slide_hole_diameter'),sx),null);
+ assert.match(s.inactiveReason(field('partition_slide_hole_diameter'),{...sx,include_metal_slide_holes:false}),/Enable slide holes/);
  // Drilling jig and screw-mark detail controls follow their switches.
  assert.equal(s.inactiveReason(field('include_handle_jig'),v),null);assert.match(s.inactiveReason(field('jig_thickness'),v),/Enable the handle jig/);
  assert.equal(s.inactiveReason(field('jig_thickness'),{...v,include_handle_jig:true}),null);assert.match(s.inactiveReason(field('include_handle_jig'),{...v,handle_style:'none'}),/handle style/);

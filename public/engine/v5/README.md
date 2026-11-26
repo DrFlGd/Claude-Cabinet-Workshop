@@ -52,9 +52,10 @@ OpenSCAD Customizer users can open frontends in `data/scad/` directly. Keep thei
 python -m unittest discover -s tests -v
 python tests/run_matrix.py
 python -m modular_organization.hardware --check
+python ../../../scripts/engine-schema.py --check   # from the app repository
 ```
 
-The matrix regenerates the manufacturing audits of every preset (the saved matrix predates the workbench and holds 82) and requires OpenSCAD. It is more expensive than the regression suite. See [review](docs/REVIEW.md), [integration](docs/INTEGRATION.md), [migration](docs/MIGRATION.md) and [machining](docs/MACHINING.md).
+`data/config/schema.json`, `tests/parameter_contract.json` and the app's `lib/schema.json` are generated from the front ends' Customizer annotations: after changing a setting run `python3 scripts/engine-schema.py --write` from the repository root (CI fails while they differ). The matrix regenerates the manufacturing audits of every preset of all eight front ends (91 jobs) and requires OpenSCAD. It is more expensive than the regression suite. See [review](docs/REVIEW.md), [integration](docs/INTEGRATION.md), [migration](docs/MIGRATION.md) and [machining](docs/MACHINING.md).
 
 No structural certification or engineering load guarantee is provided by these geometric checks. Confirm material, hardware, loads and installation for the intended use. Distribution licensing and ownership should be confirmed before public publication; this cleanup does not assign a new license.
 

@@ -130,6 +130,17 @@ area).
 | Straight bar | 202 × 45 | 15 mm bar with 5 mm corners on two 22 × 30 mm legs 20 mm in from the ends; 10 mm fillets where the legs meet the bar |
 | Traditional | 210 × 49 | crown arc through the ends 17 mm up and the middle; wings and recess top on a 217.667 mm arc with its apex 34 mm up; 4.419 mm tips tangent to both arcs; legs 24–46 mm from each end at the feet, leaning in at 8°; 6.5 mm fillets under the wings and 15 mm in the recess |
 
+**Handle stock thickness.** Every dimension in the table lies in the plane of the
+handle stock, so none of them depends on `handle_thickness`: thicker stock gives the
+same profile, taller across the door. The reference set draws all five pulls for its
+18 mm sheet and gives no profile dimension that changes with the sheet. What does
+depend on the thickness scales with it: the pull is centred across the door on its
+hole line (`handle_top_offset` is to the centre of the stock), the leg pilot holes are
+drilled half way through the stock, and the jig's block is cut from the same stock,
+its fence stands `handle_thickness` + 7 mm above the plate and the guide holes are
+`handle_thickness` / 2 above it. `HANDLE_STOCK` is an error when the stock leaves
+less than 3 mm around the pilot holes.
+
 **Drilling jig** (`include_handle_jig`, off by default): three extra parts in the cut
 files, assembled beside the bench in the 3D view.
 
@@ -178,7 +189,7 @@ The carcass is the simple cabinet above; only its front and interior change.
 | Contents | Front | Interior |
 |---|---|---|
 | `door` | one door per cell of width (reference) | shelves on pins |
-| `drawers` | `n` equal drawer fronts over the full height | `n` drawer boxes on side-mount slides, no shelf pins |
+| `drawers` | `n` equal drawer fronts over the full height, one wide or two side by side | `n` drawer boxes (or `n` pairs beside a centre partition) on side-mount slides, no shelf pins |
 | `drawer_door` | `n` drawer fronts of `combo_drawer_height` (150) above one door (two on wider modules) | drawers at the top; shelf pins only below them |
 | `open` | none (reference) | shelves on pins |
 | `framed` | a face panel the size of a door with a rounded opening (`face_opening_border` 40, `face_opening_radius` 60) | shelves on pins |
@@ -210,9 +221,39 @@ The carcass is the simple cabinet above; only its front and interior change.
   `drawer_rear_clearance` (5): 350 mm in a one-cell-deep module. Cabinet holes are
   8 mm pilots in the module sides at the box's mid-height; drawer holes go through the
   box sides. Both are in the `pocket_slide_holes` file.
+- **Two drawers side by side.** A `drawers` module two or more cells across its face
+  can have two drawer columns (the row's eleventh entry, 2; the Layout tab's
+  "Drawers across"). A partition of carcass stock stands on the centre line, from the
+  module's front edge to the back, between the bottom and the top rails. It is
+  located by through tenons that finish flush: one through the bottom in the middle
+  half of each cell row (clear of the registration pockets), and one 45 mm tenon
+  through each top rail, 15 mm in from the rail's edges. The mortises have dogbones,
+  the tenons T-bone reliefs at their roots, the back is screw-marked into the
+  partition's rear edge, and stacking-key sites that would meet a rail mortise are
+  skipped. Each column's drawer is half the opening less the partition: (764 − 18) / 2
+  − 2 × 12.7 = 347.6 mm wide in a two-cell module, with a front half the module width
+  less `door_gap` and its own pull. Both slides beside the partition share its holes:
+  one through hole (`partition_slide_hole_diameter`, 6 mm) per listed cabinet hole
+  takes a binding post (sex bolt) that fixes the slide on each face, so the screws of
+  the two slides cannot meet inside the 18 mm partition. The outer slides screw into
+  the module sides as before. Drawers in two columns are named `M2-DRAWER-1L` and
+  `M2-DRAWER-1R`. `drawer_door` modules keep one drawer column (a partition would end
+  in mid-air above the door), and a one-cell module ignores the setting with a
+  `DRAWER_COLUMNS` warning.
+- **Slide catalog.** The Hardware step offers the same slide models as the other
+  cabinet types (generic or catalog side-mount slides). A model sets the slide length,
+  side clearance, front setback, profile height and, where the maker's drawing is
+  unambiguous, the hole arrays. The workbench uses side-mount metal slides only and
+  always drills every listed hole on the slide's centre line, centred on the drawer
+  box, so a model's mounting choice, hole-pattern mode, drilling mode and hole heights
+  are not used; catalog models that leave drilling off drill nothing.
+  `metal_slide_hole_rear_margin` (10) leaves out holes that close to the slide's end.
+  The hole arrays of the generic slides are generic by nature: check them against the
+  slides you buy.
 - **Reports.** Each drawer reports `DIM|DRAWER` outside, inside-clear and opening
   sizes (the app's drawer-fit table reads them), `DIM|DRAWER_FACE` and `DIM|SLIDE`;
-  the hardware list counts slide pairs by length.
+  a partition reports `DIM|PARTITION`. The hardware list counts slide pairs by length
+  and the binding posts.
 
 ### Stacking keys
 
@@ -233,8 +274,9 @@ off (and back to the `STACK_FASTENING` warning).
 
 - `modules` lists one row per module: `[column, row, cells wide, cells deep,
   height, contents door|open|drawers|drawer_door|framed, shelves, facing
-  front|back|left|right, hinge left|right, drawers]`. Rows saved without the drawer
-  count read as three drawers. The Layout tab edits it.
+  front|back|left|right, hinge left|right, drawers, drawer columns 1|2]`. Rows saved
+  without the drawer count read as three drawers, and without the drawer columns as
+  one wide drawer. The Layout tab edits it.
 - A module turned left or right swaps its width and depth: its face is the cells'
   side.
 - Later modules stack on earlier ones: a module rests on the highest module under
@@ -277,7 +319,8 @@ The engine reports `CHECK|ERROR` for geometry that cannot be built (grid fit,
 support, door and drawer clearance, joint depths, cutter access in the puzzle necks,
 dog holes inside seams, hinges and handles that do not fit their fronts, drawer boxes
 too low for their slides, slides that do not fit, no room for a door under the
-drawers, face-panel borders) and warnings for shelf sag on wide modules, unsupported
+drawers, face-panel borders, partition tenons and hand slots that meet them, pull
+stock too thin for its pilot holes) and warnings for shelf sag on wide modules, unsupported
 worksurface cells, stacked modules with fewer than two keys, wide drawers and parts
 larger than the stock sheet. Screw marks must leave 2 mm of stock and sit between a
 registration pocket and the crossing strip. The repository tests check every starter's cut layout against

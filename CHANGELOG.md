@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.24.0**) are separate from the bundled
+Application versions (currently **0.25.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.24.0 — 2026-11-26
+## 0.25.0 — 2026-11-26
 
 The remaining details of the user's reference stackable plans, and nested
 stacking with every joinery (see `docs/STACKABLE_REFERENCE.md`, phase 4).
@@ -61,7 +61,9 @@ stacking with every joinery (see `docs/STACKABLE_REFERENCE.md`, phase 4).
   - Door-hinge and bay partitions follow the same bottom rule in the shared
     code. Stackable modules have one bay and never build them.
 - **Settings.** **Stack bottom style** no longer requires tab-and-slot
-  joinery. The link-screw, interface-depth and toe-notch controls now follow
+  joinery. The Python package's schema, the parameter contract and
+  `lib/schema.json` were regenerated from the SCAD front end with
+  `scripts/engine-schema.py --write`. The link-screw, interface-depth and toe-notch controls now follow
   the nested bottom with any joinery, as the engine does.
 - **Shared locating geometry.** The stacking profile is now built from
   `public/engine/v5/src/modular_organization/data/scad/stack_locator.scad`
@@ -101,9 +103,11 @@ stacking with every joinery (see `docs/STACKABLE_REFERENCE.md`, phase 4).
 Validation performed:
 
 - **Static and engine checks.** These all passed after merging
-  main at 0.23.0:
+  main at 0.24.0:
   - `tsc --noEmit`;
   - the engine-source, parity and product-source checks;
+  - `scripts/engine-schema.py --check` and the package's
+    `tests.test_parameter_layout`;
   - units, nesting, settings visibility (with the new nested-joinery and
     hinge-mark rules) and hardware;
   - v5 integration (120 presets);
@@ -124,7 +128,7 @@ Validation performed:
 - **Interference sweep.** `tests/engine-interference.mjs --all` ran locally in
   four shards before main was merged, including the new cases: 197
   configurations with no overlapping parts, and 1 random design skipped as
-  rejected by the engine. After merging main at 0.23.0, the default
+  rejected by the engine. After merging main at 0.24.0, the default
   interference run passed locally, and CI's six-shard `--all` sweep passed
   on the merged branch.
   Earlier runs of the targeted cases found problems that are now fixed:
@@ -135,6 +139,138 @@ Validation performed:
   The engine's keepout check (`INTERFACE_KEEPOUT_CONFLICT`) also flagged a
   first nested dado groove that reached the stacking transition. That is
   fixed too.
+
+## 0.24.0 — 2026-11-26
+
+The modular workbench can put two drawers side by side on each level, its slides
+can come from the Hardware panel's slide catalog, the pull stock is checked, and
+the bundled Python package's generated schema and parameter contract are back in
+step with every cabinet type, with a CI step that keeps them there (see
+`docs/MODULAR_WORKBENCH.md`).
+
+- **Two drawers side by side.** A `drawers` module two or more cells across its
+  face has a new **Drawers across** choice in the Layout tab: *One wide* (as before)
+  or *Two side by side* (the module row's eleventh entry, 2). A centre partition of
+  carcass stock runs from the front edge to the back between the bottom and the top
+  rails, located by flush through tenons (one through the bottom in the middle half
+  of each cell row, clear of the registration pockets, and one 45 mm tenon through
+  each top rail). Mortises get dogbones and the tenon roots T-bone reliefs; the back
+  is screw-marked into the partition's rear edge (three screws), and stacking-key
+  sites that would meet a rail mortise are skipped. Each column has its own drawer
+  box, front (half the module width less `door_gap`) and pull, named
+  `M#-DRAWER-1L` / `M#-DRAWER-1R`; in a two-cell module a box is 347.6 mm wide.
+  The two slides beside the partition share it: one through hole per listed
+  cabinet hole (`partition_slide_hole_diameter`, 6 mm) takes a binding post (sex
+  bolt) holding the slide on each face, so the screws of two slides never meet
+  inside 18 mm stock. The cut list, BOM (`drawer_partition`), DIM records
+  (`DIM|PARTITION`, one `DIM|DRAWER` per column with the cell opening), hardware
+  list (slide pairs per column, `slide_binding_posts`, screws), 3D schematic,
+  exact render and Layout summary ("3 × 2 drawers") follow. A new starter,
+  **Side-by-side drawers**, shows it. *One wide* remains the default, and existing
+  designs load unchanged.
+- **Checks.** `DRAWER_NARROW` (a box narrower than its sides plus 50 mm),
+  `PARTITION_TENONS` (no room for the tenons), `PARTITION_RAIL` (hand slots meeting
+  the partition mortises), `PARTITION_HOLES` (partition holes too large for the
+  slide) are errors; `DRAWER_COLUMNS` warns when two columns are asked of a
+  one-cell or `drawer_door` module, which keep one column.
+- **Slide catalog for the workbench.** The Hardware step's **Drawer slides** card
+  now appears for the workbench, with the same *Generic slide* / catalog model
+  picker and *Fill from* templates as the other cabinet types (72 side-mount
+  models). A model sets slide length, side clearance, front setback, profile
+  height and, where the maker's drawing is unambiguous, the hole arrays; catalog
+  values are locked until *Adjust dimensions*. The workbench uses side-mount metal
+  slides only and drills every listed hole on the slide's centre line, centred on
+  the drawer box, so the panel shows no mounting-method control and a model's
+  mounting choice, hole-pattern mode, drilling mode and hole heights are not used
+  (the package marks those four settings not applicable to the workbench; its
+  `validate()` rejects a non-metal slide or legacy hole spacing with holes on).
+  Catalog models that leave drilling off drill nothing. New setting
+  `metal_slide_hole_rear_margin` (10 mm) replaces the fixed rear limit for holes.
+  Slide hole positions stay generic arrays by design: the engine drills the arrays
+  as listed, not a maker's alternative hole choices.
+- **Pull stock thickness.** The five pull profiles are unchanged, and this is
+  deliberate: every profile dimension (length, recess, legs, chamfers, radii) lies
+  in the plane of the handle stock, so none depends on `handle_thickness`, and the
+  reference draws all five for 18 mm stock with no dimension that varies with the
+  sheet. Thicker stock gives the same profile, taller across the door. Everything
+  that does depend on the thickness already scales with it: the pull is centred
+  across the door on its hole line, the leg pilot holes are at half the stock, the
+  jig block is cut from the same stock, its fence stands `handle_thickness` + 7 mm
+  above the plate and its guide holes at `handle_thickness` / 2. New error
+  `HANDLE_STOCK` when the stock leaves less than 3 mm around the leg pilot holes
+  (`handle_thickness` < `handle_pilot_diameter` + 6).
+- **Python package back in step.** `config/schema.json` and
+  `tests/parameter_contract.json` are regenerated for all eight cabinet types
+  (shop cart, utility, benchtop, stackable, kitchen, drawer, equipment stand,
+  workbench), so the package's schema-equality and contract tests pass again.
+  To get there, the drawer-height weight arrays of the shop cart, utility, kitchen,
+  stackable and benchtop front ends moved from their hidden section to the end of
+  *Drawers / Layout* with descriptions (values unchanged), several SCAD comments
+  were shortened or completed so the Customizer parser reads them whole (stackable
+  base and toe-notch, hinge fixing-hole offset, layout mode), and the schema gains
+  visibility rules for section nodes, combo door height, the stackable base and
+  toe notch, the workbench grid and dog-hole panels, and the tab-and-slot settings.
+  The app's settings (`lib/schema.json`) take the same descriptions; the kitchen
+  starters' section nodes moved to the current 14-entry default. Products (the shop
+  wall and the other `public/products/` designs) read their settings from their
+  SCAD files at run time and have no generated copy to refresh.
+- **Package audit fixes.** Since 0.21.0 the package's audit and export tried the
+  workbench-only `pocket_screw_marks` output on every cabinet type, which failed
+  every non-workbench audit ("Unknown output_mode"); they now skip it where it is
+  not offered. The export-frame comparison now allows for OpenSCAD's 6-significant-
+  digit echo, which made the shop cart preset *3-Section Drawer Workbench* report a
+  false `POCKET_OPERATION_COLLISION` (also on main).
+- **Drift check in CI.** New `scripts/engine-schema.py`: `--check` fails when
+  `config/schema.json`, the parameter contract or `lib/schema.json` differs from
+  what the SCAD front ends produce (listing the differences); `--write` regenerates
+  them, keeping the app's own presentation (units, steps, advanced flags, curated
+  starters) and rebasing starters onto new defaults. The Pages build runs it and the
+  package's parameter-layout tests after the parity check, and `test:release`
+  runs it too.
+
+Validation performed:
+
+- **Python package** (Python 3.13, OpenSCAD 2021.01): the 24 unit tests pass,
+  including the schema-equality and parameter-contract tests that failed before.
+  `tests/run_matrix.py` audited 91 jobs (every preset and joinery variant of the
+  eight cabinet types, nine of them workbench including *Side-by-side drawers*):
+  0 errors, 67 PASS and 24 WARN (warnings only; the saved
+  `docs/validation_matrix.json` is updated). `inspect` with a catalog slide
+  profile on the workbench resolves and validates.
+- **Split drawers**: the cut-layout check of the new starter passed (every part
+  on a sheet, no overlaps); `tests/engine-interference.mjs` with a new hand-picked
+  split-drawer case found no overlapping parts, and its random sweep now also
+  draws two-column modules.
+- `python3 scripts/engine-schema.py --check`, `pnpm exec tsc --noEmit` and the
+  full `test:release` gate (engine-source, parity and schema checks, units,
+  settings visibility, hardware with new workbench catalog assertions, v5
+  integration with new drawer-column assertions, stackable-controls, sections,
+  section WASM, engine fit, engine interference, layout editor, golden, hardware
+  engine, product sources, products; product interference, run on its own after
+  the combined run was stopped during it, rendered 61 configurations with no
+  overlapping parts) and `pnpm run build:static` passed.
+- `tests/golden.mjs` added the new starter; every existing snapshot matched
+  unchanged.
+- After merging 0.23.0 (the in-app collision check): the schema, engine-source,
+  parity and product-source checks, `tsc`, units, hardware, v5 integration, the
+  static build, desktop assets, the collision worker (8 cabinet types and 2
+  products clean), engine interference (43 configurations, no overlaps) and the
+  layout editor passed again.
+- **Headless Chrome** at 1500 px: the *Side-by-side drawers* starter passes the
+  engine checks; the Layout inspector shows **Drawers across** with the partition
+  note and "Drawer levels"; the Hardware step lists 72 slide models, and choosing
+  one locks its dimensions with the engine checks still passing; the instant 3D
+  view shows the module's three levels of two drawers and the cut list lists
+  `M2-PARTITION` and the `M2-DRAWER-#L`/`#R` parts; no console errors or
+  horizontal scroll. A phone-width pass was not run.
+
+Remaining limitations:
+
+- `drawer_door` modules keep one drawer column, and a module has at most two
+  columns.
+- The partition slides need binding posts (sex bolts), listed in the hardware;
+  the engine does not offer screwing two slides into one partition.
+- The pull profiles and the jig's T-bone reliefs are as in 0.21.0.
 
 ## 0.23.0 — 2026-11-26
 

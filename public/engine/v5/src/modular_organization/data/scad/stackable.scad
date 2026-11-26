@@ -481,6 +481,14 @@ drawer_separator_style = "stretchers"; // [full, stretchers]
 
 drawer_separator_stretcher_depth = 75;
 
+// One row of custom drawer-height weights per independent drawer bank, top drawer first.
+drawer_bank_height_weights = [
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1]
+];
+
 /* [Drawers / Clearances] */
 
 drawer_vertical_clearance = 10;
@@ -545,16 +553,11 @@ include_stack_base = true;
 // below it.
 stack_interface_depth = 18;
 
-// How the bottom panel meets the stacking interface.
-// raised = the bottom sits on the stacking pads, above the side tongue, at
-//          stack_interface_depth.
-// nested = the bottom sits low in the tongue layer and fits between the top
-//          stretchers and sides of the module below, as in the reference
-//          stackable plans. The interface depth then equals the sheet
-//          thickness, stacked modules register front-to-back and side-to-side,
-//          and screws through the lower module's ears fix it to the bottom
-//          above. Works with every joinery: the side joint is kept to the
-//          full-height part of the side tongue.
+// raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom
+// sits low between the top stretchers and sides of the module below, as in the reference
+// stackable plans: modules register in both directions, screws through the lower ears fix
+// them together and the interface depth equals the sheet thickness. Works with every
+// joinery: the side joint is kept to the full-height part of the side tongue.
 stack_bottom_style = "raised"; // [raised, nested]
 
 // Nested stacking: screw holes through the top of each side (and the base
@@ -564,20 +567,16 @@ stack_link_screw_holes = true;
 // Separate base-frame rail height.
 stack_base_height = 70;
 
-// Construction of the separate base frame.
-// edge_rails = two side rails with the stacking recess and two on-edge cross
-//              rails at the front and back.
-// flat_rails = as in the reference stackable plans: side rails with the
-//              stacking recess and a front toe notch, two flat rails like a
-//              module's top stretchers, and a set-back on-edge kick board
-//              that carries a nested bottom. A module sits on
-//              it exactly as it sits on another module.
-// auto       = flat_rails for a nested bottom, edge_rails otherwise.
+// edge_rails = two side rails with the stacking recess and on-edge cross rails at the front and back.
+// flat_rails = as in the reference stackable plans: side rails with the stacking recess and a
+// front toe notch, two flat rails like a module's top stretchers, and a set-back kick board
+// that carries a nested bottom. auto = flat_rails for a nested bottom, edge_rails otherwise.
 stack_base_style = "auto"; // [auto, edge_rails, flat_rails]
 
-// Flat-rail base: toe notch at the front bottom corner of each base side.
-// Set either value to 0 for no notch.
+// Flat-rail base: depth of the toe notch at the front bottom corner of each base side (0 for none).
 stack_base_toe_notch_depth = 57.5;
+
+// Flat-rail base: height of the toe notch (0 for none).
 stack_base_toe_notch_height = 47;
 
 // Stacked fronts.
@@ -608,13 +607,10 @@ stack_interface_corner_radius = 9;
 // reference stackable plans (3 mm). 0 keeps them square.
 side_outer_corner_radius = 0;
 
-// Shape of the stacking flanks (stack_locator.scad).
-// s_curve    = the radiused S transition described above.
-// chamfer_45 = a straight 45-degree flank between two fillets of the radius
-//              above, as in the reference stackable plans (r = 15 mm in 18 mm
-//              sheet). It self-centres: a module set down slightly off
-//              position slides into the recess. Allows radii up to about
-//              1.7 x the interface depth.
+// s_curve = the radiused S transition between the pads and the tongue. chamfer_45 = a 45-degree
+// flank between two fillets of the corner radius, as in the reference stackable plans
+// (r = 15 mm in 18 mm sheet); it self-centres a module set down slightly off position.
+// Allows radii up to about 1.7 x the interface depth. Shapes: stack_locator.scad.
 stack_interface_flank = "s_curve"; // [s_curve, chamfer_45]
 
 // Clearance is applied by offsetting the COMPLETE female mating profile.
@@ -685,6 +681,9 @@ hinge_cup_center_from_door_edge = 22.5;
 hinge_door_fixing_hole_diameter = 3;
 
 hinge_door_fixing_hole_spacing = 45;
+// Moves the two door fixing holes sideways from the cup center, toward the middle of the door.
+// Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center;
+// 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.
 hinge_door_fixing_hole_offset = 0; // [0:0.1:30]
 
 // Cabinet-side mounting-plate geometry.
@@ -1229,13 +1228,6 @@ mixed_bay_drawer_height_weights = [
 ];
 
 
-// One row of custom height weights per bank.
-drawer_bank_height_weights = [
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1]
-];
 
 // Internal section: Hidden
 

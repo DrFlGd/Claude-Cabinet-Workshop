@@ -26,7 +26,7 @@ import useProjects from './useProjects';
 import {parseDesign,Design} from '@/lib/projects';
 import HardwareSetup from './HardwareSetup';
 import HardwareView from './HardwareView';
-import {HARDWARE_PANEL_KEYS} from '@/lib/hardware';
+import {HARDWARE_PANEL_KEYS,SLIDE_BODY,SLIDE_HOLES} from '@/lib/hardware';
 import FitGuide,{guideKeys} from './FitGuide';
 import {helpFor,optionLabel} from '@/lib/help';
 import {productById,productStarterValues,productTarget} from '@/lib/products';
@@ -173,7 +173,8 @@ export default function Home(){
  const hiddenAdvanced=(name:string)=>advanced[name]?0:visibleFields.filter(f=>sectionFor(f)===name&&!inactiveReason(f,values)&&isAdvanced(f)).length;
  const matchCount=(name:string)=>visibleFields.filter(f=>sectionFor(f)===name&&matches(f)).length;
  // The hardware panel presents slides, runners and hinges itself; the Hardware section lists the rest.
- const panelOwned=(f:Field)=>step==='Hardware'&&family!==7&&HARDWARE_PANEL_KEYS(f.key);
+ // On the workbench the panel presents the drawer slides only; its hinge settings stay in the list.
+ const panelOwned=(f:Field)=>step==='Hardware'&&HARDWARE_PANEL_KEYS(f.key)&&(family!==7||SLIDE_BODY.includes(f.key)||SLIDE_HOLES.includes(f.key));
  const sectionFields=visibleFields.filter(f=>sectionFor(f)===step&&!guidedKeys.has(f.key)&&!panelOwned(f));
  const advancedCount=sectionFields.filter(f=>!inactiveReason(f,values)&&isAdvanced(f)).length;
  // Active settings of the chosen section (or every match while searching), then the ones that do not apply.
@@ -265,7 +266,10 @@ export default function Home(){
        options={k=>visibleFields.find(f=>f.key===k)?.options??null}
        active={k=>{const f=visibleFields.find(x=>x.key===k);return !!f&&!inactiveReason(f,values)}}
        fieldFor={(k,o)=>{const f=visibleFields.find(x=>x.key===k);if(!f)return null;if(o?.locked)return field(f,null,true);return inactiveReason(f,values)?null:field(f)}}
-       apply={(patch,message)=>{record(v=>({...v,...patch}));toast.success(message)}}
+       apply={(patch,message)=>{
+        // Catalog patches carry settings the workbench has no use for (mounting choice, hole pattern mode, hole heights).
+        const own=family===7?Object.fromEntries(Object.entries(patch).filter(([k])=>k.startsWith('_')||fields.some(f=>f.key===k))):patch;
+        record(v=>({...v,...own}));toast.success(message)}}
        onView={kind=>{setHardwareKind(kind);setTab('hardware')}}/>}
       {!searching&&step==='Sizing'&&family<5&&<FitGuide family={family} values={values} units={units} change={change} patch={patch=>record(v=>({...v,...patch}))}/>}
       {!searching&&step==='Machining'&&<p className='field-note'>Shared settings provide defaults. Material-specific relief and cutter diameters appear with the relevant joints below. A diameter of 0 inherits the shared cutter. Use None where CAM adds relief.</p>}

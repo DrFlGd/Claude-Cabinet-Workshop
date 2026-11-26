@@ -573,6 +573,23 @@ drawer_separator_style = "stretchers"; // [full, stretchers]
 
 drawer_separator_stretcher_depth = 75;
 
+// One row of custom drawer-height weights per bay, top drawer first. Used by bays
+// whose height mode is custom_weights.
+mixed_bay_drawer_height_weights = [
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1]
+];
+
+// One row of custom drawer-height weights per independent drawer bank, top drawer first.
+drawer_bank_height_weights = [
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1],
+    [1,1,1,1,1,1,1,1]
+];
+
 /* [Drawers / Clearances] */
 
 drawer_vertical_clearance = 10;
@@ -685,6 +702,9 @@ hinge_cup_center_from_door_edge = 22.5;
 hinge_door_fixing_hole_diameter = 3;
 
 hinge_door_fixing_hole_spacing = 45;
+// Moves the two door fixing holes sideways from the cup center, toward the middle of the door.
+// Many screw-on 35 mm cup hinges use holes 45 mm apart and 9.5 mm from the cup center;
+// 0 keeps the holes on the cup center line. Check the hinge maker's drilling drawing.
 hinge_door_fixing_hole_offset = 0; // [0:0.1:30]
 
 // Cabinet-side mounting-plate geometry.
@@ -1207,22 +1227,8 @@ top_stretcher_depth = 90;
 
 
 
-// One row of custom drawer-height weights per bay.
-mixed_bay_drawer_height_weights = [
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1]
-];
 
 
-// One row of custom height weights per bank.
-drawer_bank_height_weights = [
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,1]
-];
 
 // Internal section: Hidden
 
