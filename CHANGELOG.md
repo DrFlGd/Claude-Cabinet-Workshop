@@ -109,7 +109,8 @@ Validation performed:
   - v5 integration (120 presets);
   - the native OpenSCAD stackable-controls and sections tests;
   - section WASM workers, engine fit, layout editor and hardware engine;
-  - products, product interference and `pnpm run build:static`.
+  - products, the collision worker, product interference and
+    `pnpm run build:static`.
 - **Golden outputs.** Only the nested starter differed: its cut-layout and
   pocket-layout SVGs, from the new side profile and the moved bottom tabs.
   The diff was reviewed and re-recorded. All 120 starters match.
@@ -121,8 +122,11 @@ Validation performed:
   37 mm from the front and ±16 mm about each hinge, and none on the hinge
   side.
 - **Interference sweep.** `tests/engine-interference.mjs --all` ran locally in
-  four shards, including the new cases: 197 configurations with no
-  overlapping parts and 1 random design skipped as rejected by the engine.
+  four shards before main was merged, including the new cases: 197
+  configurations with no overlapping parts, and 1 random design skipped as
+  rejected by the engine. After merging main at 0.23.0, the default
+  interference run passed locally, and CI's six-shard `--all` sweep passed
+  on the merged branch.
   Earlier runs of the targeted cases found problems that are now fixed:
   - nested dado and drawer-bank cases ran the back's and partitions' bottom
     tongues into the lower module's rear stretcher;
