@@ -59,6 +59,8 @@ const features=[
   ['Base mounting plate',has('include_base_mounting_plate',true)],
   ['Stacking interface',has('stack_interface_depth')],
   ['Nested stacking (bottom between the stretchers below)',has('stack_bottom_style','nested')],
+  ['Flat-rail base frame with toe notch and kick board',has('stack_base_style','flat_rails')],
+  ['Stacked fronts with the gap centred on the rail',has('stack_front_seam','rail_centre')],
   ['Side ganging',has('ganging_style')],
   ['French cleats',any(has('mount_mode','wall_mount_french_cleat'),has('cleat_angle'))],
  ]],

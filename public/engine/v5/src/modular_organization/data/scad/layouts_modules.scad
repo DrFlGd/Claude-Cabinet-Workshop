@@ -61,6 +61,7 @@ function id_stack_base_side(side) =
     side == "left" ? "STACK-BASE-L" : "STACK-BASE-R";
 function id_stack_base_cross(front=true) =
     front ? "STACK-BASE-F" : "STACK-BASE-B";
+function id_stack_base_kick() = "STACK-BASE-K";
 function id_combo_divider() = "DIV";
 
 function id_legacy_shelf(s,p=0) =
@@ -617,7 +618,7 @@ module stack_base_engrave_labels() {
             stack_base_cross_layout_y,
             id_stack_base_cross(true),
             stack_base_cross_rail_cut_width(),
-            stack_base_height
+            stack_base_cross_rail_cut_height()
         );
 
         engraving_label_at(
@@ -625,8 +626,17 @@ module stack_base_engrave_labels() {
             stack_base_cross_layout_y,
             id_stack_base_cross(false),
             stack_base_cross_rail_cut_width(),
-            stack_base_height
+            stack_base_cross_rail_cut_height()
         );
+
+        if (stack_base_kick_active())
+            engraving_label_at(
+                0,
+                stack_base_kick_layout_y,
+                id_stack_base_kick(),
+                stack_base_cross_rail_cut_width(),
+                stack_base_kick_height()
+            );
     }
 }
 
@@ -884,8 +894,10 @@ module bom_report() {
             "stack_base_cross","CARCASS",
             material_thickness,
             stack_base_cross_rail_cut_width(),
-            stack_base_height,
-            carcass_joint_geometry
+            stack_base_cross_rail_cut_height(),
+            stack_base_flat()
+                ? str("flat_rail;",carcass_joint_geometry)
+                : carcass_joint_geometry
         );
 
         bom_row(
@@ -893,9 +905,21 @@ module bom_report() {
             "stack_base_cross","CARCASS",
             material_thickness,
             stack_base_cross_rail_cut_width(),
-            stack_base_height,
-            carcass_joint_geometry
+            stack_base_cross_rail_cut_height(),
+            stack_base_flat()
+                ? str("flat_rail;",carcass_joint_geometry)
+                : carcass_joint_geometry
         );
+
+        if (stack_base_kick_active())
+            bom_row(
+                id_stack_base_kick(),
+                "stack_base_kick","CARCASS",
+                material_thickness,
+                stack_base_cross_rail_cut_width(),
+                stack_base_kick_height(),
+                str("kick_board;",carcass_joint_geometry)
+            );
     }
 
     // Legacy shelves.
@@ -1903,11 +1927,18 @@ function accessory_layout_placements() =
                  stack_base_side_layout_y,
                  resolved_cabinet_depth,stack_base_height,"stack_base_side",0],
                 [id_stack_base_cross(true),0,stack_base_cross_layout_y,
-                 stack_base_cross_rail_cut_width(),stack_base_height,"stack_base_cross",0],
+                 stack_base_cross_rail_cut_width(),stack_base_cross_rail_cut_height(),
+                 "stack_base_cross",0],
                 [id_stack_base_cross(false),stack_base_cross_rail_cut_width()+g,
                  stack_base_cross_layout_y,
-                 stack_base_cross_rail_cut_width(),stack_base_height,"stack_base_cross",0]
+                 stack_base_cross_rail_cut_width(),stack_base_cross_rail_cut_height(),
+                 "stack_base_cross",0]
               ]
+            : [],
+        stack_base_kick_active()
+            ? [[id_stack_base_kick(),0,stack_base_kick_layout_y,
+                stack_base_cross_rail_cut_width(),stack_base_kick_height(),
+                "stack_base_kick",0]]
             : []
     );
 
@@ -2595,6 +2626,10 @@ module accessory_cut_layout() {
 
         placed(id_stack_base_cross(false))
             stack_base_cross_rail_cut();
+
+        if (stack_base_kick_active())
+            placed(id_stack_base_kick())
+                stack_base_kick_cut();
     }
 }
 
@@ -3741,6 +3776,16 @@ module print_layout() {
             ])
                 linear_extrude(height=material_thickness)
                     stack_base_cross_rail_cut();
+
+        if (stack_base_kick_active())
+            paint("stack_base_cross")
+                translate([
+                    0,
+                    stack_base_kick_layout_y,
+                    0
+                ])
+                    linear_extrude(height=material_thickness)
+                        stack_base_kick_cut();
     }
 
 }
@@ -3979,7 +4024,7 @@ module layout_elevation_report() {
                         "|X=",include_drawer_faces
                             ? drawer_face_x(b) : drawer_box_x0(b),
                         "|Z=",include_drawer_faces
-                            ? drawer_face_z(i,b) : drawer_box_z(i,b),
+                            ? drawer_face_visible_z(i,b) : drawer_box_z(i,b),
                         "|W=",include_drawer_faces
                             ? drawer_face_width(b) : drawer_outer_width(b),
                         "|H=",include_drawer_faces

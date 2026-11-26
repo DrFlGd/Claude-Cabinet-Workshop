@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.20.0**) are separate from the bundled
+Application versions (currently **0.21.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.20.0 — 2026-11-26
+## 0.21.0 — 2026-11-26
 
 A new **Shop wall** area holds 31 French-cleat and wall-mounted shop organizers,
 integrated from the owner's ShopWall OpenSCAD modules and rebuilt on the
@@ -137,6 +137,88 @@ Remaining limitations:
 - The 3D interference check runs in the test suite (every starter, 16 cases
   and random designs), not live in the editor; the editor's overlap check uses
   part boxes.
+
+## 0.20.0 — 2026-11-26
+
+The stackable base frame and stacked fronts now follow the user's reference
+stackable plans (see `docs/STACKABLE_REFERENCE.md`, phase 3).
+
+- **Flat-rail base frame.** A new **Stack base style** setting
+  (`stack_base_style`: auto, edge rails, or flat rails and kick board).
+  `flat_rails` builds the reference base:
+  - side rails with the stacking recess, the rails' joints at the top, and a
+    toe notch at the front (`stack_base_toe_notch_depth` × `_height`, 57.5 × 47
+    mm by default);
+  - two flat rails identical to the module's top stretchers;
+  - an on-edge kick board directly behind the front rail, from the floor to the
+    recess floor, in closed pockets (or dados, or butt with guide holes). A
+    nested bottom rests on it.
+  - The lowest module sits on the base exactly as it sits on another module:
+    a nested bottom drops between the base's rails and sides, and the link
+    screws go through the base sides.
+  - `auto`, the default, picks flat rails for a nested bottom and keeps the
+    edge rails otherwise, so raised designs build the same base as before.
+  - The toe notch is reduced, with a `STACK_BASE_TOE_NOTCH` warning, where it
+    would leave less than 10 mm in front of the kick board or below the front
+    rail. A base too low for a 20 mm kick board is built without one
+    (`STACK_BASE_KICK` warning).
+  - The kick board is a new part, `STACK-BASE-K`, in the parts list, cut
+    layout, engraving and print layouts.
+- **Stacked fronts centred on the rail.** A new **Stack front seam** setting
+  (`stack_front_seam`), `rail_centre` by default on stackable modules.
+  - Overlay doors and drawer fronts that reach the module's bottom now start
+    one reveal above the middle of the lower module's top stretcher. Those that
+    reach the top stop one reveal below the middle of the module's own top
+    member. Stacked fronts leave a gap of twice the edge reveal, centred on the
+    stretcher, as in the reference.
+  - Only the visible faces move. Drawer boxes, their openings and slides are
+    unchanged. Hinges follow the doors.
+  - `module_edge` keeps the previous fronts. Inset fronts are unaffected.
+- **Starter outputs changed (intended).**
+  - All six stackable starters have new front sizes. For example, the door
+    module's door is now 398 mm tall from z = 10.475 instead of 378.95 mm from
+    z = 20. Top and bottom drawer faces grow by about half a sheet; middle faces
+    are unchanged.
+  - "Door Module, Nested (Reference Joinery)" now has an 80 mm base and a
+    2.5 mm reveal, with the flat-rail base. Its door is 470 × 610 mm from
+    z = 11.5, as in the reference. Its base is 550 × 80 mm sides, 465 × 75 mm
+    rails and a 465 × 62 mm kick board.
+  - No other starter changed.
+- **Interference test.** The stack base's sides and its rails and kick board
+  are now separate groups, so the base's own joints are checked. Four cases
+  were added: the nested starter, and the flat-rail base with butt-style,
+  dado and through-tab joinery. The random sweep can now choose the base style
+  and the front seam.
+
+Validation performed:
+
+- **Static and engine checks.** `pnpm exec tsc --noEmit`, the engine-source,
+  parity and product-source checks, units, nesting, settings visibility (with
+  assertions for the toe-notch and front-seam rules), hardware, v5
+  integration, the native OpenSCAD stackable-controls and sections tests
+  (OpenSCAD 2021.01), section WASM workers, engine fit, layout editor,
+  hardware engine, products and `pnpm run build:static` all passed, re-run
+  after merging main at 0.19.0.
+- **Golden outputs.** The six stackable starters' diffs were reviewed: front
+  sizes and positions only, plus the nested starter's base frame, base height
+  and reveal. They were then re-recorded. All 120 starters match after merging main at
+  0.19.0.
+- **Cut-layout check.** A new section renders the nested starter with the
+  flat-rail base and with edge rails. It confirms: rails as deep as the top
+  stretchers, a 62 mm kick board, base-side outlines that differ only by the
+  toe notch, and one contour per part.
+- **Interference sweep.** `tests/engine-interference.mjs --all` ran locally in
+  four shards: 188 configurations with no overlapping parts, 1 random design
+  skipped as rejected by the engine. A flat-rail base under a raised dado
+  module first showed the kick board's ends rising into the module's tongue.
+  The kick board now stops at the recess floor in every case.
+
+Remaining limitations:
+
+- The kick board supports only a nested bottom. A raised bottom sits one
+  interface depth above it.
+- The app's instant drawing does not show the base frame or the moved fronts;
+  the 3D model and cut files do.
 
 ## 0.19.0 — 2026-11-26
 

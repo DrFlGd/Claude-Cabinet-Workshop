@@ -563,6 +563,29 @@ stack_link_screw_holes = true;
 // Separate base-frame rail height.
 stack_base_height = 70;
 
+// Construction of the separate base frame.
+// edge_rails = two side rails with the stacking recess and two on-edge cross
+//              rails at the front and back.
+// flat_rails = as in the reference stackable plans: side rails with the
+//              stacking recess and a front toe notch, two flat rails like a
+//              module's top stretchers, and a set-back on-edge kick board
+//              that carries a nested bottom. A module sits on
+//              it exactly as it sits on another module.
+// auto       = flat_rails for a nested bottom, edge_rails otherwise.
+stack_base_style = "auto"; // [auto, edge_rails, flat_rails]
+
+// Flat-rail base: toe notch at the front bottom corner of each base side.
+// Set either value to 0 for no notch.
+stack_base_toe_notch_depth = 57.5;
+stack_base_toe_notch_height = 47;
+
+// Stacked fronts.
+// rail_centre = doors and drawer fronts overlay half the top stretcher, so
+//               the gap between stacked fronts is centred on the stretcher,
+//               as in the reference plans.
+// module_edge = fronts stop at the module's front opening.
+stack_front_seam = "rail_centre"; // [rail_centre, module_edge]
+
 // Front/rear end pads remain full-height; the center span becomes the mating
 // tongue/recess. Keep these margins at least as deep as the top stretchers.
 stack_interface_front_margin = 80;

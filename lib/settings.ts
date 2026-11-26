@@ -164,6 +164,8 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(/^(tab_count_mode|joint_tab_|target_tab_spacing|max_auto_tab_count|minimum_joint_web)|^(top|bottom|shelf|separator)_tab_/.test(k)&&!tabs)return 'Requires tab-and-slot carcass joinery';
  if((k==='side_tab_style'||k.startsWith('blind_tab_'))&&!tabs)return 'Requires tab-and-slot carcass joinery';
  if(k==='stack_bottom_style'&&!tabs)return 'Requires tab-and-slot carcass joinery';
+ if(k.startsWith('stack_base_toe_notch_')&&(v.stack_base_style==='edge_rails'||(v.stack_base_style!=='flat_rails'&&!(tabs&&v.stack_bottom_style==='nested'))))return 'Choose the flat-rail base frame';
+ if(k==='stack_front_seam'&&v.front_mount_style==='inset_flush')return 'Overlay fronts only';
  if(k==='stack_link_screw_holes'&&(!tabs||v.stack_bottom_style!=='nested'))return 'Choose a nested bottom';
  if(k==='stack_interface_depth'&&tabs&&v.stack_bottom_style==='nested')return 'A nested bottom sets it to the sheet thickness';
  if(k.startsWith('blind_tab_')&&v.side_tab_style!=='blind')return 'Choose blind side tabs';
