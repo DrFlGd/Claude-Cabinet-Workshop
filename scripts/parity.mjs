@@ -58,6 +58,7 @@ const features=[
   ['Worktop',has('include_worktop',true)],
   ['Base mounting plate',has('include_base_mounting_plate',true)],
   ['Stacking interface',has('stack_interface_depth')],
+  ['Nested stacking (bottom between the stretchers below)',has('stack_bottom_style','nested')],
   ['Side ganging',has('ganging_style')],
   ['French cleats',any(has('mount_mode','wall_mount_french_cleat'),has('cleat_angle'))],
  ]],

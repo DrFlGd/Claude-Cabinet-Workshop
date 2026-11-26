@@ -554,5 +554,68 @@
    }
   },
   "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × DOOR 19.05 mm"
+ },
+ "stackable_cube_door_nested": {
+  "records": [
+   "DIM|UNITS|mm",
+   "DIM|CABINET|OUTSIDE|W=475|D=550|H=633",
+   "DIM|CABINET|CLEAR_INTERIOR|W=439|D=532|H=597",
+   "DIM|CABINET|FRONT_OPENING|W=439|H=597|BOTTOM_Z=18|TOP_Z=615",
+   "DIM|MATERIALS|CARCASS_T=18|BACK_T=18|DRAWER_WALL_T=12.7|DRAWER_BOTTOM_T=6.35|DRAWER_FACE_T=19.05|DOOR_T=18",
+   "DIM|FRONTS|MOUNT=overlay|EDGE_REVEAL=2|DRAWER_GAP=3|DOOR_GAP=3|INTERIOR_SETBACK=0",
+   "DIM|STACKABLE|MODULE_PITCH=615|INTERFACE_DEPTH=18|BASE_H=70|PREVIEW_TOTAL_H=2530",
+   "DIM|BAY|B1|TYPE=door|OPEN_W=439|CLEAR_D=532|CLEAR_H=597",
+   "LAYOUT|CABINET|W=475|H=633|T=18|OPEN_X=18|OPEN_Z=18|OPEN_W=439|OPEN_H=597|CONTENT_Z=20|CONTENT_H=593|MODE=mixed_bays",
+   "LAYOUT|BAY|B1|TYPE=door|X=18|W=439|Z=18|H=597",
+   "LAYOUT|FRONT|B1-DOOR1|KIND=door|BAY=1|INDEX=1|X=2|Z=2|W=471|H=611|HINGE=left",
+   "LAYOUT|SHELF|B1-SH1|BAY=1|X=18|W=439|Z=307.5|STYLE=adjustable",
+   "DIM|DOOR|B1-DOOR1|W=471|H=611|T=18|MOUNT=overlay|HINGE=left",
+   "DIM|SHELF|B1-SH1|STYLE=adjustable|CLEAR_SPAN_W=439|CUT_W=435|D=522|T=18",
+   "CHECK|INFO|ENGINE|Modular Organization v4 geometry validation",
+   "CHECK|INFO|INTERFACE_CONTRACT|MOI-4 / parent modular_storage_v35",
+   "CHECK|INFO|VALIDATION_COVERAGE|Side-panel machining collision ledger is exhaustive for 104 active features across 8 feature families; full-layout CUT/POCKET coverage is completed by modular_organization_validate.py.",
+   "CHECK|INFO|EDGE_POLICY|edge_joinery_policy=location_aware",
+   "CHECK|INFO|BOTTOM_TAB_POLICY|stack_safe",
+   "CHECK|INFO|TOP_TAB_POLICY|automatic",
+   "CHECK|INFO|SHELF_TAB_POLICY|automatic",
+   "CHECK|INFO|SEPARATOR_TAB_POLICY|automatic",
+   "BOM|CS-L|1|carcass|CARCASS|18|550|633|stackable_top_bottom_notches",
+   "BOM|CS-R|1|carcass|CARCASS|18|550|633|stackable_top_bottom_notches",
+   "BOM|BOTTOM|1|carcass|CARCASS|18|465|398.8|tab_slot",
+   "BOM|TOP-F|1|carcass|CARCASS|18|465|75|tab_slot",
+   "BOM|TOP-R|1|carcass|CARCASS|18|465|75|tab_slot",
+   "BOM|BACK|1|back_structural|CARCASS|18|465|615|captured_tab_slot",
+   "BOM|STACK-BASE-L|1|stack_base_side|CARCASS|18|550|70|top_stack_notch;tab_slot",
+   "BOM|STACK-BASE-R|1|stack_base_side|CARCASS|18|550|70|top_stack_notch;tab_slot",
+   "BOM|STACK-BASE-F|1|stack_base_cross|CARCASS|18|465|70|tab_slot",
+   "BOM|STACK-BASE-B|1|stack_base_cross|CARCASS|18|465|70|tab_slot",
+   "BOM|B1-SH1|1|shelf_adjustable|CARCASS|18|435|522|loose",
+   "BOM|B1-DOOR1|1|door|DOOR|18|471|611|left;overlay",
+   "PLACE|CS-L|X=0|Y=0|W=550|H=633",
+   "PLACE|CS-R|X=570|Y=0|W=550|H=633",
+   "PLACE|BOTTOM|X=0|Y=653|W=465|H=398.8",
+   "PLACE|TOP-F|X=485|Y=653|W=465|H=75",
+   "PLACE|TOP-R|X=485|Y=748|W=465|H=75",
+   "PLACE|BACK|X=0|Y=1223|W=465|H=615",
+   "PLACE|B1-SH1|X=0|Y=1858|W=435|H=522",
+   "PLACE|B1-DOOR1|X=0|Y=2480|W=471|H=611",
+   "PLACE|STACK-BASE-L|X=0|Y=3111|W=550|H=70",
+   "PLACE|STACK-BASE-R|X=570|Y=3111|W=550|H=70",
+   "PLACE|STACK-BASE-F|X=0|Y=3201|W=465|H=70",
+   "PLACE|STACK-BASE-B|X=485|Y=3201|W=465|H=70"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "00a55906d2f2ff79486715d9",
+    "bytes": 115459,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "8c62fd34ac54e1a8cc807f67",
+    "bytes": 22691,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 18 mm, 1 × DOOR 18 mm"
  }
 }

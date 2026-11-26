@@ -30,6 +30,10 @@ for(const family of [0,1,2,3,4]){
  check('blind_tab_skin',true,{joinery_style:'tab_slot',side_tab_style:'through'},family);check('blind_tab_skin',false,{joinery_style:'tab_slot',side_tab_style:'blind'},family);
  check('blind_tab_screw_hole_diameter',true,{joinery_style:'tab_slot',side_tab_style:'blind',blind_tab_screw_holes:false},family);
 }
+// Nested stacking needs tab-and-slot joinery and takes over the interface depth.
+check('stack_bottom_style',true,{joinery_style:'butt'},3);check('stack_bottom_style',false,{joinery_style:'tab_slot'},3);
+check('stack_link_screw_holes',true,{joinery_style:'tab_slot',stack_bottom_style:'raised'},3);check('stack_link_screw_holes',false,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);
+check('stack_interface_depth',true,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_interface_depth',false,{joinery_style:'butt'},3);
 console.log('Conditional controls: joinery, drawer modes, hardware, nested drilling and presets/help regressions passed.');
 
 for(let family=0;family<schema.length;family++){

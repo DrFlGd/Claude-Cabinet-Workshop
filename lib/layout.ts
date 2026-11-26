@@ -360,7 +360,7 @@ export type Frame={w:number;h:number;t:number;open:LayoutRect;inner:{x:number;w:
 export function estimateFrame(family:number,v:Values):Frame{
  const t=thickness(v),W=num(v.custom_cabinet_width??v.cabinet_width,600),H=num(v.custom_cabinet_height??v.cabinet_height,700);
  const frame=family===4&&v.front_facing_style==='face_frame';
- const base=family===3?num(v.stack_interface_depth,18):(family===4||family===1)&&v.cabinet_mount_style!=='wall'&&v.base_style==='toe_kick'?num(v.custom_bottom_above_toe??v.custom_toe_kick_height,100):0;
+ const base=family===3?(v.stack_bottom_style==='nested'?0:num(v.stack_interface_depth,18)):(family===4||family===1)&&v.cabinet_mount_style!=='wall'&&v.base_style==='toe_kick'?num(v.custom_bottom_above_toe??v.custom_toe_kick_height,100):0;
  const left=frame?num(v.face_frame_side_stile_width,38.1):t,bottom=base+(frame?num(v.face_frame_bottom_rail_width,38.1):t),top=H-(frame?num(v.face_frame_top_rail_width,38.1):t);
  const reveal=num(v.front_edge_reveal,2);
  return {w:W,h:H,t,open:{x:left,z:bottom,w:W-2*left,h:top-bottom},inner:{x:t,w:W-2*t},content:{z:bottom+reveal,h:top-bottom-2*reveal}};

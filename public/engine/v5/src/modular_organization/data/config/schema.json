@@ -11600,6 +11600,24 @@
           "step": 0.01
         },
         {
+          "id": "stack_bottom_style",
+          "group": "Mounting / Stacking",
+          "type": "enum",
+          "default": "raised",
+          "enum": [
+            "raised",
+            "nested"
+          ],
+          "description": "raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom sits low in the tongue layer between the top stretchers and sides of the module below, as in the reference stackable plans: modules register in both directions, screws through the lower ears fix them together and the interface depth equals the sheet thickness. Needs tab-and-slot joinery and a single bay."
+        },
+        {
+          "id": "stack_link_screw_holes",
+          "group": "Mounting / Stacking",
+          "type": "boolean",
+          "default": true,
+          "description": "Nested stacking: screw holes through the top of each side and the base-frame side rails into the edge of the bottom panel of the module above."
+        },
+        {
           "id": "stack_base_height",
           "group": "Mounting / Stacking",
           "type": "number",
