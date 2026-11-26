@@ -39,7 +39,9 @@ export const CABINET_GROUPS:Record<string,Group>={
  // The stack base sits below the module (in module coordinates, at -stack_first_module_z),
  // and a second module sits one stacking pitch above it: the stacking interface, the
  // nested bottom and the fronts must clear the module below.
- stackBase:{on:['show_stack_base'],code:'if (stackable_mode) translate([0,0,-stack_first_module_z]) stack_base_assembly_3d();'},
+ // Its sides and its rails/kick board are separate groups, so their joints are checked too.
+ stackBaseSides:{on:['show_stack_base'],code:'if (stackable_mode) translate([0,0,-stack_first_module_z]) stack_base_sides_3d();'},
+ stackBaseMembers:{on:['show_stack_base'],code:'if (stackable_mode) translate([0,0,-stack_first_module_z]) stack_base_members_3d();'},
  stackUpper:{on:SHOW_FLAGS.filter(k=>k!=='show_stack_base'),code:'if (stackable_mode) translate([0,0,stack_module_pitch]) cabinet_unit_assembly();'},
  // The slide envelope is the space a metal slide needs between the drawer box and the
  // cabinet side or partition; nothing else may enter it.
