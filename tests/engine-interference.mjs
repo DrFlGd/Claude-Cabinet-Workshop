@@ -12,7 +12,7 @@
 // and the metal slide envelopes between the drawer boxes and the cabinet.
 //
 //   node tests/engine-interference.mjs                 the hand-picked cases
-//   node tests/engine-interference.mjs --starters      plus all 118 starters
+//   node tests/engine-interference.mjs --starters      plus all 120 starters
 //   node tests/engine-interference.mjs --random 24     plus 24 random designs
 //   node tests/engine-interference.mjs --all           cases + starters + 24 random
 //   SHARD=1/4 node tests/engine-interference.mjs --all  one quarter of that job list
@@ -200,6 +200,11 @@ const CASES=[
  [7,undefined,{frame_size:'custom',grid_columns:4,grid_rows:3,frame_cross_members:'every_column',handle_style:'traditional',joint_fit_clearance:0.2,puzzle_clearance:0.2,
   modules:[[0,0,1,1,365,'open',0,'front','left'],[0,0,1,1,365,'door',0,'front','left'],[1,0,2,1,730,'door',1,'front','left'],[3,0,1,2,730,'door',2,'right','left'],[0,1,1,2,730,'door',1,'left','right'],[1,1,2,1,730,'open',1,'front','left'],[1,2,1,1,730,'door',1,'back','left'],[2,2,1,1,730,'door',1,'back','right'],[3,2,1,1,730,'open',3,'back','left']]}],
  [7,'workbench_stacked',{handle_style:'chamfered',include_worksurface:false}],
+ // Drawer, drawer-and-door and framed modules, stacked on modules turned to every side (keys in
+ // front and back rails, along both axes), with fit clearances and the traditional pull.
+ [7,undefined,{handle_style:'traditional',joint_fit_clearance:0.2,registration_clearance:0.3,
+  modules:[[0,0,1,2,365,'drawers',0,'left','left',2],[0,0,1,1,365,'framed',1,'front','left'],[0,1,1,1,365,'door',0,'back','left'],[1,0,2,1,365,'door',0,'front','left'],
+   [1,0,1,1,365,'drawers',0,'front','left',1],[2,0,1,1,365,'drawers',0,'right','left',3],[1,1,2,1,730,'drawer_door',1,'back','right',2]]}],
 ];
 // ---- random sweep: construction choices, counts and sizes the engine accepts ----
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
@@ -221,9 +226,9 @@ function randomBench(random){
   const w=c+1<C&&!taken.has((c+1)+','+r)&&random()<0.35?2:1,face=facing(c,r,w,1);
   if(!face)continue;
   for(let i=0;i<w;i++)taken.add((c+i)+','+r);
-  const contents=random()<0.7?'door':'open',hinge=pick(['left','right']);
-  if(random()<0.25)modules.push([c,r,w,1,365,contents,0,face,hinge],[c,r,w,1,365,pick(['door','open']),0,face,hinge]);
-  else modules.push([c,r,w,1,pick([600,730,730,900]),contents,Math.floor(random()*4),face,hinge]);
+  const contents=pick(['door','door','door','open','drawers','drawers','drawer_door','framed']),hinge=pick(['left','right']),drawers=1+Math.floor(random()*4);
+  if(random()<0.25)modules.push([c,r,w,1,365,contents==='drawer_door'?'drawers':contents,0,face,hinge,Math.min(drawers,2)],[c,r,w,1,365,pick(['door','open','drawers','framed']),0,face,hinge,1]);
+  else modules.push([c,r,w,1,pick([600,730,730,900]),contents,Math.floor(random()*4),face,hinge,drawers]);
  }
  const patch={frame_size:size,modules,handle_style:pick(['none','square','rounded','chamfered','straight_bar','traditional']),include_worksurface:random()<0.7,frame_cross_members:pick(['ends','every_column'])};
  if(custom)Object.assign(patch,{grid_columns:cols,grid_rows:rows});

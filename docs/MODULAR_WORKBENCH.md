@@ -3,7 +3,8 @@
 The **Modular workbench** cabinet type (engine frontend `workbench`,
 `public/engine/v5/src/modular_organization/data/scad/workbench.scad`) is a rolling
 base frame on a square grid of cells, simple cabinet modules that drop onto whole
-cells and stack, and a puzzle-jointed worksurface with a dog-hole grid.
+cells and stack (doors, drawers, drawers over a door, open, or open behind a framed face),
+and a puzzle-jointed worksurface with a dog-hole grid.
 
 It is modelled on reference plans the owner of this project bought: three base
 frames (small, medium, large), one example module (a "simple cabinet"), the
@@ -26,6 +27,11 @@ implements.
   metric grid and the imperial starter only changes the stock thicknesses.
 - The rendering of a frame with modules shows how modules occupy cells (single
   cells and two-cell modules), and that casters sit under the frame corners.
+- A photo grid of module configurations from the same reference set shows stacks of
+  two to eight drawers, a drawer above a door, stacked half-height modules and open
+  cubes behind face panels with large rounded cut-outs. No cut files came with these
+  configurations, so the drawer and face-panel construction below is the engine's own
+  (see "Drawer modules").
 
 ## Derived dimensions (defaults)
 
@@ -112,19 +118,77 @@ traditional 210 × 49 mm (`handle_style`). The engine draws its own parametric
 profiles at those sizes (finger recess and two screw lugs); the plans' exact
 curves are not reproduced. The plans' drilling block and hole jig are not modelled.
 
+### Drawer modules (engine design, matching the photo configurations)
+
+The carcass is the simple cabinet above; only its front and interior change.
+
+| Contents | Front | Interior |
+|---|---|---|
+| `door` | one door per cell of width (reference) | shelves on pins |
+| `drawers` | `n` equal drawer fronts over the full height | `n` drawer boxes on side-mount slides, no shelf pins |
+| `drawer_door` | `n` drawer fronts of `combo_drawer_height` (150) above one door (two on wider modules) | drawers at the top; shelf pins only below them |
+| `open` | none (reference) | shelves on pins |
+| `framed` | a face panel the size of a door with a rounded opening (`face_opening_border` 40, `face_opening_radius` 60) | shelves on pins |
+
+- **Fronts.** Drawer fronts are full overlay like the doors: the module width less
+  `door_gap`, the drawer's share of the height less `door_gap`, so drawer and door
+  reveals line up. The pull sits in the middle of the front, `handle_top_offset` below
+  its top or half way down on low fronts, on the same 140 mm hole centres.
+- **Boxes.** Sides, front and back from `drawer_box_thickness` (12, the reference's
+  second sheet), the bottom from `drawer_bottom_thickness` (12). Box width = inside
+  width − 2 × `metal_slide_clearance_per_side` (12.7): 338.6 mm in a one-cell module.
+  Box depth = slide length. Box height = the drawer's share of the opening between the
+  bottom and the top rails, less `drawer_vertical_clearance` (20, half above and half
+  below): four drawers in a 730 mm module give boxes of 144.5, 162.5, 162.5 and
+  144.5 mm.
+- **Box joints.** The corners are through finger joints with an odd number of
+  equal fingers about `drawer_finger_pitch` (35) high, the sides taking the top and
+  bottom fingers, with dogbones in every notch. The bottom has 60 mm tongues
+  (`drawer_bottom_tongue` 5 long) on all four edges, centred with 60 mm gaps and
+  30 mm margins, in blind pockets `drawer_bottom_pocket_depth` (6) deep milled into
+  the inside faces `drawer_bottom_inset` (8) above the lower edge. The pockets have
+  dogbones at their corners and the tongues T-bone reliefs at their roots, from the
+  shared tab-in-pocket helpers (`tab_pocket.scad`).
+- **Slides.** Side-mount full-extension slides, the same parameters and generic hole
+  arrays as the equipment stand (`metal_slide_cabinet_holes_x` /
+  `metal_slide_drawer_holes_x` = 37, 133, 229, 325 mm from the slide front, holes past
+  the slide end left out). `metal_slide_length` 0 picks the longest of 250 … 700 mm
+  in 50 mm steps that fits between the module front and the back less
+  `drawer_rear_clearance` (5): 350 mm in a one-cell-deep module. Cabinet holes are
+  8 mm pilots in the module sides at the box's mid-height; drawer holes go through the
+  box sides. Both are in the `pocket_slide_holes` file.
+- **Reports.** Each drawer reports `DIM|DRAWER` outside, inside-clear and opening
+  sizes (the app's drawer-fit table reads them), `DIM|DRAWER_FACE` and `DIM|SLIDE`;
+  the hardware list counts slide pairs by length.
+
+### Stacking keys
+
+A module standing on another is located by loose keys instead of being only screwed
+down. A key is a block of frame stock the size of a frame tab and twice its height
+(50 × 26 × 18 mm). It stands in a pocket of the registration-pocket size
+(51 × 19 mm, `registration_pocket_depth` 14 deep, dogbones) milled into a top rail of
+the module below, and in one of the four registration pockets that every cell of the
+upper module's bottom already has for the frame. A key goes wherever one of those four
+sites lies wholly inside a rail of the module below, 3 mm clear of its edges and hand
+slots. On a module that faces front or back the sites are the two along the rails; on
+a sideways module they are the two across the cell, so a one-cell module stacked on a
+one-cell module always gets two keys. A stacked module with fewer than two keys
+reports `STACK_KEYS` and should be screwed down; `include_stack_keys` turns the keys
+off (and back to the `STACK_FASTENING` warning).
+
 ## Layout rules (beyond the reference)
 
 - `modules` lists one row per module: `[column, row, cells wide, cells deep,
-  height, contents door|open, shelves, facing front|back|left|right, hinge
-  left|right]`. The Layout tab edits it.
+  height, contents door|open|drawers|drawer_door|framed, shelves, facing
+  front|back|left|right, hinge left|right, drawers]`. Rows saved without the drawer
+  count read as three drawers. The Layout tab edits it.
 - A module turned left or right swaps its width and depth: its face is the cells'
   side.
 - Later modules stack on earlier ones: a module rests on the highest module under
   any of its cells and must be supported evenly (`MODULE_SUPPORT`). Stacked
-  modules have no tabs to locate them; the engine warns to screw them down
-  (`STACK_FASTENING`).
-- A module whose doors would open into another module is an error; an open module
-  facing another is a warning (`MODULE_FACING`).
+  modules are located by keys (above).
+- A module whose doors or drawers would open into another module is an error; an open
+  or framed module facing another is a warning (`MODULE_FACING`).
 - The worksurface rests on the tallest modules; cells with lower or no modules are
   reported (`WORKSURFACE_SUPPORT`).
 - Modules wider than one cell get two doors hinged on the outer edges.
@@ -136,6 +200,15 @@ curves are not reproduced. The plans' drilling block and hole jig are not modell
 - Back-row modules face the back of the bench in the default layouts.
 - Stacking, sideways modules and custom grids are extensions; the reference only
   shows one module height on the three frames.
+- Drawer, drawer-and-door and framed modules follow the photo grid's configurations
+  but not its construction, which no cut file documents: the fronts copy the
+  reference door (full overlay, 5 mm gap), the boxes use metal side-mount slides,
+  finger-jointed corners and a captured bottom, and the framed face panel is screwed
+  to the carcass front edges.
+- Stacked modules are located by loose keys in the existing registration pockets
+  rather than by changing the reference carcass (the stackable cabinet type nests
+  its bottoms between the rails below instead; that would change the reference
+  module's bottom and sides).
 - Fit clearances default to zero because the reference cuts are exact (18 mm slots
   for 18 mm strips, a 364 mm shelf in a 364 mm opening); `joint_fit_clearance`,
   `registration_clearance`, `shelf_side_clearance` and `puzzle_clearance` open
@@ -148,10 +221,12 @@ curves are not reproduced. The plans' drilling block and hole jig are not modell
 ## Checks
 
 The engine reports `CHECK|ERROR` for geometry that cannot be built (grid fit,
-support, door clearance, joint depths, cutter access in the puzzle necks, dog holes
-inside seams, hinges and handles that do not fit their doors) and warnings for
-shelf sag on wide modules, unsupported worksurface cells, stacking and parts larger
-than the stock sheet. The repository tests check every starter's cut layout against
+support, door and drawer clearance, joint depths, cutter access in the puzzle necks,
+dog holes inside seams, hinges and handles that do not fit their fronts, drawer boxes
+too low for their slides, slides that do not fit, no room for a door under the
+drawers, face-panel borders) and warnings for shelf sag on wide modules, unsupported
+worksurface cells, stacked modules with fewer than two keys, wide drawers and parts
+larger than the stock sheet. The repository tests check every starter's cut layout against
 its part table and nest it on the stock sheet (`tests/golden.mjs`), render every
 part on its own and intersect every pair (`tests/engine-interference.mjs`,
 hand-picked layouts and a seeded random sweep of module layouts), and run the

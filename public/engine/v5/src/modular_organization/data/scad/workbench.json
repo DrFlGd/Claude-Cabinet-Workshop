@@ -29,7 +29,17 @@
       "worksurface_thickness": "19.05",
       "handle_thickness": "19.05",
       "shelf_thickness": "12.7",
+      "drawer_box_thickness": "12.7",
+      "drawer_bottom_thickness": "12.7",
       "router_bit_diameter": "6.35"
+    },
+    "Drawers, cubbies and a drawer-and-door cabinet": {
+      "modules": "[[0, 0, 1, 1, 730, \"drawers\", 0, \"front\", \"left\", 4], [1, 0, 1, 1, 730, \"drawer_door\", 1, \"front\", \"left\", 1], [2, 0, 1, 1, 365, \"framed\", 0, \"front\", \"left\", 3], [2, 0, 1, 1, 365, \"drawers\", 0, \"front\", \"left\", 2], [0, 1, 1, 1, 730, \"drawers\", 0, \"back\", \"left\", 6], [1, 1, 1, 1, 365, \"framed\", 0, \"back\", \"left\", 3], [1, 1, 1, 1, 365, \"framed\", 0, \"back\", \"left\", 3], [2, 1, 1, 1, 730, \"door\", 1, \"back\", \"right\"]]"
+    },
+    "Small 2 \u00d7 2 drawer bank": {
+      "frame_size": "small",
+      "handle_style": "rounded",
+      "modules": "[[0, 0, 1, 1, 730, \"drawers\", 0, \"front\", \"left\", 3], [1, 0, 1, 1, 365, \"drawers\", 0, \"front\", \"left\", 2], [1, 0, 1, 1, 365, \"drawers\", 0, \"front\", \"left\", 1], [0, 1, 2, 1, 730, \"drawer_door\", 1, \"back\", \"left\", 1]]"
     }
   }
 }
