@@ -1,6 +1,6 @@
 // The in-app 3D collision check (public/openscad/interference-worker.js, jobs from
-// lib/interference.ts) run through the production worker: the default design of the media
-// cart and of every cabinet type must report no intersecting parts, a design with a part
+// lib/interference.ts) run through the production worker: the default design of every
+// product and of every cabinet type must report no intersecting parts, a design with a part
 // drawn twice must report that pair, and bad requests are refused. Prints the timings the
 // app's users would see (one worker, as in the browser).
 //
@@ -37,13 +37,21 @@ const lines=[],failures=[];
 // ---- media cart ----
 const mc=P.productById('media_cart'),target=P.productTarget(mc),values=P.productStarterValues(mc,mc.defaultStarter);
 const source=target.source(values),rep=await report(mc.file,source,target.sources);
-const jobs=I.productJobs(source,rep,!!values.show_casters);
+const jobs=I.productJobs(mc.id,source,rep);
 assert(jobs.length>=10&&jobs.some(j=>j.name==='CASTERS'),'media cart jobs list every part and the casters');
 const r=await worker('interference-worker.js',{filename:mc.file,sources:target.sources,jobs,threshold:I.PRODUCT_THRESHOLD});
 if(r.type!=='result')failures.push('media cart: '+r.error);
 else{
  if(r.overlaps.length)failures.push('media cart default: '+JSON.stringify(r.overlaps));
  lines.push(`media cart (default): ${r.parts} parts, ${r.candidates} of ${r.pairs} pairs intersected, ${secs(r.ms.total)} (render ${secs(r.ms.render)}, intersect ${secs(r.ms.intersect)})`);
+}
+// Every other product's default design.
+for(const p of P.products.filter(p=>p.id!=='media_cart')){
+ const t=P.productTarget(p),v=P.productStarterValues(p,p.defaultStarter),src=t.source(v),pj=I.productJobs(p.id,src,await report(p.file,src,t.sources));
+ const q=await worker('interference-worker.js',{filename:p.file,sources:t.sources,jobs:pj,threshold:I.PRODUCT_THRESHOLD});
+ if(q.type!=='result'){failures.push(p.id+': '+q.error);continue}
+ if(q.overlaps.length)failures.push(`${p.id} default: ${JSON.stringify(q.overlaps)}`);
+ lines.push(`${p.name.toLowerCase()} (default): ${q.parts} parts, ${q.candidates} of ${q.pairs} pairs intersected, ${secs(q.ms.total)} (render ${secs(q.ms.render)}, intersect ${secs(q.ms.intersect)})`);
 }
 // A part drawn twice must be reported against itself.
 const twice=[...jobs.slice(0,3),{name:'BOTTOM_AGAIN',source:jobs.find(j=>j.name==='BOTTOM').source}];
@@ -70,4 +78,4 @@ for(const f of only){
 for(const l of lines)console.log(l);
 for(const f of failures)console.log('FAIL '+f);
 if(failures.length){console.log(`Collision worker: ${failures.length} failure(s).`);process.exitCode=1}
-else console.log(`Collision worker: the media cart and ${only.length} cabinet type(s) check clean, a duplicated part is caught and bad requests are refused.`);
+else console.log(`Collision worker: ${P.products.length} product(s) and ${only.length} cabinet type(s) check clean, a duplicated part is caught and bad requests are refused.`);

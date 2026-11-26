@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.22.0**) are separate from the bundled
+Application versions (currently **0.23.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,12 +17,12 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.22.0 — 2026-11-26
+## 0.23.0 — 2026-11-26
 
 In-app 3D collision check for every design.
 
 - **Check for intersecting parts**, under **Cut list & fit** for every cabinet
-  type and for the media cart. On request, a background worker
+  type and every product (the media cart and the shop wall). On request, a background worker
   (`public/openscad/interference-worker.js`) renders each part (products) or each
   group of parts (cabinets: sides, caps, back, shelves, interior members, rails,
   face frame, drawers, doors, worktop, base hardware, stack base, the next module
@@ -41,17 +41,19 @@ In-app 3D collision check for every design.
 
 Timings through the production worker in Node (one worker, as in the browser; the
 browser precompiles the engine and is usually as fast or faster), on this
-release's main: media cart default 6.0 s (14 parts, 43 of 91 pairs intersected);
-cabinet defaults: shop cart 17.8 s, utility 6.2 s, benchtop 8.1 s, stackable
-7.5 s, kitchen 7.4 s, drawer 0.5 s, equipment stand 1.2 s, workbench 13.8 s (59
-parts, 123 of 1,711 pairs intersected). In Chromium: media cart 3.9 s, shop cart 16 s.
+release's main: media cart default 6.4 s (14 parts, 43 of 91 pairs intersected),
+shop wall default 1.9 s; cabinet defaults: shop cart 18.6 s, utility 5.2 s,
+benchtop 6.8 s, stackable 7.1 s, kitchen 7.0 s, drawer 0.6 s, equipment stand
+1.2 s, workbench 14.6 s (59 parts, 123 of 1,711 pairs intersected). In Chromium: media cart 3.9 s, shop cart 16 s.
 
 Validation run for this release: `tsc --noEmit`; eslint on the new and changed
-files (no new findings); new `tests/collision-worker.mjs` (the media cart and all
+files (no new findings); new `tests/collision-worker.mjs` (both products' and all
 eight cabinet types' defaults check clean through the production worker, a part
 drawn twice is reported, malformed requests are refused); `tests/engine-interference.mjs`
 (hand-picked cases: before and after the move on 0.18.0, 37 configurations and 977
-pairs both times; after merging 0.21.0, 42 configurations and 1,305 pairs, clean); `tests/product-interference.mjs` (13 configurations, 507 pairs);
+pairs both times; after merging 0.22.0, 42 configurations and 1,305 pairs, clean); `tests/product-interference.mjs` (after merging 0.22.0: 61 configurations of both
+products, 1,122 pairs, the same count as the suite before the move);
+after merging 0.22.0 also `tests/golden.mjs` (120 starters), `engine-fit.mjs` (120 starters), `layout-editor.mjs`, `hardware-engine.mjs`,
 `tests/products.mjs`, `section-wasm.mjs`, `units.cjs`, `nesting.cjs`,
 `settings-visibility.cjs`, `hardware.cjs`, `v5-integration.cjs`,
 `stackable-controls.cjs`, `sections.cjs`, the engine-source, product-source and
@@ -63,6 +65,127 @@ Limitations: the check runs one worker and is not cached; very large designs
 (many workbench modules, many section members) can take minutes. Hardware is only
 as complete as the engine draws it (screws and bolts are not modelled). Shared
 volume below the thresholds is ignored.
+
+## 0.22.0 — 2026-11-26
+
+A new **Shop wall** area holds 31 French-cleat and wall-mounted shop organizers,
+integrated from the owner's ShopWall OpenSCAD modules and rebuilt on the
+workshop's shared SCAD core, with fit checks on every joint and a fit test
+coupon to cut first (see `docs/SHOP_WALL.md`).
+
+- **Shop wall product.** New → **Shop wall** lists one product with a grouped
+  starter per module at the original preset sizes: simple shelves, jar shelves,
+  spray paint display, single and double cube shelves, narrow and sandpaper
+  shelves; single, double and sliding door cabinets, 3- and 4-drawer cabinets;
+  chisel, clamp, hammer, screwdriver, plier, router bit and circular saw racks;
+  simple and double drill stations, single and double shelf drill stands;
+  closed lid, screw, shallow storage and glove boxes; hook panel, material
+  storage stand, paper towel holder and wrench holder; and a fit test coupon.
+  One engine file (`public/products/shop_wall/shop_wall.scad`) builds them all;
+  choosing a module (as a starter or under **Module**) loads its sizes and
+  module settings and keeps the mount, stock, joinery, machining and sheet
+  settings.
+- **Module settings.** Shelves, bays, drawers, lip height, compartments, tool
+  slots or holes (count, width, length, spacing, rows, shank allowance,
+  staggered second row), saw guard slot, bin grid and front height, glove slot,
+  hooks, brackets, dowel and clearance, wrench slots and rise, and the
+  door/drawer/lid gap. Each shows only where it applies; elsewhere it is listed
+  under "settings not in use" with the reason (for example the cleat choice
+  without a French cleat, or CNC hooks on a hook panel, which has no side
+  panels). Labels follow the module and count buttons use the SCAD ranges.
+- **Wall mount.** French cleat with CNC side hooks (cut into the side panels,
+  passing through notches in the back) or a beveled hanger board and spacer
+  screwed to the back, with the mating wall rail cut as a part (length, stud
+  spacing and screw size are settings); or screws through the back, or none.
+- **Shared core.** Tabs come from the core tab planner (`joinery.scad`) and
+  slots, slot reliefs, tab shoulder reliefs and screws beside the tabs from
+  `tab_pocket.scad`, as for the cabinets. New core files:
+  `seam_joinery.scad` (multi-tab seams, screws in the webs, sloped-panel
+  coverage) and `wall_mount.scad` (CNC hooks, inside-corner relief along the
+  bisector, rail position and hang lift, stud screw stations, adjacent rails);
+  the hanger and rail bevels use `cleat.scad`. The cut-layout placement helpers
+  moved from `layouts_modules.scad` into `placement.scad`, shared with the
+  products (cabinet outputs unchanged). Holes smaller than the cutter go to the
+  drill layout.
+- **Fit checks (geometric).** Every design is checked by the engine: each tab
+  against its slot (clearance on both axes, tab length and setback, cutter
+  reach, corner and shoulder reliefs, web between slots), screws in solid wood
+  clear of slots and openings with room for the pilot, cuts within a part not
+  running into each other, the assembly order (each part goes on along its
+  tabs), the back held by at least two tabs or screws, parts not sharing space,
+  the French cleat (rail position, hook tip, depth and relief, notch height,
+  nothing behind the wall, other rails at a stated pitch), and the module's
+  own fits (doors, drawers, sliding leaves, bins, tool openings, slots, dowel,
+  wrench slots). Errors block the export as for the cabinets.
+- **Fit test coupon.** The Export view of a shop wall design has a **Fit test
+  coupon** card: a tab in its slot with screws, and a short CNC hook (or
+  beveled hanger) with a short rail, built with the design's stock,
+  clearances, cutter, relief and bevel, checked and nested like a module, and
+  downloaded as SVG and DXF per stock (cut and drill layouts).
+- **Corrections to the original modules** (each in `docs/SHOP_WALL.md`): relief
+  at the CNC hooks' tabs and inside corners; the back joined by the horizontal
+  panels (with CNC hooks the original joined nothing to it); rear tabs kept off
+  the pointed tips of sloped ribs; sliding leaves that can be lifted out of
+  their bottom channel; equal shelf openings; spacer and tilt-in note for
+  short modules on a beveled board; wall rail screws at the stud spacing; the
+  door pull clear of the finger bore; the paper towel dowel as hardware; slot
+  and hole sizes against the cutter; flat parts nested on sheets.
+- **Framework.** Products can be listed under their own area in the picker,
+  starters can be grouped, controls can have module-dependent labels and count
+  ranges, and a product can offer a fit test coupon on the export page.
+
+Validation performed:
+
+- `pnpm exec tsc --noEmit`, the engine-source, parity and product-source
+  checks, units, nesting, settings visibility, hardware, v5 integration,
+  stackable-controls and sections (native OpenSCAD), section WASM workers,
+  engine fit, layout editor, cut-layout check, hardware-engine and
+  `pnpm run build:static` passed.
+- Cabinet golden outputs: all 120 starters unchanged after `placement.scad`
+  was split out of `layouts_modules.scad`.
+- `tests/products.mjs`: snapshots added for the 32 shop wall starters (the
+  media cart's are unchanged); every starter runs through the production
+  workers with no engine errors, one cut outline per part matching its
+  placement, sheet nesting and labels inside their parts. New unit checks
+  cover the shop wall editor definition and the engine files sent to the
+  workers.
+- Exact 3D interference (every part rendered alone, every pair intersected):
+  `tests/product-interference.mjs --random 6` passed 71 configurations (all
+  starters of both products, the 16 new shop wall cases and the random
+  designs). Separately, all 32 shop wall starters were swept with CNC hooks,
+  with beveled boards, with screw joinery and screws through the back, and
+  free standing with dog-bones in ½″ stock: no overlapping parts. The sweep
+  found dividers placed one board low in the cube shelves and the boxes, which
+  was fixed before the gates above were run.
+- Fit checks were confirmed to fire on bad settings (a 20 mm cutter, a cleat
+  taller than the module, rails every 100 mm, an oversized hook tip, too many
+  tool slots, a tab setback past half the board, no layout gap, a 0.2 mm door
+  gap), and the cut-layout gate caught a sliver cut off a pointed rib, fixed
+  by starting rear seams where the rib has a board of wood.
+- In headless Chrome at 1500 px on the static build: New → Shop wall lists the
+  grouped starters; the sliding door cabinet opens, renders in 3D, passes the
+  engine checks, shows its module settings with 25 settings not in use;
+  Export generates the manufacturing package (2 sheets) and the fit test
+  coupon, with no console errors and no horizontal scroll. This run found and
+  fixed an editor check that failed when called on its own.
+
+These are geometric checks of the model, not a physical fit test: nothing was
+cut. Cut the fit test coupon with the measured stock before a full module.
+
+Remaining limitations:
+
+- No load rating, racking or wall-anchoring analysis and no stud finding; the
+  wall rail note only says when the rail is shorter than the stud spacing.
+- Hook panel hooks are each held by one glued tab (no room for a screw beside
+  it). Short racks and drill stations with CNC hooks hold their side panels or
+  gussets by the deck or cradle and the hook notches only, and a drill station
+  then needs the screws beside the tabs.
+- Short modules on a beveled board must be tilted onto the rail.
+- Hinges are counted, not modelled; drawers run wood on wood. The hanger and
+  rail bevels are cut on a saw after the blanks.
+- The 3D interference check runs in the test suite (every starter, 16 cases
+  and random designs), not live in the editor; the editor's overlap check uses
+  part boxes.
 
 ## 0.21.0 — 2026-11-26
 

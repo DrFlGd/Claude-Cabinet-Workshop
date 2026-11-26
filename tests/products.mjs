@@ -15,7 +15,8 @@ import assert from 'node:assert/strict';
 import {Worker} from 'node:worker_threads';
 import {checkCutLayout} from './cut-layout-check.mjs';
 import {loadProducts,loadNesting} from './product-load.mjs';
-const P=loadProducts(),nesting=loadNesting(),update=process.argv.includes('--update');
+import manifestModule from '../public/openscad/product-files.js';
+const P=loadProducts(),nesting=loadNesting(),update=process.argv.includes('--update'),manifest=manifestModule;
 const dir=new URL('golden/products/',import.meta.url);
 
 // ---- framework units ----
@@ -26,9 +27,30 @@ for(const p of P.products){
  const v=P.productStarterValues(p,p.defaultStarter),src=P.productSource(p,{...v,width:777});
  assert(/^width = 777;/m.test(src),'width applied to the SCAD source');
  assert.deepEqual(P.parseProductValues(p,JSON.parse(P.productDesignFile(p,v,'x','mm')).values),v);
- assert.throws(()=>P.parseProductValues(p,{...v,shape:'pyramid'}),/Invalid option/);
- assert.throws(()=>P.parseProductValues(p,{...v,rows:'3'}),/Invalid setting/);
+ const choice=p.params.find(x=>x.options),count=p.params.find(x=>typeof x.value==='number');
+ assert.throws(()=>P.parseProductValues(p,{...v,[choice.key]:'pyramid'}),/Invalid option/);
+ assert.throws(()=>P.parseProductValues(p,{...v,[count.key]:'3'}),/Invalid setting/);
+ // The workers accept exactly the engine files the product sends.
+ const t=P.productTarget(p);
+ assert.deepEqual(t.sources.map(f=>f.name).sort(),[...manifest.files[p.file]].sort(),`${p.id}: engine files differ from public/openscad/product-files.js`);
+ for(const f of t.sources)assert(t.projectFiles(v,'x','mm').some(x=>x.name===f.name&&x.data===f.text),`${p.id}: ${f.name} missing from the project download`);
+ assert(manifest.frontends[p.file].includes('bom')&&p.exportModes.every(m=>manifest.frontends[p.file].includes(m)),`${p.id}: export modes not accepted by the workers`);
 }
+// Shop wall: every module has a starter and a starting size, choosing a module loads it,
+// and settings that do not apply say why.
+const sw=P.productById('shop_wall'),swParam=sw.params.find(x=>x.key==='module_type');
+assert.deepEqual(sw.starters.map(s=>s.id).sort(),[...swParam.options].sort());
+for(const s of sw.starters)assert(s.group&&s.values.module_type===s.id&&s.values.width>0,`shop_wall:${s.id} starter`);
+const swV=P.productStarterValues(sw,'simple_shelves'),moved=sw.linked('module_type','three_drawer_cabinet',{...swV,tool_width:99});
+assert.equal(moved.drawer_count,3);assert.equal(moved.width,381);assert.equal(moved.tool_width,sw.params.find(x=>x.key==='tool_width').value);
+const swControl=k=>sw.sections.flatMap(x=>x.controls).find(c=>c.key===k);
+assert.match(swControl('cleat_strategy').when({...swV,mount:'direct_screws'}),/French cleat/);
+assert.match(swControl('cleat_strategy').when(P.productStarterValues(sw,'hook_panel')),/no side panels/);
+assert.equal(swControl('cleat_strategy').when(swV),null);
+assert.match(swControl('drawer_count').when(swV),/Not used/);
+assert.equal(swControl('tool_width').labelFor(P.productStarterValues(sw,'router_bit_stand')),'Bit shank diameter');
+assert(sw.validate({...swV,height:100,cleat_height:63.5}).some(e=>/too short|below/.test(e)),'short module with CNC hooks is refused');
+assert.match(P.productTarget(sw).coupon.source(swV),/^module_type = "fit_coupon";/m);
 const mc=P.productById('media_cart');
 assert.deepEqual(mc.params.find(x=>x.key==='rows'),{key:'rows',value:3,section:'Body and grid',help:'',min:1,max:12,step:1});
 assert.deepEqual(mc.params.find(x=>x.key==='joinery_style').options,['butt','screw','dado','tab_slot']);

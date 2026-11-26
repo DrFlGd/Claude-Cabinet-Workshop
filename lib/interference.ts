@@ -100,12 +100,15 @@ export function cabinetJobs(engine:CabinetEngine,values:Values,report:string,spl
 export const CABINET_THRESHOLD=50;
 
 // ---- products ----
+// Hardware a product draws as parts of its own (render_part ids that are not in the BOM).
+// A job that draws nothing for a design (no casters, say) is skipped by the worker.
+export const PRODUCT_EXTRA_PARTS:Record<string,string[]>={media_cart:['CASTERS'],shop_wall:['DOWEL']};
 // One job per part: the product's assembly with only that part drawn (render_part, under
-// Hidden in the product's SCAD file), plus its casters when it has them. report: the
-// bom-mode engine report, whose BOM records list the parts.
-export function productJobs(source:string,report:string,casters=false):CollisionJob[]{
+// Hidden in the product's SCAD file), plus its hardware parts. report: the bom-mode
+// engine report, whose BOM records list the parts.
+export function productJobs(productId:string,source:string,report:string):CollisionJob[]{
  const ids=[...new Set([...report.matchAll(/BOM\|([^|"\n]+)\|/g)].map(m=>m[1]))];
  const assembly=setAssignment(source,'output_mode','assembly');
- return [...ids,...(casters?['CASTERS']:[])].map(id=>({name:id,source:setAssignment(assembly,'render_part',id)}));
+ return [...ids,...(PRODUCT_EXTRA_PARTS[productId]??[])].map(id=>({name:id,source:setAssignment(assembly,'render_part',id)}));
 }
 export const PRODUCT_THRESHOLD=1;
