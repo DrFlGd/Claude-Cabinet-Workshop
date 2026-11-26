@@ -33,7 +33,7 @@ const PART_NAMES:Record<string,string>={
  shelf_fixed:'Fixed shelf',shelf_adjustable:'Adjustable shelf',mixed_bay_partition:'Bay partition',drawer_face:'Drawer face',
  drawer_rail:'Drawer rail (cabinet side)',drawer_runner:'Drawer runner (drawer side)',drawer_side:'Drawer box side',drawer_front_box:'Drawer box front',
  drawer_back_box:'Drawer box back',drawer_bottom:'Drawer bottom',toe_kick:'Toe kick',divider:'Horizontal divider',door:'Door',
- stack_base_side:'Stack base side',stack_base_cross:'Stack base cross member',face_frame_stile:'Face-frame stile',face_frame_rail:'Face-frame rail',
+ stack_base_side:'Stack base side',stack_base_cross:'Stack base cross member',stack_base_kick:'Stack base kick board',face_frame_stile:'Face-frame stile',face_frame_rail:'Face-frame rail',
  section_shelf:'Section rail or shelf',section_partition:'Section partition',section_divider:'Section divider',section_rail:'Section front rail',side:'Side',tray:'Pull-out tray',cheek:'Tray cheek',lip:'Tray lip',
  drawer_divider_longitudinal:'Drawer divider (front to back)',drawer_divider_transverse:'Drawer divider (side to side)',cleat_stand:'French cleat (on stand)',
  cleat_wall:'French cleat (on wall)',backer:'Cleat backer',spacer:'Stabilizer',runner:'Tray runner',

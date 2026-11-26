@@ -204,6 +204,28 @@ if(process.argv[1]&&import.meta.url===new URL(process.argv[1],'file://').href){
   if(!depth)fail(bid+' blind: no pocket depth reported');
   if(ids.length>=2&&ids.every(id=>Math.abs(got[id]-want[id])<1)&&!big&&pockets&&depth)console.log(`${bid} blind: ${ids.length} side outlines uncut, ${pockets} pockets ${depth} mm deep, one contour per part.`);
  }
+ // 5. Flat-rail base frame (the reference construction, automatic for a nested bottom): flat rails as
+ // deep as the module's top stretchers, a kick board up to the recess floor, and base sides that
+ // differ from edge-rail base sides by exactly the toe notch.
+ {
+  const fid='stackable_cube_door_nested',flat=valuesFor(3,fid,{}),edge=valuesFor(3,fid,{stack_base_style:'edge_rails'});
+  const fb=await run(3,flat,'bom'),fc=await run(3,flat,'cut_layout'),eb=await run(3,edge,'bom'),ec=await run(3,edge,'cut_layout');
+  if([fb,fc,eb,ec].some(m=>m.type!=='result'))fail(fid+' flat base: a render failed');
+  else{
+   const rec=recordsOf(fb),bom=id=>rec.find(r=>r.startsWith('BOM|'+id+'|'))?.split('|');
+   for(const p of checkCutLayout({records:rec,svg:fc.output}))fail(fid+' flat base: '+p);
+   const T=flat.custom_carcass_thickness,tsd=flat.top_stretcher_depth,hb=flat.stack_base_height;
+   const rail=bom('STACK-BASE-F'),kick=bom('STACK-BASE-K');
+   if(!rail||Number(rail[7])!==tsd)fail(`${fid} flat base: front rail is ${rail?.[7]} mm deep, not the ${tsd} mm of the top stretchers`);
+   if(!kick||Math.abs(Number(kick[7])-(hb-T))>0.001)fail(`${fid} flat base: kick board ${kick?.[7]} mm tall, expected ${hb-T}`);
+   const want=sideAreas(ec.output,placements(recordsOf(eb))),got=sideAreas(fc.output,placements(rec));
+   const notch=flat.stack_base_toe_notch_depth*flat.stack_base_toe_notch_height;
+   const ids=['STACK-BASE-L','STACK-BASE-R'].filter(id=>id in got&&id in want);
+   if(ids.length<2)fail(fid+' flat base: base side parts not found');
+   for(const id of ids)if(!(Math.abs(want[id]-got[id]-notch)<1))fail(`${fid} flat base: ${id} outline is ${(want[id]-got[id]).toFixed(1)} mm2 smaller than the edge-rail side, expected the toe notch ${notch}`);
+   if(ids.length===2&&!failures)console.log(`${fid} flat base: rails ${tsd} mm deep, kick board ${hb-T} mm, base sides differ from edge-rail sides by the toe notch only, one contour per part.`);
+  }
+ }
  if(failures){console.log(`Cut layout check: ${failures} failure(s).`);process.exitCode=1}
  else console.log('Cut layout check passed.');
 }

@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.19.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.20.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.19.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.20.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -161,7 +161,12 @@ Stackable modules can also set **Stack bottom style: Nested in the module below*
 low, between the top stretchers and sides of the module below, so stacked
 modules locate in both directions and screw together through the lower
 module's sides. The **Door Module, Nested (Reference Joinery)** starter builds
-one this way. See the [stackable reference](docs/STACKABLE_REFERENCE.md).
+one this way. Its base frame follows the same plans (**Stack base style: Flat
+rails and kick board**): flat rails like the module's top stretchers, a toe notch
+and a kick board that carries the bottom, so the lowest module sits on the base as
+on another module. Stacked doors and drawer fronts cover half of the stretcher
+between them, so the gap between stacked fronts is centred on it (**Stack front
+seam**). See the [stackable reference](docs/STACKABLE_REFERENCE.md).
 
 ## Your products: the media cart
 
