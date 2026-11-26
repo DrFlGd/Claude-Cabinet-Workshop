@@ -18,7 +18,7 @@ self.onmessage=async({data})=>{
   const {filename,source,sources,mode}=data;
   const manifest=engineFor(filename);
   const modern=Object.hasOwn(manifest.frontends,filename);
-  if(!modern||!manifest.frontends[filename].includes(mode)||!['bom','cut_layout','engrave_layout',...manifest.frontends[filename].filter(m=>m.startsWith('pocket_'))].includes(mode)||typeof source!=='string'||source.length>2000000||!Array.isArray(sources)||sources.length!==manifest.files.length||!manifest.files.every(name=>sources.some(f=>f.name===name&&typeof f.text==='string'&&f.text.length<2000000)))throw Error('Invalid export request. Refresh the app and try again.');
+  if(!modern||!manifest.frontends[filename].includes(mode)||!['bom','cut_layout','engrave_layout','drill_layout',...manifest.frontends[filename].filter(m=>m.startsWith('pocket_'))].includes(mode)||typeof source!=='string'||source.length>2000000||!Array.isArray(sources)||sources.length!==manifest.files.length||!manifest.files.every(name=>sources.some(f=>f.name===name&&typeof f.text==='string'&&f.text.length<2000000)))throw Error('Invalid export request. Refresh the app and try again.');
   const {default:OpenSCAD}=await import('./openscad.js');
   let font;if(mode==='engrave_layout'){const r=await fetch(new URL('./DejaVuSans.ttf',self.location.href));if(!r.ok)throw Error('Could not load the engraving font. Check your connection and try again.');font=new Uint8Array(await r.arrayBuffer());}
   const engine=await OpenSCAD(await engineOptions({noInitialRun:true,locateFile:path=>new URL(path,self.location.href).href,print:log,printErr:log}));

@@ -21,7 +21,7 @@ globalThis.fetch=async url=>{const p=new URL(String(url),'http://test').pathname
 const {default:OpenSCAD}=await import(new URL('public/openscad/openscad.js',root).href);
 async function scad(files,main,args,out){
  const logs=[];const e=await OpenSCAD({noInitialRun:true,locateFile:p=>'http://test/openscad/'+p,print:l=>logs.push(String(l)),printErr:l=>logs.push(String(l))});
- for(const [n,d] of Object.entries(files))e.FS.writeFile('/'+n,d);
+ for(const [n,d] of Object.entries(files)){e.FS.mkdirTree('/'+n.split('/').slice(0,-1).join('/'));e.FS.writeFile('/'+n,d)}
  try{e.callMain(['/'+main,'--backend=Manifold',...args])}catch{}
  let data=null;try{data=e.FS.readFile(out)}catch{}
  return {logs,data};
@@ -41,13 +41,14 @@ const hook=(s,k,v)=>s.replace(new RegExp('^('+k+'\\s*=\\s*)[^;]+;','m'),(_m,p)=>
 
 async function overlaps(p,values){
  const source=P.productSource(p,values);
- const bom=await scad({'m.scad':hook(source,'output_mode','bom')},'m.scad',['-o','/o.echo'],'/o.echo');
+ const inc=Object.fromEntries(P.productTarget(p).sources.map(f=>[f.name,f.text])),at=s=>({...inc,[p.file]:s});
+ const bom=await scad(at(hook(source,'output_mode','bom')),p.file,['-o','/o.echo'],'/o.echo');
  const text=bom.logs.join('\n')+'\n'+(bom.data?new TextDecoder().decode(bom.data):'');
  const errors=[...text.matchAll(/CHECK\|ERROR\|[^"\n]*/g)].map(m=>m[0]);
  if(errors.length)return {errors};
  const ids=[...new Set([...text.matchAll(/BOM\|([^|]+)\|/g)].map(m=>m[1]))],stl={},ext={};
  for(const id of [...ids,'CASTERS']){
-  const r=await scad({'m.scad':hook(hook(source,'output_mode','assembly'),'render_part',id)},'m.scad',['--export-format=binstl','-o','/o.stl'],'/o.stl');
+  const r=await scad(at(hook(hook(source,'output_mode','assembly'),'render_part',id)),p.file,['--export-format=binstl','-o','/o.stl'],'/o.stl');
   const bad=r.logs.filter(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l));
   if(bad.length)return {errors:bad.map(l=>id+': '+l)};
   if(r.data&&r.data.length>84){stl[id]=r.data;ext[id]=extent(r.data)}
