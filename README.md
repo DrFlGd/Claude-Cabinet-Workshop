@@ -171,11 +171,19 @@ thickness, crosspiece and panel joinery with fit clearances, corner relief and
 cutter, kerf, casters, sheet size and layout gap) are grouped below. The
 **Drawing** tab shows a to-scale front elevation and side profile with quick
 controls (rows, columns, wall profile, towers, cubbies, casters); click a part to
-open its settings. **3D model** renders the exact engine geometry, **Cut list &
-fit** lists every part with the engine's checks, and **Assembly** gives the
-order of assembly and the hardware. **Export** produces the same manufacturing
-package as for the cabinets: cut, pocket (each face) and engraving layouts,
-per-sheet SVG and DXF, reports, an assembly packet and the editable SCAD file.
+open its settings. Once the engine check has run, the drawing also outlines the
+joinery (tabs, slots and half-laps, dados, holes) and marks the center of
+gravity, with a stability summary below: the push at the top and the lean on the
+front that would tip the cart, empty, loaded and top loaded, against the forces
+and contents set in **Stability**, and what resists racking. **3D model** renders
+the exact engine geometry, **Cut list & fit** lists every part with the engine's
+checks, and **Assembly** gives the order of assembly and the hardware.
+**Export** produces the same manufacturing package as for the cabinets: cut,
+drill (holes smaller than the cutter), pocket and engraving layouts, per-sheet
+SVG and DXF, reports, an assembly packet and the editable SCAD file. Dados on a
+part's second face are laid out for the whole sheet turned over left to right
+about its center line, with registration-pin holes on that line; the READ-ME
+gives the order.
 How the original model was reviewed and corrected is in
 [the media cart review](docs/MEDIA_CART_REVIEW.md); adding another product is
 described in [development notes](docs/DEVELOPMENT.md#products).

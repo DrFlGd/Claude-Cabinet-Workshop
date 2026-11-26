@@ -55,8 +55,24 @@ assert.deepEqual(hole.map(([x,y])=>[x-a.x,y-a.y]).sort(),(a.rot?[[240,40],[240,5
 const dxf=N.sheetDxf(strip,n2.sheets[0],'cut_layout');
 assert.equal((dxf.match(/LWPOLYLINE/g)||[]).length,4);assert.match(dxf,/\r\n8\r\nCUT-LAYOUT\r\n/);assert.match(dxf,/\r\n8\r\nSTOCK\r\n/);
 
+// 4b. Second-face layouts: the engine draws them for the whole strip turned over left to
+// right about x = axis. A pocket at (40..50, 50..60) inside part A, mirrored about axis 500,
+// is turned back to find A, placed, and the sheet is turned over about its center line.
+const axis=500,mirror=x=>2*axis-x;
+const flipStrip=`<svg><path d="M ${mirror(40)},-50 L ${mirror(50)},-50 L ${mirror(50)},-60 L ${mirror(40)},-60 z"/></svg>`;
+const n3=N.nest([part('A','CARCASS',18,400,300)],[place('A',0,0,400,300)],o),a3=n3.sheets[0].placements[0];
+const flipped=N.sheetPolygons(flipStrip,n3.sheets[0],0,axis);
+assert.equal(flipped[0].polys.length,1);
+assert.deepEqual(flipped[0].polys[0].map(([x,y])=>[x,y]).sort(),[[1000-(a3.x+40),a3.y+50],[1000-(a3.x+50),a3.y+50],[1000-(a3.x+40),a3.y+60],[1000-(a3.x+50),a3.y+60]].sort());
+assert.equal(N.sheetPolygons(flipStrip,n3.sheets[0])[0].polys.length,0); // read without the axis it misses A
+const pins=N.registrationPins(n3.sheets[0],20);
+assert.deepEqual(pins,[{x:500,y:10,d:6},{x:500,y:490,d:6}]); // on the center line: a flipped sheet lands on them
+assert.deepEqual(N.registrationPins(n3.sheets[0],8),[]);
+const fsvg=N.sheetSvg(flipStrip,n3.sheets[0],'pocket_dados_flip',0,{flipAxis:axis,pins});assert.match(fsvg,/id="registration-pins"/);
+assert.equal((N.sheetDxf(flipStrip,n3.sheets[0],'pocket_dados_flip',0,{flipAxis:axis,pins}).match(/REGISTRATION-PINS/g)||[]).length,2);
+
 // 5. Options come from the design's settings; the spacing covers gap, kerf and cutter.
 const opt=N.nestOptions({stock_width:1220,stock_height:610,layout_gap:8,kerf:0.2,cnc_tool_diameter:12.7});
 assert.deepEqual(opt,{sheetW:1220,sheetH:610,margin:8,gap:12.7,rotate:'needed'});
 assert.equal(N.nestOptions({}).sheetW,2440);
-console.log('Nesting: grouping, spacing, margins, rotation, oversize parts, re-mapped layouts, SVG and DXF passed.');
+console.log('Nesting: grouping, spacing, margins, rotation, oversize parts, re-mapped layouts, second-face flips, registration pins, SVG and DXF passed.');

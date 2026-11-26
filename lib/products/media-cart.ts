@@ -54,6 +54,7 @@ const L=(key:string,label:string,help?:string,extra:Partial<ProductControl>={}):
 export const mediaCart:Product={
  id:'media_cart',name:'Media cart',sub:'Adjustable bins, lower cubbies and side shelf towers',code:'MC / P1',
  file:MEDIA_CART_FILE,source,params,
+ engineIncludes:['v5/src/modular_organization/data/scad/tab_pocket.scad'],
  defaultStarter:'sloped_bins',
  starters:[
   {id:'sloped_bins',name:'Sloped bins',description:'3 × 3 sloped bins over lower cubbies, on casters',values:{shape:'sloped_bins'}},
@@ -86,6 +87,14 @@ export const mediaCart:Product={
    L('tower_width','Tower clear width',undefined,{when:v=>cartModel(v).tower!=='None'?null:'Add a tower (Shelf cart or Custom shape)'}),
    {key:'tower_openings',label:'Tower openings',kind:'count',when:v=>cartModel(v).tower!=='None'?null:'Add a tower'},
   ],summary:(v,u)=>{const m=cartModel(v);return m.tower==='None'?'None':`${m.openings} openings · ${len(m.towerOpening,u)} high`}},
+  {id:'stability',title:'Stability',blurb:'The engine check finds the push at the top and the lean on the front edge that would tip the cart, empty, fully loaded and loaded only at the top, and warns below the forces you set here. The drawing shows the result and the center of gravity.',controls:[
+   {key:'stability_push_force',label:'Push or pull at the top (N)',kind:'number',help:'A level force at the top edge, in each direction. 50 N is a firm one-handed push (about 5 kg).'},
+   {key:'stability_lean_force',label:'Lean on the front edge (N)',kind:'number',help:'Downward force on the front edge of the bins, for example someone leaning on it. Only tips a cart whose front support is behind that edge.'},
+   {key:'bin_load',label:'Contents per bin (kg)',kind:'number'},
+   {key:'cubby_load',label:'Contents per cubby (kg)',kind:'number',when:v=>cartModel(v).lower?null:'Turn lower cubbies on'},
+   {key:'shelf_load',label:'Contents per tower opening (kg)',kind:'number',when:v=>cartModel(v).tower!=='None'?null:'Add a tower'},
+   {key:'material_density',label:'Sheet density (kg/m³)',kind:'number',advanced:true,help:'Plywood is about 500 to 700 kg/m³, MDF about 750.'},
+  ],summary:v=>`${v.stability_push_force} N push · ${v.stability_lean_force} N lean · ${v.bin_load} kg per bin`},
   {id:'materials',title:'Materials',shop:true,blurb:'Measure your sheets: nominal plywood is rarely its nominal thickness.',controls:[
    {key:'carcass_stock',label:'Carcass stock',kind:'choice',options:stockLabels},
    L('material_thickness','Measured carcass thickness',undefined,{when:v=>v.carcass_stock==='custom_mm'?null:'Choose measured thickness'}),
@@ -128,7 +137,7 @@ export const mediaCart:Product={
   ],summary:(v,u)=>`${formatShop(Number(v.stock_width),u)} × ${len(Number(v.stock_height),u)}`},
  ],
  renderModes:[{id:'assembly',label:'Full assembly'},{id:'flat_3d',label:'Flat parts · exact 3D'}],
- exportModes:['cut_layout','pocket_layout','pocket_dados','pocket_dados_flip','engrave_layout'],
+ exportModes:['cut_layout','drill_layout','pocket_layout','pocket_dados','pocket_dados_flip','engrave_layout'],
  linked(key,value,v){
   // Tower and cubby choices only apply to the Custom shape: switch to it, keeping the look.
   if((key==='custom_tower'||key==='custom_lower_cubbies')&&v.shape!=='custom'){
@@ -150,6 +159,9 @@ export const mediaCart:Product={
   else if(m.clearW<20)e.push('Each bin needs at least 20 mm clear width: use fewer columns or a wider cart.');
   if(m.clearD<20)e.push('Each bin needs at least 20 mm clear depth: use fewer rows or a deeper cart.');
   if(m.front-m.deck<Math.max(2*m.t,30))e.push('The front height leaves too little crosspiece above the bin floor.');
+  for(const [k,label,max] of [['stability_push_force','The push at the top',1000],['stability_lean_force','The lean on the front',2000],['bin_load','Contents per bin',100],['cubby_load','Contents per cubby',100],['shelf_load','Contents per tower opening',100]] as const)
+   if(!(Number(v[k])>=0&&Number(v[k])<=max))e.push(`${label} must be from 0 to ${max.toLocaleString('en-US')}.`);
+  if(!(Number(v.material_density)>=200&&Number(v.material_density)<=1500))e.push('Sheet density must be from 200 to 1,500 kg/m³.');
   return e;
  },
  summary(v){const m=cartModel(v);return [{label:'WIDTH',mm:m.width},{label:'HEIGHT',mm:m.body+m.lift},{label:'DEPTH',mm:m.depth},{label:'BINS',text:`${m.rows} × ${m.columns}`}]},
@@ -159,14 +171,14 @@ export const mediaCart:Product={
   if(m.lower)steps.push('Stand the cubby dividers and the cubby back on the bottom panel (their tabs drop into its slots).','Lower the bin deck onto the cubby dividers and back, engaging their top tabs.');
   steps.push(`Stand the ${m.rows+1} crosspieces on the ${m.lower?'deck':'bottom panel'}, front (lowest) to back (tallest), slots facing up.`);
   if(m.columns>1)steps.push(`Drop the ${m.columns-1} fin${m.columns>2?'s':''} into the crosspiece half-laps from above; the fins' bottom tabs enter the ${m.lower?'deck':'bottom panel'}.`);
-  steps.push('Slide the left and right bin walls on from the sides over the crosspiece'+(m.lower?', deck and cubby-back':'')+' tabs.','Screw up through the bottom panel into the bottom edges of the walls (drill pilots on assembly).');
+  steps.push('Slide the left and right bin walls on from the sides over the crosspiece'+(m.lower?', deck and cubby-back':'')+' tabs.','Screw up through the bottom panel into the bottom edges of the walls through the holes drilled from drill_layout (drill the pilots on assembly).');
   if(m.tower!=='None')steps.push('Build each tower on its outer wall laid flat: fit the back, the shelves and the cap, then stand it up and slide it onto the shared bin wall. Screw its wall and back to the bottom panel from below.');
   if(v.show_casters)steps.push('Bolt the four casters to the bottom panel through the drilled holes.');
   return steps;
  },
  coverage:{
-  checked:['Bin, cubby and tower opening sizes against minimums','Joint fit: tab, dado, screw and half-lap clearances for the measured stock','Room for tabs and screws on walls that carry joints on both faces','Slot widths against the cutter, corner relief at closed corners','Caster bolt holes clear of every panel standing on the bottom','Flat cut layout: every part has its own place and no two outlines overlap','Sheet nesting: every part placed on the stock sheet with the layout gap, one SVG and DXF per sheet in the package'],
-  notChecked:['Parts intersecting in 3D for this exact design (every starter and a seeded set of random designs are swept in the test suite)','Load rating, racking and stability on casters','Grain direction and edge banding'],
+  checked:['Bin, cubby and tower opening sizes against minimums','Tip-over: the push at the top and the lean on the front that tip the cart, empty, fully loaded and top loaded, from its center of gravity and its caster or footprint support','Racking: which parts and joints resist side-to-side and front-to-back shear, with a warning where only glued butt joints do','Holes smaller than the cutter go to a separate drill layout; second-face dados are laid out for the sheet turned over, with registration pins','Joint fit: tab, dado, screw and half-lap clearances for the measured stock','Room for tabs and screws on walls that carry joints on both faces','Slot widths against the cutter, corner relief at closed corners','Caster bolt holes clear of every panel standing on the bottom','Flat cut layout: every part has its own place and no two outlines overlap','Sheet nesting: every part placed on the stock sheet with the layout gap, one SVG and DXF per sheet in the package'],
+  notChecked:['Parts intersecting in 3D for this exact design (every starter and a seeded set of random designs are swept in the test suite)','Strength: load rating of joints, panels, shelves and casters; dynamic loads such as rolling over a threshold','Grain direction and edge banding'],
  },
  sheetSection:'sheets',
 };
