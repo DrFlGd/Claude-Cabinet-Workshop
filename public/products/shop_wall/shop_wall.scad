@@ -152,7 +152,7 @@ include_shared_export_bounding_box = true;
 engrave_label_size = 10; // [2:0.5:40]
 
 /* [Output] */
-output_mode = "assembly"; // [assembly, flat_3d, bom, cut_layout, engrave_layout]
+output_mode = "assembly"; // [assembly, flat_3d, bom, cut_layout, drill_layout, engrave_layout]
 /* [Hidden] */
 // Test hook: render one part (ID) or DOWEL in assembly position.
 render_part = "";
@@ -658,8 +658,11 @@ function cut_bbox(c) =
     c[0] == "poly" ? pts_box(c[1]) :
     c[0] == "pocket" ? [c[1], c[1] + c[3], c[2], c[2] + c[4]] :
     let(r = tool/2) [min([for (q=c[1]) q[0]]) - r, max([for (q=c[1]) q[0]]) + r, min([for (q=c[1]) q[1]]) - r, max([for (q=c[1]) q[1]]) + r];
-// Finished through-cut profile in local coordinates.
-module part_2d(p) {
+// Holes smaller than the cutter are drilled (drill_layout), not cut.
+function drilled(d) = d < tool;
+// Finished through-cut profile in local coordinates. with_drilled = false leaves out the
+// holes that are drilled rather than cut (the cut layout).
+module part_2d(p, with_drilled=true) {
     difference() {
         union() {
             polygon(p[4]);
@@ -667,14 +670,19 @@ module part_2d(p) {
         }
         for (f=part_features(p[0], "slot")) let(lb=local_box(p, f[2]))
             translate([lb[0], lb[2]]) tp_pocket_2d(lb[1] - lb[0], lb[3] - lb[2], tool, slot_corner_relief, slot_open(p, lb));
-        for (f=part_features(p[0], "hole")) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
+        for (f=part_features(p[0], "hole")) if (with_drilled || !drilled(f[3])) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
         // T-bone shoulder reliefs beside every tab, so the shoulder seats on the slot mouth.
         if (relief_on) for (f=part_features(p[0], "add")) let(s = shoulder(p, f))
             if (s[0] == 0) tp_tab_root_reliefs_2d(s[1], s[2], s[3], tool);
             else multmatrix([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]) tp_tab_root_reliefs_2d(s[1], s[2], s[3], tool);
-        for (c=p[7]) local_cut(c);
+        for (c=p[7]) if (with_drilled || !(c[0] == "circle" && drilled(c[3]))) local_cut(c);
     }
 }
+module drills_2d(p) {
+    for (f=part_features(p[0], "hole")) if (drilled(f[3])) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
+    for (c=p[7]) if (c[0] == "circle" && drilled(c[3])) local_cut(c);
+}
+DRILLED = len([for (f=FEATURES) if (f[1] == "hole" && drilled(f[3])) 1]) + len([for (p=PARTS) for (c=p[7]) if (c[0] == "circle" && drilled(c[3])) 1]);
 
 // ---------------------------------------------------------------- 3D
 function frame(p) = p[2] == "XY" ? [[1,0,0,p[3][0]], [0,1,0,p[3][1]], [0,0,1,p[3][2]], [0,0,0,1]] :
@@ -725,10 +733,14 @@ module export_frame() {
     }
 }
 // Flat cut profile of a part: beveled boards are cut as rectangular blanks.
-module flat_2d(p) { part_2d(p); }
+module flat_2d(p) { part_2d(p, false); }
 module cut_layout() {
     export_frame();
     for (p=PARTS) placed(p[0]) laid(p) flat_2d(p);
+}
+module drill_layout() {
+    export_frame();
+    for (p=PARTS) placed(p[0]) laid(p) drills_2d(p);
 }
 // Part labels sit inside the part's outline: the first spot, from the middle outwards,
 // where the whole label (about one size per character wide) is on the part.
@@ -742,7 +754,7 @@ module engrave_layout() {
         translate([q[1] + l[0][0] - e[0], q[2] + l[0][1] - e[2]]) text(q[0], size=l[1], halign="center", valign="center");
 }
 module flat_3d() {
-    for (p=PARTS) let(q = cut_layout_placement_table[placement_index(p[0])]) translate([q[1], q[2]]) linear_extrude(p[5]) laid(p) flat_2d(p);
+    for (p=PARTS) let(q = cut_layout_placement_table[placement_index(p[0])]) translate([q[1], q[2]]) linear_extrude(p[5]) laid(p) part_2d(p);
 }
 
 // ---------------------------------------------------------------- fit checks
@@ -878,7 +890,8 @@ module validate() {
             check(l > w/2 && l < F - min_web_open - (MT == "plier_stand" ? (F - l)/2 : 0), "SLOT_LENGTH", str("Slots ", l, " mm long do not fit a ", F, " mm deep panel."));
         if (MT == "router_bit_stand") check(bit_fit_allowance > 0 && F/tool_rows > w + min_web_open, "TOOL_FIT", "Router bit holes need an allowance over the shank and room for their rows.");
         if (MT == "screwdriver_rack" && second_row) check(0.40*F > w + min_web_open, "TOOL_FIT", "The two rows of screwdriver holes overlap; make the rack deeper or the holes smaller.");
-        warn(w >= tool, "DRILL_HOLES", str(w, " mm openings are smaller than the ", tool, " mm cutter: drill them."));
+        if (!(MT == "hammer_rack" || MT == "screwdriver_rack" || MT == "router_bit_stand"))
+            check(w >= tool, "SLOT_CUTTER", str(w, " mm slots are narrower than the ", tool, " mm cutter."));
     }
     if (FAMILY == "drill_simple") check(gusset_d >= 2*t, "GUSSET", "The drill station is too shallow for its gussets.");
     if (FAMILY == "glove") check(glove_l >= glove_w && glove_l < I - 2*min_web_open - 2*tool && glove_w < H - 3*t, "TOOL_FIT", "The glove slot must fit inside the front.");
@@ -932,6 +945,8 @@ module reports() {
     if (FAMILY == "rack" || FAMILY == "stand" || FAMILY == "drill_simple" || FAMILY == "drill_cabinet")
         echo(str("DIM|SHOP_WALL|OPENINGS|COUNT=", MT == "circular_saw_stand" ? 1 : tool_count, "|WIDTH=", MT == "circular_saw_stand" ? saw_guard_width : MT == "router_bit_stand" ? tool_width + bit_fit_allowance : tool_width,
                  "|PITCH=", tool_pitch, "|ROWS=", MT == "router_bit_stand" ? tool_rows : MT == "screwdriver_rack" && second_row ? 2 : 1));
+    if (DRILLED > 0) echo(str("CHECK|INFO|DRILL_HOLES|", DRILLED, " hole(s) are smaller than the ", tool, " mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout."));
+    if (output_mode == "drill_layout") echo("OPERATION|drill_layout|Drill through, full stock thickness, at the center of each circle (hole diameter as drawn); these holes are smaller than the cutter. Face up as in the cut layout.");
     if (output_mode == "cut_layout") echo("OPERATION|cut_layout|Through cuts, full stock thickness: outlines, tabs, slots, hooks, notches, openings and holes. Bevel the hanger and wall rail blanks on a saw afterwards.");
     if (output_mode == "bom") {
         for (p=PARTS) echo(str("BOM|", p[0], "|1|", p[1], "|", p[6], "|", p[5], "|", cut_w(p), "|", cut_h(p), "|", bom_note(p)));
@@ -953,4 +968,5 @@ reports();
 if (output_mode == "assembly") assembly();
 else if (output_mode == "flat_3d") flat_3d();
 else if (output_mode == "cut_layout") cut_layout();
+else if (output_mode == "drill_layout") drill_layout();
 else if (output_mode == "engrave_layout") engrave_layout();

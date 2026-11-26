@@ -48,11 +48,11 @@ export type EngineTarget={
 export type Product={
  id:string;name:string;sub:string;code:string;
  file:string;source:string;params:ScadParam[];
+ // Shared engine modules the SCAD file `use`s, as keys of lib/engine-sources.json. They are
+ // written next to the product under engine/ (the file includes ../../engine/<key>).
+ engineIncludes?:string[];
  // Where the picker lists it ("Your products" when absent).
  area?:string;
- // Shared engine files the SCAD file includes (keys of lib/engine-sources.json). They are
- // sent to the workers as engine/<key> and packed beside the product in downloads.
- engineFiles?:string[];
  // START-HERE.txt of the OpenSCAD project download.
  startHere?:string;
  // A fit test coupon: the module_type value that builds it, and what it is for.

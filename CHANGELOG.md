@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.17.0**) are separate from the bundled
+Application versions (currently **0.19.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,163 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.19.0 — 2026-11-26
+
+Modular workbench modules can now hold drawers, drawers over a door, or an open
+front behind a framed face panel, as in the photo grid of module configurations
+from the owner's reference set, and stacked modules are located by keys instead
+of only being screwed down. No cut files came with those configurations, so the
+drawer and face-panel construction is designed parametrically in the engine
+around the reference cabinet; [docs/MODULAR_WORKBENCH.md](docs/MODULAR_WORKBENCH.md)
+records the construction and the decisions.
+
+- **New module contents.** Besides doors and open:
+  - **Drawers**: one to eight equal overlay drawer fronts over the whole
+    height, each with a drawer box on side-mount full-extension slides.
+  - **Drawers + door**: one to eight 150 mm drawer fronts
+    (`combo_drawer_height`) above a door, with shelves only below the drawers.
+  - **Framed opening**: an open module behind a door-sized face panel with a
+    rounded opening (40 mm border, 60 mm corner radius).
+  Fronts line up with the doors (full overlay, 5 mm gaps) and carry the selected
+  pull, centred.
+- **Drawer boxes.** 12 mm sides, front and back with through finger joints at
+  the corners, and a 12 mm bottom with tongues on all four edges in blind 6 mm
+  pockets, using the shared tab-in-pocket corner reliefs. Boxes are 338.6 mm
+  wide in a one-cell module (12.7 mm slide clearance per side) and as deep as
+  the slide; the slide length is picked automatically (350 mm in a one-cell
+  module) or set. Slide screw holes are drilled in the module sides (8 mm
+  pilots) and through the box sides on the equipment stand's generic hole
+  arrays. Bottom pockets and slide holes are in the new `pocket_drawer_dados`
+  and `pocket_slide_holes` files of the export. Each drawer reports its
+  outside, inside and opening sizes, so the drawer-fit table covers it, and the
+  hardware list counts slide pairs by length.
+- **Stacking keys.** A module standing on another is located by 50 × 26 mm keys
+  of frame stock. Each key stands in a 14 mm pocket milled into a top rail of
+  the module below and in one of the registration pockets already under the
+  module above (on modules facing any way). A module stacked on a one-cell
+  module gets two keys; a stacked module with fewer than two reports
+  `STACK_KEYS`. `include_stack_keys` turns them off.
+- **Checks.** Drawers or doors that open into another module, drawer boxes too
+  low for their slides, slides that do not fit the module, no room for a door
+  under the drawers, corner fingers narrower than the cutter, pulls that do not
+  fit a drawer front, face-panel borders and pocket depths are errors; wide
+  drawers are a warning. The side-panel notes in the parts list no longer
+  mention shelf pins on modules too low to have any.
+- **Layout tab.** Contents are now Doors, Drawers, Drawers + door, Open or
+  Framed opening, with a drawer count. The grid labels each module (for
+  example "4 drawers · 730"), and the drawing checks drawer counts against the
+  module height before the engine runs. The instant 3D view draws drawer
+  fronts, boxes and framed face panels.
+- **Two new starters**: *Drawers, cubbies and a drawer-and-door cabinet*
+  (medium 3 × 2) and *Small 2 × 2 drawer bank*.
+- The default and the other reference starters keep their cut and pocket files
+  unchanged; the stacked starter gains its keys and rail pockets.
+
+Validation performed:
+
+- `pnpm exec tsc --noEmit`, the engine-source and parity checks, units,
+  settings visibility, hardware, v5 integration (new assertions for drawer
+  counts, box heights, schematic ids, drawers opening into a module, too many
+  drawers, no room for the door, and the visibility of the new settings),
+  stackable-controls and sections passed, as did nesting, runtime integrity,
+  schematic orbit, diagram depth, desktop assets, layout editor, engine fit
+  (all 120 starters), hardware-engine, cut-layout check, section WASM workers,
+  products, product interference and `pnpm run build:static`.
+- `tests/engine-interference.mjs` for the three workbench drawer, drawer-bank
+  and stacked cases: no overlapping parts (579 group pairs). The full sharded
+  sweep was left to CI.
+- Golden snapshots were updated for the nine workbench starters only; all 120
+  starters then matched. In the
+  seven existing ones only report records changed (module lines gained a drawer
+  count, the machining line two depths, side-panel notes and screw totals), and
+  only the stacked starter's cut layout changed (its keys and rail pockets).
+- Every workbench starter, a hand-picked layout (drawers on a sideways module
+  carrying a framed and a door module, single- and three-drawer modules stacked
+  on a two-cell module and on one turned to the right, a two-cell drawer-and-door
+  module, fit clearances) and six seeded random layouts with the new contents:
+  each cut layout matched its part table, and every part rendered on its own
+  and intersected with every other showed no overlap. A deliberately long
+  bottom tongue and tall keys were reported as overlapping parts.
+- In headless Chrome at 1500 px: the new starter's Layout tab, changing a
+  module to eight drawers and to drawers + door (both problems shown), back to
+  one drawer and to a framed opening, the instant 3D view, an Exact render
+  (10 s) and the Cut list, with no console errors or horizontal scroll.
+
+Remaining limitations:
+
+- Drawers use metal side-mount slides only; the slide hole arrays are generic and
+  must be checked against the purchased slides.
+- Drawer fronts are screwed to the box fronts and face panels to the carcass
+  edges without drilled positions; the screw-marking dimples and jigs of the
+  reference are still not modelled.
+- Two-cell-wide drawer modules get one wide drawer per level, not two side by
+  side.
+
+## 0.18.0 — 2026-11-26
+
+Media cart: the limitations listed with 0.15.0, except the in-app collision
+check, which follows separately.
+
+- **Tip-over check.** The engine check now computes the cart's weight and center
+  of gravity (every part's outline × thickness × sheet density, plus stated
+  contents per bin, cubby and tower opening) for three loadings: empty, fully
+  loaded, and loaded only in the highest bin row and tower opening. For each it
+  reports the level push at the top that tips the cart forward, backward, left
+  or right about its caster centers (or the bottom panel's edges without
+  casters), and the downward lean on the front edge of the bins that tips it
+  forward. An error is raised when the weight alone is outside the support, and a
+  warning when the stated push (default 50 N) or lean (default 250 N) would tip
+  it. A new **Stability** section sets the forces, the contents and the density.
+  The old height-to-depth note is gone.
+- **Racking.** The report lists what resists shear side to side and front to
+  back, and warns when only glued butt joints do.
+- **In the editor.** The drawing marks the center of gravity of the weakest
+  loading and shows a stability summary (per-loading weight, weakest push and
+  lean, what resists racking, and the assumptions) that opens the Stability
+  settings.
+- **Joinery in the instant drawing.** After the engine check, both elevations
+  outline the tabs, slots and half-laps, dados and holes of the parts each view
+  shows (from new `FEAT|` records in the engine report), with a legend and a
+  Joinery toggle; they fade while a newer check runs.
+- **Second-face dados register.** `pocket_dados_flip` is drawn for the whole
+  layout turned over left to right about its vertical center line instead of
+  each part flipped in its own place. Per sheet, the export turns the second-face
+  contours over about the sheet's center line and adds two registration-pin holes
+  on that line in the margins of `pocket_dados` and `pocket_dados_flip` (none when
+  the margin is under 10 mm). The READ-ME, the sheet notes, the operation note and
+  START-HERE give the order: up face, turn the sheet over onto the same pins,
+  second face, turn back, drill and cut.
+- **Default design has no warnings.** Holes smaller than the cutter (the 4.5 mm
+  screw clearance holes with the 6.35 mm cutter) leave the cut layout and go to a
+  new `drill_layout` operation (drill at the circle centers), reported as a note
+  instead of a warning. Caster bolt holes stay in the cut layout.
+- **Shared joinery module.** Receivers, slots and dados with their corner relief,
+  and new shoulder reliefs at the roots of tabs and tongues, come from the
+  engine's shared `data/scad/tab_pocket.scad`. Products can now include shared
+  engine files (`engineIncludes`; the workers, tests and downloads carry them).
+
+Validation run for this release: `tsc --noEmit`; eslint on the changed files (no
+new findings); `tests/nesting.cjs` (new: second-face contours turned back to
+their part and over about the sheet center, registration pins); `tests/products.mjs`
+(every starter through the production workers with the new drill layout and the
+second-face containment check, plus two extra configurations with dados on both
+faces of the walls; golden snapshots updated and reviewed);
+`tests/product-interference.mjs --all` (31 designs, 1,231 part pairs intersected, no shared volume; 6 random designs skipped as rejected); `tests/units.cjs`,
+`settings-visibility.cjs`, `hardware.cjs`, `v5-integration.cjs`,
+`stackable-controls.cjs`, `sections.cjs`, `section-wasm.mjs`, `golden.mjs` (118 starters unchanged), `layout-editor.mjs`,
+`hardware-engine.mjs`, `engine-fit.mjs`, `cut-layout-check.mjs`, the
+engine-source, product-source and parity checks; and the editor in Chromium at
+1440 × 900 and 390 × 844 (stability summary and settings, joinery outlines,
+center of gravity; a two-tower design with dados exported, and the per-sheet
+second-face files turned back over their sheet and overlaid on the cut layout).
+
+Limitations: the stability check is static (no rolling over a threshold, no
+caster catching) and rates no joint, panel, shelf or caster strength; the
+compact sorter starter (no casters, 11 kg) tips under the default 50 N push
+and says so; the instant drawing shows joinery only after an engine check and
+only for the parts each view sees face on or edge on; the per-design 3D
+collision check is not in the app yet.
 
 ## 0.17.0 — 2026-11-26
 

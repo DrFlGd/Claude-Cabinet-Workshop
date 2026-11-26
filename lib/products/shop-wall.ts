@@ -137,7 +137,7 @@ const starters:ProductStarter[]=SHOP_WALL_MODULES.map(m=>({id:m.id,name:m.name,d
 export const shopWall:Product={
  id:'shop_wall',name:'Shop wall',sub:'French-cleat shelves, cabinets, racks, boxes and holders',code:'SW / P2',area:'Shop wall',
  file:SHOP_WALL_FILE,source,params,
- engineFiles:['tab_pocket','joinery','seam_joinery','cleat','wall_mount','placement'].map(n=>`v5/src/modular_organization/data/scad/${n}.scad`),
+ engineIncludes:['tab_pocket','joinery','seam_joinery','cleat','wall_mount','placement'].map(n=>`v5/src/modular_organization/data/scad/${n}.scad`),
  defaultStarter:'simple_shelves',
  starters,
  sections:[
@@ -228,8 +228,8 @@ export const shopWall:Product={
   ],summary:(v,u)=>`${formatShop(Number(v.stock_width),u)} × ${len(Number(v.stock_height),u)}`},
  ],
  renderModes:[{id:'assembly',label:'Module and wall rail'},{id:'flat_3d',label:'Flat parts · exact 3D'}],
- exportModes:['cut_layout','engrave_layout'],
- startHere:'Shop wall: open products/shop_wall/shop_wall.scad in OpenSCAD 2021.01 or later (keep the engine folder beside the products folder; it holds the shared joinery, cleat and layout files). All selected settings are applied.\n\nSet output_mode to assembly for the module on its wall rail, cut_layout for through cuts, engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. Bevel the hanger and wall rail blanks on a saw after cutting. Set module_type to fit_coupon to cut a fit test coupon with the same stock, clearances, cutter and bevel.\n',
+ exportModes:['cut_layout','drill_layout','engrave_layout'],
+ startHere:'Shop wall: open products/shop_wall/shop_wall.scad in OpenSCAD 2021.01 or later (keep the engine folder beside the products folder; it holds the shared joinery, cleat and layout files). All selected settings are applied.\n\nSet output_mode to assembly for the module on its wall rail, cut_layout for through cuts, drill_layout for holes smaller than the cutter (drill at the circle centers), engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. Bevel the hanger and wall rail blanks on a saw after cutting. Set module_type to fit_coupon to cut a fit test coupon with the same stock, clearances, cutter and bevel.\n',
  coupon:{module:'fit_coupon',label:'Fit test coupon',note:'One tab in its slot with screws, and a short CNC hook (or beveled hanger) on a short wall rail, cut from the same stock with the same clearances, cutter, relief and bevel as this design. Cut it before the module: the tab should slide in by hand, and the hook should drop over the rail and sit flat against it.'},
  linked(key,value){
   // Choosing a module loads its starting sizes and module settings; shop settings stay.

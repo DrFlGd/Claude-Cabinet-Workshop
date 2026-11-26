@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.17.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.19.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.17.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.19.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -53,7 +53,7 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
 
 1. **Pick what to build.** The cabinet-type card at the top of the settings
    panel shows the current type and starting point. **Change** (or **New** in
-   the header) opens the picker: choose a type, then one of 118 starting
+   the header) opens the picker: choose a type, then one of 120 starting
    points, including 48 standard US kitchen sizes. The previous design stays in
    **Recent**.
 2. **Arrange the front in the Layout tab.** The **Layout** tab (the first tab
@@ -74,9 +74,11 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    recalculates.
    For the **modular workbench** the Layout tab is a top view of the base
    frame's grid instead: click an empty cell to place a cabinet module, click a
-   module to set its contents (doors or open), the side it faces, hinge side,
+   module to set its contents (doors, drawers, drawers over a door, open, or a
+   framed opening), the number of drawers, the side it faces, hinge side,
    height, shelves and how many cells it spans, move it, stack a module on top
-   (a module at bench height is split into two stacked halves) or remove it.
+   (a module at bench height is split into two stacked halves; stacked modules
+   are located by loose keys in the top rails below) or remove it.
    **Fill empty cells** completes the grid. See
    [the workbench design note](docs/MODULAR_WORKBENCH.md).
 3. **Work through the settings.** The section rail follows the order you
@@ -171,11 +173,19 @@ thickness, crosspiece and panel joinery with fit clearances, corner relief and
 cutter, kerf, casters, sheet size and layout gap) are grouped below. The
 **Drawing** tab shows a to-scale front elevation and side profile with quick
 controls (rows, columns, wall profile, towers, cubbies, casters); click a part to
-open its settings. **3D model** renders the exact engine geometry, **Cut list &
-fit** lists every part with the engine's checks, and **Assembly** gives the
-order of assembly and the hardware. **Export** produces the same manufacturing
-package as for the cabinets: cut, pocket (each face) and engraving layouts,
-per-sheet SVG and DXF, reports, an assembly packet and the editable SCAD file.
+open its settings. Once the engine check has run, the drawing also outlines the
+joinery (tabs, slots and half-laps, dados, holes) and marks the center of
+gravity, with a stability summary below: the push at the top and the lean on the
+front that would tip the cart, empty, loaded and top loaded, against the forces
+and contents set in **Stability**, and what resists racking. **3D model** renders
+the exact engine geometry, **Cut list & fit** lists every part with the engine's
+checks, and **Assembly** gives the order of assembly and the hardware.
+**Export** produces the same manufacturing package as for the cabinets: cut,
+drill (holes smaller than the cutter), pocket and engraving layouts, per-sheet
+SVG and DXF, reports, an assembly packet and the editable SCAD file. Dados on a
+part's second face are laid out for the whole sheet turned over left to right
+about its center line, with registration-pin holes on that line; the READ-ME
+gives the order.
 How the original model was reviewed and corrected is in
 [the media cart review](docs/MEDIA_CART_REVIEW.md); adding another product is
 described in [development notes](docs/DEVELOPMENT.md#products).

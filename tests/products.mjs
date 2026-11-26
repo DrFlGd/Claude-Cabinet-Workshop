@@ -71,15 +71,16 @@ const RECORD=/^ECHO: "((?:BOM|PLACE|DIM|CHECK|WARN|HARDWARE)\|.*|WARNING: .*)"\s
 const recordsOf=m=>{const text=(m.logs??[]).join('\n')+'\n'+(typeof m.output==='string'?m.output:'');const out=[];for(const l of text.split(/\r?\n/)){const r=l.match(RECORD);if(r&&!out.includes(r[1]))out.push(r[1])}return {out,text}};
 const finger=svg=>({sha256:crypto.createHash('sha256').update(svg).digest('hex').slice(0,24),bytes:Buffer.byteLength(svg),paths:(svg.match(/<path/g)??[]).length});
 async function snapshot(p,s){
- const v=P.productStarterValues(p,s.id),source=P.productSource(p,v),problems=[],sources=P.productTarget(p).sources;
- const bom=await run(p.file,source,'bom','export-worker.js',sources);
+ const v=s.patched??P.productStarterValues(p,s.id),source=P.productSource(p,v),problems=[];
+ const inc=P.productTarget(p).sources,go=(mode,worker)=>run(p.file,source,mode,worker,inc);
+ const bom=await go('bom');
  if(bom.type!=='result')return {problems:['bom failed: '+bom.error+' '+(bom.logs??[]).slice(-3).join(' ')]};
  const {out:recs,text}=recordsOf(bom);
  for(const l of text.split('\n'))if(/^ERROR|^WARNING: (undefined|Ignoring unknown)|CHECK\|ERROR/.test(l.replace(/^ECHO: "/,'')))problems.push('engine: '+l);
  const snap={records:recs,svg:{}},kerf=v.apply_kerf_compensation?Number(v.kerf)||0:0;
  const parts=nesting.partRecords(recs),places=nesting.placementRecords(recs),nest=nesting.nest(parts,places,nesting.nestOptions(v));
  for(const mode of p.exportModes){
-  const r=await run(p.file,source,mode,'export-worker.js',sources);
+  const r=await go(mode);
   if(r.type!=='result'){problems.push(`${mode} failed: ${r.error}`);continue}
   const svg=r.empty?'':r.output;snap.svg[mode]=finger(svg);
   if(mode==='cut_layout'){
@@ -89,15 +90,23 @@ async function snapshot(p,s){
   }else if(svg){
    // Every pocket and label contour must move with a part onto the sheets (none dropped).
    const all=nesting.svgPolygons(svg).length,frame=v.include_shared_export_bounding_box!==false?2:0;
-   const kept=nest.sheets.reduce((n,sh)=>n+nesting.sheetPolygons(svg,sh,kerf/2).reduce((k,x)=>k+x.polys.length,0),0);
+   // Second-face layouts are drawn turned over about the engine's flip axis.
+   const axis=mode.endsWith('_flip')?Number(text.match(/FLIP\|AXIS_X=([-\d.eE]+)/)?.[1]):undefined;
+   if(axis!==undefined&&!Number.isFinite(axis))problems.push(`${mode}: no FLIP|AXIS_X record`);
+   const kept=nest.sheets.reduce((n,sh)=>n+nesting.sheetPolygons(svg,sh,kerf/2,axis).reduce((k,x)=>k+x.polys.length,0),0);
    if(kept!==all-frame)problems.push(`${mode}: ${all-frame-kept} contour(s) fall outside every part`);
   }
  }
  return {snap,problems};
 }
+// Extra configurations checked for problems only (no snapshot): paths no starter takes,
+// such as dados on both faces of a wall (second-face layout on the flipped sheet).
+const EXTRA={media_cart:[['double_tower',{panel_joinery:'dado'}],['shelf_cart',{panel_joinery:'dado',joinery_style:'dado',slot_corner_relief:'t_bone'}]]};
 const jobs=P.products.flatMap(p=>p.starters.map(s=>({p,s})));
+const extra=P.products.flatMap(p=>(EXTRA[p.id]??[]).map(([id,patch])=>({p,s:{id:id+'+'+Object.values(patch).join('+'),patched:{...P.productStarterValues(p,id),...patch}}})));
 const results=new Map(),problems=[];let next=0;const started=Date.now();
-await Promise.all(Array.from({length:Math.max(1,Math.min(4,os.cpus().length))},async()=>{while(next<jobs.length){const j=jobs[next++];const r=await snapshot(j.p,j.s);results.set(j.p.id+':'+j.s.id,r.snap);for(const x of r.problems)problems.push(`${j.p.id}:${j.s.id}: ${x}`)}}));
+const all=[...jobs,...extra];
+await Promise.all(Array.from({length:Math.max(1,Math.min(4,os.cpus().length))},async()=>{while(next<all.length){const j=all[next++];const r=await snapshot(j.p,j.s);if(!j.s.patched)results.set(j.p.id+':'+j.s.id,r.snap);for(const x of r.problems)problems.push(`${j.p.id}:${j.s.id}: ${x}`)}}));
 // The render worker builds the 3D assembly of each product's default starter.
 for(const p of P.products){
  const r=await run(p.file,P.productSource(p,P.productStarterValues(p,p.defaultStarter)),'assembly','render-worker.js',P.productTarget(p).sources);
@@ -123,4 +132,4 @@ const seconds=Math.round((Date.now()-started)/1000);
 if(problems.length){console.log(`Products: ${problems.length} problem(s).`);process.exitCode=1}
 if(update)console.log(`Products: wrote snapshots for ${jobs.length} starters in ${seconds} s.`);
 else if(changed){console.log(`Products: ${changed} starter(s) differ from tests/golden/products. If intended, run node tests/products.mjs --update and review the diff.`);process.exitCode=1}
-else if(!problems.length)console.log(`Products: ${jobs.length} starters of ${P.products.length} product(s) match their snapshots; cut layouts, nesting, pockets and labels pass (${seconds} s).`);
+else if(!problems.length)console.log(`Products: ${jobs.length} starters of ${P.products.length} product(s) match their snapshots; cut layouts, nesting, pockets, second-face pockets and labels pass for them and ${extra.length} extra configuration(s) (${seconds} s).`);

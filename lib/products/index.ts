@@ -7,8 +7,8 @@ import type {EngineTarget,Product} from './types';
 import {applyParams} from './scad-params';
 import {mediaCart} from './media-cart';
 import {shopWall} from './shop-wall';
-import engineBundle from '../engine-sources.json';
 import {productPacket} from './packet';
+import engineSources from '../engine-sources.json';
 
 export const products:Product[]=[mediaCart,shopWall];
 export const productById=(id:string|null|undefined)=>products.find(p=>p.id===id);
@@ -35,25 +35,23 @@ export function parseProductValues(p:Product,input:Record<string,unknown>):Value
  v._starter=p.starters.some(s=>s.id===input._starter)?input._starter:'edited';
  return v;
 }
-// Shared engine files of a product, named as its includes resolve them from the product
-// file (products/<id>/<id>.scad includes ../../engine/<key>).
-export const productEngineSources=(p:Product)=>(p.engineFiles??[]).map(key=>{
- const text=(engineBundle as Record<string,string>)[key];
- if(typeof text!=='string')throw Error(`${p.id}: engine file ${key} is not bundled`);
- return {name:'engine/'+key,text};
+// The shared engine files a product includes, at the paths the workers and the downloaded
+// project use (engine/<key>, beside products/).
+export const productIncludes=(p:Product)=>(p.engineIncludes??[]).map(k=>{
+ const text=(engineSources as Record<string,string>)[k];if(typeof text!=='string')throw Error('Missing engine source '+k);
+ return {name:'engine/'+k,text};
 });
-const MEDIA_START=(p:Product)=>`${p.name}: open ${p.file} in OpenSCAD 2021.01 or later. All selected settings are applied.\n\nSet output_mode to assembly for the 3D model, cut_layout for through cuts, pocket_dados for dados on the face that is up, pocket_dados_flip for dados on the other face (turn the part over left to right), engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. All layouts share one registration frame.\n`;
 export function productTarget(p:Product):EngineTarget{
- const sources=productEngineSources(p);
+ const includes=productIncludes(p);
  return {
-  id:p.id,label:p.name,filename:p.file,sources,
+  id:p.id,label:p.name,filename:p.file,sources:includes,
   source:v=>productSource(p,v),validate:p.validate,
   renderModes:p.renderModes,exportModes:p.exportModes,sheetSection:p.sheetSection,
   projectFiles:(v,name,units)=>[
    {name:p.file,data:productSource(p,v)},
+   ...includes.map(f=>({name:f.name,data:f.text})),
    {name:'design.cabinet.json',data:productDesignFile(p,v,name,units)},
-   ...sources.map(f=>({name:f.name,data:f.text})),
-   {name:'START-HERE.txt',data:p.startHere??MEDIA_START(p)},
+   {name:'START-HERE.txt',data:p.startHere??`${p.name}: open ${p.file} in OpenSCAD 2021.01 or later. All selected settings are applied.\n\nKeep the products/ and engine/ folders together: the product includes shared joinery modules from engine/.\n\nSet output_mode to assembly for the 3D model, cut_layout for through cuts, drill_layout for holes smaller than the cutter (drill at the circle centers), pocket_dados for dados on the face that is up, pocket_dados_flip for dados on the other face, engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. All layouts share one registration frame. pocket_dados_flip is drawn for the whole layout turned over left to right about its vertical center line (the registration frame lands on itself): machine the up-face pockets, turn the stock over that way, machine the flip pockets, turn it back, then drill and cut. The app's per-sheet files add registration-pin holes on that line.\n`},
   ],
   coupon:p.coupon?{label:p.coupon.label,note:p.coupon.note,source:v=>productSource(p,{...v,module_type:p.coupon!.module})}:undefined,
   packet:(name,v,text,units)=>productPacket(p,name,v,text,units),

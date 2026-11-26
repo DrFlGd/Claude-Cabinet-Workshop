@@ -19291,6 +19291,30 @@
           "step": 0.01
         },
         {
+          "id": "drawer_box_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 12.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "drawer_bottom_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 12.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
           "id": "router_bit_diameter",
           "group": "Machining / Tool and Kerf",
           "type": "number",
@@ -19554,6 +19578,36 @@
           ]
         },
         {
+          "id": "include_stack_keys",
+          "group": "Structure / Stacking",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "face_opening_border",
+          "group": "Structure / Faces",
+          "type": "number",
+          "default": 40,
+          "range": {
+            "min": 10.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "face_opening_radius",
+          "group": "Structure / Faces",
+          "type": "number",
+          "default": 60,
+          "range": {
+            "min": 0.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
           "id": "top_rail_width",
           "group": "Structure / Top",
           "type": "number",
@@ -19729,6 +19783,90 @@
           "step": 0.1
         },
         {
+          "id": "combo_drawer_height",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 150,
+          "range": {
+            "min": 60.0,
+            "max": 600.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "drawer_vertical_clearance",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 20,
+          "range": {
+            "min": 4.0,
+            "max": 100.0,
+            "step": 0.5
+          },
+          "step": 0.5
+        },
+        {
+          "id": "drawer_rear_clearance",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 0.0,
+            "max": 100.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "drawer_finger_pitch",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 35,
+          "range": {
+            "min": 10.0,
+            "max": 150.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "drawer_bottom_inset",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 8,
+          "range": {
+            "min": 0.0,
+            "max": 60.0,
+            "step": 0.5
+          },
+          "step": 0.5
+        },
+        {
+          "id": "drawer_bottom_pocket_depth",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 6,
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "drawer_bottom_tongue",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
           "id": "shelf_front_setback",
           "group": "Shelves / Layout",
           "type": "number",
@@ -19897,6 +20035,118 @@
           "step": 0.1
         },
         {
+          "id": "metal_slide_clearance_per_side",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 12.7,
+          "range": {
+            "min": 0.0,
+            "max": 40.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "metal_slide_length",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 0,
+          "range": {
+            "min": 0.0,
+            "max": 1000.0,
+            "step": 10.0
+          },
+          "step": 10.0
+        },
+        {
+          "id": "metal_slide_front_setback",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 3,
+          "range": {
+            "min": 0.0,
+            "max": 50.0,
+            "step": 0.5
+          },
+          "step": 0.5
+        },
+        {
+          "id": "metal_slide_envelope_height",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 45,
+          "range": {
+            "min": 10.0,
+            "max": 100.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "include_metal_slide_holes",
+          "group": "Hardware / Drawer Slides",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "metal_slide_cabinet_holes_x",
+          "group": "Hardware / Drawer Slides",
+          "type": "array",
+          "default": [
+            37,
+            133,
+            229,
+            325
+          ]
+        },
+        {
+          "id": "metal_slide_drawer_holes_x",
+          "group": "Hardware / Drawer Slides",
+          "type": "array",
+          "default": [
+            37,
+            133,
+            229,
+            325
+          ]
+        },
+        {
+          "id": "metal_slide_cabinet_hole_diameter",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 1.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "metal_slide_drawer_hole_diameter",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 1.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "slide_drill_depth",
+          "group": "Hardware / Drawer Slides",
+          "type": "number",
+          "default": 8,
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.5
+          },
+          "step": 0.5
+        },
+        {
           "id": "handle_style",
           "group": "Hardware / Handles",
           "type": "enum",
@@ -19982,8 +20232,10 @@
             "engrave_layout",
             "bom",
             "pocket_carcass_dados",
+            "pocket_drawer_dados",
             "pocket_hinge_cups",
-            "pocket_shelf_pins"
+            "pocket_shelf_pins",
+            "pocket_slide_holes"
           ]
         },
         {
@@ -20000,6 +20252,12 @@
         },
         {
           "id": "show_doors",
+          "group": "Output / Visibility",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "show_drawer_slides",
           "group": "Output / Visibility",
           "type": "boolean",
           "default": true
@@ -20057,7 +20315,9 @@
         "Doors in front, open shelving behind",
         "Stacked half-height modules",
         "One simple cabinet on a 1 \u00d7 1 frame",
-        "Medium 3 \u00d7 2 in \u00be\u2033 stock"
+        "Medium 3 \u00d7 2 in \u00be\u2033 stock",
+        "Drawers, cubbies and a drawer-and-door cabinet",
+        "Small 2 \u00d7 2 drawer bank"
       ],
       "capabilities": {
         "carcass_joinery": true,
@@ -20083,11 +20343,15 @@
         "Sizing / Modular Grid",
         "Structure / Base",
         "Structure / Layout",
+        "Structure / Stacking",
+        "Structure / Faces",
         "Structure / Top",
         "Structure / Worktop",
         "Doors / Layout",
+        "Drawers / Layout",
         "Shelves / Layout",
         "Hardware / Hinges",
+        "Hardware / Drawer Slides",
         "Hardware / Handles",
         "Hardware / Base",
         "Output / View",
@@ -20150,7 +20414,10 @@
       "Output / Calibration",
       "Output / Export Registration",
       "System / Reports",
-      "System / Interface Validation"
+      "System / Interface Validation",
+      "Structure / Stacking",
+      "Structure / Faces",
+      "Hardware / Drawer Slides"
     ],
     "rules": {
       "empty_groups": "omit",

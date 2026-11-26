@@ -77,7 +77,10 @@ export default function ProductWorkspace({product,values,units,analysis,name,cha
  const starter=values._starter&&values._starter!=='edited'?product.starters.find(s=>s.id===values._starter):null;
  const plan=analysis.plan&&analysis.planKey===analysis.key?analysis.plan:null;
  const issueCount=plan?plan.issues.filter(i=>i.severity==='error').length:0;
- const hardware=plan?records(analysis.log).filter(r=>r.startsWith('HARDWARE|')).map(r=>Object.fromEntries(r.split('|').slice(1).map(x=>{const i=x.indexOf('=');return [x.slice(0,i),x.slice(i+1)]}))):[];
+ // The drawing shows the joinery and stability of the newest engine check, faded while a
+ // check for the current values runs.
+ const recs=useMemo(()=>analysis.log?records(analysis.log):[],[analysis.log]),recsStale=analysis.planKey!==analysis.key;
+ const hardware=plan?recs.filter(r=>r.startsWith('HARDWARE|')).map(r=>Object.fromEntries(r.split('|').slice(1).map(x=>{const i=x.indexOf('=');return [x.slice(0,i),x.slice(i+1)]}))):[];
  const fmt=(mm:number)=>formatDimension(mm,units);
  const main=product.sections.filter(s=>!s.shop),shop=product.sections.filter(s=>s.shop);
  // The shop group shows while one of its sections is open (for example from Change sheet size).
@@ -129,7 +132,7 @@ export default function ProductWorkspace({product,values,units,analysis,name,cha
      <span className='schematic-label'>{tab==='drawing'?'Instant elevations · click a part to edit it':tab==='model'?'OpenSCAD geometry · joinery, holes and dados':tab==='assembly'?'Order of assembly and hardware':'Engine-calculated parts'}</span>
     </div>
     {Diagram&&<TabsContent value='drawing' className='pw-drawing-content'>
-     {errors.length?<div className='validation-panel'><Info/><h2>Check your dimensions</h2>{errors.map(e=><p key={e}>{e}</p>)}</div>:<Diagram values={values} units={units} change={change} focus={setOpenSection}/>}
+     {errors.length?<div className='validation-panel'><Info/><h2>Check your dimensions</h2>{errors.map(e=><p key={e}>{e}</p>)}</div>:<Diagram values={values} units={units} change={change} focus={setOpenSection} records={recs} stale={recsStale}/>}
     </TabsContent>}
     <TabsContent value='model' forceMount hidden={tab!=='model'} className='model-content'>
      <div className='native-content'><OpenSCADView family={0} values={values} active={tab==='model'} parts={[]} target={target}/></div>

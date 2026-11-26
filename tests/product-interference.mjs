@@ -42,16 +42,16 @@ const hook=(s,k,v)=>s.replace(new RegExp('^('+k+'\\s*=\\s*)[^;]+;','m'),(_m,p)=>
 // Parts drawn outside the part list (casters, a dowel), rendered when the design has them.
 const EXTRA={media_cart:['CASTERS'],shop_wall:['DOWEL']};
 async function overlaps(p,values){
- const source=P.productSource(p,values),engine=Object.fromEntries(P.productTarget(p).sources.map(f=>[f.name,f.text]));
- const run=(text,args,out)=>scad({...engine,[p.file]:text},p.file,args,out);
- const bom=await run(hook(source,'output_mode','bom'),['-o','/o.echo'],'/o.echo');
+ const source=P.productSource(p,values);
+ const inc=Object.fromEntries(P.productTarget(p).sources.map(f=>[f.name,f.text])),at=s=>({...inc,[p.file]:s});
+ const bom=await scad(at(hook(source,'output_mode','bom')),p.file,['-o','/o.echo'],'/o.echo');
  const text=bom.logs.join('\n')+'\n'+(bom.data?new TextDecoder().decode(bom.data):'');
  const errors=[...text.matchAll(/CHECK\|ERROR\|[^"\n]*/g)].map(m=>m[0]);
  if(errors.length)return {errors};
  const ids=[...new Set([...text.matchAll(/BOM\|([^|]+)\|/g)].map(m=>m[1]))],stl={},ext={};
  const extra=EXTRA[p.id]??[];
  for(const id of [...ids,...extra]){
-  const r=await run(hook(hook(source,'output_mode','assembly'),'render_part',id),['--export-format=binstl','-o','/o.stl'],'/o.stl');
+  const r=await scad(at(hook(hook(source,'output_mode','assembly'),'render_part',id)),p.file,['--export-format=binstl','-o','/o.stl'],'/o.stl');
   const bad=r.logs.filter(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l));
   if(bad.length)return {errors:bad.map(l=>id+': '+l)};
   if(r.data&&r.data.length>84){stl[id]=r.data;ext[id]=extent(r.data)}
