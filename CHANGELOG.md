@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.15.0**) are separate from the bundled
+Application versions (currently **0.16.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.15.0 — 2026-11-26
+## 0.16.0 — 2026-11-26
 
 Tab-and-slot carcasses can hide their tabs: the tabs entering the cabinet sides
 stop in blind pockets milled into the inside faces, as in the stackable cabinet
@@ -72,7 +72,8 @@ Validation performed:
   settings in all five cabinet types), hardware, v5 integration, the native
   OpenSCAD stackable-controls and sections tests (OpenSCAD 2021.01), the
   section WASM workers, engine fit (117 starters and regressions), the layout
-  editor and hardware-engine suites all passed.
+  editor and hardware-engine suites, and the product-source and product
+  (media cart) checks all passed, re-run after merging main at 0.15.0.
 - **Golden outputs.** All 117 starters match their recorded parts, reports and
   cut/pocket layouts unchanged.
 - **Cut-layout check.** The check now renders a stackable door module with a
@@ -107,6 +108,69 @@ Remaining limitations:
 - The screw holes are clearance holes only; pilot holes in the member edges are
   left to the assembler.
 - Interior joints stay through.
+
+## 0.15.0 — 2026-11-26
+
+Your own products beside the cabinet types, starting with the media cart: a
+reviewed and corrected media-storage cart with its own editor, cut files and
+checks.
+
+- **Products.** New in the New picker under **Your products**. A product has its
+  own OpenSCAD engine file and its own editor, and shares the engine check, cut
+  list, export page (operation SVGs, per-sheet SVG and DXF nesting, reports,
+  assembly packet), saved design files and browser recovery with the cabinets.
+  Its settings and defaults are read from the SCAD file's Customizer parameters.
+  Saved designs carry the product id; older cabinet designs open as before.
+- **Media cart.** Sloped or stepped bins in adjustable rows and columns, optional
+  lower cubbies, shelf towers on either or both sides, casters. Starters: Sloped
+  bins, Stepped bins, Shelf cart, Two towers, Compact sorter. The editor shows the
+  settings as collapsible sections with a one-line summary each (shop details:
+  materials, joinery, machining, casters, sheets), and four views: an instant
+  front elevation and side profile drawn to scale with quick controls (rows,
+  columns, wall profile, towers, cubbies, casters; clicking a part opens its
+  section), the exact 3D model, the cut list and checks, and the assembly order
+  with the hardware list.
+- **Manufacturing.** Carcass and fin stock presets or measured thickness;
+  crosspiece joinery and a new panel joinery setting (butt, screws, dados, tab &
+  slot) with fit clearances, tab length, spacing, margin and web; dado depth
+  limited to under half the stock; dog-bone or T-bone relief at closed corners;
+  kerf compensation, layout gap and registration frame; screw clearance holes and
+  caster bolt holes; pocket layouts for each face (`pocket_dados`,
+  `pocket_dados_flip`) and engraved part labels. Every part is one flat profile
+  from which the 3D model, the cut layout and the parts list are drawn.
+- **Review of the original model** (docs/MEDIA_CART_REVIEW.md): panels that were
+  only butted are now joined; fins half-lap every crosspiece including front and
+  rear (a one-row grid no longer floats); pilots in panel edges became face
+  clearance holes with pilots drilled at assembly; an assembly order is defined
+  (towers built on their outer wall and slid on, walls screwed from below); on
+  stepped profiles a half-lap no longer cuts the front fin segment free and the
+  rear crosspiece tabs no longer sever the wall's rear post; caster mounting holes
+  added and checked against the panels standing on the bottom.
+- **Engine checks for the cart**: bin, cubby and tower opening minimums, room for
+  tabs, slot width against the cutter, dado depth, screw sizes, caster holes and
+  fit, flat-layout overlaps, sheet size, two-sided parts, and a tipping note when
+  the cart is more than 2.2 times taller than deep.
+
+Validation run for this release: `tsc --noEmit`; `tests/products.mjs` (framework
+units, every starter through the production export and render workers, cut-layout
+gate, per-sheet nesting, every pocket and label inside its part, golden
+snapshots); `tests/product-interference.mjs --all` (5 starters, 8 hand-picked
+joinery, tower and profile cases and 24 seeded random designs; every part
+rendered on its own and every touching pair intersected: 31 designs and 1,231
+part pairs with no shared volume; 6 random designs were skipped because the
+editor or the engine rejects them, with the reason printed);
+`tests/units.cjs`, `nesting.cjs`, `settings-visibility.cjs`, `hardware.cjs`,
+`v5-integration.cjs`, the engine-source and parity checks; and the editor driven
+in Chromium at 1440 × 900 and 390 × 844 (new design from the picker, quick
+controls, 3D render, cut list, assembly, export package generated and
+downloaded, design saved and reopened, recovery after reload, no horizontal
+scroll at 390 px). CI also runs the product suites and shards the product sweep
+with the cabinet sweep.
+
+Limitations: no load rating, racking or tipping analysis; 3D interference is
+swept in the test suite, not checked for each user design; the instant drawing
+is schematic (joinery shows in the 3D model and cut files); the flip pocket pass
+assumes each two-sided part is turned over within its own place in the layout.
 
 ## 0.14.0 — 2026-11-26
 

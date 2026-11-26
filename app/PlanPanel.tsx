@@ -66,7 +66,8 @@ export function printablePlan(plan:Plan,name:string,units:Units,values:Values,co
  <script>window.onload=()=>window.print()</script></body></html>`;
 }
 
-export default function PlanPanel({analysis,units,name,values}:{analysis:Analysis;units:Units;name:string;values:Values}){
+// coverage and sheetsWhere let a product (lib/products) state its own checks and where its sheet settings are.
+export default function PlanPanel({analysis,units,name,values,coverage,sheetsWhere='Sheet width and height under Materials'}:{analysis:Analysis;units:Units;name:string;values:Values;coverage?:{checked:string[];notChecked:string[]};sheetsWhere?:string}){
  const plan=analysis.plan,stale=analysis.planKey!==analysis.key;
  const nested=plan&&analysis.log?sheetCounts(analysis.log,values):null;
  const [copied,setCopied]=useState(false);
@@ -99,8 +100,8 @@ export default function PlanPanel({analysis,units,name,values}:{analysis:Analysi
   <details className='plan-coverage'>
    <summary><Info size={15}/> What this check does and does not cover</summary>
    <div className='coverage-columns'>
-    <div><strong>Checked by the engine</strong><ul>{COVERED.map(c=><li key={c}><Check size={13}/>{c}</li>)}</ul></div>
-    <div><strong>Not checked yet</strong><ul>{NOT_COVERED.map(c=><li key={c}><AlertTriangle size={13}/>{c}</li>)}</ul></div>
+    <div><strong>Checked by the engine</strong><ul>{(coverage?.checked??COVERED).map(c=><li key={c}><Check size={13}/>{c}</li>)}</ul></div>
+    <div><strong>Not checked yet</strong><ul>{(coverage?.notChecked??NOT_COVERED).map(c=><li key={c}><AlertTriangle size={13}/>{c}</li>)}</ul></div>
    </div>
    <p className='field-note'>Review the Exact view and the exported cut layout before cutting. Interference and layout-overlap checks are on the reliability roadmap.</p>
   </details>
@@ -114,7 +115,7 @@ export default function PlanPanel({analysis,units,name,values}:{analysis:Analysi
   </div>
   {(()=>{const byT=new Map<number,number>();for(const m of plan.materials)byT.set(m.thickness,(byT.get(m.thickness)??0)+m.area);
    return byT.size<plan.materials.length?<p className='sheet-totals'><strong>If cut from the same sheets:</strong> {[...byT.entries()].sort((a,b)=>b[1]-a[1]).map(([t,a])=>formatShop(t,units)+(units==='mm'?' mm':'')+' ≈ '+sheetEstimate(a,values)).join(' · ')}</p>:null})()}
-  {nested?<p className='field-note'>Sheet counts come from nesting every part on {nested.options.sheetW} × {nested.options.sheetH} mm stock (Sheet width and height under Materials) with the layout gap as margin and spacing, parts in the orientation shown in the cut layout.{nested.unplaced?` ${nested.unplaced} part${nested.unplaced>1?'s do':' does'} not fit the sheet.`:''} The manufacturing package contains the per-sheet files.</p>:<p className='field-note'>Sheet counts are area estimates with 20% waste on {Number(values.stock_width)||2440} × {Number(values.stock_height)||1220} mm stock (Sheet width and height under Materials), not a nested layout.</p>}
+  {nested?<p className='field-note'>Sheet counts come from nesting every part on {nested.options.sheetW} × {nested.options.sheetH} mm stock ({sheetsWhere}) with the layout gap as margin and spacing, parts in the orientation shown in the cut layout.{nested.unplaced?` ${nested.unplaced} part${nested.unplaced>1?'s do':' does'} not fit the sheet.`:''} The manufacturing package contains the per-sheet files.</p>:<p className='field-note'>Sheet counts are area estimates with 20% waste on {Number(values.stock_width)||2440} × {Number(values.stock_height)||1220} mm stock ({sheetsWhere}), not a nested layout.</p>}
   <h3 className='plan-heading'>Cut list</h3>
   <div className='review-table cut-table'>
    <table>

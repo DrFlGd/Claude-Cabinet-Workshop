@@ -6,6 +6,7 @@ import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/compo
 import {configuredSource,renderSources,families,schemas,validate,Values,Part} from '@/lib/cabinet';
 import {partAtPoint} from '@/lib/selection';
 import type {BufferGeometry,Material,WebGLRenderer} from 'three';
+import type {EngineTarget} from '@/lib/products/types';
 
 function MeshView({bytes,active,selected,parts,onSelect}:{bytes:ArrayBuffer;active:boolean;selected?:Part;parts:Part[];onSelect?:(p:Part|null)=>void}){
  const selection=useRef({selected,parts,onSelect});selection.current={selected,parts,onSelect};
@@ -32,19 +33,21 @@ function MeshView({bytes,active,selected,parts,onSelect}:{bytes:ArrayBuffer;acti
  return <div className='native-mesh'><div ref={host} className='mesh-canvas'/>{error&&<div className='native-empty'><Info/><p>{error}</p></div>}<button className='mesh-reset' onClick={()=>reset.current()}><RotateCcw size={16}/>Reset view</button><span className='mesh-hint'>Drag to orbit · scroll to zoom · arrow keys to rotate</span></div>
 }
 
-type Result={bytes:ArrayBuffer;key:string;seconds:number;family:number;mode:string;warnings:number};
-export default function OpenSCADView({family,values,active,selected,parts,onSelect}:{family:number;values:Values;active:boolean;selected?:Part;parts:Part[];onSelect?:(p:Part|null)=>void}){
+type Result={bytes:ArrayBuffer;key:string;seconds:number;family:number;mode:string;warnings:number;label:string};
+// A product (target) renders its own engine file with its own render modes.
+export default function OpenSCADView({family,values,active,selected,parts,onSelect,target}:{family:number;values:Values;active:boolean;selected?:Part;parts:Part[];onSelect?:(p:Part|null)=>void;target?:EngineTarget}){
  const [mode,setMode]=useState('assembly'),[result,setResult]=useState<Result|null>(null),[running,setRunning]=useState(false),[stage,setStage]=useState(''),[error,setError]=useState(''),[logs,setLogs]=useState<string[]>([]),[elapsed,setElapsed]=useState(0);
  const worker=useRef<Worker|null>(null),controller=useRef<AbortController|null>(null),sequence=useRef(0),timeout=useRef<ReturnType<typeof setTimeout>|null>(null);
- const key=JSON.stringify({family,values,mode}),stale=!!result&&result.key!==key,errors=validate(values);
+ const key=JSON.stringify({family,product:target?.id,values,mode}),stale=!!result&&result.key!==key,errors=target?target.validate(values):validate(values);
  // The render worker stays warm between renders; cancelling a render in progress discards it.
  const busy=useRef(false);
  const spawn=()=>{const w=new Worker(assetUrl('/openscad/render-worker.js'),{type:'module'});w.postMessage({type:'warm'});return w};
  const stop=(keep=false)=>{sequence.current++;if(!keep||busy.current){worker.current?.terminate();worker.current=null}busy.current=false;controller.current?.abort();controller.current=null;if(timeout.current)clearTimeout(timeout.current);timeout.current=null};
  useEffect(()=>{if(active&&!worker.current)worker.current=spawn();return ()=>{}},[active]);
  useEffect(()=>()=>stop(),[]);
- const supported=schemas[family].fields.find(f=>f.key==='output_mode')?.options??[];
- useEffect(()=>{if(!supported.includes(mode))setMode('assembly')},[family,mode]);
+ const modeLabels:[string,string][]=target?target.renderModes.map(m=>[m.id,m.label]):[['assembly','Full assembly'],['flat_3d','Flat parts · exact 3D'],['carcass_only','Carcass only'],['drawers_only','Drawers only']];
+ const supported=target?target.renderModes.map(m=>m.id):schemas[family].fields.find(f=>f.key==='output_mode')?.options??[];
+ useEffect(()=>{if(!supported.includes(mode))setMode('assembly')},[family,target?.id,mode]);
  // Keep the exact view current while it is visible: re-render shortly after edits settle.
  // A failed or cancelled render is not retried until the settings change again.
  const [auto,setAuto]=useState(true),attempted=useRef('');
@@ -55,24 +58,24 @@ export default function OpenSCADView({family,values,active,selected,parts,onSele
  },[auto,active,key,running,result,stale,errors.length]);
  useEffect(()=>{if(!running)return;setElapsed(0);const start=Date.now();const id=setInterval(()=>setElapsed(Math.floor((Date.now()-start)/1000)),1000);return()=>clearInterval(id)},[running]);
  async function render(){
-  attempted.current=key;stop(true);const id=sequence.current;const snapshot={family,key,mode};controller.current=new AbortController();setRunning(true);setError('');setLogs([]);setStage('Preparing cabinet…');
+  attempted.current=key;stop(true);const id=sequence.current;const snapshot={family,key,mode,label:target?.label??families[family].name};controller.current=new AbortController();setRunning(true);setError('');setLogs([]);setStage(target?'Preparing '+target.label.toLowerCase()+'…':'Preparing cabinet…');
  timeout.current=setTimeout(()=>{if(sequence.current!==id)return;stop();setRunning(false);setError('Rendering stopped after 3 minutes. Try carcass only, or reduce circle segments in Advanced.')},180000);
- try{const source=await configuredSource(family,values,controller.current.signal);if(sequence.current!==id)return;
+ try{const source=target?target.source(values):await configuredSource(family,values,controller.current.signal);if(sequence.current!==id)return;
  const job=worker.current??spawn();worker.current=job;busy.current=true;
  job.onmessage=({data})=>{if(sequence.current!==id)return;
  if(data.type==='stage')setStage(data.stage);
  if(data.type==='log')setLogs(l=>[...l.slice(-149),data.line]);
- if(data.type==='result'){const bytes=data.output as ArrayBuffer;if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<84){setError('OpenSCAD returned an empty model.')}else{setResult({bytes,key:snapshot.key,family:snapshot.family,mode:snapshot.mode,seconds:data.elapsed/1000,warnings:(data.logs??[]).filter((s:string)=>/^WARNING:/.test(s)).length})}busy.current=false;stop(true);setRunning(false)}
+ if(data.type==='result'){const bytes=data.output as ArrayBuffer;if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<84){setError('OpenSCAD returned an empty model.')}else{setResult({bytes,key:snapshot.key,family:snapshot.family,label:snapshot.label,mode:snapshot.mode,seconds:data.elapsed/1000,warnings:(data.logs??[]).filter((s:string)=>/^WARNING:/.test(s)).length})}busy.current=false;stop(true);setRunning(false)}
  if(data.type==='error'){setError(data.error||'Rendering failed.');setLogs(data.logs??[]);stop();setRunning(false)}
  };
  job.onerror=()=>{if(sequence.current!==id)return;setError('Could not run OpenSCAD. Check your connection and try again.');stop();setRunning(false)};
- job.postMessage({filename:schemas[family].file,source,mode,sources:renderSources});
+ job.postMessage({filename:target?target.filename:schemas[family].file,source,mode,sources:target?target.sources:renderSources});
  }catch(e){if(sequence.current!==id)return;setError(e instanceof Error?e.message:'Rendering failed.');stop();setRunning(false)}
  }
- return <div className='native-render'><div className='native-toolbar'><Select value={mode} onValueChange={setMode}><SelectTrigger aria-label='OpenSCAD render contents' className='native-mode'><SelectValue/></SelectTrigger><SelectContent>{[['assembly','Full assembly'],['flat_3d','Flat parts · exact 3D'],['carcass_only','Carcass only'],['drawers_only','Drawers only']].filter(([id])=>supported.includes(id)).map(([id,label])=><SelectItem key={id} value={id}>{label}</SelectItem>)}</SelectContent></Select><span className='native-status' role='status'>{running?`${stage} ${elapsed}s`:error?'Render needs attention':stale?(auto?'Updating shortly…':'Settings changed · update render'):result?'Render current':'Ready to render'}</span><label className='auto-render'><input type='checkbox' checked={auto} onChange={e=>setAuto(e.target.checked)}/>Auto-update</label>{running?<button className='render-cancel' onClick={()=>{stop();setRunning(false);setError('Render cancelled. Your previous result is retained.')}}><Square size={14}/>Cancel</button>:<button className='primary' disabled={errors.length>0} onClick={render}><Play size={15}/>{result?'Update render':'Render cabinet'}</button>}</div>
- {result?<MeshView bytes={result.bytes} active={active} selected={!stale&&mode==='assembly'&&family<6?selected:undefined} parts={!stale&&mode==='assembly'&&family<6?parts:[]} onSelect={!stale&&mode==='assembly'&&family<6?onSelect:undefined}/>:<div className='native-empty'><span className='native-empty-icon'>{running?<LoaderCircle className='render-spinner' size={32}/>:<Box size={32}/>}</span><h2>{running?'Building your cabinet':'Render the actual cabinet geometry'}</h2><p>{running?'You can keep editing while OpenSCAD works.':'OpenSCAD uses the engine files, including joinery, holes, and structural details.'}</p>{!running&&<small>The engine downloads on first use. The Preview tab remains your instant schematic.</small>}</div>}
+ return <div className='native-render'><div className='native-toolbar'><Select value={mode} onValueChange={setMode}><SelectTrigger aria-label='OpenSCAD render contents' className='native-mode'><SelectValue/></SelectTrigger><SelectContent>{modeLabels.filter(([id])=>supported.includes(id)).map(([id,label])=><SelectItem key={id} value={id}>{label}</SelectItem>)}</SelectContent></Select><span className='native-status' role='status'>{running?`${stage} ${elapsed}s`:error?'Render needs attention':stale?(auto?'Updating shortly…':'Settings changed · update render'):result?'Render current':'Ready to render'}</span><label className='auto-render'><input type='checkbox' checked={auto} onChange={e=>setAuto(e.target.checked)}/>Auto-update</label>{running?<button className='render-cancel' onClick={()=>{stop();setRunning(false);setError('Render cancelled. Your previous result is retained.')}}><Square size={14}/>Cancel</button>:<button className='primary' disabled={errors.length>0} onClick={render}><Play size={15}/>{result?'Update render':target?'Render '+target.label.toLowerCase():'Render cabinet'}</button>}</div>
+ {result?<MeshView bytes={result.bytes} active={active} selected={!stale&&mode==='assembly'&&family<6?selected:undefined} parts={!stale&&mode==='assembly'&&family<6?parts:[]} onSelect={!stale&&mode==='assembly'&&family<6?onSelect:undefined}/>:<div className='native-empty'><span className='native-empty-icon'>{running?<LoaderCircle className='render-spinner' size={32}/>:<Box size={32}/>}</span><h2>{running?'Building your '+(target?target.label.toLowerCase():'cabinet'):'Render the actual '+(target?target.label.toLowerCase():'cabinet')+' geometry'}</h2><p>{running?'You can keep editing while OpenSCAD works.':'OpenSCAD uses the engine files, including joinery, holes, and structural details.'}</p>{!running&&<small>The engine downloads on first use. The Preview tab remains your instant schematic.</small>}</div>}
  {running&&result&&<div className='render-progress'><LoaderCircle className='render-spinner' size={17}/><span>Showing the previous result while rendering…</span></div>}
  {(error||errors.length>0)&&<div className='render-error' role='alert'><Info size={16}/><span>{error||errors.join(' ')}</span></div>}
- {selected&&!stale&&mode==='assembly'&&<p className='selection-note'>Selection guide: {selected.name}. Bounds and click selection are approximate; the OpenSCAD mesh remains the manufacturing geometry.</p>}<div className={'native-result-bar '+(stale?'is-stale':'')}>{result?<><span>{stale?<Info size={14}/>:<Check size={14}/>} {families[result.family].name} · {result.mode.replaceAll('_',' ')} · {result.seconds.toFixed(1)}s{result.warnings?` · ${result.warnings} warning(s)`:''}</span><small>{stale?'Previous settings':'OpenSCAD / Manifold'}</small></>:<span>OpenSCAD runs locally in your browser.</span>}</div>
+ {selected&&!stale&&mode==='assembly'&&<p className='selection-note'>Selection guide: {selected.name}. Bounds and click selection are approximate; the OpenSCAD mesh remains the manufacturing geometry.</p>}<div className={'native-result-bar '+(stale?'is-stale':'')}>{result?<><span>{stale?<Info size={14}/>:<Check size={14}/>} {result.label} · {result.mode.replaceAll('_',' ')} · {result.seconds.toFixed(1)}s{result.warnings?` · ${result.warnings} warning(s)`:''}</span><small>{stale?'Previous settings':'OpenSCAD / Manifold'}</small></>:<span>OpenSCAD runs locally in your browser.</span>}</div>
  <details className='render-log'><summary>Render log {logs.length>0&&`(${logs.length})`}<a href={assetUrl('/openscad/NOTICE.txt')} target='_blank' rel='noreferrer'>Engine & license</a></summary><pre>{logs.length?logs.join('\n'):'Render a cabinet to see OpenSCAD messages here.'}</pre></details></div>
 }
