@@ -150,8 +150,8 @@ worker integration coverage, not a visual browser interaction test.
 ## Products
 
 A product is a design with its own OpenSCAD file and its own editor beside the
-cabinet types (the media cart is the first; see
-[MEDIA_CART_REVIEW.md](MEDIA_CART_REVIEW.md)). The SCAD file is the single source of
+cabinet types (the media cart and the shop wall organizers; see
+[MEDIA_CART_REVIEW.md](MEDIA_CART_REVIEW.md) and [SHOP_WALL.md](SHOP_WALL.md)). The SCAD file is the single source of
 defaults: lib/products/scad-params.ts reads its Customizer parameters (everything
 above `/* [Hidden] */`), and settings are applied by rewriting those assignments.
 To add one:
@@ -172,11 +172,14 @@ To add one:
    then turns it over per sheet and adds registration pins.
 3. Add a definition module beside lib/products/media-cart.ts (sections and
    controls, starters, quick validation, summary, assembly steps, coverage) and add
-   it to the list in lib/products/index.ts.
+   it to the list in lib/products/index.ts. `area` lists it under its own heading in
+   the picker, starters may carry a `group`, and a `coupon` adds a fit test coupon
+   to the Export view.
 4. Optionally register an instant drawing in app/products/diagrams.ts; without
    one the editor opens on the 3D model.
 5. Run `node tests/products.mjs --update`, review the snapshot, and run
-   `node tests/product-interference.mjs --all`.
+   `node tests/product-interference.mjs --all` (add the product's random-sweep
+   settings to `RANDOM` there).
 
 The editor (app/products/ProductWorkspace.tsx), engine check, cut list, export page,
 nesting, saved designs and recovery need no changes for a new product.
