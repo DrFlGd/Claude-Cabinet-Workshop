@@ -1518,6 +1518,15 @@ if (validation_enabled()) {
         validation_check("WARNING","STACK_LINK_SCREWS",
             "There is no room for a screw between a top stretcher and the stacking recess. Make the stacking margins deeper than the top stretchers.");
 
+    // Flat-rail base frame.
+    if (stack_base_flat() && !stack_base_kick_active())
+        validation_check("WARNING","STACK_BASE_KICK",
+            "The base frame is too low (or the stretchers too deep) for a kick board under the module's bottom; the base is built without one. Raise the base or use edge rails.");
+
+    if (stack_base_toe_notch_clamped())
+        validation_check("WARNING","STACK_BASE_TOE_NOTCH",
+            str("The base toe notch was reduced to ",stack_base_toe_notch()[0]," x ",stack_base_toe_notch()[1]," mm to keep 10 mm of material in front of the kick board and below the front rail."));
+
     // Separators are continuous full-width parts; the drawer-bank partitions
     // have no cross-lap or receiver for them.
     if (drawer_separator_count > 0 && drawer_bank_partition_count() > 0)
@@ -1954,7 +1963,7 @@ else if (fronts_cover_bottom_lip) {
             if (drawer_bank_drawer_count(b) > 0)
                 echo("Lowest drawer front bottom Z, bank/bay ", b+1,
                      " = ",
-                     drawer_face_z(
+                     drawer_face_visible_z(
                          drawer_bank_drawer_count(b)-1,b));
 
     if (has_doors)
