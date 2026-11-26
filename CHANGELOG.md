@@ -128,6 +128,11 @@ Validation performed:
   overlapping parts) and `pnpm run build:static` passed.
 - `tests/golden.mjs` added the new starter; every existing snapshot matched
   unchanged.
+- After merging 0.23.0 (the in-app collision check): the schema, engine-source,
+  parity and product-source checks, `tsc`, units, hardware, v5 integration, the
+  static build, desktop assets, the collision worker (8 cabinet types and 2
+  products clean), engine interference (43 configurations, no overlaps) and the
+  layout editor passed again.
 - **Headless Chrome** at 1500 px: the *Side-by-side drawers* starter passes the
   engine checks; the Layout inspector shows **Drawers across** with the partition
   note and "Drawer levels"; the Hardware step lists 72 slide models, and choosing
