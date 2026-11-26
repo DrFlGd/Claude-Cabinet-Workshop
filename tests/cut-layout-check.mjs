@@ -208,7 +208,7 @@ if(process.argv[1]&&import.meta.url===new URL(process.argv[1],'file://').href){
  // deep as the module's top stretchers, a kick board up to the recess floor, and base sides that
  // differ from edge-rail base sides by exactly the toe notch.
  {
-  const fid='stackable_cube_door_nested',flat=valuesFor(3,fid,{}),edge=valuesFor(3,fid,{stack_base_style:'edge_rails'});
+  const fid='stackable_cube_door_nested',flat=valuesFor(3,fid,{side_outer_corner_radius:0}),edge=valuesFor(3,fid,{side_outer_corner_radius:0,stack_base_style:'edge_rails'});
   const fb=await run(3,flat,'bom'),fc=await run(3,flat,'cut_layout'),eb=await run(3,edge,'bom'),ec=await run(3,edge,'cut_layout');
   if([fb,fc,eb,ec].some(m=>m.type!=='result'))fail(fid+' flat base: a render failed');
   else{
@@ -224,6 +224,37 @@ if(process.argv[1]&&import.meta.url===new URL(process.argv[1],'file://').href){
    if(ids.length<2)fail(fid+' flat base: base side parts not found');
    for(const id of ids)if(!(Math.abs(want[id]-got[id]-notch)<1))fail(`${fid} flat base: ${id} outline is ${(want[id]-got[id]).toFixed(1)} mm2 smaller than the edge-rail side, expected the toe notch ${notch}`);
    if(ids.length===2&&!failures)console.log(`${fid} flat base: rails ${tsd} mm deep, kick board ${hb-T} mm, base sides differ from edge-rail sides by the toe notch only, one contour per part.`);
+  }
+ }
+ // 6. Nested bottom with dado joinery: its dado tongues run only over the full-height part of the
+ // side tongue, so its outline is the cut rectangle less a notch at each corner that reaches at
+ // least that range (and at most 15 mm further). Rounded outer side corners only take the corner
+ // material off: at most 16 corners of (1 - pi/4) r^2 each.
+ {
+  const fid='stackable_cube_door_nested',dado=valuesFor(3,fid,{joinery_style:'dado',slot_corner_relief:'none'});
+  const square=valuesFor(3,fid,{side_outer_corner_radius:0}),round=valuesFor(3,fid,{});
+  const runs=await Promise.all([run(3,dado,'bom'),run(3,dado,'cut_layout'),run(3,square,'bom'),run(3,square,'cut_layout'),run(3,round,'bom'),run(3,round,'cut_layout')]);
+  if(runs.some(m=>m.type!=='result'))fail(fid+' nested dado / rounded corners: a render failed');
+  else{
+   const [db,dc,qb,qc,rb,rc]=runs,before=failures;
+   const rec=recordsOf(db),places=placements(rec);
+   for(const p of checkCutLayout({records:rec,svg:dc.output}))fail(fid+' nested dado: '+p);
+   const b=places.find(p=>p.id==='BOTTOM'),poly=b&&svgPolygons(dc.output).map(pts=>({pts,b:bbox(pts)})).find(q=>same(q.b.x0,b.x)&&same(q.b.y0,b.y)&&same(q.b.x1,b.x+b.w)&&same(q.b.y1,b.y+b.h));
+   if(!poly)fail(fid+' nested dado: bottom outline not found');
+   else{
+    const T=dado.custom_carcass_thickness,dd=(b.w-(dado.cabinet_width-2*T))/2;
+    const runLen=T+(2*Math.SQRT2-2)*dado.stack_interface_corner_radius;
+    const full=dado.cabinet_depth-dado.stack_interface_front_margin-dado.stack_interface_back_margin-2*runLen;
+    const missing=b.w*b.h-area(poly.pts),lo=2*dd*(b.h-full),hi=2*dd*(b.h-full+30);
+    if(!(dd>0)||!(missing>lo-0.5&&missing<hi))fail(`${fid} nested dado: bottom notches remove ${missing.toFixed(1)} mm2, expected ${lo.toFixed(1)} to ${hi.toFixed(1)} (dado ${dd} mm)`);
+   }
+   for(const p of checkCutLayout({records:recordsOf(rb),svg:rc.output}))fail(fid+' rounded corners: '+p);
+   const r=round.side_outer_corner_radius,sq=sideAreas(qc.output,placements(recordsOf(qb))),rd=sideAreas(rc.output,placements(recordsOf(rb)));
+   for(const id of ['CS-L','CS-R','STACK-BASE-L','STACK-BASE-R']){
+    const d=sq[id]-rd[id];
+    if(!(d>0.5&&d<16*(1-Math.PI/4)*r*r+0.5))fail(`${fid} rounded corners: ${id} lost ${d?.toFixed(2)} mm2 to the ${r} mm corner radius`);
+   }
+   if(failures===before)console.log(`${fid}: nested dado bottom notched to the full-height tongue, ${r} mm rounded side corners, one contour per part.`);
   }
  }
  if(failures){console.log(`Cut layout check: ${failures} failure(s).`);process.exitCode=1}

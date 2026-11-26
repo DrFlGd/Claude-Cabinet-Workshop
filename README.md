@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.24.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.25.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.24.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.25.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -167,7 +167,12 @@ rails and kick board**): flat rails like the module's top stretchers, a toe notc
 and a kick board that carries the bottom, so the lowest module sits on the base as
 on another module. Stacked doors and drawer fronts cover half of the stretcher
 between them, so the gap between stacked fronts is centred on it (**Stack front
-seam**). See the [stackable reference](docs/STACKABLE_REFERENCE.md).
+seam**). A nested bottom works with tab-and-slot, dado or screw joinery and with
+several drawer banks. **Stack interface flank: 45° flank** gives the reference's
+self-centring 45° transitions instead of the S-curve, **Side outer corner
+radius** rounds the sides' outer corners, and **Hinge plate marks both sides**
+engraves the plate positions on the side without hinges. See the
+[stackable reference](docs/STACKABLE_REFERENCE.md).
 
 ## Your products: the media cart
 
