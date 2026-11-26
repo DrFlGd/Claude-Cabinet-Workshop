@@ -16,7 +16,9 @@ class BoundaryTests(unittest.TestCase):
     def test_fractional_stock_all_frontends(self):
         for name in FRONTENDS:
             with self.subTest(name=name):
-                c=compile_config(name,common={'material_thickness':18.35,'joinery':'screw'})
+                # The workbench's carcass joinery is fixed (fingers in housings); it takes the stock only.
+                common={'material_thickness':18.35,**({} if name=='workbench' else {'joinery':'screw'})}
+                c=compile_config(name,common=common)
                 self.assertIn(18.35,c['parameters'].values())
     def test_reject_unknown_frontend(self):
         with self.assertRaises(ValueError):compile_config('../utility')
@@ -28,11 +30,22 @@ class BoundaryTests(unittest.TestCase):
         with self.assertRaises(ValueError):compile_config('utility',parameters={'output_mode':'assembly'})
     def test_reject_conflicting_aliases(self):
         with self.assertRaises(ValueError):compile_config('equipment_stand',common={'joinery':'screw'},parameters={'joinery_style':'butt'})
+    def test_workbench_frontend(self):
+        d=api.describe()['frontends']['workbench']
+        self.assertTrue(d['capabilities']['modular_grid']);self.assertIn('Drawers, cubbies and a drawer-and-door cabinet',d['presets'])
+        modes=next(p for p in d['parameters'] if p['id']=='output_mode')['enum']
+        for m in ('pocket_drawer_dados','pocket_slide_holes','pocket_screw_marks'):self.assertIn(m,modes)
+        c=compile_config('workbench',preset='Small 2 × 2 drawer bank',common={'material_thickness':19.05})
+        self.assertEqual(c['parameters']['carcass_thickness'],19.05)
+        c=compile_config('workbench',parameters={'modules':[[0,0,1,1,730,'drawers',0,'front','left',4]],'include_handle_jig':True})
+        self.assertEqual(c['parameters']['modules'][0][9],4)
+        with self.assertRaises(ValueError):compile_config('workbench',parameters={'modules':[[0,0,1,1,730,'x'*200]]})
+        with self.assertRaises(ValueError):compile_config('workbench',common={'joinery':'screw'})
     def test_legacy_joinery(self):
         c=compile_config('equipment_stand',parameters={'joinery_type':'tab_slot'})
         self.assertEqual(c['parameters']['joinery_style'],'tab_slot');self.assertTrue(c['warnings'])
     def test_schema_copy(self):
-        a=api.describe();a['frontends'].clear();self.assertEqual(len(api.describe()['frontends']),7)
+        a=api.describe();a['frontends'].clear();self.assertEqual(len(api.describe()['frontends']),8)
     def test_zero_exit_renderer_error(self):
         with patch('modular_organization.runtime.subprocess.run',return_value=subprocess.CompletedProcess([],0,'','ERROR: invalid')):
             self.assertNotEqual(run_scad(['openscad']).returncode,0)
@@ -67,7 +80,7 @@ class EngineTests(unittest.TestCase):
     def test_all_frontends_fractional_screw_metadata(self):
         for name in FRONTENDS:
             with self.subTest(name=name):
-                r=api.inspect(name,common={'material_thickness':18.35,'joinery':'screw'})
+                r=api.inspect(name,common={'material_thickness':18.35,**({} if name=='workbench' else {'joinery':'screw'})})
                 self.assertNotEqual(r['status'],'ERROR',r['checks']);self.assertTrue(r['bom']);self.assertFalse(r['runtime_warnings'])
     def test_project_examples_and_immutability(self):
         for path in (ROOT/'examples').glob('*.morg'):

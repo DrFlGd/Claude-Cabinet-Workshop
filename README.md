@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.21.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.23.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.21.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.23.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -79,8 +79,9 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    height, shelves and how many cells it spans, move it, stack a module on top
    (a module at bench height is split into two stacked halves; stacked modules
    are located by loose keys in the top rails below) or remove it.
-   **Fill empty cells** completes the grid. See
-   [the workbench design note](docs/MODULAR_WORKBENCH.md).
+   **Fill empty cells** completes the grid. The cut files spot every assembly
+   screw with shallow marks, and an optional drilling jig for the plywood pulls
+   can be added. See [the workbench design note](docs/MODULAR_WORKBENCH.md).
 3. **Work through the settings.** The section rail follows the order you
    would design in: Sizing, Structure, Drawers, Doors, Shelves and so on. The
    shop details (Materials, Hardware, Machining, Engine & export) are collapsed
@@ -199,6 +200,25 @@ gives the order.
 How the original model was reviewed and corrected is in
 [the media cart review](docs/MEDIA_CART_REVIEW.md); adding another product is
 described in [development notes](docs/DEVELOPMENT.md#products).
+
+## Shop wall: French-cleat organizers
+
+**New → Shop wall** holds 31 wall-mounted organizers in one editor: open shelves
+and displays, cube and narrow shelves, door, sliding-door and drawer cabinets,
+chisel, clamp, hammer, screwdriver, plier, router bit and circular saw racks,
+drill stations, lidded, open and glove boxes, a hook panel, a material stand, a
+paper towel holder and a wrench holder. Pick one as a starting point (or under
+**Module**) and set its size and its own settings: shelves, drawers, bins, tool
+slots or holes, dowel, wrench slots and so on. **Wall mount** hangs it on a
+French cleat, either hooks cut into the side panels on the CNC or a beveled hanger
+board, with the mating wall rail cut as a part; or screws through the back, or
+nothing. Tabs, slots, reliefs and screws come from the same joinery core as the
+cabinets, and the engine checks every joint, the assembly order, the cleat
+engagement and each module's own fits. The Export view adds a **fit test coupon**
+(one tab in its slot and a short hook or hanger on a short rail) to cut before the
+module. These checks are geometric and do not replace a test cut. See
+[docs/SHOP_WALL.md](docs/SHOP_WALL.md) for the modules, the review of the original
+designs and the per-module fit results.
 
 ## Accuracy and its limits
 

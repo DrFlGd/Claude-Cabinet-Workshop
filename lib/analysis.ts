@@ -40,7 +40,7 @@ const PART_NAMES:Record<string,string>={
  frame_long:'Base frame strip (long)',frame_cross:'Base frame strip (cross)',side_l:'Module side (left)',side_r:'Module side (right)',bottom:'Module bottom',rail_f:'Front top rail',rail_b:'Back top rail',shelf:'Adjustable shelf',handle:'Pull',top:'Worksurface panel',face_panel:'Face panel',stack_key:'Stacking key',
 };
 const CARCASS_NAMES:Record<string,string>={'CS-L':'Left side','CS-R':'Right side',BOTTOM:'Bottom',TOP:'Top','TOP-F':'Front top stretcher','TOP-R':'Rear top stretcher',BASE:'Base',TOP_FRONT:'Front top rail',TOP_REAR:'Rear top rail',UPPER_SHELF:'Upper shelf'};
-export const MATERIAL_NAMES:Record<string,string>={CARCASS:'Carcass',BACK:'Back',DRAWER_WALL:'Drawer boxes',DRAWER_BOTTOM:'Drawer bottoms',DRAWER_FRONT:'Drawer faces',DOOR:'Doors',FACE_FRAME:'Face frame',WOOD_RAIL:'Drawer rails',WOOD_RUNNER:'Drawer runners',WORKTOP:'Worktop',DRAWER_DIVIDER:'Drawer dividers',FIN:'Fins (bin dividers)',plywood:'Sheet stock'};
+export const MATERIAL_NAMES:Record<string,string>={CARCASS:'Carcass',BACK:'Back',DRAWER_WALL:'Drawer boxes',DRAWER_BOTTOM:'Drawer bottoms',DRAWER_FRONT:'Drawer faces',DOOR:'Doors',FACE_FRAME:'Face frame',WOOD_RAIL:'Drawer rails',WOOD_RUNNER:'Drawer runners',WORKTOP:'Worktop',DRAWER_DIVIDER:'Drawer dividers',FIN:'Fins (bin dividers)',CLEAT:'Cleat stock',plywood:'Sheet stock'};
 const human=(s:string)=>s.replace(/_/g,' ').replace(/^\w/,c=>c.toUpperCase());
 export function partName(id:string,category:string){
  if(CARCASS_NAMES[id])return CARCASS_NAMES[id];

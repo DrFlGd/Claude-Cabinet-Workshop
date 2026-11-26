@@ -1,0 +1,1612 @@
+{
+ "simple_shelves": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|5 joints, 7 tabs and 8 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=508|H=152.4|D=196.85",
+   "DIM|SHOP_WALL|MODULE|TYPE=simple_shelves|FAMILY=display|W=508|H=152.4|D=177.8|WALL_D=196.85|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=44.45|RAIL_L=508|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=5|TABS=7|SCREWS=8",
+   "CHECK|INFO|DRILL_HOLES|10 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|196.85|152.4|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|196.85|152.4|CNC side hook on the rear edge",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|507.4|177.5|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|508|152.4|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|508|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=196.85|H=152.4",
+   "PLACE|SIDE_R|X=216.85|Y=0|W=196.85|H=152.4",
+   "PLACE|SHELF_1|X=433.7|Y=0|W=507.4|H=177.5",
+   "PLACE|BACK|X=961.1|Y=0|W=508|H=152.4",
+   "PLACE|WALL_RAIL|X=1489.1|Y=0|W=508|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=8|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "7cb17e673a37f264766471b2",
+    "bytes": 17575,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "b387312ec1258b475ab813c0",
+    "bytes": 9484,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "c7f2e8153689baa203d4f60c",
+    "bytes": 24072,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "jar_shelves": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 203.2 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|18 joints, 22 tabs and 40 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=203.2|H=508|D=146.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=jar_shelves|FAMILY=display|W=203.2|H=508|D=127|WALL_D=146.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=400.05|RAIL_L=203.2|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=18|TABS=22|SCREWS=40",
+   "CHECK|INFO|DRILL_HOLES|42 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|146.05|508|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|146.05|508|CNC side hook on the rear edge",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|202.6|126.7|as drawn",
+   "BOM|SHELF_2|1|shelf|CARCASS|19.05|202.6|126.7|as drawn",
+   "BOM|SHELF_3|1|shelf|CARCASS|19.05|202.6|126.7|as drawn",
+   "BOM|SHELF_4|1|shelf|CARCASS|19.05|202.6|126.7|as drawn",
+   "BOM|LIP_1|1|lip|CARCASS|19.05|165.1|37.8|as drawn",
+   "BOM|LIP_2|1|lip|CARCASS|19.05|165.1|37.8|as drawn",
+   "BOM|LIP_3|1|lip|CARCASS|19.05|165.1|37.8|as drawn",
+   "BOM|LIP_4|1|lip|CARCASS|19.05|165.1|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|203.2|508|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|203.2|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=146.05|H=508",
+   "PLACE|SIDE_R|X=166.05|Y=0|W=146.05|H=508",
+   "PLACE|SHELF_1|X=332.1|Y=0|W=202.6|H=126.7",
+   "PLACE|SHELF_2|X=554.7|Y=0|W=202.6|H=126.7",
+   "PLACE|SHELF_3|X=777.3|Y=0|W=202.6|H=126.7",
+   "PLACE|SHELF_4|X=999.9|Y=0|W=202.6|H=126.7",
+   "PLACE|LIP_1|X=1222.5|Y=0|W=165.1|H=37.8",
+   "PLACE|LIP_2|X=1407.6|Y=0|W=165.1|H=37.8",
+   "PLACE|LIP_3|X=1592.7|Y=0|W=165.1|H=37.8",
+   "PLACE|LIP_4|X=1777.8|Y=0|W=165.1|H=37.8",
+   "PLACE|BACK|X=1962.9|Y=0|W=203.2|H=508",
+   "PLACE|WALL_RAIL|X=2186.1|Y=0|W=203.2|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=40|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "6990fb3b74a9182e8b7629e6",
+    "bytes": 55498,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "ca41039b3e5ef6ee388626fc",
+    "bytes": 38570,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "4264e79c2f787fcbcb9c8d71",
+    "bytes": 54067,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "spray_paint_display": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|6 joints, 10 tabs and 16 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=482.6|H=203.2|D=158.75",
+   "DIM|SHOP_WALL|MODULE|TYPE=spray_paint_display|FAMILY=display|W=482.6|H=203.2|D=139.7|WALL_D=158.75|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=95.25|RAIL_L=482.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=6|TABS=10|SCREWS=16",
+   "CHECK|INFO|DRILL_HOLES|18 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|158.75|203.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|158.75|203.2|CNC side hook on the rear edge",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|482|139.4|as drawn",
+   "BOM|LIP_1|1|lip|CARCASS|19.05|444.5|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|482.6|203.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|482.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=158.75|H=203.2",
+   "PLACE|SIDE_R|X=178.75|Y=0|W=158.75|H=203.2",
+   "PLACE|SHELF_1|X=357.5|Y=0|W=482|H=139.4",
+   "PLACE|LIP_1|X=859.5|Y=0|W=444.5|H=37.8",
+   "PLACE|BACK|X=1324|Y=0|W=482.6|H=203.2",
+   "PLACE|WALL_RAIL|X=1826.6|Y=0|W=482.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=16|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "9e8cc322895dd22dacb82867",
+    "bytes": 23414,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "295ff8133daeecf04a8b616b",
+    "bytes": 16804,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "e257e7a9a18f3d87b13ccbdc",
+    "bytes": 25802,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "single_cube_shelf": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 304.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 14 tabs and 22 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=304.8|H=304.8|D=273.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=single_cube_shelf|FAMILY=cubby|W=304.8|H=304.8|D=254|WALL_D=273.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=196.85|RAIL_L=304.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=14|SCREWS=22",
+   "DIM|SHOP_WALL|BAYS|COUNT=1|CLEAR_W=266.7|CLEAR_H=266.7",
+   "CHECK|INFO|DRILL_HOLES|24 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|273.05|304.8|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|273.05|304.8|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|304.2|253.7|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|304.2|253.7|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|304.8|304.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|304.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=273.05|H=304.8",
+   "PLACE|SIDE_R|X=293.05|Y=0|W=273.05|H=304.8",
+   "PLACE|BOTTOM|X=586.1|Y=0|W=304.2|H=253.7",
+   "PLACE|TOP|X=910.3|Y=0|W=304.2|H=253.7",
+   "PLACE|BACK|X=1234.5|Y=0|W=304.8|H=304.8",
+   "PLACE|WALL_RAIL|X=1559.3|Y=0|W=304.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=22|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "189d54f6fe81083ee70fce9c",
+    "bytes": 31174,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "a6b07ad4a5d6b05d89329d12",
+    "bytes": 22259,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "b14329d174b297f47d732a04",
+    "bytes": 30377,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "double_cube_shelf": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|11 joints, 24 tabs and 37 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=609.6|H=304.8|D=273.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=double_cube_shelf|FAMILY=cubby|W=609.6|H=304.8|D=254|WALL_D=273.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=196.85|RAIL_L=609.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=11|TABS=24|SCREWS=37",
+   "DIM|SHOP_WALL|BAYS|COUNT=2|CLEAR_W=276.225|CLEAR_H=266.7",
+   "CHECK|INFO|DRILL_HOLES|39 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|273.05|304.8|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|273.05|304.8|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|609|253.7|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|609|253.7|as drawn",
+   "BOM|DIVIDER_1|1|divider|CARCASS|19.05|253.7|304.2|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|609.6|304.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|609.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=273.05|H=304.8",
+   "PLACE|SIDE_R|X=293.05|Y=0|W=273.05|H=304.8",
+   "PLACE|BOTTOM|X=586.1|Y=0|W=609|H=253.7",
+   "PLACE|TOP|X=1215.1|Y=0|W=609|H=253.7",
+   "PLACE|DIVIDER_1|X=1844.1|Y=0|W=253.7|H=304.2",
+   "PLACE|BACK|X=0|Y=324.8|W=609.6|H=304.8",
+   "PLACE|WALL_RAIL|X=629.6|Y=324.8|W=609.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=37|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "9371aed1144c2e663c883a6a",
+    "bytes": 56136,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "c72255b8384545b13b3b3a0a",
+    "bytes": 35840,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "5db5dddee1f31b243b09f1f4",
+    "bytes": 35372,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "narrow_shelves": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 177.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|14 joints, 16 tabs and 30 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=177.8|H=457.2|D=171.45",
+   "DIM|SHOP_WALL|MODULE|TYPE=narrow_shelves|FAMILY=cubby|W=177.8|H=457.2|D=152.4|WALL_D=171.45|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=349.25|RAIL_L=177.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=14|TABS=16|SCREWS=30",
+   "DIM|SHOP_WALL|SHELVES|COUNT=2|OPENING_H=127",
+   "CHECK|INFO|DRILL_HOLES|32 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|171.45|457.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|171.45|457.2|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|177.2|152.1|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|177.2|152.1|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|177.2|152.1|as drawn",
+   "BOM|SHELF_2|1|shelf|CARCASS|19.05|177.2|152.1|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|177.8|457.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|177.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=171.45|H=457.2",
+   "PLACE|SIDE_R|X=191.45|Y=0|W=171.45|H=457.2",
+   "PLACE|BOTTOM|X=382.9|Y=0|W=177.2|H=152.1",
+   "PLACE|TOP|X=580.1|Y=0|W=177.2|H=152.1",
+   "PLACE|SHELF_1|X=777.3|Y=0|W=177.2|H=152.1",
+   "PLACE|SHELF_2|X=974.5|Y=0|W=177.2|H=152.1",
+   "PLACE|BACK|X=1171.7|Y=0|W=177.8|H=457.2",
+   "PLACE|WALL_RAIL|X=1369.5|Y=0|W=177.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=30|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "4fdc28fa68ef5a88c00c4aff",
+    "bytes": 40643,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "c5e9c31bf319bb8b4a32ec28",
+    "bytes": 29594,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "7b830d8f1fc58e7fa2af67e3",
+    "bytes": 40943,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "sandpaper_shelf": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 177.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|29 joints, 31 tabs and 60 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=177.8|H=457.2|D=196.85",
+   "DIM|SHOP_WALL|MODULE|TYPE=sandpaper_shelf|FAMILY=cubby|W=177.8|H=457.2|D=177.8|WALL_D=196.85|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=349.25|RAIL_L=177.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=29|TABS=31|SCREWS=60",
+   "DIM|SHOP_WALL|SHELVES|COUNT=7|OPENING_H=35.7188",
+   "CHECK|INFO|DRILL_HOLES|62 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|196.85|457.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|196.85|457.2|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_2|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_3|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_4|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_5|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_6|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|SHELF_7|1|shelf|CARCASS|19.05|177.2|177.5|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|177.8|457.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|177.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=196.85|H=457.2",
+   "PLACE|SIDE_R|X=216.85|Y=0|W=196.85|H=457.2",
+   "PLACE|BOTTOM|X=433.7|Y=0|W=177.2|H=177.5",
+   "PLACE|TOP|X=630.9|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_1|X=828.1|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_2|X=1025.3|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_3|X=1222.5|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_4|X=1419.7|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_5|X=1616.9|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_6|X=1814.1|Y=0|W=177.2|H=177.5",
+   "PLACE|SHELF_7|X=2011.3|Y=0|W=177.2|H=177.5",
+   "PLACE|BACK|X=2208.5|Y=0|W=177.8|H=457.2",
+   "PLACE|WALL_RAIL|X=0|Y=477.2|W=177.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=60|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "08cf8ab11dd90460f64a5d59",
+    "bytes": 84059,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "7bea50d91d7e3e15eacbe67b",
+    "bytes": 56814,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "988d2c93418355c5776281a9",
+    "bytes": 70656,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "single_door_cabinet": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 304.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|12 joints, 17 tabs and 29 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=304.8|H=355.6|D=247.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=single_door_cabinet|FAMILY=doors|W=304.8|H=355.6|D=228.6|WALL_D=247.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=247.65|RAIL_L=304.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=12|TABS=17|SCREWS=29",
+   "DIM|SHOP_WALL|SHELVES|COUNT=1|OPENING_H=149.225",
+   "DIM|SHOP_WALL|DOORS|COUNT=1|LEAF_W=263.525|LEAF_H=314.325|GAP=1.5875",
+   "CHECK|INFO|DRILL_HOLES|31 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|247.65|355.6|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|247.65|355.6|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|304.2|228.3|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|304.2|228.3|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|304.2|206.075|as drawn",
+   "BOM|DOOR_1|1|door|CARCASS|19.05|263.525|314.325|as drawn",
+   "BOM|DOOR_1_PULL|1|pull|CARCASS|19.05|101.6|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|304.8|355.6|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|304.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=247.65|H=355.6",
+   "PLACE|SIDE_R|X=267.65|Y=0|W=247.65|H=355.6",
+   "PLACE|BOTTOM|X=535.3|Y=0|W=304.2|H=228.3",
+   "PLACE|TOP|X=859.5|Y=0|W=304.2|H=228.3",
+   "PLACE|SHELF_1|X=1183.7|Y=0|W=304.2|H=206.075",
+   "PLACE|DOOR_1|X=1507.9|Y=0|W=263.525|H=314.325",
+   "PLACE|DOOR_1_PULL|X=1791.43|Y=0|W=101.6|H=37.8",
+   "PLACE|BACK|X=1913.03|Y=0|W=304.8|H=355.6",
+   "PLACE|WALL_RAIL|X=0|Y=375.6|W=304.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=29|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=hinges|QTY=2|UNIT=each|NOTE=surface-mount or butt hinges for 19.05 mm stock; inset doors hinged on the outer edges",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "ede424fe334b5d099107be30",
+    "bytes": 42767,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "e6eaa6d2db8d90ad56120880",
+    "bytes": 28517,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "7f17ef4f32688e047c11a1a5",
+    "bytes": 52482,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "double_door_cabinet": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|13 joints, 30 tabs and 43 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=609.6|H=457.2|D=298.45",
+   "DIM|SHOP_WALL|MODULE|TYPE=double_door_cabinet|FAMILY=doors|W=609.6|H=457.2|D=279.4|WALL_D=298.45|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=349.25|RAIL_L=609.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=13|TABS=30|SCREWS=43",
+   "DIM|SHOP_WALL|SHELVES|COUNT=1|OPENING_H=200.025",
+   "DIM|SHOP_WALL|DOORS|COUNT=2|LEAF_W=283.369|LEAF_H=415.925|GAP=1.5875",
+   "CHECK|INFO|DRILL_HOLES|45 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|298.45|457.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|298.45|457.2|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|609|279.1|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|609|279.1|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|609|256.875|as drawn",
+   "BOM|DOOR_1|1|door|CARCASS|19.05|283.369|415.925|as drawn",
+   "BOM|DOOR_1_PULL|1|pull|CARCASS|19.05|101.6|37.8|as drawn",
+   "BOM|DOOR_2|1|door|CARCASS|19.05|283.369|415.925|as drawn",
+   "BOM|DOOR_2_PULL|1|pull|CARCASS|19.05|101.6|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|609.6|457.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|609.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=298.45|H=457.2",
+   "PLACE|SIDE_R|X=318.45|Y=0|W=298.45|H=457.2",
+   "PLACE|BOTTOM|X=636.9|Y=0|W=609|H=279.1",
+   "PLACE|TOP|X=1265.9|Y=0|W=609|H=279.1",
+   "PLACE|SHELF_1|X=0|Y=477.2|W=609|H=256.875",
+   "PLACE|DOOR_1|X=629|Y=477.2|W=283.369|H=415.925",
+   "PLACE|DOOR_1_PULL|X=932.369|Y=477.2|W=101.6|H=37.8",
+   "PLACE|DOOR_2|X=1053.97|Y=477.2|W=283.369|H=415.925",
+   "PLACE|DOOR_2_PULL|X=1357.34|Y=477.2|W=101.6|H=37.8",
+   "PLACE|BACK|X=1478.94|Y=477.2|W=609.6|H=457.2",
+   "PLACE|WALL_RAIL|X=0|Y=954.4|W=609.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=43|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=hinges|QTY=4|UNIT=each|NOTE=surface-mount or butt hinges for 19.05 mm stock; inset doors hinged on the outer edges",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "49a692783f6ef6b8b592a9cd",
+    "bytes": 73703,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "9fd61081bd3d94d49c551e6a",
+    "bytes": 41227,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "a5083aababc2d8ad64779d6b",
+    "bytes": 74162,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "sliding_door_cabinet": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|17 joints, 50 tabs and 67 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=609.6|H=431.8|D=323.85",
+   "DIM|SHOP_WALL|MODULE|TYPE=sliding_door_cabinet|FAMILY=doors|W=609.6|H=431.8|D=304.8|WALL_D=323.85|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=323.85|RAIL_L=609.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=17|TABS=50|SCREWS=67",
+   "DIM|SHOP_WALL|SHELVES|COUNT=1|OPENING_H=187.325",
+   "DIM|SHOP_WALL|SLIDING|LEAF_W=293.688|LEAF_H=377.125|LIFT=16.575|CHANNEL=22.225",
+   "CHECK|INFO|DRILL_HOLES|69 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|323.85|431.8|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|323.85|431.8|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|609|304.5|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|609|304.5|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|609|201.313|as drawn",
+   "BOM|STRIP_B1|1|guide_strip|CARCASS|19.05|571.5|32.15|as drawn",
+   "BOM|STRIP_T1|1|guide_strip|CARCASS|19.05|571.5|48.725|as drawn",
+   "BOM|STRIP_B2|1|guide_strip|CARCASS|19.05|571.5|32.15|as drawn",
+   "BOM|STRIP_T2|1|guide_strip|CARCASS|19.05|571.5|48.725|as drawn",
+   "BOM|STRIP_B3|1|guide_strip|CARCASS|19.05|571.5|32.15|as drawn",
+   "BOM|STRIP_T3|1|guide_strip|CARCASS|19.05|571.5|48.725|as drawn",
+   "BOM|SLIDING_DOOR_1|1|sliding_door|CARCASS|19.05|293.688|377.125|as drawn",
+   "BOM|SLIDING_DOOR_2|1|sliding_door|CARCASS|19.05|293.688|377.125|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|609.6|431.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|609.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=323.85|H=431.8",
+   "PLACE|SIDE_R|X=343.85|Y=0|W=323.85|H=431.8",
+   "PLACE|BOTTOM|X=687.7|Y=0|W=609|H=304.5",
+   "PLACE|TOP|X=1316.7|Y=0|W=609|H=304.5",
+   "PLACE|SHELF_1|X=0|Y=451.8|W=609|H=201.313",
+   "PLACE|STRIP_B1|X=629|Y=451.8|W=571.5|H=32.15",
+   "PLACE|STRIP_T1|X=1220.5|Y=451.8|W=571.5|H=48.725",
+   "PLACE|STRIP_B2|X=1812|Y=451.8|W=571.5|H=32.15",
+   "PLACE|STRIP_T2|X=0|Y=673.112|W=571.5|H=48.725",
+   "PLACE|STRIP_B3|X=591.5|Y=673.112|W=571.5|H=32.15",
+   "PLACE|STRIP_T3|X=1183|Y=673.112|W=571.5|H=48.725",
+   "PLACE|SLIDING_DOOR_1|X=1774.5|Y=673.112|W=293.688|H=377.125",
+   "PLACE|SLIDING_DOOR_2|X=2088.19|Y=673.112|W=293.688|H=377.125",
+   "PLACE|BACK|X=0|Y=1070.24|W=609.6|H=431.8",
+   "PLACE|WALL_RAIL|X=629.6|Y=1070.24|W=609.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=67|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "5f8aecde7cee7e5c6520001d",
+    "bytes": 124161,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "66961c5ada447f04f1554503",
+    "bytes": 63058,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "779c694131a94aaac3d5cf3b",
+    "bytes": 124442,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "three_drawer_cabinet": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 381 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|38 joints, 64 tabs and 102 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=381|H=355.6|D=323.85",
+   "DIM|SHOP_WALL|MODULE|TYPE=three_drawer_cabinet|FAMILY=drawers|W=381|H=355.6|D=304.8|WALL_D=323.85|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=247.65|RAIL_L=381|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=38|TABS=64|SCREWS=102",
+   "DIM|SHOP_WALL|DRAWERS|COUNT=3|BOX_W=339.725|BOX_H=91.5458|BOX_D=284.163|GAP=1.5875",
+   "CHECK|INFO|DRILL_HOLES|104 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|323.85|355.6|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|323.85|355.6|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_DIVIDER_1|1|drawer_divider|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_DIVIDER_2|1|drawer_divider|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_1_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_1_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_1_FRONT|1|drawer_front|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_1_BACK|1|drawer_back|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_1_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|DRAWER_2_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_2_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_2_FRONT|1|drawer_front|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_2_BACK|1|drawer_back|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_2_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|DRAWER_3_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_3_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|91.2458|as drawn",
+   "BOM|DRAWER_3_FRONT|1|drawer_front|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_3_BACK|1|drawer_back|CARCASS|19.05|339.725|91.2458|as drawn",
+   "BOM|DRAWER_3_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|381|355.6|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|381|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=323.85|H=355.6",
+   "PLACE|SIDE_R|X=343.85|Y=0|W=323.85|H=355.6",
+   "PLACE|BOTTOM|X=687.7|Y=0|W=380.4|H=304.5",
+   "PLACE|TOP|X=1088.1|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_DIVIDER_1|X=1488.5|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_DIVIDER_2|X=1888.9|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_1_SIDE_L|X=0|Y=375.6|W=283.563|H=91.2458",
+   "PLACE|DRAWER_1_SIDE_R|X=303.563|Y=375.6|W=283.563|H=91.2458",
+   "PLACE|DRAWER_1_FRONT|X=607.125|Y=375.6|W=339.725|H=91.2458",
+   "PLACE|DRAWER_1_BACK|X=966.85|Y=375.6|W=339.725|H=91.2458",
+   "PLACE|DRAWER_1_BOTTOM|X=1326.57|Y=375.6|W=339.725|H=284.163",
+   "PLACE|DRAWER_2_SIDE_L|X=1686.3|Y=375.6|W=283.563|H=91.2458",
+   "PLACE|DRAWER_2_SIDE_R|X=1989.86|Y=375.6|W=283.563|H=91.2458",
+   "PLACE|DRAWER_2_FRONT|X=0|Y=679.763|W=339.725|H=91.2458",
+   "PLACE|DRAWER_2_BACK|X=359.725|Y=679.763|W=339.725|H=91.2458",
+   "PLACE|DRAWER_2_BOTTOM|X=719.45|Y=679.763|W=339.725|H=284.163",
+   "PLACE|DRAWER_3_SIDE_L|X=1079.17|Y=679.763|W=283.563|H=91.2458",
+   "PLACE|DRAWER_3_SIDE_R|X=1382.74|Y=679.763|W=283.563|H=91.2458",
+   "PLACE|DRAWER_3_FRONT|X=1686.3|Y=679.763|W=339.725|H=91.2458",
+   "PLACE|DRAWER_3_BACK|X=2046.02|Y=679.763|W=339.725|H=91.2458",
+   "PLACE|DRAWER_3_BOTTOM|X=0|Y=983.925|W=339.725|H=284.163",
+   "PLACE|BACK|X=359.725|Y=983.925|W=381|H=355.6",
+   "PLACE|WALL_RAIL|X=760.725|Y=983.925|W=381|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=102|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "eb16a4c9177de1960c6fd66d",
+    "bytes": 142620,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "2d0b2b4184a794cbf2419107",
+    "bytes": 95015,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "ea3ed185024c477515ddc739",
+    "bytes": 250086,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "four_drawer_cabinet": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 381 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|49 joints, 82 tabs and 131 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=381|H=457.2|D=323.85",
+   "DIM|SHOP_WALL|MODULE|TYPE=four_drawer_cabinet|FAMILY=drawers|W=381|H=457.2|D=304.8|WALL_D=323.85|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=349.25|RAIL_L=381|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=49|TABS=82|SCREWS=131",
+   "DIM|SHOP_WALL|DRAWERS|COUNT=4|BOX_W=339.725|BOX_H=88.9|BOX_D=284.163|GAP=1.5875",
+   "CHECK|INFO|DRILL_HOLES|133 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|323.85|457.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|323.85|457.2|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_DIVIDER_1|1|drawer_divider|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_DIVIDER_2|1|drawer_divider|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_DIVIDER_3|1|drawer_divider|CARCASS|19.05|380.4|304.5|as drawn",
+   "BOM|DRAWER_1_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_1_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_1_FRONT|1|drawer_front|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_1_BACK|1|drawer_back|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_1_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|DRAWER_2_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_2_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_2_FRONT|1|drawer_front|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_2_BACK|1|drawer_back|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_2_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|DRAWER_3_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_3_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_3_FRONT|1|drawer_front|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_3_BACK|1|drawer_back|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_3_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|DRAWER_4_SIDE_L|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_4_SIDE_R|1|drawer_side|CARCASS|19.05|283.563|88.6|as drawn",
+   "BOM|DRAWER_4_FRONT|1|drawer_front|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_4_BACK|1|drawer_back|CARCASS|19.05|339.725|88.6|as drawn",
+   "BOM|DRAWER_4_BOTTOM|1|drawer_bottom|CARCASS|19.05|339.725|284.163|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|381|457.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|381|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=323.85|H=457.2",
+   "PLACE|SIDE_R|X=343.85|Y=0|W=323.85|H=457.2",
+   "PLACE|BOTTOM|X=687.7|Y=0|W=380.4|H=304.5",
+   "PLACE|TOP|X=1088.1|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_DIVIDER_1|X=1488.5|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_DIVIDER_2|X=1888.9|Y=0|W=380.4|H=304.5",
+   "PLACE|DRAWER_DIVIDER_3|X=0|Y=477.2|W=380.4|H=304.5",
+   "PLACE|DRAWER_1_SIDE_L|X=400.4|Y=477.2|W=283.563|H=88.6",
+   "PLACE|DRAWER_1_SIDE_R|X=703.962|Y=477.2|W=283.563|H=88.6",
+   "PLACE|DRAWER_1_FRONT|X=1007.52|Y=477.2|W=339.725|H=88.6",
+   "PLACE|DRAWER_1_BACK|X=1367.25|Y=477.2|W=339.725|H=88.6",
+   "PLACE|DRAWER_1_BOTTOM|X=1726.97|Y=477.2|W=339.725|H=284.163",
+   "PLACE|DRAWER_2_SIDE_L|X=2086.7|Y=477.2|W=283.563|H=88.6",
+   "PLACE|DRAWER_2_SIDE_R|X=0|Y=801.7|W=283.563|H=88.6",
+   "PLACE|DRAWER_2_FRONT|X=303.563|Y=801.7|W=339.725|H=88.6",
+   "PLACE|DRAWER_2_BACK|X=663.287|Y=801.7|W=339.725|H=88.6",
+   "PLACE|DRAWER_2_BOTTOM|X=1023.01|Y=801.7|W=339.725|H=284.163",
+   "PLACE|DRAWER_3_SIDE_L|X=1382.74|Y=801.7|W=283.563|H=88.6",
+   "PLACE|DRAWER_3_SIDE_R|X=1686.3|Y=801.7|W=283.563|H=88.6",
+   "PLACE|DRAWER_3_FRONT|X=1989.86|Y=801.7|W=339.725|H=88.6",
+   "PLACE|DRAWER_3_BACK|X=0|Y=1105.86|W=339.725|H=88.6",
+   "PLACE|DRAWER_3_BOTTOM|X=359.725|Y=1105.86|W=339.725|H=284.163",
+   "PLACE|DRAWER_4_SIDE_L|X=719.45|Y=1105.86|W=283.563|H=88.6",
+   "PLACE|DRAWER_4_SIDE_R|X=1023.01|Y=1105.86|W=283.563|H=88.6",
+   "PLACE|DRAWER_4_FRONT|X=1326.57|Y=1105.86|W=339.725|H=88.6",
+   "PLACE|DRAWER_4_BACK|X=1686.3|Y=1105.86|W=339.725|H=88.6",
+   "PLACE|DRAWER_4_BOTTOM|X=2046.02|Y=1105.86|W=339.725|H=284.163",
+   "PLACE|BACK|X=0|Y=1410.03|W=381|H=457.2",
+   "PLACE|WALL_RAIL|X=401|Y=1410.03|W=381|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=131|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "a518bbab9f0218cc7a029c15",
+    "bytes": 184023,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "48465845bd0663912de704da",
+    "bytes": 121336,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "cc9e6b27cea5b9a71c0b9d63",
+    "bytes": 320750,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "chisel_rack": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|3 joints, 4 tabs and 7 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=127|D=107.95",
+   "DIM|SHOP_WALL|MODULE|TYPE=chisel_rack|FAMILY=rack|W=406.4|H=127|D=88.9|WALL_D=107.95|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=3|TABS=4|SCREWS=7",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=5|WIDTH=21.59|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|9 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|107.95|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|107.95|127|CNC side hook on the rear edge",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|405.8|88.6|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=107.95|H=127",
+   "PLACE|SIDE_R|X=127.95|Y=0|W=107.95|H=127",
+   "PLACE|DECK|X=255.9|Y=0|W=405.8|H=88.6",
+   "PLACE|BACK|X=681.7|Y=0|W=406.4|H=127",
+   "PLACE|WALL_RAIL|X=1108.1|Y=0|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=7|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "dec4e4cab1093e6218b31286",
+    "bytes": 14238,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "d340d035c92eeff3b46a9dcc",
+    "bytes": 8634,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "18aff40b62634321ec5b3e73",
+    "bytes": 23528,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "clamp_rack": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|5 joints, 6 tabs and 7 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=152.4|D=222.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=clamp_rack|FAMILY=rack|W=406.4|H=152.4|D=203.2|WALL_D=222.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=44.45|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=5|TABS=6|SCREWS=7",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=5|WIDTH=17.78|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|9 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|222.25|152.4|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|222.25|152.4|CNC side hook on the rear edge",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|405.8|202.9|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|152.4|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=222.25|H=152.4",
+   "PLACE|SIDE_R|X=242.25|Y=0|W=222.25|H=152.4",
+   "PLACE|DECK|X=484.5|Y=0|W=405.8|H=202.9",
+   "PLACE|BACK|X=910.3|Y=0|W=406.4|H=152.4",
+   "PLACE|WALL_RAIL|X=1336.7|Y=0|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=7|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "96c42f4eaf87d8cd98b27fa7",
+    "bytes": 18190,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "2a3075cfc32013ff13cbb2c1",
+    "bytes": 8650,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "0806e5ab22652b6d434e6748",
+    "bytes": 23552,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "hammer_rack": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 355.6 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|3 joints, 4 tabs and 7 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=355.6|H=127|D=133.35",
+   "DIM|SHOP_WALL|MODULE|TYPE=hammer_rack|FAMILY=rack|W=355.6|H=127|D=114.3|WALL_D=133.35|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=355.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=3|TABS=4|SCREWS=7",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=4|WIDTH=30.48|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|9 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|133.35|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|133.35|127|CNC side hook on the rear edge",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|355|114|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|355.6|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|355.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=133.35|H=127",
+   "PLACE|SIDE_R|X=153.35|Y=0|W=133.35|H=127",
+   "PLACE|DECK|X=306.7|Y=0|W=355|H=114",
+   "PLACE|BACK|X=681.7|Y=0|W=355.6|H=127",
+   "PLACE|WALL_RAIL|X=1057.3|Y=0|W=355.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=7|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "86d85253332c0d0753c38f44",
+    "bytes": 15375,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "bbacc6942e87d544dce784d8",
+    "bytes": 8638,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "acd467604b932198d05e6897",
+    "bytes": 23527,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "screwdriver_rack": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|3 joints, 4 tabs and 7 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=127|D=120.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=screwdriver_rack|FAMILY=rack|W=406.4|H=127|D=101.6|WALL_D=120.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=3|TABS=4|SCREWS=7",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=7|WIDTH=10|PITCH=0|ROWS=2",
+   "CHECK|INFO|DRILL_HOLES|9 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|120.65|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|120.65|127|CNC side hook on the rear edge",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|405.8|101.3|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=120.65|H=127",
+   "PLACE|SIDE_R|X=140.65|Y=0|W=120.65|H=127",
+   "PLACE|DECK|X=281.3|Y=0|W=405.8|H=101.3",
+   "PLACE|BACK|X=707.1|Y=0|W=406.4|H=127",
+   "PLACE|WALL_RAIL|X=1133.5|Y=0|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=7|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "b2959be662f09cd471e5e9a2",
+    "bytes": 23535,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "df36cd60f9bf6dd635c49e22",
+    "bytes": 8638,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "c6fd2c9def83c161ba1bbd0e",
+    "bytes": 23532,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "plier_stand": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 10 tabs and 18 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=177.8|D=146.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=plier_stand|FAMILY=stand|W=406.4|H=177.8|D=127|WALL_D=146.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=69.85|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=10|SCREWS=18",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=5|WIDTH=17.272|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|20 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|146.05|177.8|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|146.05|177.8|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|405.8|126.7|as drawn",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|405.8|126.7|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|177.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=146.05|H=177.8",
+   "PLACE|SIDE_R|X=166.05|Y=0|W=146.05|H=177.8",
+   "PLACE|BOTTOM|X=332.1|Y=0|W=405.8|H=126.7",
+   "PLACE|DECK|X=757.9|Y=0|W=405.8|H=126.7",
+   "PLACE|BACK|X=1183.7|Y=0|W=406.4|H=177.8",
+   "PLACE|WALL_RAIL|X=1610.1|Y=0|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=18|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "47070279ee71180c8b7aa561",
+    "bytes": 28184,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "c4b9fb89f1dcf790db15473b",
+    "bytes": 18613,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "8468eaae072d67caa82ee8f0",
+    "bytes": 30576,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "router_bit_stand": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 10 tabs and 14 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=127|D=120.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=router_bit_stand|FAMILY=stand|W=406.4|H=127|D=101.6|WALL_D=120.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=10|SCREWS=14",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=8|WIDTH=6.985|PITCH=0|ROWS=2",
+   "CHECK|INFO|DRILL_HOLES|16 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|120.65|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|120.65|127|CNC side hook on the rear edge",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|405.8|101.3|as drawn",
+   "BOM|DECK|1|tool_deck|CARCASS|19.05|405.8|101.3|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=120.65|H=127",
+   "PLACE|SIDE_R|X=140.65|Y=0|W=120.65|H=127",
+   "PLACE|BOTTOM|X=281.3|Y=0|W=405.8|H=101.3",
+   "PLACE|DECK|X=707.1|Y=0|W=405.8|H=101.3",
+   "PLACE|BACK|X=1132.9|Y=0|W=406.4|H=127",
+   "PLACE|WALL_RAIL|X=1559.3|Y=0|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=14|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "f4c333d739faf7dde559c590",
+    "bytes": 37836,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "78571a03afc8dc53f45592ce",
+    "bytes": 14949,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "5ad33289c667e45d2a7cd35a",
+    "bytes": 30568,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "circular_saw_stand": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 330.2 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|5 joints, 8 tabs and 13 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=330.2|H=228.6|D=349.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=circular_saw_stand|FAMILY=rack|W=330.2|H=228.6|D=330.2|WALL_D=349.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=120.65|RAIL_L=330.2|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=5|TABS=8|SCREWS=13",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=1|WIDTH=57.15|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|15 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|349.25|228.6|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|349.25|228.6|CNC side hook on the rear edge",
+   "BOM|DECK|1|saw_cradle|CARCASS|19.05|329.6|329.9|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|330.2|228.6|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|330.2|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=349.25|H=228.6",
+   "PLACE|SIDE_R|X=369.25|Y=0|W=349.25|H=228.6",
+   "PLACE|DECK|X=738.5|Y=0|W=329.6|H=329.9",
+   "PLACE|BACK|X=1088.1|Y=0|W=330.2|H=228.6",
+   "PLACE|WALL_RAIL|X=1438.3|Y=0|W=330.2|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=13|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "101224cd36775095a1bedcea",
+    "bytes": 20080,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "410e2b73f179c25184f498b7",
+    "bytes": 14142,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "4bae61978b1cd8bdbee2f7aa",
+    "bytes": 23614,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "simple_drill_station": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 152.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|3 joints, 3 tabs and 6 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=152.4|H=127|D=222.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=simple_drill_station|FAMILY=drill_simple|W=152.4|H=127|D=203.2|WALL_D=222.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=152.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=3|TABS=3|SCREWS=6",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=1|WIDTH=41.91|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|8 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|GUSSET_L|1|gusset|CARCASS|19.05|111.76|127|CNC side hook on the rear edge",
+   "BOM|GUSSET_R|1|gusset|CARCASS|19.05|111.76|127|CNC side hook on the rear edge",
+   "BOM|CRADLE|1|drill_cradle|CARCASS|19.05|152.4|202.9|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|152.4|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|152.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|GUSSET_L|X=0|Y=0|W=111.76|H=127",
+   "PLACE|GUSSET_R|X=131.76|Y=0|W=111.76|H=127",
+   "PLACE|CRADLE|X=263.52|Y=0|W=152.4|H=202.9",
+   "PLACE|BACK|X=435.92|Y=0|W=152.4|H=127",
+   "PLACE|WALL_RAIL|X=608.32|Y=0|W=152.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=6|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "fa2efe5c4697e29bf07207dd",
+    "bytes": 10326,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "f0e9b9f99dca2dfb6bea25f9",
+    "bytes": 7730,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "553afeacbb60090d5745d36e",
+    "bytes": 36618,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "double_drill_station": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 254 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|3 joints, 3 tabs and 6 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=254|H=127|D=222.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=double_drill_station|FAMILY=drill_simple|W=254|H=127|D=203.2|WALL_D=222.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=254|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=3|TABS=3|SCREWS=6",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=2|WIDTH=41.91|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|8 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|GUSSET_L|1|gusset|CARCASS|19.05|111.76|127|CNC side hook on the rear edge",
+   "BOM|GUSSET_R|1|gusset|CARCASS|19.05|111.76|127|CNC side hook on the rear edge",
+   "BOM|CRADLE|1|drill_cradle|CARCASS|19.05|254|202.9|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|254|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|254|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|GUSSET_L|X=0|Y=0|W=111.76|H=127",
+   "PLACE|GUSSET_R|X=131.76|Y=0|W=111.76|H=127",
+   "PLACE|CRADLE|X=263.52|Y=0|W=254|H=202.9",
+   "PLACE|BACK|X=537.52|Y=0|W=254|H=127",
+   "PLACE|WALL_RAIL|X=811.52|Y=0|W=254|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=6|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "c3dfa5758cca087ff844b4bb",
+    "bytes": 10838,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "ca8e7b25785c97247fe76015",
+    "bytes": 7742,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "aec09a627d229f21d9fa5e02",
+    "bytes": 36620,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "single_shelf_drill_stand": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 381 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 10 tabs and 18 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=381|H=228.6|D=247.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=single_shelf_drill_stand|FAMILY=drill_cabinet|W=381|H=228.6|D=228.6|WALL_D=247.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=120.65|RAIL_L=381|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=10|SCREWS=18",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=3|WIDTH=41.91|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|20 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|247.65|228.6|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|247.65|228.6|CNC side hook on the rear edge",
+   "BOM|CRADLE|1|drill_cradle|CARCASS|19.05|380.4|228.3|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|380.4|228.3|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|381|228.6|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|381|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=247.65|H=228.6",
+   "PLACE|SIDE_R|X=267.65|Y=0|W=247.65|H=228.6",
+   "PLACE|CRADLE|X=535.3|Y=0|W=380.4|H=228.3",
+   "PLACE|TOP|X=935.7|Y=0|W=380.4|H=228.3",
+   "PLACE|BACK|X=1336.1|Y=0|W=381|H=228.6",
+   "PLACE|WALL_RAIL|X=1737.1|Y=0|W=381|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=18|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "a07600b600ecc59efde1dea3",
+    "bytes": 24997,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "e47185bf9eef136884b91d00",
+    "bytes": 18605,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "c37719cda636c94c2a6dd569",
+    "bytes": 29024,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "double_shelf_drill_stand": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|11 joints, 25 tabs and 36 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=558.8|H=381|D=273.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=double_shelf_drill_stand|FAMILY=drill_cabinet|W=558.8|H=381|D=254|WALL_D=273.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=273.05|RAIL_L=558.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=11|TABS=25|SCREWS=36",
+   "DIM|SHOP_WALL|OPENINGS|COUNT=4|WIDTH=41.91|PITCH=0|ROWS=1",
+   "CHECK|INFO|DRILL_HOLES|38 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|273.05|381|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|273.05|381|CNC side hook on the rear edge",
+   "BOM|CRADLE|1|drill_cradle|CARCASS|19.05|558.2|253.7|as drawn",
+   "BOM|TOP|1|top|CARCASS|19.05|558.2|253.7|as drawn",
+   "BOM|SHELF_1|1|shelf|CARCASS|19.05|558.2|253.7|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|558.8|381|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|558.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|SIDE_L|X=0|Y=0|W=273.05|H=381",
+   "PLACE|SIDE_R|X=293.05|Y=0|W=273.05|H=381",
+   "PLACE|CRADLE|X=586.1|Y=0|W=558.2|H=253.7",
+   "PLACE|TOP|X=1164.3|Y=0|W=558.2|H=253.7",
+   "PLACE|SHELF_1|X=1742.5|Y=0|W=558.2|H=253.7",
+   "PLACE|BACK|X=0|Y=401|W=558.8|H=381",
+   "PLACE|WALL_RAIL|X=578.8|Y=401|W=558.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=36|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "aa14b147fa1d4bb259afda62",
+    "bytes": 60919,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "f34a915b73e3fe0d71d9fb7a",
+    "bytes": 34879,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "77456747695535eb70044c4d",
+    "bytes": 33357,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "closed_lid_box": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 431.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|16 joints, 22 tabs and 40 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=431.8|H=203.2|D=273.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=closed_lid_box|FAMILY=box|W=431.8|H=203.2|D=254|WALL_D=273.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=95.25|RAIL_L=431.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=16|TABS=22|SCREWS=40",
+   "DIM|SHOP_WALL|BINS|COLUMNS=3|ROWS=2|CELL_W=118.533|FRONT_H=184.15",
+   "CHECK|INFO|DRILL_HOLES|42 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|431.2|253.7|as drawn",
+   "BOM|SIDE_L|1|box_side|CARCASS|19.05|273.05|203.2|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|box_side|CARCASS|19.05|273.05|203.2|CNC side hook on the rear edge",
+   "BOM|FRONT|1|box_front|CARCASS|19.05|431.2|183.85|as drawn",
+   "BOM|LONG_DIV_1|1|long_divider|CARCASS|19.05|234.65|178.135|as drawn",
+   "BOM|LONG_DIV_2|1|long_divider|CARCASS|19.05|234.65|178.135|as drawn",
+   "BOM|CROSS_DIV_1_1|1|cross_divider|CARCASS|19.05|118.533|178.135|as drawn",
+   "BOM|CROSS_DIV_2_1|1|cross_divider|CARCASS|19.05|118.533|178.135|as drawn",
+   "BOM|CROSS_DIV_3_1|1|cross_divider|CARCASS|19.05|118.533|178.135|as drawn",
+   "BOM|LID|1|lid|CARCASS|19.05|431.8|233.362|as drawn",
+   "BOM|LID_PULL|1|pull|CARCASS|19.05|101.6|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|431.8|203.2|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|431.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|BOTTOM|X=0|Y=0|W=431.2|H=253.7",
+   "PLACE|SIDE_L|X=451.2|Y=0|W=273.05|H=203.2",
+   "PLACE|SIDE_R|X=744.25|Y=0|W=273.05|H=203.2",
+   "PLACE|FRONT|X=1037.3|Y=0|W=431.2|H=183.85",
+   "PLACE|LONG_DIV_1|X=1488.5|Y=0|W=234.65|H=178.135",
+   "PLACE|LONG_DIV_2|X=1743.15|Y=0|W=234.65|H=178.135",
+   "PLACE|CROSS_DIV_1_1|X=1997.8|Y=0|W=118.533|H=178.135",
+   "PLACE|CROSS_DIV_2_1|X=2136.33|Y=0|W=118.533|H=178.135",
+   "PLACE|CROSS_DIV_3_1|X=2274.87|Y=0|W=118.533|H=178.135",
+   "PLACE|LID|X=0|Y=273.7|W=431.8|H=233.362",
+   "PLACE|LID_PULL|X=451.8|Y=273.7|W=101.6|H=37.8",
+   "PLACE|BACK|X=573.4|Y=273.7|W=431.8|H=203.2",
+   "PLACE|WALL_RAIL|X=1025.2|Y=273.7|W=431.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=40|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=hinges|QTY=2|UNIT=each|NOTE=surface-mount or butt hinges for 19.05 mm stock; lid hinged at the top of the back",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "7f8dda402881c386a006846b",
+    "bytes": 54527,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "8d17802507cc4fe9202ae156",
+    "bytes": 38586,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "b556198ec3440e887c4247d6",
+    "bytes": 100737,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "screw_box": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 406.4 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|15 joints, 18 tabs and 23 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=406.4|H=127|D=247.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=screw_box|FAMILY=box|W=406.4|H=127|D=228.6|WALL_D=247.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=406.4|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=15|TABS=18|SCREWS=23",
+   "DIM|SHOP_WALL|BINS|COLUMNS=3|ROWS=2|CELL_W=110.067|FRONT_H=66.04",
+   "CHECK|INFO|DRILL_HOLES|25 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|405.8|228.3|as drawn",
+   "BOM|SIDE_L|1|box_side|CARCASS|19.05|247.65|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|box_side|CARCASS|19.05|247.65|127|CNC side hook on the rear edge",
+   "BOM|FRONT|1|box_front|CARCASS|19.05|405.8|65.74|as drawn",
+   "BOM|LONG_DIV_1|1|long_divider|CARCASS|19.05|209.25|60.025|as drawn",
+   "BOM|LONG_DIV_2|1|long_divider|CARCASS|19.05|209.25|60.025|as drawn",
+   "BOM|CROSS_DIV_1_1|1|cross_divider|CARCASS|19.05|110.067|60.025|as drawn",
+   "BOM|CROSS_DIV_2_1|1|cross_divider|CARCASS|19.05|110.067|60.025|as drawn",
+   "BOM|CROSS_DIV_3_1|1|cross_divider|CARCASS|19.05|110.067|60.025|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|406.4|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|406.4|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|BOTTOM|X=0|Y=0|W=405.8|H=228.3",
+   "PLACE|SIDE_L|X=425.8|Y=0|W=247.65|H=127",
+   "PLACE|SIDE_R|X=693.45|Y=0|W=247.65|H=127",
+   "PLACE|FRONT|X=961.1|Y=0|W=405.8|H=65.74",
+   "PLACE|LONG_DIV_1|X=1386.9|Y=0|W=209.25|H=60.025",
+   "PLACE|LONG_DIV_2|X=1616.15|Y=0|W=209.25|H=60.025",
+   "PLACE|CROSS_DIV_1_1|X=1845.4|Y=0|W=110.067|H=60.025",
+   "PLACE|CROSS_DIV_2_1|X=1975.47|Y=0|W=110.067|H=60.025",
+   "PLACE|CROSS_DIV_3_1|X=2105.53|Y=0|W=110.067|H=60.025",
+   "PLACE|BACK|X=0|Y=248.3|W=406.4|H=127",
+   "PLACE|WALL_RAIL|X=426.4|Y=248.3|W=406.4|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=23|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "c57922ad0f0438411305f01c",
+    "bytes": 45785,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "2ef065cd3bf16ff96e1aff36",
+    "bytes": 22984,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "961150be6004449f78a035e8",
+    "bytes": 95183,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "shallow_storage_box": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 330.2 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 10 tabs and 10 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=330.2|H=127|D=222.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=shallow_storage_box|FAMILY=box|W=330.2|H=127|D=203.2|WALL_D=222.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=19.05|RAIL_L=330.2|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=10|SCREWS=10",
+   "DIM|SHOP_WALL|BINS|COLUMNS=1|ROWS=1|CELL_W=292.1|FRONT_H=66.04",
+   "CHECK|INFO|DRILL_HOLES|12 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|329.6|202.9|as drawn",
+   "BOM|SIDE_L|1|box_side|CARCASS|19.05|222.25|127|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|box_side|CARCASS|19.05|222.25|127|CNC side hook on the rear edge",
+   "BOM|FRONT|1|box_front|CARCASS|19.05|329.6|65.74|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|330.2|127|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|330.2|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|BOTTOM|X=0|Y=0|W=329.6|H=202.9",
+   "PLACE|SIDE_L|X=349.6|Y=0|W=222.25|H=127",
+   "PLACE|SIDE_R|X=591.85|Y=0|W=222.25|H=127",
+   "PLACE|FRONT|X=834.1|Y=0|W=329.6|H=65.74",
+   "PLACE|BACK|X=1183.7|Y=0|W=330.2|H=127",
+   "PLACE|WALL_RAIL|X=1533.9|Y=0|W=330.2|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=10|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "7e8bd257a1413abaee953645",
+    "bytes": 23486,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "c88823e0f2d7ed03a3fe8845",
+    "bytes": 11307,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "b697a4f7a37ea1c6c08f836f",
+    "bytes": 31296,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "glove_box": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 304.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|8 joints, 10 tabs and 18 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=304.8|H=177.8|D=158.75",
+   "DIM|SHOP_WALL|MODULE|TYPE=glove_box|FAMILY=glove|W=304.8|H=177.8|D=139.7|WALL_D=158.75|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=69.85|RAIL_L=304.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=8|TABS=10|SCREWS=18",
+   "CHECK|INFO|DRILL_HOLES|20 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|BOTTOM|1|bottom|CARCASS|19.05|304.2|139.4|as drawn",
+   "BOM|SIDE_L|1|side|CARCASS|19.05|158.75|177.8|CNC side hook on the rear edge",
+   "BOM|SIDE_R|1|side|CARCASS|19.05|158.75|177.8|CNC side hook on the rear edge",
+   "BOM|FRONT|1|glove_front|CARCASS|19.05|304.2|177.5|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|304.8|177.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|304.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|BOTTOM|X=0|Y=0|W=304.2|H=139.4",
+   "PLACE|SIDE_L|X=324.2|Y=0|W=158.75|H=177.8",
+   "PLACE|SIDE_R|X=502.95|Y=0|W=158.75|H=177.8",
+   "PLACE|FRONT|X=681.7|Y=0|W=304.2|H=177.5",
+   "PLACE|BACK|X=1005.9|Y=0|W=304.8|H=177.8",
+   "PLACE|WALL_RAIL|X=1330.7|Y=0|W=304.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=18|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "d298db445bec5c6a407cb914",
+    "bytes": 24399,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "d5917e4489d3324bbb26f531",
+    "bytes": 18613,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "f73edb0953fe50eedbc5d4d6",
+    "bytes": 31278,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "hook_panel": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|5 joints, 5 tabs and 0 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=482.6|H=152.4|D=107.95",
+   "DIM|SHOP_WALL|MODULE|TYPE=hook_panel|FAMILY=hooks|W=482.6|H=152.4|D=88.9|WALL_D=107.95|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=beveled_board|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=44.45|RAIL_L=469.9|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=5|TABS=5|SCREWS=0",
+   "CHECK|INFO|DRILL_HOLES|6 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|HOOK_1|1|hook|CARCASS|19.05|88.6|97.536|as drawn",
+   "BOM|HOOK_2|1|hook|CARCASS|19.05|88.6|97.536|as drawn",
+   "BOM|HOOK_3|1|hook|CARCASS|19.05|88.6|97.536|as drawn",
+   "BOM|HOOK_4|1|hook|CARCASS|19.05|88.6|97.536|as drawn",
+   "BOM|HOOK_5|1|hook|CARCASS|19.05|88.6|97.536|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|482.6|152.4|as drawn",
+   "BOM|HANGER|1|hanger|CLEAT|19.05|469.9|63.5|SECONDARY BEVEL 45 deg along the bottom edge, low side to the wall; blank; screwed through the back",
+   "BOM|SPACER|1|spacer|CLEAT|19.05|469.9|19.05|screwed through the back; keeps the bottom of the module off the wall",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|469.9|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|HOOK_1|X=0|Y=0|W=88.6|H=97.536",
+   "PLACE|HOOK_2|X=108.6|Y=0|W=88.6|H=97.536",
+   "PLACE|HOOK_3|X=217.2|Y=0|W=88.6|H=97.536",
+   "PLACE|HOOK_4|X=325.8|Y=0|W=88.6|H=97.536",
+   "PLACE|HOOK_5|X=434.4|Y=0|W=88.6|H=97.536",
+   "PLACE|BACK|X=543|Y=0|W=482.6|H=152.4",
+   "PLACE|HANGER|X=1045.6|Y=0|W=469.9|H=63.5",
+   "PLACE|SPACER|X=1535.5|Y=0|W=469.9|H=19.05",
+   "PLACE|WALL_RAIL|X=0|Y=172.4|W=469.9|H=63.5",
+   "HARDWARE|ID=hanger_screws|QTY=4|UNIT=each|NOTE=countersunk from inside the back into the hanger and spacer; length at most 35 mm",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "2fab30008e9f9ac1b59ddd1b",
+    "bytes": 15201,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "885e24bb377d9813fb0264a4",
+    "bytes": 5892,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "5ad40993463b9be46afc3229",
+    "bytes": 54058,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "material_storage_stand": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|6 joints, 16 tabs and 22 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=762|H=254|D=273.05",
+   "DIM|SHOP_WALL|MODULE|TYPE=material_storage_stand|FAMILY=brackets|W=762|H=254|D=254|WALL_D=273.05|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=146.05|RAIL_L=762|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=6|TABS=16|SCREWS=22",
+   "CHECK|INFO|DRILL_HOLES|24 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|BRACKET_1|1|bracket|CARCASS|19.05|273.05|254|CNC side hook on the rear edge",
+   "BOM|BRACKET_2|1|bracket|CARCASS|19.05|273.05|254|CNC side hook on the rear edge",
+   "BOM|DECK|1|deck|CARCASS|19.05|762|253.7|as drawn",
+   "BOM|LIP|1|lip|CARCASS|19.05|762|37.8|as drawn",
+   "BOM|BACK|1|back|CARCASS|19.05|762|254|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|762|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|BRACKET_1|X=0|Y=0|W=273.05|H=254",
+   "PLACE|BRACKET_2|X=293.05|Y=0|W=273.05|H=254",
+   "PLACE|DECK|X=586.1|Y=0|W=762|H=253.7",
+   "PLACE|LIP|X=1368.1|Y=0|W=762|H=37.8",
+   "PLACE|BACK|X=0|Y=274|W=762|H=254",
+   "PLACE|WALL_RAIL|X=782|Y=274|W=762|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=22|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "13b3e65afa8c030ffc1e90c3",
+    "bytes": 35004,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "172b49cf9b26c7dea73b60cf",
+    "bytes": 22338,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "2a3dc3960f51fc8bef7480cb",
+    "bytes": 30182,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "paper_towel_holder": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 355.6 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|2 joints, 2 tabs and 4 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=355.6|H=177.8|D=222.25",
+   "DIM|SHOP_WALL|MODULE|TYPE=paper_towel_holder|FAMILY=towel|W=355.6|H=177.8|D=203.2|WALL_D=222.25|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=69.85|RAIL_L=355.6|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=2|TABS=2|SCREWS=4",
+   "CHECK|INFO|DRILL_HOLES|6 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|CHEEK_L|1|dowel_cheek|CARCASS|19.05|222.25|177.8|CNC side hook on the rear edge",
+   "BOM|CHEEK_R|1|dowel_cheek|CARCASS|19.05|222.25|177.8|CNC side hook on the rear edge",
+   "BOM|BACK|1|back|CARCASS|19.05|355.6|177.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|355.6|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|CHEEK_L|X=0|Y=0|W=222.25|H=177.8",
+   "PLACE|CHEEK_R|X=242.25|Y=0|W=222.25|H=177.8",
+   "PLACE|BACK|X=484.5|Y=0|W=355.6|H=177.8",
+   "PLACE|WALL_RAIL|X=860.1|Y=0|W=355.6|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=4|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=dowel|QTY=1|UNIT=each|NOTE=22.225 mm dowel, 368.3 mm long",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "321d4e0524da75c7db9cd66e",
+    "bytes": 9686,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "7c7d49808a0fbc33716fa464",
+    "bytes": 5918,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "636a64e448924d93a66e1c9a",
+    "bytes": 16425,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "wrench_holder": {
+  "records": [
+   "CHECK|INFO|RAIL_STUDS|The 177.8 mm wall rail is shorter than the 406.4 mm stud spacing: use wall anchors or a longer rail.",
+   "CHECK|INFO|FIT_SUMMARY|2 joints, 4 tabs and 6 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=177.8|H=431.8|D=158.75",
+   "DIM|SHOP_WALL|MODULE|TYPE=wrench_holder|FAMILY=wrench|W=177.8|H=431.8|D=139.7|WALL_D=158.75|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=323.85|RAIL_L=177.8|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=2|TABS=4|SCREWS=6",
+   "CHECK|INFO|DRILL_HOLES|8 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|CHEEK_L|1|wrench_cheek|CARCASS|19.05|158.75|431.8|CNC side hook on the rear edge",
+   "BOM|CHEEK_R|1|wrench_cheek|CARCASS|19.05|158.75|431.8|CNC side hook on the rear edge",
+   "BOM|BACK|1|back|CARCASS|19.05|177.8|431.8|as drawn",
+   "BOM|WALL_RAIL|1|wall_rail|CLEAT|19.05|177.8|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|CHEEK_L|X=0|Y=0|W=158.75|H=431.8",
+   "PLACE|CHEEK_R|X=178.75|Y=0|W=158.75|H=431.8",
+   "PLACE|BACK|X=357.5|Y=0|W=177.8|H=431.8",
+   "PLACE|WALL_RAIL|X=555.3|Y=0|W=177.8|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=6|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=wall_screws|QTY=2|UNIT=each|NOTE=4.83 mm screws into studs (or rated anchors), countersunk flush",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "2c9479c4d1ef6567fec184a6",
+    "bytes": 12918,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "a5cf5713d4ee6c5ce1a3bb4c",
+    "bytes": 7726,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "d8a28d53ba97cfeef2953668",
+    "bytes": 16478,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ },
+ "fit_coupon": {
+  "records": [
+   "CHECK|INFO|FIT_SUMMARY|1 joints, 1 tabs and 2 screws checked for slot clearance, cutter reach, relief, screw landing and assembly order; geometric check only, cut a fit coupon before a full module.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, wall anchoring or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=203.2|H=152.4|D=120.65",
+   "DIM|SHOP_WALL|MODULE|TYPE=fit_coupon|FAMILY=coupon|W=203.2|H=152.4|D=101.6|WALL_D=120.65|STOCK=19.05",
+   "DIM|SHOP_WALL|MOUNT|MOUNT=french_cleat|STRATEGY=cnc_hooks|CLEAT_H=63.5|BEVEL=45|RISE=19.05|RAIL_Z=44.45|RAIL_L=203.2|HANG_LIFT=19.05",
+   "DIM|SHOP_WALL|JOINERY|STYLE=tab_slot|FIT=0.3|SETBACK=0.3|RELIEF=t_bone|CUTTER=6.35|JOINTS=1|TABS=1|SCREWS=2",
+   "CHECK|INFO|DRILL_HOLES|2 hole(s) are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "BOM|COUPON_SLOT|1|coupon_slot|CARCASS|19.05|104.8|79.05|as drawn",
+   "BOM|COUPON_TAB|1|coupon_tab|CARCASS|19.05|104.8|68.75|as drawn",
+   "BOM|COUPON_HOOK|1|coupon_hook|CARCASS|19.05|79.05|107.95|CNC side hook on the rear edge",
+   "BOM|COUPON_RAIL|1|wall_rail|CLEAT|19.05|79.05|63.5|SECONDARY BEVEL 45 deg along the top edge, high side to the room; blank; screw into studs",
+   "PLACE|COUPON_SLOT|X=0|Y=0|W=104.8|H=79.05",
+   "PLACE|COUPON_TAB|X=124.8|Y=0|W=104.8|H=68.75",
+   "PLACE|COUPON_HOOK|X=249.6|Y=0|W=79.05|H=107.95",
+   "PLACE|COUPON_RAIL|X=348.65|Y=0|W=79.05|H=63.5",
+   "HARDWARE|ID=joint_screws|QTY=2|UNIT=each|NOTE=countersunk wood screws through 4 mm holes; pilot 2.5 x 11.4 mm into the panel edge, drilled at assembly",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "d62f635e34a2207018443fa2",
+    "bytes": 4156,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "53169a483e22a9fb5d1e778b",
+    "bytes": 2242,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "1e92f98c210369c5842fb701",
+    "bytes": 51952,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 19.05 mm, 1 × CLEAT 19.05 mm"
+ }
+}
