@@ -24,6 +24,12 @@ for(const key of ['drawer_handle_vertical_offset','caster_height'])assert(!m.exp
 check('metal_slide_cabinet_hole_diameter',false,{drawer_mount:'metal_slides',metal_slide_hole_pattern_mode:'legacy_spacing'});check('metal_slide_drawer_hole_diameter',false,{drawer_mount:'metal_slides',metal_slide_hole_pattern_mode:'legacy_spacing'});
 const setup=fs.readFileSync('app/HardwareSetup.tsx','utf8');assert(setup.includes("category='drawer_slide'")&&setup.includes("category='hinge'"));
 const page=fs.readFileSync('app/page.tsx','utf8');assert(page.includes('<SettingHelp'));assert(!page.includes("<p className='field-note'>{f.description}"));
+// Blind side tabs: the style needs tab-and-slot joinery; its settings need the blind style.
+for(const family of [0,1,2,3,4]){
+ check('side_tab_style',true,{joinery_style:'butt'},family);check('side_tab_style',false,{joinery_style:'tab_slot'},family);
+ check('blind_tab_skin',true,{joinery_style:'tab_slot',side_tab_style:'through'},family);check('blind_tab_skin',false,{joinery_style:'tab_slot',side_tab_style:'blind'},family);
+ check('blind_tab_screw_hole_diameter',true,{joinery_style:'tab_slot',side_tab_style:'blind',blind_tab_screw_holes:false},family);
+}
 console.log('Conditional controls: joinery, drawer modes, hardware, nested drilling and presets/help regressions passed.');
 
 for(let family=0;family<schema.length;family++){

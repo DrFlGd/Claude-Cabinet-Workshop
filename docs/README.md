@@ -5,6 +5,7 @@
 - [README](../README.md): features, usage, limits and quick start.
 - [Hosting](../HOSTING.md): static builds, GitHub Pages and the retained Sites build.
 - [Section layouts](SECTION_LAYOUTS.md): editor, photo example and construction limits.
+- [Stackable reference](STACKABLE_REFERENCE.md): measured joinery of the reference stackable cabinet and the spec CCW implements from it.
 - [Modular workbench](MODULAR_WORKBENCH.md): reference dimensions, layout rules and decisions for the workbench type.
 - [Media cart review](MEDIA_CART_REVIEW.md): problems found in the original media cart model and how the product engine corrects them.
 - [Development](DEVELOPMENT.md): source layout, checks and engine maintenance.

@@ -2347,6 +2347,8 @@ if (output_mode == "pocket_carcass_dados") {
     echo("Pocket operation: carcass / partition dados");
     if (carcass_joint_geometry == "dado")
         echo("  carcass dado depth = ", effective_dado_depth(), " mm");
+    if (side_tabs_blind())
+        echo("  blind side-tab pocket depth = ", side_tab_pocket_depth(), " mm");
     if (drawer_bank_partition_joinery_mode() == "dado"
         && drawer_bank_partition_count() > 0)
         echo("  bank-partition receiver depth = ",

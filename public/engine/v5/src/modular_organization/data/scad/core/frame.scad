@@ -39,6 +39,94 @@ module slot_cut_x_3d(
     }
 }
 
+// ---------------------------
+// SIDE TABS (through or blind)
+// ---------------------------
+// Cross members that span between the two cabinet sides carry tabs of length
+// side_tab_length() at both ends. Through tabs fill the side's thickness;
+// blind tabs stop short of the pocket floor (see tab_pocket.scad).
+
+// One pair of tabs, entering the left and right sides. [y,z] is the tab's
+// corner and [dy,dz] its cross-section.
+module side_tab_pair_3d(y,z,dy,dz) {
+    L = side_tab_length();
+
+    sheet_box([L,dy,dz],[material_thickness-L,y,z]);
+    sheet_box([L,dy,dz],[resolved_cabinet_width-material_thickness,y,z]);
+}
+
+// Shoulder reliefs for one tab pair, as solids to subtract. A flat member
+// (axis "z") has its tab span [a0,a0+w] along Y and its thickness [p0,p0+t]
+// along Z; an on-edge member (axis "y") the span along Z, thickness along Y.
+// A relief is left off where the tab edge is flush with the member's edge
+// (lo/hi: the member's extent along the joint).
+function side_tab_root_relief_offsets(a0,w,lo,hi) =
+    let(r=effective_slot_tool_diameter()/2)
+    [
+        if (a0 > lo+0.001) a0-r,
+        if (a0+w < hi-0.001) a0+w+r
+    ];
+
+module side_tab_root_reliefs_3d(a0,w,axis,p0,t,lo=-1e9,hi=1e9) {
+    tab_root_reliefs_at_3d(
+        [material_thickness,resolved_cabinet_width-material_thickness],
+        a0,w,axis,p0,t,lo,hi);
+}
+
+// The same reliefs at the shoulders xs (global X) of any member.
+module tab_root_reliefs_at_3d(xs,a0,w,axis,p0,t,lo=-1e9,hi=1e9) {
+    if (side_tab_root_relief_active()) {
+        r = effective_slot_tool_diameter()/2;
+
+        for (x=xs)
+            for (a=side_tab_root_relief_offsets(a0,w,lo,hi))
+                if (axis == "z")
+                    translate([x,a,p0-0.01])
+                        cylinder(h=t+0.02,r=r);
+                else
+                    translate([x,p0-0.01,a])
+                        rotate([-90,0,0])
+                            cylinder(h=t+0.02,r=r);
+    }
+}
+
+// Flat-part outline of one tab pair: local X runs across the cabinet from the
+// left tab's end, local Y along the joint.
+module side_tab_pair_cut(a0,w) {
+    L = side_tab_length();
+
+    translate([0,a0]) cut_part(L,w);
+    translate([L+inner_width,a0]) cut_part(L,w);
+}
+
+module side_tab_root_reliefs_cut(a0,w,lo=-1e9,hi=1e9) {
+    tab_root_reliefs_at_cut(
+        [side_tab_length(),side_tab_length()+inner_width],a0,w,lo,hi);
+}
+
+// The same reliefs at the shoulders xs (local X) of any flat part.
+module tab_root_reliefs_at_cut(xs,a0,w,lo=-1e9,hi=1e9) {
+    if (side_tab_root_relief_active()) {
+        r = effective_slot_tool_diameter()/2;
+
+        for (x=xs)
+            for (a=side_tab_root_relief_offsets(a0,w,lo,hi))
+                translate([x,a])
+                    circle(r=r);
+    }
+}
+
+// Screw holes through a cabinet side (side-local Y = depth, Z = height) for
+// a member whose joint runs along Y from y0 (`along_y`) or along Z from z0,
+// centred on the member's thickness at `mid`.
+module side_tab_screw_holes_2d(origin,span,mid,starts,w,along_y=true) {
+    for (p=side_tab_screw_positions(span,starts,w))
+        round_hole_2d(
+            along_y ? origin+p : mid,
+            along_y ? mid : origin+p,
+            side_tab_screw_hole_diameter());
+}
+
 // Fixed horizontal panel used for bottoms, tops, stretchers, shelves,
 // and the combo divider.
 module joined_horizontal_panel_3d(y0,depth,z0,tab_location="default") {
@@ -52,22 +140,25 @@ module joined_horizontal_panel_3d(y0,depth,z0,tab_location="default") {
                   [material_thickness-dd,y0,z0]);
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            sheet_box([inner_width,depth,material_thickness],
-                      [material_thickness,y0,z0]);
+        tab_n = tab_count_for_location(depth,tab_location);
+        tw = tab_width_for(depth);
 
-            tab_n = tab_count_for_location(depth,tab_location);
+        difference() {
+            union() {
+                sheet_box([inner_width,depth,material_thickness],
+                          [material_thickness,y0,z0]);
 
-            for (i=[0:tab_n-1]) {
-                ty = y0 + tab_start_for_location(depth,i,tab_location);
-                tw = tab_width_for(depth);
-
-                // Left and right tabs extend through the cabinet sides.
-                sheet_box([material_thickness,tw,material_thickness],
-                          [0,ty,z0]);
-                sheet_box([material_thickness,tw,material_thickness],
-                          [resolved_cabinet_width-material_thickness,ty,z0]);
+                // Left and right tabs enter the cabinet sides.
+                for (i=[0:tab_n-1])
+                    side_tab_pair_3d(
+                        y0+tab_start_for_location(depth,i,tab_location),
+                        z0,tw,material_thickness);
             }
+
+            for (i=[0:tab_n-1])
+                side_tab_root_reliefs_3d(
+                    y0+tab_start_for_location(depth,i,tab_location),
+                    tw,"z",z0,material_thickness,y0,y0+depth);
         }
     }
 }
@@ -82,21 +173,22 @@ module joined_horizontal_panel_cut(depth,tab_location="default") {
         cut_part(inner_width+2*effective_dado_depth(),depth);
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            translate([material_thickness,0])
-                cut_part(inner_width,depth);
+        tab_n = tab_count_for_location(depth,tab_location);
+        tw = tab_width_for(depth);
 
-            tab_n = tab_count_for_location(depth,tab_location);
+        difference() {
+            union() {
+                translate([side_tab_length(),0])
+                    cut_part(inner_width,depth);
 
-            for (i=[0:tab_n-1]) {
-                ty = tab_start_for_location(depth,i,tab_location);
-                tw = tab_width_for(depth);
-
-                translate([0,ty])
-                    cut_part(material_thickness,tw);
-                translate([resolved_cabinet_width-material_thickness,ty])
-                    cut_part(material_thickness,tw);
+                for (i=[0:tab_n-1])
+                    side_tab_pair_cut(
+                        tab_start_for_location(depth,i,tab_location),tw);
             }
+
+            for (i=[0:tab_n-1])
+                side_tab_root_reliefs_cut(
+                    tab_start_for_location(depth,i,tab_location),tw,0,depth);
         }
     }
 }
@@ -1243,22 +1335,35 @@ module mixed_bay_fixed_shelf_3d(b=0,z0=0,s=1) {
         );
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            sheet_box([ww,shelf_depth,material_thickness],[x0,shelf_front_y,z0]);
+        // Shoulder reliefs where an end enters a cabinet side.
+        bound = mixed_bay_bound(b);
+        xs = [if (bound[0] == -1) x0, if (bound[1] == -1) x0+ww];
 
-            for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
-                yy = tab_start_for_location(shelf_depth,n,"shelf");
-                tw = tab_width_for(shelf_depth);
+        difference() {
+            union() {
+                sheet_box([ww,shelf_depth,material_thickness],[x0,shelf_front_y,z0]);
 
-                sheet_box(
-                    [ll,tw,material_thickness],
-                    [x0-ll,shelf_front_y+yy,z0]
-                );
-                sheet_box(
-                    [rl,tw,material_thickness],
-                    [x0+ww,shelf_front_y+yy,z0]
-                );
+                for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
+                    yy = tab_start_for_location(shelf_depth,n,"shelf");
+                    tw = tab_width_for(shelf_depth);
+
+                    sheet_box(
+                        [ll,tw,material_thickness],
+                        [x0-ll,shelf_front_y+yy,z0]
+                    );
+                    sheet_box(
+                        [rl,tw,material_thickness],
+                        [x0+ww,shelf_front_y+yy,z0]
+                    );
+                }
             }
+
+            for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1])
+                tab_root_reliefs_at_3d(
+                    xs,
+                    shelf_front_y+tab_start_for_location(shelf_depth,n,"shelf"),
+                    tab_width_for(shelf_depth),"z",z0,material_thickness,
+                    shelf_front_y,shelf_front_y+shelf_depth);
         }
     }
     else {
@@ -1275,19 +1380,30 @@ module mixed_bay_fixed_shelf_cut(b=0,s=1) {
         cut_part(ww+ll+rl,shelf_depth);
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            translate([ll,0])
-                cut_part(ww,shelf_depth);
+        bound = mixed_bay_bound(b);
+        xs = [if (bound[0] == -1) ll, if (bound[1] == -1) ll+ww];
 
-            for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
-                yy = tab_start_for_location(shelf_depth,n,"shelf");
-                tw = tab_width_for(shelf_depth);
+        difference() {
+            union() {
+                translate([ll,0])
+                    cut_part(ww,shelf_depth);
 
-                translate([0,yy])
-                    cut_part(ll,tw);
-                translate([ll+ww,yy])
-                    cut_part(rl,tw);
+                for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1]) {
+                    yy = tab_start_for_location(shelf_depth,n,"shelf");
+                    tw = tab_width_for(shelf_depth);
+
+                    translate([0,yy])
+                        cut_part(ll,tw);
+                    translate([ll+ww,yy])
+                        cut_part(rl,tw);
+                }
             }
+
+            for (n=[0:tab_count_for_location(shelf_depth,"shelf")-1])
+                tab_root_reliefs_at_cut(
+                    xs,
+                    tab_start_for_location(shelf_depth,n,"shelf"),
+                    tab_width_for(shelf_depth),0,shelf_depth);
         }
     }
     else {
@@ -1357,6 +1473,17 @@ module section_divider_3d(h) {
         }
 
         section_divider_receivers_3d(h);
+
+        // Shoulder reliefs where an end enters a cabinet side.
+        if (carcass_joint_geometry == "tab_slot")
+            for (n=[0:tab_count_for_location(dp,"shelf")-1])
+                tab_root_reliefs_at_3d(
+                    [
+                        if (section_divider_left_end(h) == -1) x0,
+                        if (section_divider_right_end(h) == -1) x0+ww
+                    ],
+                    y0+tab_start_for_location(dp,n,"shelf"),
+                    tab_width_for(dp),"z",z0,material_thickness,y0,y0+dp);
     }
 }
 
@@ -1399,6 +1526,16 @@ module section_divider_cut(h) {
 
         partition_receiver_through_2d(
             parts,section_divider_y0(h),dp,section_divider_cut_origin_x(h));
+
+        if (carcass_joint_geometry == "tab_slot")
+            for (n=[0:tab_count_for_location(dp,"shelf")-1])
+                tab_root_reliefs_at_cut(
+                    [
+                        if (section_divider_left_end(h) == -1) ll,
+                        if (section_divider_right_end(h) == -1) ll+ww
+                    ],
+                    tab_start_for_location(dp,n,"shelf"),
+                    tab_width_for(dp),0,dp);
     }
 }
 
@@ -1787,19 +1924,23 @@ module joined_toe_kick_3d() {
                   [material_thickness-dd,toe_kick_setback,0]);
     }
     else if (has_toe_kick && carcass_joint_geometry == "tab_slot") {
-        union() {
-            sheet_box([inner_width,material_thickness,toe_kick_height],
-                      [material_thickness,toe_kick_setback,0]);
+        tw = tab_width_for(toe_kick_height);
 
-            for (i=[0:effective_tab_count(toe_kick_height)-1]) {
-                tz = tab_start(toe_kick_height,i);
-                tw = tab_width_for(toe_kick_height);
+        difference() {
+            union() {
+                sheet_box([inner_width,material_thickness,toe_kick_height],
+                          [material_thickness,toe_kick_setback,0]);
 
-                sheet_box([material_thickness,material_thickness,tw],
-                          [0,toe_kick_setback,tz]);
-                sheet_box([material_thickness,material_thickness,tw],
-                          [resolved_cabinet_width-material_thickness,toe_kick_setback,tz]);
+                for (i=[0:effective_tab_count(toe_kick_height)-1])
+                    side_tab_pair_3d(
+                        toe_kick_setback,tab_start(toe_kick_height,i),
+                        material_thickness,tw);
             }
+
+            for (i=[0:effective_tab_count(toe_kick_height)-1])
+                side_tab_root_reliefs_3d(
+                    tab_start(toe_kick_height,i),tw,"y",
+                    toe_kick_setback,material_thickness,0,toe_kick_height);
         }
     }
 }
@@ -1812,19 +1953,20 @@ module joined_toe_kick_cut() {
         cut_part(inner_width+2*effective_dado_depth(),toe_kick_height);
     }
     else if (has_toe_kick && carcass_joint_geometry == "tab_slot") {
-        union() {
-            translate([material_thickness,0])
-                cut_part(inner_width,toe_kick_height);
+        tw = tab_width_for(toe_kick_height);
 
-            for (i=[0:effective_tab_count(toe_kick_height)-1]) {
-                tz = tab_start(toe_kick_height,i);
-                tw = tab_width_for(toe_kick_height);
+        difference() {
+            union() {
+                translate([side_tab_length(),0])
+                    cut_part(inner_width,toe_kick_height);
 
-                translate([0,tz])
-                    cut_part(material_thickness,tw);
-                translate([resolved_cabinet_width-material_thickness,tz])
-                    cut_part(material_thickness,tw);
+                for (i=[0:effective_tab_count(toe_kick_height)-1])
+                    side_tab_pair_cut(tab_start(toe_kick_height,i),tw);
             }
+
+            for (i=[0:effective_tab_count(toe_kick_height)-1])
+                side_tab_root_reliefs_cut(
+                    tab_start(toe_kick_height,i),tw,0,toe_kick_height);
         }
     }
 }
@@ -1854,37 +1996,36 @@ module joined_back_stretcher_3d(z0) {
         );
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            sheet_box(
-                [
-                    inner_width,
-                    material_thickness,
-                    back_stretcher_height
-                ],
-                [
-                    material_thickness,
-                    back_stretcher_y,
-                    z0
-                ]
-            );
+        n = effective_tab_count(back_stretcher_height);
+        tw = tab_width_for(back_stretcher_height);
 
-            for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
-                tz = z0 + tab_start(back_stretcher_height,i);
-                tw = tab_width_for(back_stretcher_height);
-
+        difference() {
+            union() {
                 sheet_box(
-                    [material_thickness,material_thickness,tw],
-                    [0,back_stretcher_y,tz]
-                );
-                sheet_box(
-                    [material_thickness,material_thickness,tw],
                     [
-                        resolved_cabinet_width-material_thickness,
+                        inner_width,
+                        material_thickness,
+                        back_stretcher_height
+                    ],
+                    [
+                        material_thickness,
                         back_stretcher_y,
-                        tz
+                        z0
                     ]
                 );
+
+                for (i=[0:n-1])
+                    side_tab_pair_3d(
+                        back_stretcher_y,
+                        z0+tab_start(back_stretcher_height,i),
+                        material_thickness,tw);
             }
+
+            for (i=[0:n-1])
+                side_tab_root_reliefs_3d(
+                    z0+tab_start(back_stretcher_height,i),tw,"y",
+                    back_stretcher_y,material_thickness,
+                    z0,z0+back_stretcher_height);
         }
     }
 }
@@ -1900,19 +2041,22 @@ module joined_back_stretcher_cut() {
         );
     }
     else if (carcass_joint_geometry == "tab_slot") {
-        union() {
-            translate([material_thickness,0])
-                cut_part(inner_width,back_stretcher_height);
+        n = effective_tab_count(back_stretcher_height);
+        tw = tab_width_for(back_stretcher_height);
 
-            for (i=[0:effective_tab_count(back_stretcher_height)-1]) {
-                tz = tab_start(back_stretcher_height,i);
-                tw = tab_width_for(back_stretcher_height);
+        difference() {
+            union() {
+                translate([side_tab_length(),0])
+                    cut_part(inner_width,back_stretcher_height);
 
-                translate([0,tz])
-                    cut_part(material_thickness,tw);
-                translate([resolved_cabinet_width-material_thickness,tz])
-                    cut_part(material_thickness,tw);
+                for (i=[0:n-1])
+                    side_tab_pair_cut(tab_start(back_stretcher_height,i),tw);
             }
+
+            for (i=[0:n-1])
+                side_tab_root_reliefs_cut(
+                    tab_start(back_stretcher_height,i),tw,
+                    0,back_stretcher_height);
         }
     }
 }
@@ -1961,12 +2105,12 @@ module side_back_stretcher_joint_cut_3d(side,z0) {
 
             if (side == "left")
                 slot_cut_x_3d(
-                    -1,material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("left"),side_receiver_x_depth(),sy,sz,sw,sh,
                     false,rear_open,false,false);
             else
                 slot_cut_x_3d(
-                    resolved_cabinet_width-material_thickness-1,
-                    material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("right"),
+                    side_receiver_x_depth(),sy,sz,sw,sh,
                     false,rear_open,false,false);
         }
     }
@@ -2038,13 +2182,13 @@ module side_horizontal_joint_cut_3d(
 
             if (side == "left")
                 slot_cut_x_3d(
-                    -1,material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("left"),side_receiver_x_depth(),sy,sz,sw,sh,
                     open_front,open_rear,open_bottom,open_top
                 );
             else
                 slot_cut_x_3d(
-                    resolved_cabinet_width-material_thickness-1,
-                    material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("right"),
+                    side_receiver_x_depth(),sy,sz,sw,sh,
                     open_front,open_rear,open_bottom,open_top
                 );
         }
@@ -2087,12 +2231,12 @@ module side_toe_joint_cut_3d(side) {
 
             if (side == "left")
                 slot_cut_x_3d(
-                    -1,material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("left"),side_receiver_x_depth(),sy,sz,sw,sh,
                     front_open,false,false,false);
             else
                 slot_cut_x_3d(
-                    resolved_cabinet_width-material_thickness-1,
-                    material_thickness+2,sy,sz,sw,sh,
+                    side_receiver_x_start("right"),
+                    side_receiver_x_depth(),sy,sz,sw,sh,
                     front_open,false,false,false);
         }
     }
@@ -2396,13 +2540,144 @@ module all_side_joinery_cuts_3d(side) {
             for (b=[0:back_stretcher_count-1])
                 side_back_stretcher_joint_cut_3d(
                     side,back_stretcher_z(b));
+
+        // Screw holes beside blind tabs.
+        if (side_tab_screw_holes_active())
+            yz_extrude_3d(
+                (side == "left"
+                    ? 0
+                    : resolved_cabinet_width-material_thickness)-1,
+                material_thickness+2)
+                side_tab_screw_holes_for_side_2d(side);
     }
 }
 
 
 // Side-panel joinery as 2D THROUGH geometry.
-// Dado pockets are intentionally NOT here because they are blind.
+// Dado pockets are intentionally NOT here because they are blind. Blind tab
+// pockets are not either: only their screw holes pass through.
 module all_side_through_joinery_2d() {
+    if (side_tabs_blind())
+        all_side_tab_screw_holes_2d();
+    else
+        side_tab_receivers_2d();
+}
+
+// Blind tab pockets in side-panel local Y/Z coordinates (the inside face),
+// milled to side_tab_pocket_depth() in the carcass-dado pocket operation.
+module all_side_tab_pockets_2d() {
+    if (side_tabs_blind())
+        side_tab_receivers_2d();
+}
+
+// Every blind tab pocket in one side, inside face, side-local Y/Z.
+module side_tab_pockets_for_side_2d(side) {
+    all_side_tab_pockets_2d();
+    mixed_bay_side_fixed_shelf_through_2d(side,true);
+    side_back_joint_2d(true);
+}
+
+// Screw holes beside the blind tabs of every cross member entering a side.
+module all_side_tab_screw_holes_2d() {
+    if (side_tab_screw_holes_active()) {
+        T = material_thickness;
+        D = resolved_cabinet_depth;
+
+        if (!full_width_bottom_active)
+            side_tab_screw_holes_2d(
+                0,D,bottom_above_toe+T/2,
+                side_tab_starts_for_location(D,"bottom"),tab_width_for(D));
+
+        top_mid = cabinet_height-T/2;
+
+        if (top_style == "full")
+            side_tab_screw_holes_2d(
+                0,D,top_mid,
+                side_tab_starts_for_location(D,"top"),tab_width_for(D));
+        else
+            for (y0=[0,D-top_stretcher_depth])
+                side_tab_screw_holes_2d(
+                    y0,top_stretcher_depth,top_mid,
+                    side_tab_starts_for_location(top_stretcher_depth,"top"),
+                    tab_width_for(top_stretcher_depth));
+
+        if (!mixed_bay_mode && combo_contents_active && door_region_height > material_thickness)
+            side_tab_screw_holes_2d(
+                shelf_front_y,shelf_depth,combo_divider_bottom_z+T/2,
+                side_tab_starts_for_location(shelf_depth,"shelf"),
+                tab_width_for(shelf_depth));
+
+        if (!mixed_bay_mode && has_doors && shelf_style == "fixed" && door_shelf_count > 0 && door_region_height > 60)
+            for (s=[1:door_shelf_count])
+                side_tab_screw_holes_2d(
+                    shelf_front_y,shelf_depth,door_shelf_z(s)+T/2,
+                    side_tab_starts_for_location(shelf_depth,"shelf"),
+                    tab_width_for(shelf_depth));
+
+        if (drawer_separator_count > 0)
+            for (s=[0:drawer_separator_count-1]) {
+                sep_mid = drawer_separator_z(s)+T/2;
+
+                if (drawer_separator_style == "full")
+                    side_tab_screw_holes_2d(
+                        drawer_separator_front_y,drawer_separator_full_depth,
+                        sep_mid,
+                        side_tab_starts_for_location(
+                            drawer_separator_full_depth,"separator"),
+                        tab_width_for(drawer_separator_full_depth));
+                else
+                    for (y0=[
+                        drawer_separator_front_y,
+                        drawer_separator_front_y
+                            + drawer_separator_full_depth
+                            - drawer_separator_stretcher_actual_depth
+                    ])
+                        side_tab_screw_holes_2d(
+                            y0,drawer_separator_stretcher_actual_depth,sep_mid,
+                            side_tab_starts_for_location(
+                                drawer_separator_stretcher_actual_depth,
+                                "separator"),
+                            tab_width_for(drawer_separator_stretcher_actual_depth));
+            }
+
+        if (has_toe_kick)
+            side_tab_screw_holes_2d(
+                0,toe_kick_height,toe_kick_setback+T/2,
+                side_tab_starts(toe_kick_height),
+                tab_width_for(toe_kick_height),false);
+
+        if (back_style == "stretchers")
+            for (b=[0:back_stretcher_count-1])
+                side_tab_screw_holes_2d(
+                    back_stretcher_z(b),back_stretcher_height,
+                    back_stretcher_y+T/2,
+                    side_tab_starts(back_stretcher_height),
+                    tab_width_for(back_stretcher_height),false);
+
+        if (structural_back_active)
+            side_tab_screw_holes_2d(
+                captured_back_bottom_z,captured_back_height,
+                structural_back_y+T/2,
+                side_tab_starts(captured_back_height),
+                tab_width_for(captured_back_height),false);
+    }
+}
+
+// The same holes for one side, including that side's mixed-bay fixed shelves
+// and section dividers.
+module side_tab_screw_holes_for_side_2d(side) {
+    all_side_tab_screw_holes_2d();
+
+    if (side_tab_screw_holes_active())
+        for (e=side_horizontal_entries(side))
+            side_tab_screw_holes_2d(
+                e[1],e[2],e[0]+material_thickness/2,
+                side_tab_starts_for_location(e[2],"shelf"),
+                tab_width_for(e[2]));
+}
+
+// Tab receivers (slots or pockets) in side-panel local Y/Z coordinates.
+module side_tab_receivers_2d() {
     c = joint_fit_clearance;
 
     if (carcass_joint_geometry == "tab_slot") {
@@ -2770,39 +3045,38 @@ module structural_back_panel_3d() {
         }
         else if (carcass_joint_geometry == "tab_slot") {
             union() {
-                sheet_box(
-                    [
-                        inner_width,
-                        material_thickness,
-                        captured_back_height
-                    ],
-                    [
-                        material_thickness,
-                        structural_back_y,
-                        captured_back_bottom_z
-                    ]
-                );
+                difference() {
+                    union() {
+                        sheet_box(
+                            [
+                                inner_width,
+                                material_thickness,
+                                captured_back_height
+                            ],
+                            [
+                                material_thickness,
+                                structural_back_y,
+                                captured_back_bottom_z
+                            ]
+                        );
 
-                // Side tabs.
-                for (i=[0:effective_tab_count(captured_back_height)-1]) {
-                    tz =
-                        captured_back_bottom_z
-                        + tab_start(captured_back_height,i);
-                    tw = tab_width_for(captured_back_height);
+                        // Side tabs.
+                        for (i=[0:effective_tab_count(captured_back_height)-1])
+                            side_tab_pair_3d(
+                                structural_back_y,
+                                captured_back_bottom_z
+                                    + tab_start(captured_back_height,i),
+                                material_thickness,
+                                tab_width_for(captured_back_height));
+                    }
 
-                    sheet_box(
-                        [material_thickness,material_thickness,tw],
-                        [0,structural_back_y,tz]
-                    );
-
-                    sheet_box(
-                        [material_thickness,material_thickness,tw],
-                        [
-                            resolved_cabinet_width-material_thickness,
-                            structural_back_y,
-                            tz
-                        ]
-                    );
+                    for (i=[0:effective_tab_count(captured_back_height)-1])
+                        side_tab_root_reliefs_3d(
+                            captured_back_bottom_z
+                                + tab_start(captured_back_height,i),
+                            tab_width_for(captured_back_height),"y",
+                            structural_back_y,material_thickness,
+                            captured_back_bottom_z,captured_back_top_z);
                 }
 
                 // Bottom/top tabs.
@@ -2880,59 +3154,51 @@ module structural_back_panel_cut() {
             }
         }
         else if (carcass_joint_geometry == "tab_slot") {
-            union() {
-                translate([
-                    material_thickness,
-                    material_thickness
-                ])
-                    cut_part(
-                        inner_width,
-                        captured_back_height
-                    );
+            L = side_tab_length();
+            th = tab_width_for(captured_back_height);
 
-                for (i=[0:effective_tab_count(captured_back_height)-1]) {
-                    tz =
-                        material_thickness
-                        + tab_start(captured_back_height,i);
-                    tw = tab_width_for(captured_back_height);
-
-                    translate([0,tz])
+            difference() {
+                union() {
+                    translate([L,material_thickness])
                         cut_part(
-                            material_thickness,
-                            tw
+                            inner_width,
+                            captured_back_height
                         );
 
-                    translate([
-                        resolved_cabinet_width-material_thickness,
-                        tz
-                    ])
-                        cut_part(
-                            material_thickness,
-                            tw
-                        );
+                    for (i=[0:effective_tab_count(captured_back_height)-1])
+                        side_tab_pair_cut(
+                            material_thickness
+                                + tab_start(captured_back_height,i),
+                            th);
+
+                    for (i=[0:effective_tab_count(inner_width)-1]) {
+                        tx = L + tab_start(inner_width,i);
+                        tw = tab_width_for(inner_width);
+
+                        translate([tx,0])
+                            cut_part(
+                                tw,
+                                material_thickness
+                            );
+
+                        translate([
+                            tx,
+                            material_thickness+captured_back_height
+                        ])
+                            cut_part(
+                                tw,
+                                material_thickness
+                            );
+                    }
                 }
 
-                for (i=[0:effective_tab_count(inner_width)-1]) {
-                    tx =
+                for (i=[0:effective_tab_count(captured_back_height)-1])
+                    side_tab_root_reliefs_cut(
                         material_thickness
-                        + tab_start(inner_width,i);
-                    tw = tab_width_for(inner_width);
-
-                    translate([tx,0])
-                        cut_part(
-                            tw,
-                            material_thickness
-                        );
-
-                    translate([
-                        tx,
-                        material_thickness+captured_back_height
-                    ])
-                        cut_part(
-                            tw,
-                            material_thickness
-                        );
-                }
+                            + tab_start(captured_back_height,i),
+                        th,
+                        material_thickness,
+                        material_thickness+captured_back_height);
             }
         }
     }
@@ -3016,18 +3282,11 @@ module side_back_joint_cut_3d(side) {
                 sh =
                     tab_width_for(captured_back_height)+c;
 
-                if (side == "left")
-                    slot_cut_x_3d(
-                        -1,
-                        material_thickness+2,
-                        sy,sz,sw,sh
-                    );
-                else
-                    slot_cut_x_3d(
-                        resolved_cabinet_width-material_thickness-1,
-                        material_thickness+2,
-                        sy,sz,sw,sh
-                    );
+                slot_cut_x_3d(
+                    side_receiver_x_start(side),
+                    side_receiver_x_depth(),
+                    sy,sz,sw,sh
+                );
             }
         }
         else if (
@@ -3054,14 +3313,16 @@ module side_back_joint_cut_3d(side) {
 
 
 // Through geometry in cabinet-side local Y/Z coordinates.
-module side_back_joint_2d() {
+// pockets=true: only blind tab pockets (the carcass-dado pocket operation).
+module side_back_joint_2d(pockets=false) {
     if (structural_back_active) {
         c =
             carcass_joint_geometry == "dado"
                 ? dado_fit_clearance
                 : joint_fit_clearance;
 
-        if (carcass_joint_geometry == "tab_slot") {
+        if (carcass_joint_geometry == "tab_slot"
+            && side_tabs_blind() == pockets) {
             for (i=[0:effective_tab_count(captured_back_height)-1]) {
                 sy = structural_back_y-c/2;
                 sw = material_thickness+c;
@@ -3077,7 +3338,8 @@ module side_back_joint_2d() {
             }
         }
         else if (
-            carcass_joint_geometry == "butt"
+            !pockets
+            && carcass_joint_geometry == "butt"
             && carcass_registration_enabled
         ) {
             for (i=[0:butt_reg_count(captured_back_height)-1])
@@ -3602,10 +3864,11 @@ module mixed_bay_side_fixed_shelf_joinery_3d(x0,side) {
             side_horizontal_joint_cut_3d(side,e[1],e[2],e[0],"shelf");
 }
 
-module mixed_bay_side_fixed_shelf_through_2d(side) {
+// pockets=true: only blind tab pockets (the carcass-dado pocket operation).
+module mixed_bay_side_fixed_shelf_through_2d(side,pockets=false) {
     c = joint_fit_clearance;
 
-    if (carcass_joint_geometry == "tab_slot")
+    if (carcass_joint_geometry == "tab_slot" && side_tabs_blind() == pockets)
         for (e=side_horizontal_entries(side))
             for (n=[0:tab_count_for_location(e[2],"shelf")-1]) {
                 sy = e[1]+tab_start_for_location(e[2],n,"shelf")-c/2;
@@ -4087,7 +4350,10 @@ module cabinet_side_panel_cut_features(side="left") {
                 toe_kick_height+0.02
             ]);
 
-    all_side_through_joinery_2d();
+    if (side_tabs_blind())
+        side_tab_screw_holes_for_side_2d(side);
+    else
+        all_side_through_joinery_2d();
     mixed_bay_side_fixed_shelf_through_2d(side);
 
     adjustable_shelf_pin_holes_cut_2d(side);
@@ -4221,8 +4487,8 @@ module stack_base_side_receiver_cuts_3d(
                         tab_width_for(stack_base_height)+c;
 
                     slot_cut_x_3d(
-                        x0-1,
-                        material_thickness+2,
+                        x0+side_receiver_local_x_start(side),
+                        side_receiver_x_depth(),
                         y0-c/2,
                         sz,
                         material_thickness+c,
@@ -4245,18 +4511,38 @@ module stack_base_side_receiver_cuts_3d(
                     );
             }
         }
+
+        if (side_tab_screw_holes_active())
+            yz_extrude_3d(x0-1,material_thickness+2)
+                stack_base_side_screw_holes_2d();
     }
 }
 
 
-module stack_base_side_receivers_through_2d() {
+// Screw holes beside the blind tabs of the base frame's cross rails.
+module stack_base_side_screw_holes_2d() {
+    if (stack_base_active && side_tab_screw_holes_active())
+        for (front=[true,false])
+            side_tab_screw_holes_2d(
+                0,stack_base_height,
+                stack_base_cross_y(front)+material_thickness/2,
+                side_tab_starts(stack_base_height),
+                tab_width_for(stack_base_height),false);
+}
+
+// pockets=true: only blind tab pockets (the carcass-dado pocket operation).
+module stack_base_side_receivers_through_2d(pockets=false) {
     if (stack_base_active) {
         c = joint_fit_clearance;
+
+        if (!pockets)
+            stack_base_side_screw_holes_2d();
 
         for (front=[true,false]) {
             y0 = stack_base_cross_y(front);
 
-            if (carcass_joint_geometry == "tab_slot")
+            if (carcass_joint_geometry == "tab_slot"
+                && side_tabs_blind() == pockets)
                 for (i=[0:effective_tab_count(stack_base_height)-1]) {
                     sz =
                         tab_start(stack_base_height,i)-c/2;
@@ -4275,7 +4561,8 @@ module stack_base_side_receivers_through_2d() {
                 }
 
             if (
-                carcass_joint_geometry == "butt"
+                !pockets
+                && carcass_joint_geometry == "butt"
                 && carcass_registration_enabled
             )
                 for (i=[0:butt_reg_count(stack_base_height)-1])
@@ -4366,6 +4653,16 @@ module stack_base_side_rail_print_part() {
                         height=effective_dado_depth()+0.02
                     )
                         stack_base_side_dado_pockets_2d();
+
+            if (side_tabs_blind())
+                translate([
+                    0,0,
+                    material_thickness-side_tab_pocket_depth()
+                ])
+                    linear_extrude(
+                        height=side_tab_pocket_depth()+0.02
+                    )
+                        stack_base_side_receivers_through_2d(true);
         }
 }
 
@@ -4405,48 +4702,34 @@ module stack_base_cross_rail_3d(
             );
         }
         else if (carcass_joint_geometry == "tab_slot") {
-            union() {
-                sheet_box(
-                    [
-                        inner_width,
-                        material_thickness,
-                        stack_base_height
-                    ],
-                    [
-                        material_thickness,
-                        y0,
-                        0
-                    ]
-                );
+            n = effective_tab_count(stack_base_height);
+            tw = tab_width_for(stack_base_height);
 
-                for (i=[0:effective_tab_count(stack_base_height)-1]) {
-                    tz =
-                        tab_start(stack_base_height,i);
-                    tw =
-                        tab_width_for(stack_base_height);
-
+            difference() {
+                union() {
                     sheet_box(
                         [
+                            inner_width,
                             material_thickness,
-                            material_thickness,
-                            tw
-                        ],
-                        [0,y0,tz]
-                    );
-
-                    sheet_box(
-                        [
-                            material_thickness,
-                            material_thickness,
-                            tw
+                            stack_base_height
                         ],
                         [
-                            resolved_cabinet_width-material_thickness,
+                            material_thickness,
                             y0,
-                            tz
+                            0
                         ]
                     );
+
+                    for (i=[0:n-1])
+                        side_tab_pair_3d(
+                            y0,tab_start(stack_base_height,i),
+                            material_thickness,tw);
                 }
+
+                for (i=[0:n-1])
+                    side_tab_root_reliefs_3d(
+                        tab_start(stack_base_height,i),tw,"y",
+                        y0,material_thickness,0,stack_base_height);
             }
         }
     }
@@ -4468,34 +4751,25 @@ module stack_base_cross_rail_cut() {
             );
         }
         else if (carcass_joint_geometry == "tab_slot") {
-            union() {
-                translate([material_thickness,0])
-                    cut_part(
-                        inner_width,
-                        stack_base_height
-                    );
+            n = effective_tab_count(stack_base_height);
+            tw = tab_width_for(stack_base_height);
 
-                for (i=[0:effective_tab_count(stack_base_height)-1]) {
-                    tz =
-                        tab_start(stack_base_height,i);
-                    tw =
-                        tab_width_for(stack_base_height);
-
-                    translate([0,tz])
+            difference() {
+                union() {
+                    translate([side_tab_length(),0])
                         cut_part(
-                            material_thickness,
-                            tw
+                            inner_width,
+                            stack_base_height
                         );
 
-                    translate([
-                        resolved_cabinet_width-material_thickness,
-                        tz
-                    ])
-                        cut_part(
-                            material_thickness,
-                            tw
-                        );
+                    for (i=[0:n-1])
+                        side_tab_pair_cut(tab_start(stack_base_height,i),tw);
                 }
+
+                for (i=[0:n-1])
+                    side_tab_root_reliefs_cut(
+                        tab_start(stack_base_height,i),tw,
+                        0,stack_base_height);
             }
         }
     }

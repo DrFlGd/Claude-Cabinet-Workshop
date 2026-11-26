@@ -42,6 +42,7 @@ const features=[
   ['Butt / screw joinery',any(has('joinery_style','butt'),has('joinery_style','screw'))],
   ['Dado joinery',has('joinery_style','dado')],
   ['Tab-and-slot joinery',has('joinery_style','tab_slot')],
+  ['Blind tab pockets in the sides (hidden tabs)',has('side_tab_style','blind')],
   ['Full top panel',any(has('top_style','full'),has('custom_top_style','full'))],
   ['Top stretchers',any(has('top_style','stretchers'),has('custom_top_style','stretchers'))],
   ['Applied back panel',has('back_style','panel')],

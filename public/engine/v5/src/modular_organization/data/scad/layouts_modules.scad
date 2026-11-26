@@ -2204,6 +2204,24 @@ module door_cut_layout() {
 module carcass_dado_operation_geometry_2d() {
     g = layout_gap;
 
+    // Blind tab pockets in the sides (and base-frame sides), milled to
+    // side_tab_pocket_depth() rather than the dado depth.
+    if (side_tabs_blind()) {
+        translate([0,-side_panel_bottom_z])
+            side_tab_pockets_for_side_2d("left");
+
+        translate([resolved_cabinet_depth+g,-side_panel_bottom_z])
+            side_tab_pockets_for_side_2d("right");
+
+        if (stack_base_active) {
+            translate([0,stack_base_side_layout_y])
+                stack_base_side_receivers_through_2d(true);
+
+            translate([resolved_cabinet_depth+g,stack_base_side_layout_y])
+                stack_base_side_receivers_through_2d(true);
+        }
+    }
+
     if (carcass_joint_geometry == "dado") {
         translate([0,-side_panel_bottom_z]) {
             all_side_dado_pockets_2d();
@@ -2971,6 +2989,17 @@ module cabinet_side_print_part(side="left") {
                         all_side_dado_pockets_2d();
                         mixed_bay_side_fixed_shelf_dado_pockets_2d(side);
                     }
+
+        if (side_tabs_blind())
+            translate([
+                0,0,
+                material_thickness-side_tab_pocket_depth()
+            ])
+                linear_extrude(
+                    height=side_tab_pocket_depth()+0.02
+                )
+                    translate([0,-side_panel_bottom_z])
+                        side_tab_pockets_for_side_2d(side);
 
         if (!mixed_bay_mode
             && has_doors
