@@ -9,9 +9,16 @@
 //     still locked together;
 //   - floors, the bin deck, cubbies and tower parts are joined (Panel joinery), with
 //     an assembly order in which every part arrives along the direction of its tabs;
-//   - slots, receivers and dados get dog-bone or T-bone relief at closed corners.
+//   - slots, receivers and dados get dog-bone or T-bone relief at closed corners, and tab
+//     and tongue roots get shoulder reliefs (shared module tab_pocket.scad);
+//   - holes smaller than the cutter are drilled (drill_layout), not cut;
+//   - dados on the second face are laid out for turning the whole sheet over;
+//   - tip-over and racking are checked against stated loads (Stability).
 // X left to right, Y front (0) to back, Z up. Body heights exclude casters.
 // See docs/MEDIA_CART_REVIEW.md for the review of the original model.
+
+// Shared blind-tab and relief primitives (also used by the cabinet engine).
+use <../../engine/v5/src/modular_organization/data/scad/tab_pocket.scad>
 
 /* [Shape] */
 shape = "sloped_bins"; // [sloped_bins, stepped_bins, shelf_cart, custom]
@@ -101,8 +108,20 @@ layout_gap = 20; // [1:1:200]
 include_shared_export_bounding_box = true;
 engrave_label_size = 12; // [2:0.5:40]
 
+/* [Stability] */
+// Horizontal push or pull at the top edge, in any direction (newtons).
+stability_push_force = 50; // [0:1:1000]
+// Downward lean on the front top edge of the bins (newtons).
+stability_lean_force = 250; // [0:1:2000]
+// Sheet material density for the cart's own weight (kg per cubic meter).
+material_density = 600; // [200:10:1500]
+// Contents per bin, per lower cubby and per tower opening (kg).
+bin_load = 5; // [0:0.5:100]
+cubby_load = 5; // [0:0.5:100]
+shelf_load = 5; // [0:0.5:100]
+
 /* [Output] */
-output_mode = "assembly"; // [assembly, flat_3d, bom, cut_layout, pocket_layout, pocket_dados, pocket_dados_flip, engrave_layout]
+output_mode = "assembly"; // [assembly, flat_3d, bom, cut_layout, pocket_layout, pocket_dados, pocket_dados_flip, drill_layout, engrave_layout]
 /* [Hidden] */
 // Test hook: render one part (ID) or CASTERS in assembly position.
 render_part = "";
@@ -354,37 +373,50 @@ function cut_h(p) = let(e=ext(p)) e[3] - e[2];
 
 // ---------------------------------------------------------------- 2D geometry
 relief_on = slot_corner_relief != "none" && cnc_tool_diameter > 0;
-module relief(p, u0, u1, v0, v1) {
-    r = cnc_tool_diameter/2;
-    w = u1 - u0; h = v1 - v0;
-    if (relief_on) for (cu=[0, 1]) for (cv=[0, 1]) {
-        u = cu == 0 ? u0 : u1; v = cv == 0 ? v0 : v1;
-        su = cu == 0 ? 1 : -1; sv = cv == 0 ? 1 : -1;
-        if (inside_base(p, u, v))
-            translate(slot_corner_relief == "dogbone" ? [u + su*r/sqrt(2), v + sv*r/sqrt(2)] :
-                      w >= h ? [u + su*r, v] : [u, v + sv*r])
-                circle(r=r);
+// A slot, receiver or dado with corner relief from the shared tab_pocket module. A wall of
+// the cut is open when both its corners lie outside the part (the cut runs off the edge
+// there), so only closed inside corners are relieved.
+module cut_rect(p, lb, with_relief) {
+    i = [for (c=[[lb[0], lb[2]], [lb[1], lb[2]], [lb[0], lb[3]], [lb[1], lb[3]]]) inside_base(p, c[0], c[1])];
+    open = [!i[0] && !i[2], !i[1] && !i[3], !i[0] && !i[1], !i[2] && !i[3]];
+    translate([lb[0], lb[2]])
+        tp_pocket_2d(lb[1] - lb[0], lb[3] - lb[2], with_relief && relief_on ? cnc_tool_diameter : 0, slot_corner_relief, open);
+}
+// Shoulder reliefs at the roots of a tab or dado tongue (shared tab_pocket module), so
+// the shoulder seats on the mouth of its receiver instead of standing off on the cutter's
+// fillet. Only roots inside the part's outline are cut.
+module root_reliefs(p, b) {
+    if (relief_on) intersection() {
+        base_2d(p);
+        if (b[2] >= p[5] - eps || b[3] <= eps)
+            tp_tab_root_reliefs_2d(b[0], b[1] - b[0], b[2] >= p[5] - eps ? p[5] : 0, cnc_tool_diameter);
+        else if (b[0] >= p[4] - eps || b[1] <= eps)
+            multmatrix([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0]])
+                tp_tab_root_reliefs_2d(b[2], b[3] - b[2], b[0] >= p[4] - eps ? p[4] : 0, cnc_tool_diameter);
     }
 }
-module cut_rect(p, lb, with_relief) {
-    translate([lb[0], lb[2]]) square([lb[1] - lb[0], lb[3] - lb[2]]);
-    if (with_relief) relief(p, lb[0], lb[1], lb[2], lb[3]);
-}
+// Holes smaller than the cutter are drilled (drill_layout); the others are cut.
+function drilled(d) = d < cnc_tool_diameter;
 module base_2d(p) {
     if (is_profile(p)) polygon(concat([[0, 0], [p[4], 0]], [for (k=[len(EDGE)-1:-1:0]) [EDGE[k][0], EDGE[k][1] - p[8]]]));
     else square([p[4], p[5]]);
 }
-// Finished through-cut profile in local coordinates.
-module part_2d(p) {
+// Finished profile in local coordinates. with_drilled = false leaves out the holes that
+// are drilled rather than cut (the cut layout).
+module part_2d(p, with_drilled=true) {
     difference() {
         union() {
             base_2d(p);
             for (b=adds(p)) translate([b[0], b[2]]) square([b[1] - b[0], b[3] - b[2]]);
         }
+        for (b=adds(p)) root_reliefs(p, b);
         for (f=part_features(p[0], "slot")) let(lb=local_box(p, f[2])) cut_rect(p, lb, f[4]);
         for (f=part_features(p[0], "pocket")) let(lb=local_box(p, f[2])) if (is_through(p, lb)) cut_rect(p, lb, f[4]);
-        for (f=part_features(p[0], "hole")) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
+        for (f=part_features(p[0], "hole")) if (with_drilled || !drilled(f[3])) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
     }
+}
+module drills_2d(p) {
+    for (f=part_features(p[0], "hole")) if (drilled(f[3])) let(lb=local_box(p, f[2])) translate([lb[0], lb[2]]) circle(d=f[3]);
 }
 module pockets_2d(p, face) {
     // Clipped to the part, so every pocket contour lies inside the part's cut rectangle.
@@ -424,6 +456,56 @@ module assembly() {
     if (show_casters && (render_part == "" || render_part == "CASTERS")) for (c=caster_xy()) caster(c[0], c[1]);
 }
 
+
+// ---------------------------------------------------------------- stability
+// Static tip-over: the cart's own weight (every part's outline x thickness x density,
+// casters and hardware left out) plus stated contents, against
+//   - a horizontal push or pull at the top edge in each of four directions, and
+//   - a downward lean on the front top edge of the bins.
+// The cart tips about the edge of its support: the caster plate centers, or the bottom
+// panel's footprint without casters. Three loadings: empty, every bin, cubby and tower
+// opening loaded, and only the highest bin row and tower opening loaded.
+gravity = 9.81;
+function vsum(v, k=0) = k >= len(v) ? 0 : v[k] + vsum(v, k + 1);
+function base_poly(p) = is_profile(p) ? concat([[0, 0], [p[4], 0]], [for (k=[len(EDGE)-1:-1:0]) [EDGE[k][0], EDGE[k][1] - p[8]]])
+                                      : [[0, 0], [p[4], 0], [p[4], p[5]], [0, p[5]]];
+function poly_cross(P, k) = let(a=P[k], b=P[(k + 1)%len(P)]) a[0]*b[1] - b[0]*a[1];
+function poly_area(P) = vsum([for (k=[0:len(P)-1]) poly_cross(P, k)])/2;
+function poly_centroid(P) = let(A=poly_area(P))
+    [vsum([for (k=[0:len(P)-1]) (P[k][0] + P[(k + 1)%len(P)][0])*poly_cross(P, k)])/(6*A),
+     vsum([for (k=[0:len(P)-1]) (P[k][1] + P[(k + 1)%len(P)][1])*poly_cross(P, k)])/(6*A)];
+// [kg, [x, y, z]] in body coordinates (z from the underside of the bottom panel).
+function part_mass(p) = let(P=base_poly(p), c=poly_centroid(P), w=frame(p)*[c[0], c[1], p[6]/2, 1])
+    [abs(poly_area(P))*p[6]*material_density*1e-9, [w[0], w[1], w[2]]];
+OWN = [for (p=PARTS) part_mass(p)];
+function col_span(c) = [c == 0 ? x0 + t : fin_x(c) + ft, c == columns - 1 ? x1 - t : fin_x(c + 1)];
+function bin_mass(i, c) = let(a=col_span(c)) [bin_load, [(a[0] + a[1])/2, (wall_y(i - 1) + t + wall_y(i))/2, deck + (row_z(i - 1) - deck)/2]];
+function cubby_mass(c) = let(a=c == 0 ? x0 + t : cubby_x(c) + t, b=c == cubby_columns - 1 ? x1 - t : cubby_x(c + 1))
+    [cubby_load, [(a + b)/2, (depth - t)/2, t + cubby_height/2]];
+function shelf_mass(s, k) = [shelf_load, [tower_x(s) + tower_width/2, (depth - t)/2, k*tower_pitch + t + (tower_pitch - t)/2]];
+TOWERS = [for (s=["L", "R"]) if (side_tall(s)) s];
+LOAD_ALL = concat([for (i=[1:rows]) for (c=[0:columns-1]) bin_mass(i, c)],
+    lower ? [for (c=[0:cubby_columns-1]) cubby_mass(c)] : [],
+    [for (s=TOWERS) for (k=[0:tower_openings-1]) shelf_mass(s, k)]);
+LOAD_TOP = concat([for (c=[0:columns-1]) bin_mass(rows, c)], [for (s=TOWERS) shelf_mass(s, tower_openings - 1)]);
+CASES = [["empty", OWN], ["loaded", concat(OWN, LOAD_ALL)], ["top_loaded", concat(OWN, LOAD_TOP)]];
+function com(list) = let(m=vsum([for (q=list) q[0]]))
+    [m, [for (a=[0:2]) vsum([for (q=list) q[0]*q[1][a]])/m]];
+// Support rectangle [x0, x1, y0, y1] and the height of the push above the floor.
+SUPPORT = show_casters ? [caster_inset, width - caster_inset, caster_inset, depth - caster_inset] : [0, width, 0, depth];
+PUSH_Z = body_height + lift;
+// Distance from the center of mass to each tipping edge: front, back, left, right.
+function tip_arms(c) = [c[1] - SUPPORT[2], SUPPORT[3] - c[1], c[0] - SUPPORT[0], SUPPORT[1] - c[0]];
+// Horizontal force at the top edge that just tips the cart, per direction (N).
+function tip_forces(m, c) = [for (d=tip_arms(c)) m*gravity*d/PUSH_Z];
+// Downward force on the front top edge of the bins that just tips it forward (N); -1 when
+// the edge is over the support, so no lean can tip it.
+function lean_limit(m, c) = SUPPORT[2] <= 0 ? -1 : m*gravity*(c[1] - SUPPORT[2])/SUPPORT[2];
+DIRECTIONS = ["forward", "backward", "to the left", "to the right"];
+function join_list(l, i=0) = i >= len(l) ? "" : str(i == 0 ? "" : i == len(l) - 1 ? " or " : ", ", l[i], join_list(l, i + 1));
+CASE_TEXT = [["empty", "empty"], ["loaded", "fully loaded"], ["top_loaded", "loaded only in the highest bins and tower openings"]];
+function case_text(id) = [for (c=CASE_TEXT) if (c[0] == id) c[1]][0];
+
 // ---------------------------------------------------------------- flat layout
 // Parts fill rows no wider than the stock sheet (or the widest part), layout_gap apart.
 row_limit = max(stock_width, max([for (p=PARTS) cut_w(p)]));
@@ -439,12 +521,11 @@ module laid(k) {
     translate(PLACES[k]) if (flipped(p)) translate([e[1] - e[0], 0]) mirror([1, 0]) translate([-e[0], -e[2]]) children();
     else translate([-e[0], -e[2]]) children();
 }
-// Bottom-face pockets, drawn where they sit after the part is turned over left to right.
-module laid_flip(k) {
-    p = PARTS[k]; e = ext(p);
-    translate(PLACES[k]) if (flipped(p)) translate([-e[0], -e[2]]) children();
-    else translate([e[1] - e[0], 0]) mirror([1, 0]) translate([-e[0], -e[2]]) children();
-}
+// Second-face pockets are laid out for turning the whole sheet over left to right about
+// the vertical center line of the layout (FLIP_AXIS): the layout seen from above, mirrored
+// about that line. The registration frame is symmetric about it, so it lands on itself.
+FLIP_AXIS = LW/2;
+module sheet_flipped() { translate([2*FLIP_AXIS, 0]) mirror([1, 0]) children(); }
 module export_frame() {
     if (include_shared_export_bounding_box) {
         m = layout_gap;
@@ -459,15 +540,20 @@ module kerf_compensated() {
 }
 module cut_layout() {
     export_frame();
-    for (k=[0:len(PARTS)-1]) laid(k) kerf_compensated() part_2d(PARTS[k]);
+    for (k=[0:len(PARTS)-1]) laid(k) kerf_compensated() part_2d(PARTS[k], false);
 }
 module pocket_layout(which) {
     export_frame();
     for (k=[0:len(PARTS)-1]) let(p=PARTS[k]) {
         up = flipped(p) ? 0 : 1;
         if (which != "flip" && len(face_pockets(p, up))) laid(k) pockets_2d(p, up);
-        if (which == "flip" && len(face_pockets(p, 1 - up))) laid_flip(k) pockets_2d(p, 1 - up);
     }
+    if (which == "flip") sheet_flipped() for (k=[0:len(PARTS)-1]) let(p=PARTS[k], up=flipped(p) ? 0 : 1)
+        if (len(face_pockets(p, 1 - up))) laid(k) pockets_2d(p, 1 - up);
+}
+module drill_layout() {
+    export_frame();
+    for (k=[0:len(PARTS)-1]) laid(k) drills_2d(PARTS[k]);
 }
 module engrave_layout() {
     export_frame();
@@ -516,7 +602,6 @@ module validate() {
     if (any_style("screw") || panel_joinery != "butt") {
         check(screw_pilot_diameter > 0 && screw_clearance_diameter >= screw_pilot_diameter && screw_clearance_diameter < min(t, ft) - 2, "SCREW_SIZE", "Screw clearance must be at least the pilot size and at least 2 mm smaller than the stock it enters.");
         check(screw_pilot_depth > 0, "SCREW_PILOT", "Pilot depth must be positive.");
-        warn(screw_clearance_diameter >= cnc_tool_diameter, "DRILL_HOLES", str(screw_clearance_diameter, " mm screw holes are smaller than the ", cnc_tool_diameter, " mm cutter: drill them or use a smaller cutter."));
     }
     check(min(t, ft) + fit >= cnc_tool_diameter || columns == 1 && !any_style("tab_slot"), "SLOT_WIDTH", str("Slots ", min(t, ft) + fit, " mm wide are narrower than the ", cnc_tool_diameter, " mm cutter."));
     check(tab_length >= min_tab, "TAB_LENGTH", str("Tabs must be at least ", min_tab, " mm long (the cutter diameter, or 8 mm)."));
@@ -537,12 +622,27 @@ module validate() {
     for (p=PARTS) warn(min(cut_w(p), cut_h(p)) <= min(stock_width, stock_height) && max(cut_w(p), cut_h(p)) <= max(stock_width, stock_height),
         "SHEET_SIZE", str(p[0], " (", cut_w(p), " x ", cut_h(p), " mm) is larger than the ", stock_width, " x ", stock_height, " mm sheet."));
     two = [for (p=PARTS) if (two_sided(p)) p[0]];
-    if (len(two)) echo(str("CHECK|WARN|TWO_SIDED|", len(two), " part(s) have dados on both faces (", two[0], len(two) > 1 ? " and others" : "", "): machine pocket_dados, turn the part over left to right, then machine pocket_dados_flip."));
-    warn(body_height + lift <= 2.2*depth, "TIP_REVIEW", "The cart is more than 2.2 times taller than it is deep; check stability before loading the top bins.");
+    if (len(two)) echo(str("CHECK|INFO|TWO_SIDED|", len(two), " part(s) have dados on both faces (", two[0], len(two) > 1 ? " and others" : "", "): machine pocket_dados, turn the whole sheet over left to right about its vertical center line, machine pocket_dados_flip, then turn it back for the cut layout."));
+    nd = len([for (f=FEATURES) if (f[1] == "hole" && drilled(f[3])) f]);
+    if (nd) echo(str("CHECK|INFO|DRILL_HOLES|", nd, " hole(s) of ", screw_clearance_diameter, " mm are smaller than the ", cnc_tool_diameter, " mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout."));
+    // Stability.
+    for (cs=CASES) let(mc=com(cs[1]), m=mc[0], c=mc[1], f=tip_forces(m, c), lean=lean_limit(m, c)) {
+        for (k=[0:3]) if (tip_arms(c)[k] <= 0)
+            echo(str("CHECK|ERROR|TIPS_OVER|", case_text(cs[0]), ", the cart's weight is outside its support: it tips ", DIRECTIONS[k], " on its own. Move the casters out, widen or deepen the cart, or lower the rear."));
+        weak = [for (k=[0:3]) if (tip_arms(c)[k] > 0 && f[k] < stability_push_force) str(DIRECTIONS[k], " (it holds ", round(f[k]), " N)")];
+        if (len(weak))
+            echo(str("CHECK|WARN|TIP_PUSH|", case_text(cs[0]), ", a ", stability_push_force, " N push at the top tips the cart ", join_list(weak),
+                     ". Widen or deepen the base", show_casters ? ", move the casters out" : "", ", lower the rear or fasten the cart to a wall or bench."));
+        if (lean >= 0 && lean < stability_lean_force)
+            echo(str("CHECK|WARN|TIP_LEAN|", case_text(cs[0]), ", leaning ", stability_lean_force, " N on the front edge of the bins tips the cart forward (it holds ", round(lean), " N); move the front casters forward."));
+    }
+    // Racking: what resists the frame shearing side to side and front to back.
+    warn(joinery_style != "butt", "RACKING", "Side-to-side racking of the bins is resisted only by the crosspieces, which are glued butt joints here; use tab & slot, dados or screws for the crosspieces.");
+    warn(panel_joinery != "butt", "RACKING", "Front-to-back racking is resisted by the side walls, which are only glued to the bottom panel here; use screws, dados or tab & slot for panel joinery.")
     for (a=[0:len(PARTS)-2]) for (b=[a+1:len(PARTS)-1])
         check(!rects_overlap([PLACES[a][0], PLACES[a][1], cut_w(PARTS[a]), cut_h(PARTS[a])], [PLACES[b][0], PLACES[b][1], cut_w(PARTS[b]), cut_h(PARTS[b])]),
               "LAYOUT_OVERLAP", str(PARTS[a][0], " overlaps ", PARTS[b][0], " in the flat cut layout."));
-    echo("CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.");
+    echo("CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.");
 }
 function joint_count(style) = len([for (j=JOINTS) if (jstyle(j) == style) j]);
 module reports() {
@@ -553,11 +653,20 @@ module reports() {
     for (i=[1:rows]) echo(str("DIM|MEDIA_CART|ROW|R", i, "|FRONT_WALL_Z=", row_z(i - 1), "|BACK_WALL_Z=", row_z(i), "|DEPTH_FROM_ENTRANCE=", row_z(i - 1) - deck));
     if (lower) echo(str("DIM|MEDIA_CART|CUBBIES|COLUMNS=", cubby_columns, "|CLEAR_W=", (span + t)/cubby_columns - t, "|CLEAR_H=", cubby_height, "|CLEAR_D=", depth - t));
     if (left || right) echo(str("DIM|MEDIA_CART|TOWER|SIDES=", tower, "|CLEAR_W=", tower_width, "|OPENINGS=", tower_openings, "|OPENING_H=", tower_pitch - t, "|SHELF_D=", depth - t));
+    for (cs=CASES) let(mc=com(cs[1]), m=mc[0], c=mc[1], f=tip_forces(m, c))
+        echo(str("DIM|MEDIA_CART|STABILITY|CASE=", cs[0], "|MASS=", m, "|COM_X=", c[0], "|COM_Y=", c[1], "|COM_Z=", c[2] + lift,
+                 "|TIP_FRONT=", f[0], "|TIP_BACK=", f[1], "|TIP_LEFT=", f[2], "|TIP_RIGHT=", f[3], "|LEAN_FRONT=", lean_limit(m, c)));
+    echo(str("DIM|MEDIA_CART|STABILITY_BASIS|PUSH=", stability_push_force, "|LEAN=", stability_lean_force, "|PUSH_Z=", PUSH_Z,
+             "|SUPPORT=", SUPPORT[0], ",", SUPPORT[1], ",", SUPPORT[2], ",", SUPPORT[3], "|DENSITY=", material_density,
+             "|BIN_LOAD=", bin_load, "|CUBBY_LOAD=", cubby_load, "|SHELF_LOAD=", shelf_load, "|LIFT=", lift));
+    echo(str("DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=", rows + 1, " crosspieces (", joinery_style, ")", len(TOWERS) ? str(", ", len(TOWERS), " tower back(s) (", panel_joinery, ")") : "", lower ? str(", cubby back (", panel_joinery, ")") : "",
+             "|FRONT_TO_BACK=side walls (", panel_joinery == "butt" ? "butt" : "screwed", ")", columns > 1 ? str(", ", columns - 1, " fin(s) (half-laps)") : "", lower && cubby_columns > 1 ? str(", ", cubby_columns - 1, " cubby divider(s) (", panel_joinery, ")") : "", len(TOWERS) ? ", tower walls" : ""));
     echo(str("DIM|MEDIA_CART|JOINERY|CROSSPIECES=", joinery_style, "|PANELS=", panel_joinery, "|FIT=", fit, "|DADO_DEPTH=", dd, "|RELIEF=", relief_on ? slot_corner_relief : "none", "|CUTTER=", cnc_tool_diameter));
     // Machining notes for the operation being exported (shown with each layout).
-    if (output_mode == "cut_layout") echo("OPERATION|cut_layout|Through cuts, full stock thickness: part outlines, slots, half-laps, tab receivers and holes. Parts are laid as listed in the BOM notes.");
+    if (output_mode == "cut_layout") echo("OPERATION|cut_layout|Through cuts, full stock thickness: part outlines, slots, half-laps, tab receivers and the holes at least as large as the cutter. Parts are laid as listed in the BOM notes.");
+    if (output_mode == "drill_layout") echo("OPERATION|drill_layout|Drill through, full stock thickness, at the center of each circle (hole diameter as drawn); these holes are smaller than the cutter. Face up as in the cut layout.");
     if (output_mode == "pocket_layout" || output_mode == "pocket_dados") echo(str("OPERATION|", output_mode, "|Pockets ", dd, " mm deep on the face that is up in the cut layout (dados for housed panels)."));
-    if (output_mode == "pocket_dados_flip") echo(str("OPERATION|pocket_dados_flip|Pockets ", dd, " mm deep on the other face: after the up-face pass, turn each two-sided part over left to right within its own place in the layout (same bounding box) and register on the frame."));
+    if (output_mode == "pocket_dados_flip") echo(str("OPERATION|pocket_dados_flip|Pockets ", dd, " mm deep on the other face. After the up-face pass, turn the whole sheet over left to right about its vertical center line (the registration frame and the sheet's pin holes land on themselves), machine this layout, then turn the sheet back before the cut layout."));
     if (output_mode == "engrave_layout") echo("OPERATION|engrave_layout|Part labels on the face that is up; shallow engrave or marker only, not a through cut.");
     if (output_mode == "bom") {
         for (p=PARTS) let(up = flipped(p) ? 0 : 1, pk = len(face_pockets(p, up)) + len(face_pockets(p, 1 - up)))
@@ -570,6 +679,10 @@ module reports() {
         if (show_casters) echo(str("HARDWARE|ID=casters|QTY=4|UNIT=each|NOTE=plate casters, ", caster_height, " mm floor to plate; two with brakes recommended"));
         if (show_casters && caster_hole_diameter > 0) echo(str("HARDWARE|ID=caster_bolts|QTY=16|UNIT=each|NOTE=bolts with washers and nuts through ", caster_hole_diameter, " mm holes"));
         echo("HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint");
+        // Second-face layouts are mirrored about this vertical line of the strip layout.
+        echo(str("FLIP|AXIS_X=", FLIP_AXIS));
+        // Joinery features in body coordinates, for the editor's drawing.
+        for (f=FEATURES) echo(str("FEAT|", f[0], "|", f[1], "|", f[2][0][0], "|", f[2][0][1], "|", f[2][1][0], "|", f[2][1][1], "|", f[2][2][0], "|", f[2][2][1], "|", f[3]));
     }
 }
 
@@ -579,4 +692,5 @@ else if (output_mode == "flat_3d") flat_3d();
 else if (output_mode == "cut_layout") cut_layout();
 else if (output_mode == "pocket_layout" || output_mode == "pocket_dados") pocket_layout("up");
 else if (output_mode == "pocket_dados_flip") pocket_layout("flip");
+else if (output_mode == "drill_layout") drill_layout();
 else if (output_mode == "engrave_layout") engrave_layout();

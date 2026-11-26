@@ -41,6 +41,9 @@ export type EngineTarget={
 export type Product={
  id:string;name:string;sub:string;code:string;
  file:string;source:string;params:ScadParam[];
+ // Shared engine modules the SCAD file `use`s, as keys of lib/engine-sources.json. They are
+ // written next to the product under engine/ (the file includes ../../engine/<key>).
+ engineIncludes?:string[];
  sections:ProductSection[];
  starters:ProductStarter[];defaultStarter:string;
  renderModes:{id:string;label:string}[];exportModes:string[];

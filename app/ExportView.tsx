@@ -8,7 +8,7 @@ import {configuredSource,engineSources,renderSources,schemas,zip,download,Values
 import {designHealth,operations,reports,Entry,parseManufacturing,operationNotes} from '@/lib/manufacturing';
 import {assemblyPacket} from '@/lib/assembly';
 import {analyse,records,MATERIAL_NAMES} from '@/lib/analysis';
-import {nest,nestOptions,partRecords,placementRecords,sheetSvg,sheetDxf,nestingReport,nestingSummary,checkNesting,NestResult,Rotate} from '@/lib/nesting';
+import {nest,nestOptions,partRecords,placementRecords,sheetSvg,sheetDxf,registrationPins,sheetPolygons,nestingReport,nestingSummary,checkNesting,NestResult,Rotate} from '@/lib/nesting';
 import {formatDimension,formatShop,Units} from '@/lib/units';
 import type {EngineTarget} from '@/lib/products/types';
 import {ArrowLeft,Download,Check,Info,LoaderCircle,TriangleAlert,FileCode2,Layers,PackageCheck} from 'lucide-react';
@@ -39,7 +39,7 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
   task.current?.abort();const controller=new AbortController();task.current=controller;setRunning(true);setError('');setLog('');setResult(null);
   const snapshot=JSON.parse(JSON.stringify(values)),filename=target?target.filename:schemas[family].file;const entries:Entry[]=[],notes:string[]=[];let text='';
   try{
-   const source=target?target.source(snapshot):await configuredSource(family,snapshot,controller.signal),supported=target?target.exportModes:schemas[family].fields.find(f=>f.key==='output_mode')?.options??[],sources=target?target.sources:renderSources,modes=full?['bom',...supported.filter(mode=>mode==='cut_layout'||mode==='engrave_layout'||mode.startsWith('pocket_'))]:['bom'];
+   const source=target?target.source(snapshot):await configuredSource(family,snapshot,controller.signal),supported=target?target.exportModes:schemas[family].fields.find(f=>f.key==='output_mode')?.options??[],sources=target?target.sources:renderSources,modes=full?['bom',...supported.filter(mode=>mode==='cut_layout'||mode==='engrave_layout'||mode==='drill_layout'||mode.startsWith('pocket_'))]:['bom'];
    for(let i=0;i<modes.length;i++){
     controller.signal.throwIfAborted();const mode=modes[i];setStatus(`${i+1} / ${modes.length} · ${mode==='bom'?'BOM and dimensions':mode.replaceAll('_',' ')}`);
     const output=await operation({filename,source,sources,mode},controller.signal);
@@ -55,9 +55,19 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
     nesting=nest(parts,places,nestOptions(snapshot,rotate));
     const cut=entries.find(e=>e.name==='svg/cut_layout.svg')?.data;
     nestingProblems=checkNesting(nesting,parts,cut,slack);
+    // Second-face operations (names ending _flip) come drawn for the layout turned over
+    // left to right about the engine's FLIP axis; per sheet they are turned over about the
+    // sheet's center line, and the sheets that have them get registration pin holes.
+    const axis=Number(text.match(/FLIP\|AXIS_X=([-\d.eE]+)/)?.[1]),layouts=entries.filter(e=>e.name.startsWith('svg/')),flips=Number.isFinite(axis)?layouts.filter(e=>e.name.endsWith('_flip.svg')):[];
     for(const s of nesting.sheets){
      const folder=`sheets/${String(s.index).padStart(2,'0')}-${s.material.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${String(Math.round(s.thickness*100)/100).replace('.','_')}mm`;
-     for(const e of entries.filter(e=>e.name.startsWith('svg/'))){const mode=e.name.slice(4,-4);entries.push({name:`${folder}/${mode}.svg`,data:sheetSvg(e.data,s,mode,slack)},{name:`${folder}/${mode}.dxf`,data:sheetDxf(e.data,s,mode,slack)})}
+     const flipped=flips.filter(e=>sheetPolygons(e.data,s,slack,axis).some(p=>p.polys.length)).map(e=>e.name.slice(4,-9)),pins=flipped.length?registrationPins(s,nesting.options.margin):[];
+     for(const e of layouts){
+      const mode=e.name.slice(4,-4),second=flips.includes(e),flip={flipAxis:second?axis:undefined,pins:flipped.includes(second?mode.slice(0,-5):mode)?pins:[]};
+      if(second&&!flipped.includes(mode.slice(0,-5)))continue;
+      entries.push({name:`${folder}/${mode}.svg`,data:sheetSvg(e.data,s,mode,slack,flip)},{name:`${folder}/${mode}.dxf`,data:sheetDxf(e.data,s,mode,slack,flip)});
+     }
+     if(flipped.length)notes.push(`sheet ${s.index}: ${flipped.map(m=>m+'_flip').join(', ')} on the second face. ${pins.length?'Drill the two registration-pin holes with '+flipped.join(', ')+', pin the sheet, machine the up face, turn the sheet over left to right onto the same pins, run the _flip file, turn it back and run the through cuts.':'The margin is too narrow for pins: mark the sheet\'s vertical center line on both faces and on the machine bed, turn the sheet over left to right about it, and align before running the _flip file.'}`);
     }
     entries.push({name:'sheets/nesting.json',data:nestingReport(nesting)});
     if(nestingProblems.length)entries.push({name:'sheets/PROBLEMS.txt',data:nestingProblems.join('\n')+'\n'});
@@ -66,7 +76,7 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
    const packet=target?.packet?target.packet(name,snapshot,text,units):assemblyPacket(name,snapshot,text,units);
    if(target)entries.push({name:'assembly-packet.html',data:packet},...target.projectFiles(snapshot,name,units).map(f=>({name:f.name==='design.cabinet.json'?f.name:'source/'+f.name,data:f.data})));
    else entries.push({name:'assembly-packet.html',data:packet},{name:`source/${filename}`,data:source},...Object.entries(engineSources).filter(([name])=>name!==filename).map(([name,text])=>({name:'source/'+name,data:text})),{name:'design.cabinet.json',data:JSON.stringify({version:2,engine:5,engineFamily:"modular_organization",bundleRevision:5,family,name,displayUnits:units,values:snapshot},null,2)});
-   entries.push({name:'READ-ME.txt',data:`${name}\nGenerated ${new Date().toISOString()} from settings captured when generation started.\n\nOpen assembly-packet.html in a browser, then Print / Save as PDF. The exploded arrangement is schematic; labels correspond to the actual BOM. The panel BOM does not provide a complete purchased-hardware count.\n\nSVGs are OpenSCAD layouts in millimeters. Preserve original scale and registration frame in CAM. These strip layouts are not toolpaths. Never machine registration frames as cabinet parts.\n\nsheets/: the same operations nested per stock sheet (sheet size, margin and part spacing from the ${target?'Sheets & layout':'Flat Layout'} settings; parts keep the engine's orientation unless a part cannot fit as drawn or free turning was chosen). One folder per sheet with an SVG and a DXF per operation, nesting.json with every placement, and PROBLEMS.txt only when a part did not fit.\n\ncut_layout: through cuts. engrave_layout: labels. pocket_layout: combined reference only, potentially multiple depths. Use separate operation SVGs and their logs for depths and machining faces, including face-frame BACK dados. Disabled operations may contain only the registration frame.\n\nBOM dimensions are cut sizes; grouped BOM only combines matching category, material, dimensions and notes. Original reports retain full precision in mm.\n\n${notes.join('\n')}`});
+   entries.push({name:'READ-ME.txt',data:`${name}\nGenerated ${new Date().toISOString()} from settings captured when generation started.\n\nOpen assembly-packet.html in a browser, then Print / Save as PDF. The exploded arrangement is schematic; labels correspond to the actual BOM. The panel BOM does not provide a complete purchased-hardware count.\n\nSVGs are OpenSCAD layouts in millimeters. Preserve original scale and registration frame in CAM. These strip layouts are not toolpaths. Never machine registration frames as cabinet parts.\n\nsheets/: the same operations nested per stock sheet (sheet size, margin and part spacing from the ${target?'Sheets & layout':'Flat Layout'} settings; parts keep the engine's orientation unless a part cannot fit as drawn or free turning was chosen). One folder per sheet with an SVG and a DXF per operation, nesting.json with every placement, and PROBLEMS.txt only when a part did not fit.\n\ncut_layout: through cuts. drill_layout (when present): holes smaller than the cutter, to drill at the circle centers. *_flip operations (when present): pockets on the second face, drawn for the sheet turned over left to right about its vertical center line (see the sheet notes below for pins and order). engrave_layout: labels. pocket_layout: combined reference only, potentially multiple depths. Use separate operation SVGs and their logs for depths and machining faces, including face-frame BACK dados. Disabled operations may contain only the registration frame.\n\nBOM dimensions are cut sizes; grouped BOM only combines matching category, material, dimensions and notes. Original reports retain full precision in mm.\n\n${notes.join('\n')}`});
    controller.signal.throwIfAborted();setResult({entries,text,packet,key,name,full,nesting,nestingProblems});setStatus('Ready for review. Nothing has been downloaded yet.');
   }catch(e){if(task.current===controller){setError(e instanceof Error?e.message:String(e));setStatus('')}}finally{if(task.current===controller)setRunning(false)}
  }
