@@ -57,7 +57,7 @@ pnpm run build:static
 
 - `tests/golden.mjs`: the engine's parts list and reports (BOM, DIM, LAYOUT, CHECK,
   WARN, HARDWARE and TARGET records) and fingerprints of the cut and pocket SVG
-  layouts for all 110 starters must match `tests/golden/*.json`. Any engine change
+  layouts for all 117 starters must match `tests/golden/*.json`. Any engine change
   that alters a starter fails until it is accepted with `pnpm run golden:update`;
   the diff of the JSON files then shows exactly which parts or dimensions changed,
   for review in the same commit. About 2.5 minutes on two cores.

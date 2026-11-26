@@ -7,6 +7,7 @@ import {Switch} from '@/components/ui/switch';
 import {Toaster,toast} from 'sonner';
 import {defaults,schemas,families,label,thickness,validate,exportBundle,download,Values,starterValues,normalizeValues,geometry,Part} from '@/lib/cabinet';
 import LayoutEditor from './LayoutEditor';
+import WorkbenchEditor from './WorkbenchEditor';
 import {convertBays} from '@/lib/sections';
 import CabinetView from './CabinetView';
 import OpenSCADView from './OpenSCADView';
@@ -26,7 +27,7 @@ import HardwareView from './HardwareView';
 import {HARDWARE_PANEL_KEYS} from '@/lib/hardware';
 import FitGuide,{guideKeys} from './FitGuide';
 import {helpFor,optionLabel} from '@/lib/help';
-import {sectionOrder,shopSections,sectionTitles,sectionBlurbs,sectionFor,settingsGroup,isAdvanced,inactiveReason,presentFields,linkedChanges,LAYOUT_KEYS,LAYOUT_REASON,isAlternative,hasLayoutEditor,fieldBounds,clampToBounds,Field} from '@/lib/settings';
+import {sectionOrder,shopSections,sectionTitles,sectionBlurbs,workbenchBlurbs,sectionFor,settingsGroup,isAdvanced,inactiveReason,presentFields,linkedChanges,LAYOUT_KEYS,LAYOUT_REASON,isAlternative,hasLayoutEditor,hasLayoutTab,hasGridEditor,fieldBounds,clampToBounds,Field} from '@/lib/settings';
 const titles:Record<string,string>={custom_cabinet_width:'Width',custom_cabinet_height:'Height',custom_cabinet_depth:'Depth',custom_top_style:'Top construction',back_style:'Back construction',joinery_style:'Carcass joinery',carcass_stock:'Carcass stock',custom_carcass_thickness:'Measured thickness',base_style:'Base style',include_worktop:'Add worktop',worktop_thickness:'Worktop thickness',cabinet_layout_mode:'Layout',custom_cabinet_contents:'Contents',custom_drawer_count:'Drawer count',custom_door_count:'Door count',mixed_bay_count:'Number of bays',bottom_width_style:'Bottom panel',cnc_tool_diameter:'CNC cutter diameter',slot_corner_relief:'Shared slot relief',side_relief:'Side-panel relief',router_bit_diameter:'CNC cutter diameter',layout_gap:'Gap between parts in cut layout',stock_width:'Sheet width',stock_height:'Sheet height',layout_show_stock:'Draw sheet outline in cut layout',engrave_label_size:'Engraved label size',engrave_label_min_size:'Smallest label size',engrave_drawer_divider_ids:'Engrave divider IDs',include_shared_export_bounding_box:'Shared export frame',export_bounding_box_margin:'Export frame margin',export_bounding_box_frame_width:'Export frame line width',apply_kerf_compensation:'Compensate for kerf',kerf:'Kerf width',circle_segments:'Circle smoothness (segments)',design_name:'Engine design label',output_mode:'Engine output mode',color_mode:'Render colours',dimension_report:'Dimension report',validation_report:'Validation report',system_contract_report:'Contract report',interface_keepout_policy:'Interface keep-out policy',hardware_drilling_mode:'Hardware drilling',fit_clearance:'Joint fit clearance',metal_slide_clearance_per_side:'Slide clearance per side',equipment_mass_kg:'Equipment mass (kg)',slide_load_rating_kg:'Slide load rating (kg)'};
 const NOMINAL:Record<string,number>={'1/8':3.175,'1/4':6.35,'3/8':9.525,'1/2':12.7,'5/8':15.875,'3/4':19.05,'1':25.4};
 const pretty=(s:string)=>{
@@ -76,7 +77,7 @@ export default function Home(){
  current.current={family,values};
  const analysis=useEngineAnalysis(family,values);
  const solved=solvedDimensions(family,analysis);
- const fitActive=family>=5||values.width_basis==='drawer_inside'||values.depth_basis==='drawer_inside';
+ const fitActive=family===5||family===6||values.width_basis==='drawer_inside'||values.depth_basis==='drawer_inside';
  const previewValues=fitActive&&solved?{...values,custom_cabinet_width:solved.RESOLVED_CABINET_W,custom_cabinet_height:solved.RESOLVED_CABINET_H??values.custom_cabinet_height,custom_cabinet_depth:solved.RESOLVED_CARCASS_D}:values;
  const selectable=[...new Map([...geometry(previewValues,false,false),...geometry(previewValues,true,false)].map(p=>[p.id,p])).values()];
  const selectedPart=selectable.find(p=>p.id===selected);
@@ -87,7 +88,7 @@ export default function Home(){
  function startDesign(n:number,starter:string){
   setFamily(n);setValues(starterValues(n,starter,defaults(n)));setPast([]);setFuture([]);
   setProjectName(schemas[n].starters.find(p=>p.id===starter&&p.id!==schemas[n].defaultStarter)?.name??families[n].name);
-  setStep('Sizing');setTab(hasLayoutEditor(n)?'layout':'model');setQuery('');setSelected(null);setPickerOpen(false);
+  setStep('Sizing');setTab(hasLayoutTab(n)?'layout':'model');setQuery('');setSelected(null);setPickerOpen(false);
   toast.success('New design started — review the size and materials');
  }
  const undo=()=>{if(past.length){setFuture(f=>[values,...f]);setValues(past[past.length-1]);setPast(p=>p.slice(0,-1))}},
@@ -115,7 +116,7 @@ export default function Home(){
  function field(f:Field,reason:string|null=null,locked=false){
   const key=f.key,value=values[key],id='field-'+key+'-'+sectionFor(f),off=!!reason||locked;
   return <div className={'field '+(isAdvanced(f)?'is-advanced ':'')+(off?'is-inactive ':'')+(typeof value==='boolean'?'toggle-field':'')} key={key} aria-disabled={off||undefined} data-locked={locked||undefined}>
-   <SettingHelp advanced={isAdvanced(f)} id={id} title={family===3&&key==='door_shelf_count'?'Shelf count':title(f)} help={[family===3&&key==='door_shelf_count'?'Number of internal shelves. Zero shelves makes one open section; each added shelf creates another section.':helpFor(key,f.description),f.expression?'Leave blank to calculate automatically ('+f.expression+').':''].filter(Boolean).join(' ')}/>
+   <SettingHelp advanced={isAdvanced(f)} id={id} title={family===3&&key==='door_shelf_count'?'Shelf count':title(f)} help={[family===3&&key==='door_shelf_count'?'Number of internal shelves. Zero shelves makes one open section; each added shelf creates another section.':helpFor(key,f.description,family),f.expression?'Leave blank to calculate automatically ('+f.expression+').':''].filter(Boolean).join(' ')}/>
    {isLengthField(f)&&!Array.isArray(value)?<DimensionInput id={id} disabled={off} value={value} units={units} automatic={!!f.expression} bounds={fieldBounds(f)} onChange={v=>change(key,v)}/>:
     typeof value==='boolean'?<Switch id={id} disabled={off} checked={value} onCheckedChange={v=>change(key,v)}/>:
     f.options?<Choice id={id} disabled={off} field={key} value={String(value)} onChange={v=>change(key,typeof f.value==='number'?Number(v):v)} options={f.options}/>:
@@ -137,7 +138,7 @@ export default function Home(){
   projects.markSaved();
   toast.success('Design downloaded to your device');
  }
- function restoreDesign(d:Design){setUnits(d.displayUnits);setFamily(d.family);setValues(d.values);setStep('Sizing');setProjectName(d.name);setPast([]);setFuture([]);setSelected(null);if(!hasLayoutEditor(d.family))setTab(t=>t==='layout'?'model':t)}
+ function restoreDesign(d:Design){setUnits(d.displayUnits);setFamily(d.family);setValues(d.values);setStep('Sizing');setProjectName(d.name);setPast([]);setFuture([]);setSelected(null);if(!hasLayoutTab(d.family))setTab(t=>t==='layout'?'model':t);if(d.family===7)setTab(t=>t==='hardware'?'model':t)}
  const projects=useProjects({...DESIGN_META,family,name:projectName,displayUnits:units,values},restoreDesign);
  async function load(file?:File){
   if(!file)return;
@@ -148,16 +149,16 @@ export default function Home(){
   }catch{toast.error('This file is not a valid Cabinet Workshop design.')}
   finally{if(input.current)input.current.value=''}
  }
- const visibleFields=fields.filter(f=>!['cabinet_preset','kitchen_model_code'].includes(f.key)&&!(f.key==='section_nodes'&&hasLayoutEditor(family)));
+ const visibleFields=fields.filter(f=>!['cabinet_preset','kitchen_model_code'].includes(f.key)&&!(f.key==='section_nodes'&&hasLayoutEditor(family))&&!(f.key==='modules'&&hasGridEditor(family)));
  const searching=!!query.trim(),needle=query.trim().toLowerCase();
- const matches=(f:Field)=>(f.key+' '+title(f)+' '+f.section+' '+helpFor(f.key,f.description)).toLowerCase().includes(needle);
+ const matches=(f:Field)=>(f.key+' '+title(f)+' '+f.section+' '+helpFor(f.key,f.description,family)).toLowerCase().includes(needle);
  // A section appears only when at least one of its settings applies to the current layout.
  const steps=sectionOrder.filter(name=>name==='Hardware'||name===step||visibleFields.some(f=>sectionFor(f)===name&&!inactiveReason(f,values)));
  const activeCount=(name:string)=>visibleFields.filter(f=>sectionFor(f)===name&&!inactiveReason(f,values)&&(advanced[name]||!isAdvanced(f))).length;
  const hiddenAdvanced=(name:string)=>advanced[name]?0:visibleFields.filter(f=>sectionFor(f)===name&&!inactiveReason(f,values)&&isAdvanced(f)).length;
  const matchCount=(name:string)=>visibleFields.filter(f=>sectionFor(f)===name&&matches(f)).length;
  // The hardware panel presents slides, runners and hinges itself; the Hardware section lists the rest.
- const panelOwned=(f:Field)=>step==='Hardware'&&HARDWARE_PANEL_KEYS(f.key);
+ const panelOwned=(f:Field)=>step==='Hardware'&&family!==7&&HARDWARE_PANEL_KEYS(f.key);
  const sectionFields=visibleFields.filter(f=>sectionFor(f)===step&&!guidedKeys.has(f.key)&&!panelOwned(f));
  const advancedCount=sectionFields.filter(f=>!inactiveReason(f,values)&&isAdvanced(f)).length;
  // Active settings of the chosen section (or every match while searching), then the ones that do not apply.
@@ -181,7 +182,7 @@ export default function Home(){
  const outside=analysis.plan&&analysis.planKey===analysis.key?analysis.plan.outside:undefined;
  const interiorDepth=analysis.plan&&analysis.planKey===analysis.key&&analysis.plan.interior?analysis.plan.interior.d:previewValues.custom_cabinet_depth-(values.back_style==='structural_panel'?thickness(values):0);
  const shown={w:outside?.w??previewValues.custom_cabinet_width,h:outside?.h??previewValues.custom_cabinet_height,d:outside?.d??previewValues.custom_cabinet_depth};
- const railButton=(name:string)=><button key={name} data-settings-step={name} aria-current={step===name&&!searching?'step':undefined} className={(step===name&&!searching?'is-active ':'')+(shopSections.includes(name)?'is-shop':'')} onClick={()=>{setStep(name);setQuery('')}} title={sectionBlurbs[name]}>
+ const railButton=(name:string)=><button key={name} data-settings-step={name} aria-current={step===name&&!searching?'step':undefined} className={(step===name&&!searching?'is-active ':'')+(shopSections.includes(name)?'is-shop':'')} onClick={()=>{setStep(name);setQuery('')}} title={(family===7&&workbenchBlurbs[name])||sectionBlurbs[name]}>
   <span>{name}</span>
   <small>{searching?matchCount(name)||'':activeCount(name)}{!searching&&hiddenAdvanced(name)>0&&<i title={hiddenAdvanced(name)+' advanced'}>+{hiddenAdvanced(name)}</i>}</small>
  </button>;
@@ -238,7 +239,7 @@ export default function Home(){
     <div className='config-main'>
      <div key={step+(searching?'-q':'')} className='config-scroll'>
       <div className='settings-heading'><h2>{searching?'Search results':sectionTitles[step]??step}</h2><span>{searching?filtered.length+' match'+(filtered.length===1?'':'es')+(inactive.length?' · '+inactive.length+' not in use':''):activeCount(step)+' settings'}</span></div>
-      {!searching&&sectionBlurbs[step]&&<p className='section-blurb'>{sectionBlurbs[step]}</p>}
+      {!searching&&((family===7&&workbenchBlurbs[step])||sectionBlurbs[step])&&<p className='section-blurb'>{(family===7&&workbenchBlurbs[step])||sectionBlurbs[step]}</p>}
       {!searching&&advancedCount>0&&<label className='advanced-control'><Switch checked={!!advanced[step]} onCheckedChange={v=>setAdvanced(a=>({...a,[step]:v}))}/>Show advanced <span>{advancedCount}</span></label>}
       {!searching&&step==='Hardware'&&<HardwareSetup family={family} values={values} keys={visibleFields.map(f=>f.key)}
        options={k=>visibleFields.find(f=>f.key===k)?.options??null}
@@ -248,6 +249,7 @@ export default function Home(){
        onView={kind=>{setHardwareKind(kind);setTab('hardware')}}/>}
       {!searching&&step==='Sizing'&&family<5&&<FitGuide family={family} values={values} units={units} change={change} patch={patch=>record(v=>({...v,...patch}))}/>}
       {!searching&&step==='Machining'&&<p className='field-note'>Shared settings provide defaults. Material-specific relief and cutter diameters appear with the relevant joints below. A diameter of 0 inherits the shared cutter. Use None where CAM adds relief.</p>}
+      {hasGridEditor(family)&&!searching&&step==='Structure'&&<div className='note layout-link'><LayoutTemplate size={18}/><p>Cabinet modules are placed on the frame's grid in the Layout tab: click a cell, then set contents, facing, height and shelves.</p><button onClick={()=>setTab('layout')}>Open Layout</button></div>}
       {hasLayoutEditor(family)&&((!searching&&step==='Structure')||layoutMatches)&&<div className='note layout-link'><LayoutTemplate size={18}/><p>{searching?'Drawer and door counts, bays and opening sizes are set in the Layout tab.':'Openings, bays, drawers and doors are arranged visually in the Layout tab: click an opening, drag dividers, type exact sizes.'}</p><button onClick={()=>setTab('layout')}>Open Layout</button></div>}
       {groups.map(group=><section key={group} className='settings-group'><h3>{groupTitle(group)}</h3>{filtered.filter(f=>settingsGroup(f)===group).map(f=>field(f))}</section>)}
       {filtered.length===0&&!(step==='Hardware'&&!searching)&&<p className='muted'>{searching?(inactive.length?'Every matching setting is out of use for this configuration; the reasons are listed below.':'No setting matches. Try another word, or a part name such as “hinge” or “runner”.'):step==='Sizing'&&guidedKeys.size?'':'Turn on advanced settings to see the controls in this section.'}</p>}
@@ -272,13 +274,14 @@ export default function Home(){
     <Tabs value={tab} onValueChange={setTab} className='view-tabs'>
      <div className='canvas-toolbar'>
       <TabsList className='view-switch'>
-       {hasLayoutEditor(family)&&<TabsTrigger value='layout'><LayoutTemplate size={16}/>Layout</TabsTrigger>}
+       {hasLayoutTab(family)&&<TabsTrigger value='layout'><LayoutTemplate size={16}/>Layout</TabsTrigger>}
        <TabsTrigger value='model'><Box size={16}/>3D model</TabsTrigger>
-       <TabsTrigger value='hardware'><Wrench size={16}/>Hardware</TabsTrigger>
+       {family!==7&&<TabsTrigger value='hardware'><Wrench size={16}/>Hardware</TabsTrigger>}
        <TabsTrigger value='plan'><ListChecks size={16}/>Cut list & fit{issueCount>0&&<span className='tab-badge'>{issueCount}</span>}</TabsTrigger>
       </TabsList>
-      <span className='schematic-label'>{tab==='layout'?'Front view · click, drag, type':tab==='hardware'?'Hole positions on both mating boards':tab==='model'?(exact?'OpenSCAD geometry · joinery, holes and grooves':'Instant schematic · approximate'):'Engine-calculated parts'}</span>
+      <span className='schematic-label'>{tab==='layout'?(family===7?'Top view · click a cell':'Front view · click, drag, type'):tab==='hardware'?'Hole positions on both mating boards':tab==='model'?(exact?'OpenSCAD geometry · joinery, holes and grooves':'Instant schematic · approximate'):'Engine-calculated parts'}</span>
      </div>
+     {hasGridEditor(family)&&<TabsContent value='layout' className='layout-content'><WorkbenchEditor values={values} units={units} apply={patch=>record(v=>({...v,...patch}))}/></TabsContent>}
      {hasLayoutEditor(family)&&<TabsContent value='layout' className='layout-content'>
       {errors.length?<div className='validation-panel'><Info/><h2>Check your dimensions</h2>{errors.map(e=><p key={e}>{e}</p>)}</div>:<LayoutEditor family={family} values={values} units={units} analysis={analysis} apply={patch=>record(v=>({...v,...patch}))}/>}
      </TabsContent>}
@@ -302,7 +305,7 @@ export default function Home(){
       <div className='native-content' hidden={!exact}>
        <OpenSCADView selected={fitActive&&!solved?undefined:selectedPart} parts={fitActive&&!solved?[]:selectable} onSelect={selectPart} family={family} values={values} active={tab==='model'&&exact}/>
       </div>
-      {!exact&&<div className='model-caption'><span className='material-dot'/>{formatShop(stockThickness,units)}{units==='mm'?' mm':''} {family===5?'drawer wall':'carcass'} stock<span className='caption-divider'/> {pretty(family===5?values.drawer_joinery_style:(values.joinery_style??'butt'))}<button className='link-button' onClick={()=>setExact(true)}>Joinery, holes and grooves are in the Exact view <ArrowUpRight size={14}/></button></div>}
+      {!exact&&<div className='model-caption'><span className='material-dot'/>{formatShop(stockThickness,units)}{units==='mm'?' mm':''} {family===5?'drawer wall':family===7?'module':'carcass'} stock<span className='caption-divider'/> {family===7?'Half-lap frame, housed finger joints':pretty(family===5?values.drawer_joinery_style:(values.joinery_style??'butt'))}<button className='link-button' onClick={()=>setExact(true)}>Joinery, holes and grooves are in the Exact view <ArrowUpRight size={14}/></button></div>}
      </TabsContent>
      <TabsContent value='hardware' className='hardware-content'>
       <HardwareView family={family} values={values} units={units} analysis={analysis} kind={hardwareKind} setKind={setHardwareKind}/>
@@ -314,7 +317,7 @@ export default function Home(){
     <div className='summary-bar'>
      <div><span>WIDTH</span><strong>{fmt(shown.w)}<small>{units}</small></strong></div>
      <div><span>HEIGHT</span><strong>{fmt(shown.h)}<small>{units}</small></strong></div>
-     <div><span>{family===5?'BOX DEPTH':family===6?'FRAME DEPTH':'CARCASS DEPTH'}</span><strong>{fmt(shown.d)}<small>{units}</small></strong></div>
+     <div><span>{family===5?'BOX DEPTH':family===6?'FRAME DEPTH':family===7?'BENCH DEPTH':'CARCASS DEPTH'}</span><strong>{fmt(shown.d)}<small>{units}</small></strong></div>
      <div className='depth-metric' hidden={family>=5}><span>INTERIOR DEPTH</span><strong>{fmt(interiorDepth)}<small>{units}</small></strong></div>
      <div className='status'>{errors.length?<><Info size={17}/>Check dimensions</>:outside?<><Check size={17}/>Engine-resolved size</>:<><Check size={17}/>Input ranges checked</>}</div>
     </div>

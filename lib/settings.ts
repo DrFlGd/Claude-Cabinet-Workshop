@@ -19,6 +19,14 @@ export const sectionBlurbs:Record<string,string>={
  Machining:'Cutter diameter, fit clearances, dados and corner relief.',
  Engine:'Render visibility, cut-layout export, labels, calibration and reports. Rarely needed.',
 };
+// The modular workbench's sections hold different things; its blurbs say what.
+export const workbenchBlurbs:Record<string,string>={
+ Sizing:'Frame size: small, medium or large, or a custom grid of cells.',
+ Structure:'Base frame, module top rails and hand slots, and the worksurface. Modules are placed in the Layout tab.',
+ Doors:'Gap around the module doors.',
+ Shelves:'Shelf fit and the shelf pin holes in the module sides.',
+ Hardware:'Hinge cups, plywood pulls and casters.',
+};
 // Companion edits that keep a choice buildable. Each returns only the keys it changes.
 export function linkedChanges(key:string,value:unknown,v:Record<string,any>):Record<string,any>{
  // Fixed runners only carry a removable service tray; the engine rejects any travel.
@@ -35,6 +43,25 @@ export const LAYOUT_KEYS=new Set(['cabinet_layout_mode','cabinet_contents','modu
  'drawer_bank_count','drawer_bank_layout_mode','drawer_bank_width_weights','drawer_bank_drawer_counts','drawer_bank_height_modes','drawer_bank_graduated_steps','drawer_bank_height_weights','drawer_height_mode','drawer_height_weights','drawer_graduated_step']);
 export const LAYOUT_REASON='Set in the Layout tab';
 export const hasLayoutEditor=(family:unknown)=>typeof family==='number'&&family>=0&&family<5;
+// The modular workbench arranges its modules on a grid editor in the same Layout tab.
+export const hasGridEditor=(family:unknown)=>family===7;
+export const hasLayoutTab=(family:unknown)=>hasLayoutEditor(family)||hasGridEditor(family);
+export const GRID_REASON='Arranged in the Layout tab';
+// Workbench settings that only matter for some layouts. Its keys share names with other cabinet
+// types (door_gap, joint_fit_clearance, hinge_cup_*) but not their rules, so it has its own list.
+function workbenchInactive(f:Field,v:Record<string,any>):string|null{
+ const k=f.key,s=f.section,mods=(Array.isArray(v.modules)?v.modules:[]).filter(Array.isArray);
+ const doors=mods.some((m:any[])=>m[5]!=='open'),shelves=mods.some((m:any[])=>Number(m[6]??1)>0);
+ if(k==='modules')return GRID_REASON;
+ if(f.visibleIf){const unmet=Object.entries(f.visibleIf).filter(([key,value])=>v[key]!==value);if(unmet.length)return k.startsWith('grid_')?'Choose a custom frame size':'Choose selected dog-hole panels'}
+ if((s==='Structure / Worktop'&&k!=='include_worksurface'||k==='worksurface_thickness'||k==='show_worksurface')&&v.include_worksurface===false)return 'Enable the worksurface';
+ if(k.startsWith('hand_slot_')&&!v.include_hand_slots)return 'Enable hand slots';
+ if((s.startsWith('Doors /')||k.startsWith('hinge_')||k.startsWith('handle_')||k==='door_thickness'||k==='show_doors')&&!doors)return 'No module has doors';
+ if((k.startsWith('handle_')&&k!=='handle_style'||k==='handle_thickness')&&v.handle_style==='none')return 'Select a handle style';
+ if((s.startsWith('Shelves /')||k==='shelf_thickness')&&!shelves)return 'No module has shelves';
+ if(k==='caster_plate_size'&&Number(v.caster_height)<=0)return 'Set a caster height';
+ return null;
+}
 
 export function presentFields(fields:Field[]):Field[]{return fields.flatMap(f=>{
  if(['cabinet_mount_style','mount_mode'].includes(f.key))return [{...f,section:'Mounting / Mount Style'}];
@@ -90,6 +117,7 @@ export const isAlternative=(reason:string|null)=>!!reason&&ALTERNATIVE_REASONS.h
 export function isAdvanced(f:Field){return f.advanced||['kerf','apply_kerf_compensation'].includes(f.key)||ADVANCED.some(r=>r.test(f.key))}
 // Hide dependent controls without discarding their saved values. Unknown controls stay visible.
 export function inactiveReason(f:Field,v:Record<string,any>):string|null{
+ if(v._family===7)return workbenchInactive(f,v);
  if(hasLayoutEditor(v._family)&&LAYOUT_KEYS.has(f.key))return LAYOUT_REASON;
  const k=f.key,s=sectionFor(f),sections=[0,1,4].includes(v._family)&&v.cabinet_layout_mode==='sections',mixed=v._family!==3&&['mixed_bays','sections'].includes(v.cabinet_layout_mode);
  if(k==='section_nodes')return 'Use the section layout editor';

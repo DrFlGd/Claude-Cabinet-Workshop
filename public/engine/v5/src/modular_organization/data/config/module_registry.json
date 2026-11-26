@@ -78,6 +78,17 @@
         "mount.floor"
       ],
       "notes": "Single or multi-bay frame; mount.wall only in cleat mode. Stack joints use through-bolts; MOI-EQUIP-STACK-1 does not mate to cabinet tab interfaces."
+    },
+    "workbench": {
+      "type": "openscad",
+      "frontend": "workbench.scad",
+      "presets": "workbench.json",
+      "kind": "workbench",
+      "subtype": "modular_grid_workbench",
+      "project_interfaces": [
+        "mount.floor"
+      ],
+      "notes": "Standalone family: base frame of half-lapped strips with registration tabs on a square cell grid, cabinet modules on whole cells (stackable), puzzle-jointed worksurface with dog holes. Does not mate to the cabinet tab interfaces."
     }
   },
   "relationship_types": {
