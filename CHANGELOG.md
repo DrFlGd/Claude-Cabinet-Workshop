@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.16.0**) are separate from the bundled
+Application versions (currently **0.17.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,83 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.17.0 — 2026-11-26
+
+Stackable modules can nest into the module below, as in the stackable cabinet
+plans the user supplied as a reference (see `docs/STACKABLE_REFERENCE.md`,
+phase 2).
+
+- **Nested bottom.** A new **Stack bottom style** setting
+  (`stack_bottom_style`, raised or nested) on stackable modules with
+  tab-and-slot joinery. Raised, the default, builds exactly as before. With
+  **nested**:
+  - The bottom sits at the very bottom of the module, in the tongue layer, and
+    runs front to back only between where the lower module's top stretchers
+    end (`top_stretcher_depth` + `stack_interface_clearance` from the front and
+    from the back). Stacked, it drops between the lower module's stretchers and
+    sides, so modules locate front to back and side to side.
+  - The bottom's side tabs stay on the full-height part of the side tongue, and
+    with blind side tabs they stop in pockets as in 0.16.0.
+  - The interface depth follows the sheet thickness, so the stack pitch is the
+    module height less one sheet (615 mm for a 633 mm module in 18 mm sheet).
+  - A structural back has no bottom tabs when the nested bottom stops short of
+    it. It starts one sheet above the module's base, so in a stack it stands on
+    the lower module's rear stretcher, as the reference's back does.
+  - Stacked overlay doors leave a gap of twice the edge reveal (4 mm by
+    default) instead of a band of about 23 mm.
+- **Screws between modules.** `stack_link_screw_holes` (on by default with a
+  nested bottom) drills holes of the blind-tab screw-hole diameter (4.5 mm)
+  through the top of each side and each base-frame side rail, half a sheet
+  below the top edge, between the stretcher and the stacking recess, for
+  screws up into the edge of the bottom of the module above. In the new starter
+  they fall at depths 91 and 459 mm (90 and 460 in the reference). The holes are
+  in the side feature ledger, so they are checked against the other holes.
+- **Checks.** A nested bottom with joinery other than tab-and-slot, or with
+  partitions, is reported as an error (`STACK_NESTED_JOINERY`,
+  `STACK_NESTED_PARTITIONS`); margins too shallow for the link screws give a
+  warning.
+- **New starter.** Stackable → **Door Module, Nested (Reference Joinery)**:
+  475 × 633 × 550 mm in 18 mm sheet, tab-and-slot with blind side tabs and
+  T-bone relief, 75 mm top stretchers, a structural back and a full-overlay
+  door. Its parts: sides 550 × 633, stretchers 465 × 75, bottom 465 × 398.8,
+  door 471 × 611, 14 mm pockets.
+- **Editor.** The 3D preview, the stacked preview and the layout frame place a
+  nested bottom low and use the sheet thickness as the stacking overlap. The
+  interface-depth setting is shown as set by the nested bottom.
+- **Interference test.** Every stackable configuration is now also checked
+  against a copy of itself one stacking pitch higher, and the stack base is
+  rendered in place below the module (before, its group drew the carcass
+  only). Three nested cases were added. A deliberate overlap (a −10 mm edge
+  reveal) was confirmed to be reported between the doors and the module above.
+
+Validation performed:
+
+- **Static and engine checks.** `pnpm exec tsc --noEmit`, the engine-source,
+  parity and product-source checks, units, nesting, settings visibility (with
+  assertions for the nested settings), hardware, v5 integration, the native
+  OpenSCAD stackable-controls and sections tests (OpenSCAD 2021.01), section
+  WASM workers, engine fit, layout editor, cut-layout check, hardware-engine,
+  products and `pnpm run build:static` all passed.
+- **Golden outputs.** `tests/golden.mjs --update` added a snapshot for the new
+  starter only; the other 117 starters' outputs are unchanged. All 118 then
+  matched.
+- **Interference sweep.** `tests/engine-interference.mjs --all` ran locally in
+  four shards with the new stacked-module group: 184 configurations with no
+  overlapping parts, 1 random design skipped as rejected by the engine.
+- **Starter checks.** The new starter's cut layout passed `checkCutLayout`
+  (12 parts, one outline each). A nested bottom with dado joinery and one with
+  two drawer banks were confirmed to report their errors.
+
+Remaining limitations:
+
+- The gap between stacked doors sits at the lower edge of the stretchers above
+  it, not centred on them as in the reference.
+- Nested stacking needs tab-and-slot joinery and a single bay.
+- The stack base is unchanged: the reference's flat top rails, toe notch and
+  set-back kick board that supports the bottom are not modelled.
+- 45° stacking flanks, rounded outer corners, hinge-plate marks on both sides
+  and a back with top tabs through rail notches are not implemented.
 
 ## 0.16.0 — 2026-11-26
 

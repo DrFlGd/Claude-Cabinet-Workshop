@@ -1191,6 +1191,7 @@ if (stackable_mode
 // Dado carcasses deliberately lift the bottom by stack_bottom_dado_lift (see
 // stackable.scad); only an unexpected offset is reported.
 if (stackable_mode
+    && !stack_nested()
     && abs(
         bottom_above_toe
         - effective_stack_interface_depth
@@ -1497,6 +1498,25 @@ if (validation_enabled()) {
             validation_check("ERROR","FACE_FRAME_BAYS_INSET",
                 "Inset fronts are not supported for independent bays behind a face frame. Use overlay fronts or the Sections layout.");
     }
+
+    // Nested stacking: the bottom stops short of the front and rear, so only
+    // tab-and-slot joints (kept on the full-height tongue) and one bay work.
+    if (stack_nested() && carcass_joint_geometry != "tab_slot")
+        validation_check("ERROR","STACK_NESTED_JOINERY",
+            "A nested bottom is joined to the side tongues with tab-and-slot joints. Set Joinery to Tab & slot, or set Stack bottom style to Raised.");
+
+    if (stack_nested()
+        && (drawer_bank_partition_count() > 0
+            || door_hinge_partition_count() > 0
+            || mixed_bay_partition_count() > 0))
+        validation_check("ERROR","STACK_NESTED_PARTITIONS",
+            "Partitions would stand past the front and rear of a nested bottom and run into the module below. Use one drawer bank, or set Stack bottom style to Raised.");
+
+    if (stack_nested()
+        && stack_link_screws_active()
+        && len(stack_link_screw_ys()) < 2)
+        validation_check("WARNING","STACK_LINK_SCREWS",
+            "There is no room for a screw between a top stretcher and the stacking recess. Make the stacking margins deeper than the top stretchers.");
 
     // Separators are continuous full-width parts; the drawer-bank partitions
     // have no cross-lap or receiver for them.

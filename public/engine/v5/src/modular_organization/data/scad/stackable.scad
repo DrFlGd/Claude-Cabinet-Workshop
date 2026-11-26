@@ -545,6 +545,21 @@ include_stack_base = true;
 // below it.
 stack_interface_depth = 18;
 
+// How the bottom panel meets the stacking interface.
+// raised = the bottom sits on the stacking pads, above the side tongue, at
+//          stack_interface_depth.
+// nested = the bottom sits low in the tongue layer and fits between the top
+//          stretchers and sides of the module below, as in the reference
+//          stackable plans. The interface depth then equals the sheet
+//          thickness, stacked modules register front-to-back and side-to-side,
+//          and screws through the lower module's ears fix it to the bottom
+//          above. Needs tab-and-slot joinery and a single bay.
+stack_bottom_style = "raised"; // [raised, nested]
+
+// Nested stacking: screw holes through the top of each side (and the base
+// frame's side rails) into the edge of the bottom panel of the module above.
+stack_link_screw_holes = true;
+
 // Separate base-frame rail height.
 stack_base_height = 70;
 
@@ -1206,10 +1221,13 @@ toe_kick_setback = 0;
 // Butt and localized tab joints preserve the established bottom elevation.
 // The interface depth is clamped here exactly as effective_stack_interface_depth
 // clamps it later (that variable is not yet assigned at this point).
-stack_bottom_dado_lift = joinery_style=="dado" ? material_thickness+dado_fit_clearance/2+0.1 : 0;
+// A nested bottom sits at the very bottom of the module, in the tongue layer.
+stack_bottom_dado_lift = joinery_style=="dado" && stack_bottom_style != "nested" ? material_thickness+dado_fit_clearance/2+0.1 : 0;
 bottom_above_toe =
-    min(max(2,stack_interface_depth),max(2,cabinet_height/3))
-    + stack_bottom_dado_lift;
+    stack_bottom_style == "nested"
+        ? 0
+        : min(max(2,stack_interface_depth),max(2,cabinet_height/3))
+          + stack_bottom_dado_lift;
 side_toe_kick_cutout = "none";
 
 base_hardware_active = false;

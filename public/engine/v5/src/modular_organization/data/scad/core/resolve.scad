@@ -3018,11 +3018,15 @@ function stack_safe_bottom_tab_center(span,i) =
 function tab_count_for_location(span,location="default") =
     location_tab_custom_active(span,location)
         ? len(location_tab_custom_centers_resolved(span,location))
-        : effective_tab_count(span);
+        : location == "bottom" && stack_nested()
+            ? nested_bottom_tab_count()
+            : effective_tab_count(span);
 
 function tab_center_for_location(span,i,location="default") =
     location_tab_custom_active(span,location)
         ? location_tab_custom_centers_resolved(span,location)[i]
+        : location == "bottom" && stack_nested()
+            ? nested_bottom_tab_center(i)
         : (
             location == "bottom"
             && stackable_mode
@@ -3052,6 +3056,78 @@ function bottom_tab_start(span,i) = tab_start_for_location(span,i,"bottom");
 // pass through them (through) or stop in pockets milled into their inside
 // faces (blind), which leaves the outside faces unbroken. Interior joints
 // (partitions, dividers) keep through tabs. Primitives: tab_pocket.scad.
+// ---------------------------
+// NESTED STACKING
+// ---------------------------
+// A nested bottom sits in the tongue layer (z = 0) and spans only the depth
+// between the module below's front and rear top stretchers, so it drops into
+// that module's top recess between its sides. Its tabs stay within the full-
+// height part of the side tongue.
+function stack_nested() =
+    stackable_mode
+    && !is_undef(stack_bottom_style)
+    && stack_bottom_style == "nested";
+
+function bottom_panel_y0() =
+    stack_nested()
+        ? top_stretcher_depth+max(0,stack_interface_clearance)
+        : 0;
+
+function bottom_panel_depth() =
+    max(1,resolved_cabinet_depth-2*bottom_panel_y0());
+
+// Global Y range where the side tongue has its full height.
+function stack_tongue_full_range() =
+    let(r=effective_stack_interface_corner_radius)
+    [
+        effective_stack_front_margin+2*r,
+        resolved_cabinet_depth-effective_stack_back_margin-2*r
+    ];
+
+// Panel-local range along the bottom where its side joints may sit: the
+// whole depth, or for a nested bottom the full-height tongue less a margin.
+function bottom_joint_range() =
+    stack_nested()
+        ? let(
+            t=stack_tongue_full_range(),
+            e=joint_fit_clearance/2+1,
+            lo=max(0,t[0]+e-bottom_panel_y0()),
+            hi=min(bottom_panel_depth(),t[1]-e-bottom_panel_y0())
+          )
+          [lo,max(lo+1,hi)]
+        : [0,bottom_panel_depth()];
+
+function nested_bottom_tab_count() =
+    let(r=bottom_joint_range()) effective_tab_count(r[1]-r[0]);
+
+function nested_bottom_tab_center(i) =
+    let(r=bottom_joint_range()) r[0]+tab_center(r[1]-r[0],i);
+
+// Screw holes linking stacked modules: through the top of each side, at the
+// mid-thickness of the nested bottom above, where the lower side still has
+// full material (the ear, before the recess flank) and the bottom is present.
+function stack_link_screws_active() =
+    stack_nested()
+    && (is_undef(stack_link_screw_holes) || stack_link_screw_holes)
+    && side_tab_screw_hole_diameter() > 0;
+
+function stack_link_screw_ys() =
+    let(
+        d=side_tab_screw_hole_diameter(),
+        r=effective_stack_interface_corner_radius,
+        c=effective_stack_interface_clearance,
+        lo=bottom_panel_y0()+d/2+2,
+        fhi=effective_stack_front_margin+r-c-d/2-2,
+        bhi=effective_stack_back_margin+r-c-d/2-2
+    )
+    !stack_link_screws_active() ? [] : [
+        if (fhi >= lo) (lo+fhi)/2,
+        if (bhi >= lo) resolved_cabinet_depth-(lo+bhi)/2
+    ];
+
+// Height of those holes below a side's top edge.
+function stack_link_screw_drop() = material_thickness/2;
+
 function side_tabs_blind() =
     carcass_joint_geometry == "tab_slot"
     && !is_undef(side_tab_style)
@@ -3101,10 +3177,16 @@ function side_receiver_local_x_start(side) =
 
 // Screw holes beside and between the tabs of one side joint, as positions
 // along the joint. `starts` are the nominal tab starts, `w` the tab width.
-function side_tab_screw_positions(span,starts,w) =
-    side_tab_screw_holes_active()
-        ? tp_web_centres(span,starts,w,side_tab_screw_hole_diameter()+6)
-        : [];
+// For a nested bottom ("bottom") only the stretch over the full-height
+// tongue has side material, so holes are kept within bottom_joint_range().
+function side_tab_screw_positions(span,starts,w,location="default") =
+    !side_tab_screw_holes_active() ? []
+    : location == "bottom" && stack_nested()
+        ? let(r=bottom_joint_range())
+          [for (p=tp_web_centres(r[1]-r[0],[for (s=starts) s-r[0]],w,
+                                  side_tab_screw_hole_diameter()+6))
+              p+r[0]]
+        : tp_web_centres(span,starts,w,side_tab_screw_hole_diameter()+6);
 
 function side_tab_starts_for_location(span,location) =
     [for (i=[0:tab_count_for_location(span,location)-1])
@@ -3262,11 +3344,20 @@ function structural_back_cut_width() =
             ? inner_width+2*side_tab_length()
             : inner_width;
 
+// Tab-and-slot structural backs have tabs into the bottom only when the
+// bottom reaches the back plane (a nested bottom stops short of it).
+function structural_back_bottom_tab_length() =
+    structural_back_panel_overlaps_horizontal(
+        bottom_panel_y0(),bottom_panel_depth())
+        ? material_thickness
+        : 0;
+
 function structural_back_cut_height() =
     carcass_joint_geometry == "dado"
         ? captured_back_height+2*structural_back_dado_depth
         : carcass_joint_geometry == "tab_slot"
-            ? captured_back_height+2*material_thickness
+            ? captured_back_height+material_thickness
+              +structural_back_bottom_tab_length()
             : captured_back_height;
 
 // Applied back sits BEHIND the rear carcass edge. With back_inset = 0 the
@@ -3275,7 +3366,12 @@ applied_back_y = resolved_cabinet_depth-back_inset;
 
 // The applied back spans the full cabinet width and runs from the underside
 // of the raised cabinet bottom to the cabinet top, leaving the toe-kick open.
-simple_back_bottom_z = bottom_above_toe;
+// A nested module's applied back starts at the stacking pads (the interface
+// depth, the sheet thickness), clear of the back of the module below.
+simple_back_bottom_z =
+    stackable_mode && !is_undef(stack_bottom_style) && stack_bottom_style == "nested"
+        ? material_thickness
+        : bottom_above_toe;
 simple_back_top_z = cabinet_height;
 simple_back_height =
     max(0,simple_back_top_z-simple_back_bottom_z);
@@ -4041,7 +4137,7 @@ function mo_feature_pair_hits(a,b,clearance=0) =
     );
 
 function mo_joint_span(location="default") =
-    location == "bottom" ? resolved_cabinet_depth
+    location == "bottom" ? bottom_panel_depth()
     : location == "top" ? (top_style == "full" ? resolved_cabinet_depth : top_stretcher_depth)
     : location == "shelf" ? shelf_depth
     : location == "separator" ? drawer_separator_full_depth
@@ -4456,9 +4552,10 @@ function mo_side_tab_operation() =
 // Screw holes beside a member's blind tabs. along_y: the joint runs along Y
 // from `origin` at height `mid`; otherwise along Z at depth `mid`.
 function mo_side_tab_screw_features(
-    prefix,side,owner,origin,span,mid,starts,w,along_y=true,source="side_tab_screws"
+    prefix,side,owner,origin,span,mid,starts,w,along_y=true,source="side_tab_screws",
+    location="default"
 ) =
-    let(ps=side_tab_screw_positions(span,starts,w)) [
+    let(ps=side_tab_screw_positions(span,starts,w,location)) [
         for (i=[0:max(0,len(ps)-1)]) if (len(ps) > 0)
             mo_side_circle_feature(
                 str(prefix,".screw.",i+1),side,"screw_hole",owner,
@@ -4499,7 +4596,7 @@ function mo_side_horizontal_features(
           mo_side_tab_screw_features(
             prefix,side,owner,y0,panel_depth,z0+material_thickness/2,
             side_tab_starts_for_location(panel_depth,location),
-            tab_width_for(panel_depth)))
+            tab_width_for(panel_depth),true,"side_tab_screws",location))
     : carcass_registration_enabled
         ? let(n=butt_reg_count(panel_depth)) [
             for (i=[0:max(0,n-1)]) if (n>0)
@@ -4666,7 +4763,7 @@ function mo_side_carcass_joint_features(side="left") =
     concat(
         (!full_width_bottom_active)
             ? mo_side_horizontal_features(
-                side,0,resolved_cabinet_depth,bottom_above_toe,"bottom",
+                side,bottom_panel_y0(),bottom_panel_depth(),bottom_above_toe,"bottom",
                 str("bottom.",side),"carcass.bottom")
             : [],
         top_style == "full"
@@ -4742,7 +4839,15 @@ function mo_side_carcass_joint_features(side="left") =
                     str("section_divider.",side,".",h+1),"carcass.shelf")],
         mo_side_toe_features(side),
         mo_side_back_stretcher_features(side),
-        mo_side_structural_back_features(side)
+        mo_side_structural_back_features(side),
+        [for (i=[0:max(0,len(stack_link_screw_ys())-1)])
+            if (len(stack_link_screw_ys()) > 0)
+                mo_side_circle_feature(
+                    str("stack_link.",side,".",i+1),side,"screw_hole",
+                    "stack.link",stack_link_screw_ys()[i],
+                    cabinet_height-stack_link_screw_drop(),
+                    side_tab_screw_hole_diameter(),
+                    "through",0,"cut_layout","stack_link_screws")]
     );
 
 function mo_side_shelf_pin_features(side="left") =
@@ -5407,10 +5512,12 @@ stack_base_active =
 
 effective_stack_interface_depth =
     stackable_mode
-        ? min(
-            max(2,stack_interface_depth),
-            max(2,cabinet_height/3)
-          )
+        ? stack_nested()
+            ? material_thickness
+            : min(
+                max(2,stack_interface_depth),
+                max(2,cabinet_height/3)
+              )
         : 0;
 
 effective_stack_interface_clearance =

@@ -1,6 +1,6 @@
 'use client';
 import { useMemo,useRef,useState } from 'react';
-import { geometry,Values,Part } from '@/lib/cabinet';
+import { geometry,thickness,Values,Part } from '@/lib/cabinet';
 import { RotateCcw,Plus,Minus,Move3D } from 'lucide-react';
 import {formatDimension,Units} from '@/lib/units';
 import SchematicScene from './SchematicScene';
@@ -8,7 +8,7 @@ export default function CabinetView({values,interior,exploded,dimensions,units='
  const pick=useRef<((x:number,y:number)=>void)|null>(null),travel=useRef(0);
  const [angle,setAngle]=useState(-.56),[tilt,setTilt]=useState(.35),[zoom,setZoom]=useState(1);const drag=useRef<{x:number;y:number;pointerId:number}|null>(null);
  const W=Number(values.custom_cabinet_width)||650,H=Number(values.custom_cabinet_height)||700,D=Number(values.custom_cabinet_depth)||500;
- const sceneH=values._family===3?H+(Math.max(1,Math.min(8,Number(values.stack_preview_count??1)))-1)*(H-Number(values.stack_interface_depth??18)+Number(values.stack_preview_explode_gap??0)):H;
+ const sceneH=values._family===3?H+(Math.max(1,Math.min(8,Number(values.stack_preview_count??1)))-1)*(H-(values.stack_bottom_style==='nested'?thickness(values):Number(values.stack_interface_depth??18))+Number(values.stack_preview_explode_gap??0)):H;
  const scale=Math.min(520/(W+D*.65),490/(sceneH+D*.4))*zoom;
  const project=(x:number,y:number,z:number)=>{x-=W/2;y-=D/2;z-=sceneH/2;const a=x*Math.cos(angle)-y*Math.sin(angle),b=x*Math.sin(angle)+y*Math.cos(angle);return [450+a*scale,350+(-b*Math.sin(tilt)-z*Math.cos(tilt))*scale,b*Math.cos(tilt)+z*Math.sin(tilt)]};
  const parts=useMemo(()=>geometry(values,interior,exploded),[values,interior,exploded]);

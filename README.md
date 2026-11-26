@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.16.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.17.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.16.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.17.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -53,7 +53,7 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
 
 1. **Pick what to build.** The cabinet-type card at the top of the settings
    panel shows the current type and starting point. **Change** (or **New** in
-   the header) opens the picker: choose a type, then one of 117 starting
+   the header) opens the picker: choose a type, then one of 118 starting
    points, including 48 standard US kitchen sizes. The previous design stays in
    **Recent**.
 2. **Arrange the front in the Layout tab.** The **Layout** tab (the first tab
@@ -152,10 +152,14 @@ independent bays may hold open shelves, overlay doors, or drawers in a middle
 bay; for other arrangements behind a face frame the Layout tab builds the
 cabinet as sections instead.
 
-With tab-and-slot joinery, **Side tabs: blind** stops the tabs in pockets milled
+With tab-and-slot joinery, **Side tab style: Blind pockets (hidden)** stops the tabs in pockets milled
 into the inside faces of the sides, so the outsides stay clean, with shoulder
-reliefs and screw holes beside the tabs (the default on stackable modules); see the
-[stackable reference](docs/STACKABLE_REFERENCE.md).
+reliefs and screw holes beside the tabs (the default on stackable modules).
+Stackable modules can also set **Stack bottom style: Nested in the module below**: the bottom sits
+low, between the top stretchers and sides of the module below, so stacked
+modules locate in both directions and screw together through the lower
+module's sides. The **Door Module, Nested (Reference Joinery)** starter builds
+one this way. See the [stackable reference](docs/STACKABLE_REFERENCE.md).
 
 ## Your products: the media cart
 

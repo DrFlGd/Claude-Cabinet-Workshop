@@ -183,7 +183,7 @@ All screw holes are 4.5 mm, through, for 1-1/4 in screws.
 
 ## What CCW implements
 
-### Phase 1: blind side tabs (this release)
+### Phase 1: blind side tabs (0.16.0)
 
 - **New setting.** `side_tab_style` = `through` | `blind` is available on shop
   carts, utility, benchtop, stackable and kitchen cabinets with tab-and-slot
@@ -208,17 +208,41 @@ All screw holes are 4.5 mm, through, for 1-1/4 in screws.
   `public/engine/v5/src/modular_organization/data/scad/tab_pocket.scad`. They
   take arguments only and read no cabinet setting.
 
-### Phase 2 (planned)
+### Phase 2: nested stacking (0.17.0)
 
-- **Nested stacking.** The bottom sits between the lower module's stretchers and
-  sides, giving registration in both directions.
-- **Interface depth tied to T.**
-- **Inter-module screw holes.**
-- **Base frame.** Flat top stretchers and a supporting kick board.
-- **Fronts across the stack seam.** Fronts sized to a uniform gap centred on the
-  rail.
-- **Stack interference check.** A test that a module placed on another does not
-  intersect it.
+- **New setting.** `stack_bottom_style` = `raised` | `nested` on stackable
+  modules (default `raised`, so existing designs build as before).
+- **Nested bottom.** With `nested`, the bottom sits at the very bottom of the
+  module, in the tongue layer, and spans front to back only between the
+  stretchers of the module below: from `top_stretcher_depth` +
+  `stack_interface_clearance` to the same distance from the back. In a stack it
+  drops between the lower module's top stretchers (front to back) and sides
+  (side to side), which gives registration in both directions (gap item 4).
+- **Interface depth tied to T.** The interface depth, and so the stack pitch
+  H − T, follows the sheet thickness (gap item 7).
+- **Inter-module screws.** `stack_link_screw_holes` drills holes through the
+  top of each side, and the base-frame side rails, T/2 below the top edge (level
+  with the middle of the bottom panel above), in the window between the
+  stretcher and the stacking recess. Screws go up into the edge of the bottom of the module above
+  (gap item 5). A warning reports a window too small for two holes.
+- **Fronts across the stack seam.** Because the bottom no longer adds a band
+  above the tongue, stacked overlay doors leave a gap of 2 × the edge reveal
+  (4 mm by default) instead of about 23 mm (gap item 6). The gap sits at the
+  lower edge of the stretchers above it rather than centred on them.
+- **Checks.** Nested needs tab-and-slot joinery and a single bay; other
+  choices are reported as errors. The interference test now places a second
+  module at the stack pitch and checks it against the first, and renders the
+  stack base in place.
+- **Starter.** "Door Module, Nested (Reference Joinery)" builds a 475 × 633 ×
+  550 module in 18 mm sheet with blind tabs, T-bone relief, 75 mm stretchers and
+  a full-overlay door, close to the reference's proportions.
+
+### Not implemented
+
+- The reference base frame (flat top rails, toe notch, set-back kick board that
+  supports the bottom). CCW's stack base is unchanged.
+- 45° stacking flanks, rounded outer corners, hinge-plate marks on both sides,
+  and a back panel with top tabs through notches in the rear rail.
 
 ## Ambiguities and how they were resolved
 

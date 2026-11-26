@@ -175,7 +175,7 @@ module carcass_engrave_labels() {
 
     engraving_label_at(
         0,layout_y2,id_bottom(),
-        bottom_panel_width,resolved_cabinet_depth
+        bottom_panel_width,bottom_panel_depth()
     );
 
     if (top_style == "full") {
@@ -703,7 +703,7 @@ module bom_report() {
                     : "side");
 
     bom_row(id_bottom(),"carcass","CARCASS",
-            material_thickness,bottom_panel_width,resolved_cabinet_depth,
+            material_thickness,bottom_panel_width,bottom_panel_depth(),
             full_width_bottom_active ? "full_width" : carcass_joint_geometry);
 
     if (top_style == "full")
@@ -1678,7 +1678,7 @@ function carcass_layout_placements() =
             [id_side("right"),resolved_cabinet_depth+g,0,
              resolved_cabinet_depth,side_panel_cut_height,"side_right",0],
             [id_bottom(),0,layout_y2,
-             bottom_panel_width,resolved_cabinet_depth,"bottom",0]
+             bottom_panel_width,bottom_panel_depth(),"bottom",0]
         ],
         top_style == "full"
             ? [[id_top_full(),top_layout_x,layout_y2,

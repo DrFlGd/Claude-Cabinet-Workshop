@@ -12,7 +12,7 @@
 // and the metal slide envelopes between the drawer boxes and the cabinet.
 //
 //   node tests/engine-interference.mjs                 the hand-picked cases
-//   node tests/engine-interference.mjs --starters      plus all 117 starters
+//   node tests/engine-interference.mjs --starters      plus all 118 starters
 //   node tests/engine-interference.mjs --random 24     plus 24 random designs
 //   node tests/engine-interference.mjs --all           cases + starters + 24 random
 //   SHARD=1/4 node tests/engine-interference.mjs --all  one quarter of that job list
@@ -65,7 +65,11 @@ const GROUPS={
  // Hardware and accessories.
  worktop:{on:['show_worktop'],code:'carcass();'},
  base:{on:['show_base_hardware'],code:'carcass();'},
- stackBase:{on:['show_stack_base'],code:'carcass();'},
+ // The stack base sits below the module (in module coordinates, at -stack_first_module_z),
+ // and a second module sits one stacking pitch above it: the stacking interface, the
+ // nested bottom and the fronts must clear the module below.
+ stackBase:{on:['show_stack_base'],code:'if (stackable_mode) translate([0,0,-stack_first_module_z]) stack_base_assembly_3d();'},
+ stackUpper:{on:FLAGS.filter(k=>k!=='show_stack_base'),code:'if (stackable_mode) translate([0,0,stack_module_pitch]) cabinet_unit_assembly();'},
  // The slide envelope is the space a metal slide needs between the drawer box and the
  // cabinet side or partition; nothing else may enter it.
  slideEnvelopes:{on:['show_drawer_slide_parts'],envelopes:true,code:'carcass();',when:v=>v.drawer_mount==='metal_slides'},
@@ -182,6 +186,10 @@ const CASES=[
  [3,undefined,{include_stack_base:true,drawer_mount:'metal_slides'}],
  // Blind side tabs: every tab must stop inside its pocket without breaking the outside skin.
  [3,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',slot_corner_relief:'t_bone',include_stack_base:true}],
+ // Nested stacking: the bottom drops between the lower module's top stretchers.
+ [3,'stackable_door_module',{joinery_style:'tab_slot',stack_bottom_style:'nested',slot_corner_relief:'t_bone'}],
+ [3,'stackable_2_drawer',{joinery_style:'tab_slot',stack_bottom_style:'nested',back_style:'panel'}],
+ [3,'stackable_open_module',{joinery_style:'tab_slot',side_tab_style:'through',stack_bottom_style:'nested',back_style:'stretchers'}],
  [3,'stackable_door_module',{joinery_style:'tab_slot',side_tab_style:'blind',slot_corner_relief:'dogbone',blind_tab_skin:2,blind_tab_end_clearance:0}],
  [1,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',back_style:'stretchers',slot_corner_relief:'t_bone'}],
  [4,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',shelf_style:'fixed',door_shelf_count:2,include_drawer_separators:true,drawer_count:2,back_style:'structural_panel'}],
@@ -264,4 +272,4 @@ for(const j of jobs){
 }
 const seconds=Math.round((Date.now()-started)/1000);
 if(failures){console.log(`Engine interference: ${failures} of ${checked} configurations have overlapping parts or failed to render (${seconds} s).`);process.exitCode=1}
-else console.log(`Engine interference: ${checked} configurations render with no overlapping parts (${pairs} group pairs intersected${skipped?`, ${skipped} random designs skipped as rejected by the engine`:''}; carcass, interior members, rails, face frame, drawers, doors, worktop, base hardware, stack base and slide envelopes; ${seconds} s).`);
+else console.log(`Engine interference: ${checked} configurations render with no overlapping parts (${pairs} group pairs intersected${skipped?`, ${skipped} random designs skipped as rejected by the engine`:''}; carcass, interior members, rails, face frame, drawers, doors, worktop, base hardware, stack base, the next module in a stack and slide envelopes; ${seconds} s).`);
