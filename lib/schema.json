@@ -1556,7 +1556,7 @@
         "value": "through",
         "expression": null,
         "section": "Structure / Frame Joinery",
-        "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+        "description": "Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; the pockets are open where they reach a panel edge, so parts drop in from there.",
         "options": [
           "through",
           "blind"
@@ -1957,12 +1957,12 @@
         "value": 0,
         "expression": null,
         "section": "Doors / Layout",
-        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall). The layout editor sets this when you drag or type the drawer/door boundary.",
         "options": null,
         "bounds": [
-          0,
-          3000,
-          1
+          0.0,
+          3000.0,
+          1.0
         ],
         "step": null,
         "unit": "mm",
@@ -5197,6 +5197,28 @@
           "drawer_count": 4,
           "door_count": 1,
           "cabinet_layout_mode": "mixed_bays",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 2,
           "mixed_bay_types": [
             "drawers",
@@ -5238,6 +5260,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -5262,6 +5289,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -5321,6 +5349,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -5346,6 +5416,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -5397,6 +5509,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -5551,29 +5664,7 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce",
-          "section_nodes": [
-            [
-              -1,
-              0,
-              "leaf",
-              "weight",
-              1,
-              "drawers",
-              3,
-              "equal",
-              0.25,
-              [
-                1,
-                1,
-                1
-              ],
-              "panel",
-              0,
-              "left",
-              "adjustable"
-            ]
-          ]
+          "interface_keepout_policy": "enforce"
         }
       },
       {
@@ -5702,6 +5793,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -5726,6 +5822,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -5785,6 +5882,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -5810,6 +5949,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -5861,6 +6042,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -6145,6 +6327,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -6169,6 +6356,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -6228,6 +6416,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -6253,6 +6483,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -6304,6 +6576,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -6588,6 +6861,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -6612,6 +6890,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -6671,6 +6950,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -6696,6 +7017,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -6747,6 +7110,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -7031,6 +7395,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -7055,6 +7424,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -7114,6 +7484,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -7139,6 +7551,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -7190,6 +7644,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -7474,6 +7929,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -7498,6 +7958,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -7557,6 +8018,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -7582,6 +8085,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -7633,6 +8178,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -9351,7 +9897,7 @@
         "value": "through",
         "expression": null,
         "section": "Structure / Frame Joinery",
-        "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+        "description": "Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; the pockets are open where they reach a panel edge, so parts drop in from there.",
         "options": [
           "through",
           "blind"
@@ -9752,12 +10298,12 @@
         "value": 0,
         "expression": null,
         "section": "Doors / Layout",
-        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall). The layout editor sets this when you drag or type the drawer/door boundary.",
         "options": null,
         "bounds": [
-          0,
-          3000,
-          1
+          0.0,
+          3000.0,
+          1.0
         ],
         "step": null,
         "unit": "mm",
@@ -12992,6 +13538,28 @@
           "drawer_count": 2,
           "door_count": 2,
           "cabinet_layout_mode": "legacy",
+          "section_nodes": [
+            [
+              -1,
+              0,
+              "leaf",
+              "weight",
+              1,
+              "drawers",
+              3,
+              "equal",
+              0.25,
+              [
+                1,
+                1,
+                1
+              ],
+              "panel",
+              0,
+              "left",
+              "adjustable"
+            ]
+          ],
           "mixed_bay_count": 3,
           "mixed_bay_types": [
             "drawers",
@@ -13033,6 +13601,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -13057,6 +13630,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -13116,6 +13690,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -13141,6 +13757,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -13192,6 +13850,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -13346,29 +14005,7 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce",
-          "section_nodes": [
-            [
-              -1,
-              0,
-              "leaf",
-              "weight",
-              1,
-              "drawers",
-              3,
-              "equal",
-              0.25,
-              [
-                1,
-                1,
-                1
-              ],
-              "panel",
-              0,
-              "left",
-              "adjustable"
-            ]
-          ]
+          "interface_keepout_policy": "enforce"
         }
       },
       {
@@ -13497,6 +14134,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -13521,6 +14163,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -13580,6 +14223,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -13605,6 +14290,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -13656,6 +14383,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -13940,6 +14668,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -13964,6 +14697,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -14023,6 +14757,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -14048,6 +14824,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -14099,6 +14917,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -14383,6 +15202,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -14407,6 +15231,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -14466,6 +15291,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -14491,6 +15358,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -14542,6 +15451,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -14826,6 +15736,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -14850,6 +15765,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -14909,6 +15825,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -14934,6 +15892,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -14985,6 +15985,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -15269,6 +16270,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -15293,6 +16299,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -15352,6 +16359,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -15377,6 +16426,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -15428,6 +16519,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -15712,6 +16804,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -15736,6 +16833,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -15795,6 +16893,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -15820,6 +16960,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -15871,6 +17053,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -16155,6 +17338,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -16179,6 +17367,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -16238,6 +17427,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -16263,6 +17494,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -16314,6 +17587,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -16598,6 +17872,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -16622,6 +17901,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -16681,6 +17961,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -16706,6 +18028,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -16757,6 +18121,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -17041,6 +18406,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -17065,6 +18435,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -17124,6 +18495,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -17149,6 +18562,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -17200,6 +18655,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -17484,6 +18940,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -17508,6 +18969,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -17567,6 +19029,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -17592,6 +19096,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -17643,6 +19189,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -19032,7 +20579,7 @@
         "value": "through",
         "expression": null,
         "section": "Structure / Frame Joinery",
-        "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+        "description": "Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; the pockets are open where they reach a panel edge, so parts drop in from there.",
         "options": [
           "through",
           "blind"
@@ -21596,6 +23143,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -21648,6 +23200,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -21878,6 +23472,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -21930,6 +23529,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -22161,6 +23802,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -22213,6 +23859,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -22444,6 +24132,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -22496,6 +24189,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -22727,6 +24462,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -22779,6 +24519,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -23010,6 +24792,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -23062,6 +24849,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -23293,6 +25122,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -23345,6 +25179,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -23576,6 +25452,11 @@
           "joint_tab_width": null,
           "joint_tab_edge_margin": null,
           "minimum_joint_web": null,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -23628,6 +25509,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -25011,7 +26934,7 @@
         "value": "blind",
         "expression": null,
         "section": "Structure / Frame Joinery",
-        "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+        "description": "Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; the pockets are open where they reach a panel edge, so parts drop in from there.",
         "options": [
           "through",
           "blind"
@@ -26329,7 +28252,7 @@
         "value": true,
         "expression": null,
         "section": "Mounting / Stacking",
-        "description": "Nested stacking: screw holes through the top of each side and the base-frame side rails into the edge of the bottom panel of the module above.",
+        "description": "Nested stacking: screw holes through the top of each side (and the base frame's side rails) into the edge of the bottom panel of the module above.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -26406,7 +28329,7 @@
         "value": "rail_centre",
         "expression": null,
         "section": "Mounting / Stacking",
-        "description": "rail_centre = overlay doors and drawer fronts cover half of the top stretcher, so the gap between stacked fronts is centred on it, as in the reference plans. module_edge = fronts stop at the module's front opening.",
+        "description": "Stacked fronts. rail_centre = doors and drawer fronts overlay half the top stretcher, so the gap between stacked fronts is centred on the stretcher, as in the reference plans. module_edge = fronts stop at the module's front opening.",
         "options": [
           "rail_centre",
           "module_edge"
@@ -28505,6 +30428,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -28613,6 +30541,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -28645,7 +30615,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -28672,6 +30648,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -28882,6 +30859,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -28990,6 +30972,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -29022,7 +31046,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -29049,6 +31079,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -29260,6 +31291,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -29368,6 +31404,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -29400,7 +31478,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -29427,6 +31511,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -29638,6 +31723,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -29746,6 +31836,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -29778,7 +31910,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -29805,6 +31943,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -30016,6 +32155,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -30124,6 +32268,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -30156,7 +32342,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -30183,6 +32375,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -30394,6 +32587,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -30502,6 +32700,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -30534,7 +32774,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "raised",
+          "stack_link_screw_holes": true,
           "stack_base_height": 70,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 80,
           "stack_interface_back_margin": 80,
           "stack_interface_corner_radius": 9,
@@ -30561,6 +32807,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -30772,6 +33019,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "blind",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "bottom_tab_placement": "stack_safe",
           "bottom_tab_custom_centers": [],
           "edge_joinery_policy": "location_aware",
@@ -30880,6 +33132,48 @@
             0.35,
             0.35
           ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
           "drawer_bank_partition_joinery": "match_carcass",
@@ -30912,7 +33206,13 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
+          "stack_bottom_style": "nested",
+          "stack_link_screw_holes": true,
           "stack_base_height": 80,
+          "stack_base_style": "auto",
+          "stack_base_toe_notch_depth": 57.5,
+          "stack_base_toe_notch_height": 47,
+          "stack_front_seam": "rail_centre",
           "stack_interface_front_margin": 98,
           "stack_interface_back_margin": 98,
           "stack_interface_corner_radius": 9,
@@ -30939,6 +33239,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -31071,10 +33372,7 @@
           "dimension_report": "full",
           "validation_report": "summary",
           "system_contract_report": "summary",
-          "interface_keepout_policy": "enforce",
-          "side_tab_style": "blind",
-          "stack_bottom_style": "nested",
-          "stack_link_screw_holes": true
+          "interface_keepout_policy": "enforce"
         }
       }
     ]
@@ -32653,7 +34951,7 @@
         "value": "through",
         "expression": null,
         "section": "Structure / Frame Joinery",
-        "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+        "description": "Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; the pockets are open where they reach a panel edge, so parts drop in from there.",
         "options": [
           "through",
           "blind"
@@ -33177,12 +35475,12 @@
         "value": 0,
         "expression": null,
         "section": "Doors / Layout",
-        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall).",
+        "description": "Drawers-over-doors only: height of the door region in mm, from the bottom of the front opening to the drawer/door divider. 0 keeps the automatic split (doors three drawer-heights tall). The layout editor sets this when you drag or type the drawer/door boundary.",
         "options": null,
         "bounds": [
-          0,
-          3000,
-          1
+          0.0,
+          3000.0,
+          1.0
         ],
         "step": null,
         "unit": "mm",
@@ -36176,6 +38474,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -36184,6 +38486,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -36217,6 +38524,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -36276,6 +38584,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -36301,6 +38651,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -36352,6 +38744,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -36484,10 +38877,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -36505,7 +38894,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         }
@@ -39170,6 +41561,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -39178,6 +41573,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -39211,6 +41611,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -39270,6 +41671,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -39295,6 +41738,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -39346,6 +41831,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -39478,10 +41964,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -39499,7 +41981,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -39599,6 +42083,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -39607,6 +42095,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -39640,6 +42133,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -39699,6 +42193,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -39724,6 +42260,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -39775,6 +42353,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -39907,10 +42486,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -39928,7 +42503,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -40028,6 +42605,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -40036,6 +42617,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -40069,6 +42655,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -40128,6 +42715,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -40153,6 +42782,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -40204,6 +42875,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -40336,10 +43008,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -40357,7 +43025,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -40457,6 +43127,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -40465,6 +43139,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -40498,6 +43177,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -40557,6 +43237,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -40582,6 +43304,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -40633,6 +43397,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -40765,10 +43530,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -40786,7 +43547,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -40886,6 +43649,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "wall",
           "base_style": "flat",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -40894,6 +43661,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -40927,6 +43699,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -40986,6 +43759,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -41011,6 +43826,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -41062,6 +43919,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -41194,10 +44052,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -41215,7 +44069,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -41315,6 +44171,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "wall",
           "base_style": "flat",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -41323,6 +44183,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -41356,6 +44221,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -41412,6 +44278,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -41437,6 +44345,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -41488,6 +44438,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -41620,10 +44571,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -41641,7 +44588,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -41741,6 +44690,10 @@
           "back_stretcher_inset": 0,
           "cabinet_mount_style": "floor",
           "base_style": "toe_kick",
+          "custom_toe_kick_height": 101.6,
+          "custom_toe_kick_setback": 76.2,
+          "custom_bottom_above_toe": null,
+          "custom_side_toe_kick_cutout": "none",
           "joinery_style": "dado",
           "tab_count_mode": "adaptive",
           "joint_tab_count": 3,
@@ -41749,6 +44702,11 @@
           "joint_tab_width": 35,
           "joint_tab_edge_margin": 15,
           "minimum_joint_web": 30,
+          "side_tab_style": "through",
+          "blind_tab_skin": 4,
+          "blind_tab_end_clearance": 1,
+          "blind_tab_screw_holes": true,
+          "blind_tab_screw_hole_diameter": 4.5,
           "edge_joinery_policy": "location_aware",
           "top_tab_placement": "automatic",
           "shelf_tab_placement": "automatic",
@@ -41782,6 +44740,7 @@
             1,
             1
           ],
+          "combo_door_height": 0,
           "wall_doors_flush_top": true,
           "mixed_bay_door_counts": [
             1,
@@ -41841,6 +44800,48 @@
             0.35,
             0.35
           ],
+          "mixed_bay_drawer_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
+          ],
           "drawer_bank_count": 1,
           "drawer_bank_layout_mode": "shared",
           "drawer_bank_width_weights": [
@@ -41866,6 +44867,48 @@
             0.35,
             0.35,
             0.35
+          ],
+          "drawer_bank_height_weights": [
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1
+            ]
           ],
           "drawer_bank_face_gap": null,
           "drawer_bank_partition_rear_clearance": 10,
@@ -41917,6 +44960,7 @@
           "hinge_cup_center_from_door_edge": 22.5,
           "hinge_door_fixing_hole_diameter": 3,
           "hinge_door_fixing_hole_spacing": 45,
+          "hinge_door_fixing_hole_offset": 0,
           "hinge_plate_hole_diameter": 5,
           "hinge_plate_center_from_front": 37,
           "hinge_plate_hole_spacing": 32,
@@ -42049,10 +45093,6 @@
           "validation_report": "summary",
           "system_contract_report": "summary",
           "interface_keepout_policy": "enforce",
-          "custom_toe_kick_height": 101.6,
-          "custom_toe_kick_setback": 76.2,
-          "custom_bottom_above_toe": null,
-          "custom_side_toe_kick_cutout": "none",
           "section_nodes": [
             [
               -1,
@@ -42070,7 +45110,9 @@
                 1
               ],
               "panel",
-              0
+              0,
+              "left",
+              "adjustable"
             ]
           ]
         },
@@ -49730,7 +52772,7 @@
         ],
         "expression": null,
         "section": "Structure / Layout",
-        "description": "One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers]. Later rows stack on earlier ones.",
+        "description": "One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers, drawer columns 1|2]. Later rows stack on earlier ones. Drawer columns 2 puts two drawers side by side on every level of a drawers module at least two cells wide, beside a centre partition.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -50710,6 +53752,40 @@
         "advanced": true
       },
       {
+        "key": "metal_slide_hole_rear_margin",
+        "value": 10,
+        "expression": null,
+        "section": "Hardware / Slide Drilling",
+        "description": "Holes closer than this to the rear end of the slide are left out.",
+        "options": null,
+        "bounds": [
+          0.0,
+          100.0,
+          1.0
+        ],
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": true
+      },
+      {
+        "key": "partition_slide_hole_diameter",
+        "value": 6,
+        "expression": null,
+        "section": "Hardware / Slide Drilling",
+        "description": "Through holes in a drawer partition: one binding post (sex bolt) fixes the slides on both faces; match the post's barrel.",
+        "options": null,
+        "bounds": [
+          3.0,
+          12.0,
+          0.1
+        ],
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": true
+      },
+      {
         "key": "handle_style",
         "value": "square",
         "expression": null,
@@ -51090,8 +54166,8 @@
       "cabinet_stack_interface": false,
       "equipment_stack_interface": false,
       "drawer_organizers": false,
-      "modular_grid": true,
-      "common_joinery_parameter": "joinery_style"
+      "common_joinery_parameter": "joinery_style",
+      "modular_grid": true
     },
     "defaultStarter": "default",
     "starters": [
@@ -51250,6 +54326,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -51406,6 +54484,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -51607,6 +54687,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -51786,6 +54868,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -51987,6 +55071,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -52122,6 +55208,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -52301,6 +55389,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -52520,6 +55610,8 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
@@ -52692,7 +55784,183 @@
           "metal_slide_cabinet_hole_diameter": 5,
           "metal_slide_drawer_hole_diameter": 5,
           "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
           "handle_style": "rounded",
+          "handle_hole_diameter": 4.5,
+          "handle_pilot_diameter": 3.5,
+          "include_handle_jig": false,
+          "jig_dowel_diameter": 8,
+          "handle_edge_offset": 117.5,
+          "handle_top_offset": 72.5,
+          "caster_height": 75,
+          "caster_plate_size": 60,
+          "output_mode": "assembly",
+          "show_hardware": true,
+          "show_worksurface": true,
+          "show_doors": true,
+          "show_drawer_slides": true,
+          "stock_width": 2440,
+          "stock_height": 1220,
+          "layout_gap": 25,
+          "label_parts": true,
+          "validation_report": "summary",
+          "system_contract_report": "summary",
+          "dimension_report": "summary"
+        },
+        "group": "Workbench layouts"
+      },
+      {
+        "id": "workbench_side_by_side_drawers",
+        "name": "Side-by-side drawers",
+        "values": {
+          "frame_thickness": 18.0,
+          "carcass_thickness": 18.0,
+          "door_thickness": 18.0,
+          "shelf_thickness": 12.0,
+          "worksurface_thickness": 18.0,
+          "handle_thickness": 18.0,
+          "drawer_box_thickness": 12.0,
+          "drawer_bottom_thickness": 12.0,
+          "jig_thickness": 12.0,
+          "router_bit_diameter": 6.0,
+          "slot_corner_relief": "dogbone",
+          "include_screw_marks": true,
+          "screw_mark_diameter": 4.5,
+          "screw_mark_depth": 1.5,
+          "frame_screw_offset": 78,
+          "joint_fit_clearance": 0.0,
+          "housing_depth": 14.0,
+          "finger_length": 13.0,
+          "registration_clearance": 0.5,
+          "registration_pocket_depth": 14.0,
+          "frame_size": "medium",
+          "grid_columns": 3,
+          "grid_rows": 2,
+          "cell_size": 400,
+          "modules": [
+            [
+              0,
+              0,
+              1,
+              1,
+              730,
+              "drawers",
+              0,
+              "front",
+              "left",
+              4
+            ],
+            [
+              1,
+              0,
+              2,
+              1,
+              730,
+              "drawers",
+              0,
+              "front",
+              "left",
+              3,
+              2
+            ],
+            [
+              0,
+              1,
+              1,
+              1,
+              730,
+              "door",
+              1,
+              "back",
+              "right"
+            ],
+            [
+              1,
+              1,
+              2,
+              1,
+              730,
+              "drawers",
+              0,
+              "back",
+              "left",
+              2
+            ]
+          ],
+          "include_stack_keys": true,
+          "face_opening_border": 40,
+          "face_opening_radius": 60,
+          "top_rail_width": 75,
+          "include_hand_slots": true,
+          "hand_slot_length": 100,
+          "hand_slot_width": 25,
+          "frame_height": 85,
+          "frame_rail_inset": 60,
+          "frame_cross_members": "ends",
+          "frame_foot_inset": 18.67,
+          "registration_tab_length": 50,
+          "registration_tab_height": 13,
+          "include_worksurface": true,
+          "worksurface_overhang": 50,
+          "worksurface_corner_radius": 15,
+          "worksurface_dog_holes": "all",
+          "worksurface_dog_hole_panels": [
+            1
+          ],
+          "dog_hole_diameter": 16,
+          "dog_hole_pitch": 100,
+          "puzzle_depth": 30,
+          "puzzle_pitch": 180,
+          "puzzle_angle": 15,
+          "puzzle_clearance": 0.0,
+          "door_gap": 5,
+          "shelf_front_setback": 20,
+          "shelf_rear_clearance": 5,
+          "shelf_side_clearance": 0.0,
+          "shelf_pin_diameter": 5,
+          "shelf_pin_depth": 10,
+          "shelf_pin_first_height": 175,
+          "shelf_pin_pitch": 50,
+          "shelf_pin_top_clearance": 200,
+          "shelf_pin_front_inset": 90,
+          "shelf_pin_rear_inset": 50,
+          "combo_drawer_height": 150,
+          "drawer_rear_clearance": 5,
+          "drawer_finger_pitch": 35,
+          "drawer_bottom_pocket_depth": 6,
+          "drawer_bottom_tongue": 5,
+          "drawer_vertical_clearance": 20,
+          "drawer_bottom_inset": 8,
+          "hinge_cup_diameter": 35,
+          "hinge_cup_depth": 12,
+          "hinge_cup_center_from_door_edge": 21,
+          "hinge_end_offset": 87.5,
+          "hinge_plate_setback": 37,
+          "hinge_plate_screw_spacing": 32,
+          "metal_slide_clearance_per_side": 12.7,
+          "metal_slide_length": 0,
+          "metal_slide_front_setback": 3,
+          "metal_slide_envelope_height": 45,
+          "include_metal_slide_holes": true,
+          "metal_slide_cabinet_holes_x": [
+            37,
+            133,
+            229,
+            325
+          ],
+          "metal_slide_drawer_holes_x": [
+            37,
+            133,
+            229,
+            325
+          ],
+          "metal_slide_cabinet_hole_diameter": 5,
+          "metal_slide_drawer_hole_diameter": 5,
+          "slide_drill_depth": 8,
+          "metal_slide_hole_rear_margin": 10,
+          "partition_slide_hole_diameter": 6,
+          "handle_style": "square",
           "handle_hole_diameter": 4.5,
           "handle_pilot_diameter": 3.5,
           "include_handle_jig": false,

@@ -10,7 +10,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.06
+    "seconds": 4.97
   },
   {
     "module": "utility",
@@ -23,7 +23,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.37
+    "seconds": 6.24
   },
   {
     "module": "utility",
@@ -36,7 +36,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.36
+    "seconds": 5.03
   },
   {
     "module": "utility",
@@ -49,7 +49,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.05
+    "seconds": 4.31
   },
   {
     "module": "utility",
@@ -62,7 +62,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.61
+    "seconds": 3.54
   },
   {
     "module": "utility",
@@ -75,7 +75,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 5.52
+    "seconds": 28.28
   },
   {
     "module": "utility",
@@ -88,7 +88,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 6.43
+    "seconds": 36.63
   },
   {
     "module": "utility",
@@ -101,7 +101,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 4.5
+    "seconds": 14.85
   },
   {
     "module": "utility",
@@ -114,7 +114,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 4.32
+    "seconds": 11.64
   },
   {
     "module": "utility",
@@ -127,7 +127,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.96
+    "seconds": 5.18
   },
   {
     "module": "utility",
@@ -142,7 +142,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.83
+    "seconds": 4.3
   },
   {
     "module": "utility",
@@ -157,7 +157,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.33
+    "seconds": 4.44
   },
   {
     "module": "utility",
@@ -172,7 +172,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.19
+    "seconds": 3.84
   },
   {
     "module": "utility",
@@ -187,7 +187,7 @@
       "info": 8
     },
     "errors": [],
-    "seconds": 2.15
+    "seconds": 4.7
   },
   {
     "module": "shop_cart",
@@ -200,7 +200,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 3.34
+    "seconds": 8.61
   },
   {
     "module": "shop_cart",
@@ -213,7 +213,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 5.62
+    "seconds": 20.24
   },
   {
     "module": "shop_cart",
@@ -226,7 +226,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 6.85
+    "seconds": 28.54
   },
   {
     "module": "shop_cart",
@@ -239,7 +239,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.6
+    "seconds": 5.96
   },
   {
     "module": "shop_cart",
@@ -252,7 +252,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.58
+    "seconds": 2.95
   },
   {
     "module": "shop_cart",
@@ -267,7 +267,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.65
+    "seconds": 6.33
   },
   {
     "module": "shop_cart",
@@ -282,7 +282,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 3.0
+    "seconds": 5.65
   },
   {
     "module": "shop_cart",
@@ -297,7 +297,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.46
+    "seconds": 5.64
   },
   {
     "module": "shop_cart",
@@ -312,7 +312,7 @@
       "info": 8
     },
     "errors": [],
-    "seconds": 2.75
+    "seconds": 6.15
   },
   {
     "module": "benchtop",
@@ -325,7 +325,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.58
+    "seconds": 2.55
   },
   {
     "module": "benchtop",
@@ -338,7 +338,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.53
+    "seconds": 3.32
   },
   {
     "module": "benchtop",
@@ -351,7 +351,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.6
+    "seconds": 3.64
   },
   {
     "module": "benchtop",
@@ -364,7 +364,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.72
+    "seconds": 4.2
   },
   {
     "module": "benchtop",
@@ -377,7 +377,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.99
+    "seconds": 9.9
   },
   {
     "module": "benchtop",
@@ -390,7 +390,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 2.0
+    "seconds": 8.84
   },
   {
     "module": "benchtop",
@@ -403,7 +403,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 2.62
+    "seconds": 15.79
   },
   {
     "module": "benchtop",
@@ -418,7 +418,7 @@
       "info": 6
     },
     "errors": [],
-    "seconds": 1.63
+    "seconds": 7.3
   },
   {
     "module": "benchtop",
@@ -433,7 +433,7 @@
       "info": 6
     },
     "errors": [],
-    "seconds": 1.68
+    "seconds": 7.12
   },
   {
     "module": "benchtop",
@@ -448,7 +448,7 @@
       "info": 7
     },
     "errors": [],
-    "seconds": 1.58
+    "seconds": 5.75
   },
   {
     "module": "benchtop",
@@ -463,7 +463,7 @@
       "info": 10
     },
     "errors": [],
-    "seconds": 1.89
+    "seconds": 7.24
   },
   {
     "module": "stackable",
@@ -476,7 +476,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.04
+    "seconds": 5.26
   },
   {
     "module": "stackable",
@@ -489,7 +489,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.28
+    "seconds": 6.0
   },
   {
     "module": "stackable",
@@ -502,7 +502,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.86
+    "seconds": 7.71
   },
   {
     "module": "stackable",
@@ -515,7 +515,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.92
+    "seconds": 5.41
   },
   {
     "module": "stackable",
@@ -528,7 +528,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.26
+    "seconds": 5.08
   },
   {
     "module": "stackable",
@@ -543,7 +543,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.16
+    "seconds": 6.85
   },
   {
     "module": "stackable",
@@ -558,7 +558,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.14
+    "seconds": 6.56
   },
   {
     "module": "stackable",
@@ -573,7 +573,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.06
+    "seconds": 4.89
   },
   {
     "module": "stackable",
@@ -585,10 +585,10 @@
     "summary": {
       "errors": 0,
       "warnings": 0,
-      "info": 8
+      "info": 9
     },
     "errors": [],
-    "seconds": 2.23
+    "seconds": 7.23
   },
   {
     "module": "kitchen",
@@ -601,7 +601,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.28
+    "seconds": 6.34
   },
   {
     "module": "kitchen",
@@ -614,7 +614,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 1.96
+    "seconds": 7.1
   },
   {
     "module": "kitchen",
@@ -627,7 +627,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.41
+    "seconds": 8.07
   },
   {
     "module": "kitchen",
@@ -640,7 +640,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.52
+    "seconds": 7.25
   },
   {
     "module": "kitchen",
@@ -653,7 +653,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.41
+    "seconds": 6.25
   },
   {
     "module": "kitchen",
@@ -666,7 +666,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.26
+    "seconds": 6.37
   },
   {
     "module": "kitchen",
@@ -679,7 +679,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 6.6
+    "seconds": 22.36
   },
   {
     "module": "kitchen",
@@ -694,7 +694,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.29
+    "seconds": 6.4
   },
   {
     "module": "kitchen",
@@ -709,7 +709,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 2.29
+    "seconds": 6.85
   },
   {
     "module": "kitchen",
@@ -724,7 +724,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 2.14
+    "seconds": 8.62
   },
   {
     "module": "kitchen",
@@ -739,7 +739,7 @@
       "info": 8
     },
     "errors": [],
-    "seconds": 2.32
+    "seconds": 10.54
   },
   {
     "module": "drawer",
@@ -752,7 +752,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.54
+    "seconds": 6.65
   },
   {
     "module": "drawer",
@@ -765,7 +765,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.64
+    "seconds": 7.02
   },
   {
     "module": "drawer",
@@ -778,7 +778,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.59
+    "seconds": 6.38
   },
   {
     "module": "drawer",
@@ -791,7 +791,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.74
+    "seconds": 4.6
   },
   {
     "module": "drawer",
@@ -804,7 +804,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.81
+    "seconds": 6.31
   },
   {
     "module": "drawer",
@@ -817,7 +817,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.79
+    "seconds": 5.73
   },
   {
     "module": "drawer",
@@ -832,7 +832,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.71
+    "seconds": 7.05
   },
   {
     "module": "drawer",
@@ -847,7 +847,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.63
+    "seconds": 5.62
   },
   {
     "module": "drawer",
@@ -862,7 +862,7 @@
       "info": 5
     },
     "errors": [],
-    "seconds": 1.61
+    "seconds": 5.9
   },
   {
     "module": "drawer",
@@ -877,7 +877,7 @@
       "info": 4
     },
     "errors": [],
-    "seconds": 1.75
+    "seconds": 6.61
   },
   {
     "module": "equipment_stand",
@@ -890,7 +890,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.6
+    "seconds": 1.65
   },
   {
     "module": "equipment_stand",
@@ -903,7 +903,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.69
+    "seconds": 1.85
   },
   {
     "module": "equipment_stand",
@@ -916,7 +916,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.79
+    "seconds": 2.22
   },
   {
     "module": "equipment_stand",
@@ -929,7 +929,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.84
+    "seconds": 1.48
   },
   {
     "module": "equipment_stand",
@@ -942,7 +942,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.78
+    "seconds": 1.14
   },
   {
     "module": "equipment_stand",
@@ -955,7 +955,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.76
+    "seconds": 1.31
   },
   {
     "module": "equipment_stand",
@@ -968,7 +968,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.73
+    "seconds": 2.23
   },
   {
     "module": "equipment_stand",
@@ -981,7 +981,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.66
+    "seconds": 1.69
   },
   {
     "module": "equipment_stand",
@@ -994,7 +994,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.8
+    "seconds": 2.55
   },
   {
     "module": "equipment_stand",
@@ -1007,7 +1007,7 @@
       "info": 2
     },
     "errors": [],
-    "seconds": 0.7
+    "seconds": 2.37
   },
   {
     "module": "equipment_stand",
@@ -1020,7 +1020,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.78
+    "seconds": 2.28
   },
   {
     "module": "equipment_stand",
@@ -1033,7 +1033,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.78
+    "seconds": 1.5
   },
   {
     "module": "equipment_stand",
@@ -1046,7 +1046,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.79
+    "seconds": 2.79
   },
   {
     "module": "equipment_stand",
@@ -1059,7 +1059,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.68
+    "seconds": 1.86
   },
   {
     "module": "equipment_stand",
@@ -1074,7 +1074,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.61
+    "seconds": 2.17
   },
   {
     "module": "equipment_stand",
@@ -1089,7 +1089,7 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.64
+    "seconds": 1.53
   },
   {
     "module": "equipment_stand",
@@ -1104,7 +1104,7 @@
       "info": 2
     },
     "errors": [],
-    "seconds": 0.61
+    "seconds": 2.11
   },
   {
     "module": "equipment_stand",
@@ -1119,6 +1119,123 @@
       "info": 1
     },
     "errors": [],
-    "seconds": 0.54
+    "seconds": 2.31
+  },
+  {
+    "module": "workbench",
+    "preset": "Small 2 \u00d7 2 workbench",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 5.14
+  },
+  {
+    "module": "workbench",
+    "preset": "Large 4 \u00d7 2 workbench",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 12.29
+  },
+  {
+    "module": "workbench",
+    "preset": "Doors in front, open shelving behind",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 7.95
+  },
+  {
+    "module": "workbench",
+    "preset": "Stacked half-height modules",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 10.7
+  },
+  {
+    "module": "workbench",
+    "preset": "One simple cabinet on a 1 \u00d7 1 frame",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 2.54
+  },
+  {
+    "module": "workbench",
+    "preset": "Medium 3 \u00d7 2 in \u00be\u2033 stock",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 9.52
+  },
+  {
+    "module": "workbench",
+    "preset": "Drawers, cubbies and a drawer-and-door cabinet",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 18.51
+  },
+  {
+    "module": "workbench",
+    "preset": "Small 2 \u00d7 2 drawer bank",
+    "parameters": {},
+    "status": "WARN",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 11.33
+  },
+  {
+    "module": "workbench",
+    "preset": "Side-by-side drawers",
+    "parameters": {},
+    "status": "PASS",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "info": 3
+    },
+    "errors": [],
+    "seconds": 15.36
   }
 ]

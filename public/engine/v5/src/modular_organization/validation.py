@@ -215,7 +215,9 @@ def closed_loops_from_segments(segments: list[tuple[tuple[float, float], tuple[f
 
 def _bounds_close(a: tuple[float, float, float, float],
                   b: tuple[float, float, float, float], tol: float = 0.05) -> bool:
-    return all(abs(x - y) <= tol for x, y in zip(a, b))
+    # OpenSCAD echoes numbers to six significant digits, so on a layout more than 10 m long the
+    # EXPORT_FRAME record can differ from the drawn frame by 0.1 mm; allow for that.
+    return all(abs(x - y) <= max(tol, 2e-5 * abs(y)) for x, y in zip(a, b))
 
 
 def contour_polygons(path: Path, frame: dict[str, float] | None) -> tuple[list[Polygon], list[dict]]:
@@ -275,11 +277,13 @@ def run_audit(scad: Path, openscad: str = "openscad", param_json: Path | None = 
               preset: str | None = None, defines: list[str] | None = None) -> dict:
     defines = defines or []
     audit_modes = ALL_MODES if "equipment_stand" in scad.name else [m for m in ALL_MODES if m != "pocket_slide_holes"]
+    from .schema import parse_frontend
+    offered = next(p.get("enum", []) for p in parse_frontend(scad) if p["id"] == "output_mode")
     if "workbench" in scad.name:
         # The workbench renders nothing (and OpenSCAD fails) for modes it does not offer.
-        from .schema import parse_frontend
-        offered = next(p.get("enum", []) for p in parse_frontend(scad) if p["id"] == "output_mode")
         audit_modes = [m for m in ALL_MODES if m in offered]
+    # Screw marks are a workbench operation; the other front ends stop on it as an unknown mode.
+    audit_modes = [m for m in audit_modes if m != "pocket_screw_marks" or m in offered]
     issues: list[dict] = []
     with tempfile.TemporaryDirectory(prefix="modular_organization_v5_audit_") as td:
         td = Path(td)

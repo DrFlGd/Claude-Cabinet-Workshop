@@ -36,6 +36,12 @@ jobs:
         run: node scripts/sync-engine-sources.mjs --check
       - name: Parity table is current
         run: node scripts/parity.mjs --check
+      # The engine package's schema, its parameter-contract hashes and lib/schema.json are all
+      # generated from the SCAD front ends; a setting changed in one place fails here.
+      - name: Generated engine schema and parameter contracts match the SCAD front ends
+        run: |
+          python3 scripts/engine-schema.py --check
+          cd public/engine/v5 && PYTHONPATH=src python3 -m unittest tests.test_parameter_layout
       - name: Unit and settings tests
         run: node tests/units.cjs && node tests/nesting.cjs && node tests/settings-visibility.cjs && node tests/hardware.cjs && node tests/v5-integration.cjs
       - name: Native OpenSCAD stackable and section tests
