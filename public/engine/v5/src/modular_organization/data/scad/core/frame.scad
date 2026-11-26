@@ -134,6 +134,25 @@ module joined_horizontal_panel_3d(y0,depth,z0,tab_location="default") {
         sheet_box([inner_width,depth,material_thickness],
                   [material_thickness,y0,z0]);
     }
+    else if (carcass_joint_geometry == "dado"
+             && tab_location == "bottom" && nested_bottom_joint_restricted()) {
+        // Nested bottom: the dado tongues run only over the full-height
+        // side tongue (bottom_joint_range()); past it the ends stop at the
+        // sides' inside faces, clear of the lower module's ears.
+        dd = effective_dado_depth();
+        r = bottom_joint_range();
+        difference() {
+            union() {
+                sheet_box([inner_width,depth,material_thickness],
+                          [material_thickness,y0,z0]);
+                for (x=[material_thickness-dd,
+                        resolved_cabinet_width-material_thickness])
+                    sheet_box([dd,r[1]-r[0],material_thickness],
+                              [x,y0+r[0],z0]);
+            }
+            nested_dado_root_reliefs_3d(y0,depth,z0);
+        }
+    }
     else if (carcass_joint_geometry == "dado") {
         dd = effective_dado_depth();
         sheet_box([inner_width+2*dd,depth,material_thickness],
@@ -163,11 +182,41 @@ module joined_horizontal_panel_3d(y0,depth,z0,tab_location="default") {
     }
 }
 
+// Shoulder reliefs where a nested bottom's dado tongues meet its body, so
+// the cutter radius left in that inside corner clears the side's edge.
+module nested_dado_root_reliefs_3d(y0,depth,z0) {
+    if (slot_relief_is_active()) {
+        r = bottom_joint_range();
+        for (x=[material_thickness,resolved_cabinet_width-material_thickness])
+            for (a=side_tab_root_relief_offsets(r[0],r[1]-r[0],0,depth))
+                translate([x,y0+a,z0-0.01])
+                    cylinder(h=material_thickness+0.02,
+                             r=effective_slot_tool_diameter()/2);
+    }
+}
+
 // 2D profile of the same horizontal panel.
 // Local X is cabinet width; local Y is the panel's depth.
 module joined_horizontal_panel_cut(depth,tab_location="default") {
     if (carcass_joint_geometry == "butt") {
         cut_part(inner_width,depth);
+    }
+    else if (carcass_joint_geometry == "dado"
+             && tab_location == "bottom" && nested_bottom_joint_restricted()) {
+        dd = effective_dado_depth();
+        r = bottom_joint_range();
+        difference() {
+            union() {
+                translate([dd,0]) cut_part(inner_width,depth);
+                for (x=[0,dd+inner_width])
+                    translate([x,r[0]]) cut_part(dd,r[1]-r[0]);
+            }
+            if (slot_relief_is_active())
+                for (x=[dd,dd+inner_width])
+                    for (a=side_tab_root_relief_offsets(r[0],r[1]-r[0],0,depth))
+                        translate([x,a])
+                            circle(r=effective_slot_tool_diameter()/2);
+        }
     }
     else if (carcass_joint_geometry == "dado") {
         cut_part(inner_width+2*effective_dado_depth(),depth);
@@ -473,9 +522,17 @@ module door_hinge_partition_joinery_segment_3d(
     }
 }
 
+// The bottom joint covers the partition's overlap with the bottom panel (a
+// nested bottom stops short of the front and rear).
+function door_hinge_partition_bottom_joint_y0() =
+    door_hinge_depth_overlap_start(bottom_panel_y0());
+function door_hinge_partition_bottom_joint_span() =
+    door_hinge_depth_overlap_length(bottom_panel_y0(),bottom_panel_depth());
+
 module door_hinge_partition_bottom_joinery_3d(x0,z0) {
     door_hinge_partition_joinery_segment_3d(
-        x0,0,door_hinge_partition_actual_depth,z0,"bottom");
+        x0,door_hinge_partition_bottom_joint_y0(),
+        door_hinge_partition_bottom_joint_span(),z0,"bottom");
 }
 
 module door_hinge_partition_top_joinery_3d(x0,z0) {
@@ -677,16 +734,11 @@ module door_hinge_partition_joinery_segment_cut(
 module door_hinge_partition_bottom_joinery_cut() {
     ext = door_hinge_partition_cut_body_offset();
 
-    if (carcass_joint_geometry == "dado")
+    if (carcass_joint_geometry == "dado"
+        || carcass_joint_geometry == "tab_slot")
         door_hinge_partition_joinery_segment_cut(
-            0,
-            door_hinge_partition_actual_depth,
-            0,
-            ext);
-    else if (carcass_joint_geometry == "tab_slot")
-        door_hinge_partition_joinery_segment_cut(
-            0,
-            door_hinge_partition_actual_depth,
+            door_hinge_partition_bottom_joint_y0(),
+            door_hinge_partition_bottom_joint_span(),
             0,
             ext);
 }
@@ -974,7 +1026,12 @@ function mixed_bay_partition_end_segments(p,end="bottom") =
             mixed_bay_depth_overlap_start(section_divider_y0(e)),
             mixed_bay_depth_overlap_length(section_divider_y0(e),section_divider_depth(e))
           ]]
-    : end == "bottom" || top_style == "full"
+    : end == "bottom"
+        ? [[
+            mixed_bay_depth_overlap_start(bottom_panel_y0()),
+            mixed_bay_depth_overlap_length(bottom_panel_y0(),bottom_panel_depth())
+          ]]
+    : top_style == "full"
         ? [[0,mixed_bay_partition_depth]]
         : let(
             front_span=min(mixed_bay_partition_depth,top_stretcher_depth),
@@ -1666,8 +1723,8 @@ module bottom_mixed_bay_partition_receiver_dado_pockets_2d() {
 
 module bottom_back_receiver_dado_pockets_2d() {
     back_horizontal_dado_pocket_2d(
-        0,
-        resolved_cabinet_depth,
+        bottom_panel_y0(),
+        bottom_panel_depth(),
         bottom_panel_global_x0
     );
 }
@@ -1757,6 +1814,23 @@ module drawer_bank_partition_slide_holes_3d(x0,z_start,p=0) {
 }
 
 
+// Under top stretchers the dado tongue along a partition's top edge would
+// stand between the stretchers, where a nested module above puts its bottom;
+// for a nested module it is kept to the stretchers.
+function drawer_bank_partition_top_tongue_split() =
+    stack_nested() && top_style != "full";
+
+function drawer_bank_partition_top_dado_segments() =
+    let(
+        front_span=min(drawer_bank_partition_depth,top_stretcher_depth),
+        rear_start=max(0,resolved_cabinet_depth-top_stretcher_depth),
+        rear_span=max(0,drawer_bank_partition_depth-rear_start)
+    )
+    [
+        if (front_span > 0) [0,front_span],
+        if (rear_span > 0) [rear_start,rear_span]
+    ];
+
 module drawer_bank_partition_3d(p=0) {
     mode = drawer_bank_partition_joinery_mode();
     dd = drawer_bank_partition_dado_depth();
@@ -1770,10 +1844,23 @@ module drawer_bank_partition_3d(p=0) {
             if (mode == "dado") {
                 // Body plus top tongue, and a bottom tongue only where the
                 // supporting panel's dado runs.
-                sheet_box(
-                    [material_thickness,drawer_bank_partition_depth,bh+dd],
-                    [x0,0,z0]
-                );
+                if (drawer_bank_partition_top_tongue_split())
+                    union() {
+                        sheet_box(
+                            [material_thickness,drawer_bank_partition_depth,bh],
+                            [x0,0,z0]
+                        );
+                        for (seg=drawer_bank_partition_top_dado_segments())
+                            sheet_box(
+                                [material_thickness,seg[1],dd],
+                                [x0,seg[0],z1]
+                            );
+                    }
+                else
+                    sheet_box(
+                        [material_thickness,drawer_bank_partition_depth,bh+dd],
+                        [x0,0,z0]
+                    );
 
                 if (drawer_bank_partition_bottom_joint_span() > 0)
                     sheet_box(
@@ -1815,8 +1902,13 @@ module drawer_bank_partition_cut(p=0) {
                 translate([0,dd])
                     cut_part(
                         drawer_bank_partition_depth,
-                        bh+dd
+                        drawer_bank_partition_top_tongue_split() ? bh : bh+dd
                     );
+
+                if (drawer_bank_partition_top_tongue_split())
+                    for (seg=drawer_bank_partition_top_dado_segments())
+                        translate([seg[0],dd+bh-0.01])
+                            cut_part(seg[1],dd+0.01);
 
                 translate([drawer_bank_partition_bottom_joint_y0(),0])
                     cut_part(
@@ -2340,7 +2432,8 @@ module all_side_butt_registration_3d(x0) {
         // Bottom.
         if (!full_width_bottom_active)
             side_horizontal_butt_registration_3d(
-                x0,bottom_panel_y0(),bottom_panel_depth(),bottom_above_toe);
+                x0,bottom_side_joint_span()[0],bottom_side_joint_span()[1],
+                bottom_above_toe);
 
         // Top/full or top stretchers.
         top_z = cabinet_height-material_thickness;
@@ -2412,7 +2505,8 @@ module all_side_butt_registration_2d() {
     if (carcass_joint_geometry == "butt" && carcass_registration_enabled) {
         if (!full_width_bottom_active)
             side_horizontal_butt_registration_2d(
-                bottom_panel_y0(),bottom_panel_depth(),bottom_above_toe);
+                bottom_side_joint_span()[0],bottom_side_joint_span()[1],
+                bottom_above_toe);
 
         top_z = cabinet_height-material_thickness;
 
@@ -2482,8 +2576,8 @@ module all_side_joinery_cuts_3d(side) {
         // Bottom.
         if (!full_width_bottom_active)
             side_horizontal_joint_cut_3d(
-                side,bottom_panel_y0(),bottom_panel_depth(),bottom_above_toe,
-                "bottom");
+                side,bottom_side_joint_span()[0],bottom_side_joint_span()[1],
+                bottom_above_toe,"bottom");
 
         // Top/full or top stretchers.
         top_z = cabinet_height-material_thickness;
@@ -2869,8 +2963,8 @@ module all_side_dado_pockets_2d() {
     if (carcass_joint_geometry == "dado") {
         // Bottom.
         if (!full_width_bottom_active)
-            translate([bottom_panel_y0()-c/2,bottom_above_toe-c/2])
-                square([bottom_panel_depth()+c,material_thickness+c]);
+            translate([bottom_side_joint_span()[0]-c/2,bottom_above_toe-c/2])
+                square([bottom_side_joint_span()[1]+c,material_thickness+c]);
 
         // Top.
         top_z = cabinet_height-material_thickness;
@@ -3037,18 +3131,19 @@ module structural_back_panel_3d() {
                 // Bottom/top tongues into the horizontal receivers. The four
                 // corners are intentionally absent so the side and horizontal
                 // dados can meet without overlapping tongue material.
-                sheet_box(
-                    [
-                        inner_width,
-                        material_thickness,
-                        dd
-                    ],
-                    [
-                        material_thickness,
-                        structural_back_y,
-                        captured_back_bottom_z-dd
-                    ]
-                );
+                if (structural_back_bottom_dado_depth() > 0)
+                    sheet_box(
+                        [
+                            inner_width,
+                            material_thickness,
+                            dd
+                        ],
+                        [
+                            material_thickness,
+                            structural_back_y,
+                            captured_back_bottom_z-dd
+                        ]
+                    );
 
                 sheet_box(
                     [
@@ -3142,21 +3237,22 @@ module structural_back_panel_cut() {
         }
         else if (carcass_joint_geometry == "dado") {
             dd = structural_back_dado_depth;
+            bd = structural_back_bottom_dado_depth();
 
             union() {
-                translate([dd,dd])
+                translate([dd,bd])
                     cut_part(
                         inner_width,
                         captured_back_height
                     );
 
-                translate([0,dd])
+                translate([0,bd])
                     cut_part(
                         dd,
                         captured_back_height
                     );
 
-                translate([dd+inner_width,dd])
+                translate([dd+inner_width,bd])
                     cut_part(
                         dd,
                         captured_back_height
@@ -3165,10 +3261,10 @@ module structural_back_panel_cut() {
                 translate([dd,0])
                     cut_part(
                         inner_width,
-                        dd
+                        bd
                     );
 
-                translate([dd,dd+captured_back_height])
+                translate([dd,bd+captured_back_height])
                     cut_part(
                         inner_width,
                         dd
@@ -3806,6 +3902,38 @@ module mixed_bay_side_hinge_plate_holes_3d(x0,side) {
                 );
 }
 
+// Hinge-plate marks (hinge_plate_marks_both_sides): small engraved dots at the
+// mounting-plate screw positions on the inside of BOTH cabinet sides, so a
+// door can be hung from either side. A side that already has plate holes at
+// those positions gets no marks there. Side-local Y/Z.
+function hinge_plate_marks_active() =
+    !is_undef(hinge_plate_marks_both_sides)
+    && hinge_plate_marks_both_sides
+    && effective_hinge_style != "none"
+    && has_doors;
+
+function hinge_plate_mark_zs(side) =
+    mixed_bay_mode
+        ? mixed_bay_hinge_zs(mixed_bay_side_bays(side))
+        : [for (j=[0:max(0,hinge_count-1)]) if (hinge_count > 0) hinge_z(j)];
+
+function side_has_hinge_plate_holes(side) =
+    hinge_plate_holes_enabled
+    && (mixed_bay_mode
+        ? mixed_bay_side_has_hinge_plates(side)
+        : cabinet_side_has_door_hinges(side));
+
+module hinge_plate_marks_2d(side) {
+    if (hinge_plate_marks_active() && !side_has_hinge_plate_holes(side))
+        for (hz=hinge_plate_mark_zs(side))
+            for (dz=[
+                -effective_hinge_plate_hole_spacing/2,
+                effective_hinge_plate_hole_spacing/2
+            ])
+                translate([effective_hinge_plate_center_from_front,hz+dz])
+                    circle(d=min(2,effective_hinge_plate_hole_diameter));
+}
+
 module mixed_bay_side_hinge_plate_holes_cut_2d(side) {
     if (mixed_bay_mode && mixed_bay_side_has_hinge_plates(side))
         for (hz=mixed_bay_side_hinge_zs(side))
@@ -3961,14 +4089,11 @@ function stack_arc_points(
 ];
 
 
-// Canonical FRONT mating transition, returned HIGH -> LOW.
-//
-// It is a tangent S-profile:
-//   high horizontal
-//       quarter-circle R
-//       optional vertical tangent
-//       quarter-circle R
-//   low horizontal
+// Canonical FRONT mating transition, returned HIGH -> LOW (see
+// stack_locator.scad). stack_interface_flank chooses the tangent S-profile
+//   high horizontal, quarter-circle R, optional vertical tangent,
+//   quarter-circle R, low horizontal
+// or the self-centring 45-degree flank between two 45-degree fillets R.
 //
 // There is therefore NO sharp internal corner on the milled bottom relief.
 // The same nominal boundary is reused for the top recess.
@@ -3979,35 +4104,10 @@ function stack_front_mating_profile_points(
     r,
     segments=12
 ) =
-    concat(
-        // Upper fillet: tangent to the high pad and vertical center section.
-        stack_arc_points(
-            margin,
-            z0+d-r,
-            r,
-            90,
-            0,
-            segments
-        ),
-
-        // Vertical tangent between the two radii. This collapses to zero
-        // length when r = d/2.
-        [
-            [
-                margin+r,
-                z0+r
-            ]
-        ],
-
-        // Lower fillet: tangent to the vertical section and low tongue.
-        stack_arc_points(
-            margin+2*r,
-            z0+r,
-            r,
-            180,
-            270,
-            segments
-        )
+    sl_flank_points(
+        margin,z0,d,r,
+        stack_interface_flank_value(),
+        segments
     );
 
 
@@ -4174,6 +4274,7 @@ module stack_module_side_profile_cutouts_3d(x0) {
 
 
 module stack_base_side_profile_2d() {
+    round_convex_corners_2d(side_outer_corner_radius_value())
     difference() {
         cut_part(
             resolved_cabinet_depth,
@@ -4281,6 +4382,12 @@ module cabinet_side_panel_3d(x0=0,side="left") {
 
         // Complementary top/bottom stacking interface.
         stack_module_side_profile_cutouts_3d(x0);
+
+        // Rounded outer corners.
+        if (side_outer_corner_radius_value() > 0)
+            translate([0,0,side_panel_bottom_z])
+                yz_extrude_3d(x0-1,material_thickness+2)
+                    side_corner_rounding_waste_2d();
 
         // Optional toe-kick notch in the lower FRONT corner.
         if (side_has_toe_cutout(side))
@@ -4445,16 +4552,46 @@ module cabinet_side_panel_cut_features(side="left") {
 
 module cabinet_side_panel_cut(side="left") {
     difference() {
-        cut_part(
-            resolved_cabinet_depth,
-            side_panel_cut_height
-        );
-
-        stack_module_side_profile_cutouts_2d();
+        cabinet_side_outline_2d();
 
         translate([0,-side_panel_bottom_z])
             cabinet_side_panel_cut_features(side);
     }
+}
+
+// Outer outline of a cabinet side (side-local Y/Z, before joinery features),
+// with its convex corners rounded by side_outer_corner_radius_value().
+module cabinet_side_outline_2d() {
+    round_convex_corners_2d(side_outer_corner_radius_value())
+        difference() {
+            cut_part(
+                resolved_cabinet_depth,
+                side_panel_cut_height
+            );
+
+            stack_module_side_profile_cutouts_2d();
+        }
+}
+
+// Rounds the convex corners of the children by r; concave corners and edges
+// are unchanged.
+module round_convex_corners_2d(r) {
+    if (r > 0)
+        offset(r=r)
+            offset(delta=-r)
+                children();
+    else
+        children();
+}
+
+// Material removed by the corner rounding, as a 2D region to subtract.
+module side_corner_rounding_waste_2d() {
+    if (side_outer_corner_radius_value() > 0)
+        difference() {
+            square([resolved_cabinet_depth,side_panel_cut_height]);
+            cabinet_side_outline_2d();
+            stack_module_side_profile_cutouts_2d();
+        }
 }
 
 
@@ -4663,6 +4800,13 @@ module stack_base_side_rail_3d(
             )
                 stack_top_notch_cutout_2d(
                     stack_base_height);
+
+            if (side_outer_corner_radius_value() > 0)
+                yz_extrude_3d(x0-1,material_thickness+2)
+                    difference() {
+                        square([resolved_cabinet_depth,stack_base_height]);
+                        stack_base_side_profile_2d();
+                    }
 
             stack_base_side_receiver_cuts_3d(
                 x0,

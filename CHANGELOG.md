@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.24.0**) are separate from the bundled
+Application versions (currently **0.25.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,129 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.25.0 — 2026-11-26
+
+The remaining details of the user's reference stackable plans, and nested
+stacking with every joinery (see `docs/STACKABLE_REFERENCE.md`, phase 4).
+
+- **45° stacking flanks.** A new **Stack interface flank** setting
+  (`stack_interface_flank`: `s_curve` by default, or `chamfer_45`).
+  - `chamfer_45` is a straight 45° flank between two fillets of the stacking
+    corner radius, as in the reference (r = 15 mm in 18 mm sheet). It
+    self-centres a module that is set down slightly off position.
+  - One transition runs d + (2√2 − 2) r along the depth. The tongue range,
+    the side-panel keepouts, the bottom tabs and the link screws all follow
+    it.
+  - A chamfered interface adds `FL=45` to the stack compatibility key.
+  - The S-curve builds exactly as before.
+- **Rounded outer corners.** `side_outer_corner_radius` (0 by default, at
+  most half the sheet) rounds the convex corners of the cabinet sides and the
+  base-frame sides. That includes the stacking profile and the toe notch.
+- **Hinge-plate marks on both sides.** `hinge_plate_marks_both_sides`
+  engraves marks at the mounting-plate screw positions on the inside of the
+  side without plate holes, so the door can be re-hung from either side.
+- **Nested bottom with dado and screw joinery.** The `STACK_NESTED_JOINERY`
+  error is gone, so `stack_bottom_style = nested` now builds with dado and
+  screw joinery as well as tab-and-slot. The side has material at the
+  bottom's height only over the full-height part of its tongue, so the side
+  joint is kept there:
+  - with dado joinery, the bottom's dado tongues and the side grooves stop at
+    that range, and past it the bottom's ends stop at the inside faces, clear
+    of the lower module's ears. Slot relief adds T-bone reliefs at the
+    shoulders.
+  - with screw joinery, the registration holes are spaced along the range.
+  - In both cases the range also clears the stacking-transition keepouts.
+  - A dado structural back on a nested bottom has no bottom tongue. Like the
+    tab-and-slot back, it stands on the lower module's rear stretcher.
+- **Nested bottom with drawer banks.** The `STACK_NESTED_PARTITIONS` error is
+  gone.
+  - Drawer-bank partitions stand on the nested bottom, and their bottom tabs
+    or tongue cover only the bottom's depth.
+  - With dado joinery under top stretchers, a nested module's partitions keep
+    their top tongue to the stretchers. Between the stretchers it would run
+    into the bottom of the module above.
+  - Door-hinge and bay partitions follow the same bottom rule in the shared
+    code. Stackable modules have one bay and never build them.
+- **Settings.** **Stack bottom style** no longer requires tab-and-slot
+  joinery. The Python package's schema, the parameter contract and
+  `lib/schema.json` were regenerated from the SCAD front end with
+  `scripts/engine-schema.py --write`. The link-screw, interface-depth and toe-notch controls now follow
+  the nested bottom with any joinery, as the engine does.
+- **Shared locating geometry.** The stacking profile is now built from
+  `public/engine/v5/src/modular_organization/data/scad/stack_locator.scad`
+  (`sl_*`). It covers:
+  - the flank shapes and their run;
+  - the recess (female) and tongue reliefs (male);
+  - the full-height tongue range;
+  - the nested-bottom span;
+  - the link-screw positions.
+
+  Like `tab_pocket.scad`, it takes arguments only, so other cabinet types and
+  products can use it.
+- **Not changed.** The reference back is 12 mm stock; CCW's structural back
+  stays carcass thickness. Its construction already matches: top tabs through
+  notches in the rear stretcher, and on a nested module it rests on the lower
+  module's rear stretcher. The reasons are in the reference document.
+- **Starter outputs changed (intended).** "Door Module, Nested (Reference
+  Joinery)" now uses the 45° flank with r = 15 mm, 98.8 mm margins (the
+  tongue has its full height from 129.2 to 420.8 mm, as in the reference) and
+  3 mm rounded side corners.
+  - Its cut and pocket layouts changed: the side outlines, and the bottom tabs
+    and their pockets, which follow the new tongue range.
+  - Its parts list and fronts did not change.
+  - No other starter changed.
+- **Tests.** The interference test has six new cases:
+  - the nested starter with dado joinery;
+  - a nested door module with screws;
+  - nested two-bank drawer modules with dado and tab-and-slot joinery;
+  - a three-bank screw module on metal slides;
+  - the 45° flank with rounded corners and hinge marks.
+
+  The random sweep can now choose the bottom style, the flank and the hinge
+  marks. The cut-layout check has a new section covering:
+  - the nested dado bottom's notches against the tongue range;
+  - the side area each rounded corner removes.
+
+Validation performed:
+
+- **Static and engine checks.** These all passed after merging
+  main at 0.24.0:
+  - `tsc --noEmit`;
+  - the engine-source, parity and product-source checks;
+  - `scripts/engine-schema.py --check` and the package's
+    `tests.test_parameter_layout`;
+  - units, nesting, settings visibility (with the new nested-joinery and
+    hinge-mark rules) and hardware;
+  - v5 integration (120 presets);
+  - the native OpenSCAD stackable-controls and sections tests;
+  - section WASM workers, engine fit, layout editor and hardware engine;
+  - products, the collision worker, product interference and
+    `pnpm run build:static`.
+- **Golden outputs.** Only the nested starter differed: its cut-layout and
+  pocket-layout SVGs, from the new side profile and the moved bottom tabs.
+  The diff was reviewed and re-recorded. All 121 starters match after merging main at 0.24.0.
+- **Cut-layout check.** The new section passed. The nested dado bottom is
+  notched to the full-height tongue, the rounded corners take off only corner
+  material, and there is one contour per part.
+- **Hinge marks.** Engrave-layout output for the nested starter with European
+  hinges was checked. It has four marks on the side without hinges, at
+  37 mm from the front and ±16 mm about each hinge, and none on the hinge
+  side.
+- **Interference sweep.** `tests/engine-interference.mjs --all` ran locally in
+  four shards before main was merged, including the new cases: 197
+  configurations with no overlapping parts, and 1 random design skipped as
+  rejected by the engine. After merging main at 0.24.0, the default
+  interference run passed locally, and CI's six-shard `--all` sweep passed
+  on the merged branch.
+  Earlier runs of the targeted cases found problems that are now fixed:
+  - nested dado and drawer-bank cases ran the back's and partitions' bottom
+    tongues into the lower module's rear stretcher;
+  - a full-length partition top tongue ran into the upper module's bottom.
+
+  The engine's keepout check (`INTERFACE_KEEPOUT_CONFLICT`) also flagged a
+  first nested dado groove that reached the stacking transition. That is
+  fixed too.
 
 ## 0.24.0 — 2026-11-26
 

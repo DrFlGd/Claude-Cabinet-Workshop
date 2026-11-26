@@ -608,13 +608,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "1d93bc88b817afd6835395a7",
-    "bytes": 120946,
+    "sha256": "b39953659310425869f6acb8",
+    "bytes": 124833,
     "paths": 1
    },
    "pocket_layout": {
-    "sha256": "ecae6774203beec674d430bd",
-    "bytes": 26319,
+    "sha256": "27c67e13ca4ae01355023416",
+    "bytes": 26375,
     "paths": 1
    }
   },
