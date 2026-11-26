@@ -1,13 +1,17 @@
 'use client';
 // On-demand 3D collision check for the design on screen: every part (or group of parts) is
-// rendered on its own in a worker, pairs whose extents meet are intersected, and any shared
-// volume is listed. Runs only when asked: it takes from seconds to a few minutes.
+// rendered on its own, spread over a pool of workers (lib/collision-run.ts), pairs whose
+// extents meet are intersected, and any shared volume is listed. Runs only when asked. Renders
+// and pair results are kept for the session, so checking an unchanged design again is immediate
+// and after a change only what changed is done again.
 import {useEffect,useRef,useState} from 'react';
 import {Boxes,Check,LoaderCircle,TriangleAlert,X} from 'lucide-react';
 import {assetUrl} from '@/lib/asset-url';
 import type {CollisionJob} from '@/lib/interference';
+import {CollisionCache,CollisionPool,collisionWorkerCount,runCollisionCheck,type CollisionResult as Result} from '@/lib/collision-run';
 
-type Result={parts:number;empty:number;pairs:number;candidates:number;overlaps:{a:string;b:string;volume:number}[];ms:{render:number;intersect:number;total:number}};
+// One cache for every design of the session (bounded in lib/collision-run.ts).
+const cache=new CollisionCache();
 type State={kind:'idle'}|{kind:'running';phase:'render'|'intersect';done:number;total:number;name:string;key:string}|{kind:'done';result:Result;key:string}|{kind:'failed';error:string;key:string};
 type Props={
  // The design's identity: a result for another key is shown as out of date.
@@ -18,30 +22,34 @@ type Props={
  unit:string;
 };
 const seconds=(ms:number)=>ms<10000?(ms/1000).toFixed(1)+' s':Math.round(ms/1000)+' s';
+// Work taken from an earlier check of the same parts.
+function reusedNote(r:Result){
+ if(!r.reused.renders&&!r.reused.pairs)return '';
+ return ` Reused from an earlier check: ${r.reused.renders} of ${r.parts+r.empty} renders, ${r.reused.pairs} of ${r.candidates} pair results.`;
+}
 const label=(id:string)=>id.replace(/([a-z])([A-Z])/g,'$1 $2').replaceAll('_',' ');
 
 export default function CollisionCheck({designKey,filename,sources,jobs,threshold,unit}:Props){
  const [state,setState]=useState<State>({kind:'idle'});
- const worker=useRef<Worker|null>(null);
- useEffect(()=>()=>{worker.current?.terminate();worker.current=null},[]);
- const stop=()=>{worker.current?.terminate();worker.current=null;setState({kind:'idle'})};
- function start(){
+ // The pool lives while the panel is open, so its workers compile the engine once.
+ const pool=useRef<CollisionPool|null>(null),run=useRef(0);
+ const drop=()=>{pool.current?.terminate();pool.current=null};
+ useEffect(()=>drop,[]);
+ const stop=()=>{run.current++;drop();setState({kind:'idle'})};
+ async function start(){
   const list=jobs();
   if(typeof list==='string'){setState({kind:'failed',error:list,key:designKey});return}
-  worker.current?.terminate();
-  const w=new Worker(assetUrl('/openscad/interference-worker.js'),{type:'module'});worker.current=w;
-  const key=designKey;
+  const key=designKey,mine=++run.current;
   setState({kind:'running',phase:'render',done:0,total:list.length,name:list[0]?.name??'',key});
-  w.onmessage=({data})=>{
-   if(worker.current!==w)return;
-   if(data.type==='progress')setState({kind:'running',phase:data.phase,done:data.done,total:data.total,name:data.name,key});
-   else if(data.type==='result'||data.type==='error'){
-    w.terminate();worker.current=null;
-    setState(data.type==='result'?{kind:'done',result:data,key}:{kind:'failed',error:data.error,key});
-   }
-  };
-  w.onerror=()=>{w.terminate();worker.current=null;setState({kind:'failed',error:'Could not start the OpenSCAD engine in this browser.',key})};
-  w.postMessage({filename,sources,jobs:list,threshold});
+  try{
+   pool.current??=new CollisionPool(()=>new Worker(assetUrl('/openscad/interference-worker.js'),{type:'module'}) as never,collisionWorkerCount(navigator.hardwareConcurrency));
+   const result=await runCollisionCheck({pool:pool.current,filename,sources,jobs:list,threshold,cache,onProgress:p=>{if(run.current===mine)setState({kind:'running',...p,key})}});
+   if(run.current===mine)setState({kind:'done',result,key});
+  }catch(e){
+   if(run.current!==mine)return;
+   // Work still queued for a failed check is dropped with its workers.
+   drop();setState({kind:'failed',error:e instanceof Error?e.message:String(e),key});
+  }
  }
  const stale=state.kind!=='idle'&&state.key!==designKey;
  return <section className={'collision-check'+(stale?' is-stale':'')} aria-label='3D collision check'>
@@ -61,6 +69,6 @@ export default function CollisionCheck({designKey,filename,sources,jobs,threshol
    <p><TriangleAlert size={15}/>{state.result.overlaps.length} pair{state.result.overlaps.length===1?'':'s'} of parts share volume:</p>
    <ul>{state.result.overlaps.map(o=><li key={o.a+o.b}><strong>{label(o.a)}</strong> and <strong>{label(o.b)}</strong> · {o.volume<1000?Math.round(o.volume)+' mm³':(o.volume/1000).toFixed(1)+' cm³'}</li>)}</ul>
   </div>:<p className='collision-result is-ok'><Check size={15}/>No parts intersect.</p>)}
-  {state.kind==='done'&&<p className='collision-stats'>{state.result.parts} {unit}s rendered, {state.result.candidates} of {state.result.pairs} pairs close enough to intersect (the rest are apart), in {seconds(state.result.ms.total)}: rendering {seconds(state.result.ms.render)}, intersecting {seconds(state.result.ms.intersect)}.</p>}
+  {state.kind==='done'&&(state.result.reused.renders===state.result.parts+state.result.empty&&state.result.reused.pairs===state.result.candidates?<p className='collision-stats'>Same parts as an earlier check: all {state.result.parts+state.result.empty} renders and {state.result.candidates} pair results reused ({state.result.parts} {unit}s with geometry, {state.result.candidates} of {state.result.pairs} pairs close enough to intersect).</p>:<p className='collision-stats'>{state.result.parts} {unit}s rendered, {state.result.candidates} of {state.result.pairs} pairs close enough to intersect (the rest are apart), in {seconds(state.result.ms.total)} on {state.result.workers} worker{state.result.workers===1?'':'s'}: rendering {seconds(state.result.ms.render)}, intersecting {seconds(state.result.ms.intersect)}.{reusedNote(state.result)}</p>)}
  </section>;
 }

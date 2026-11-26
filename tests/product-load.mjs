@@ -22,3 +22,4 @@ function load(file){
 export const loadProducts=()=>load(path.join(root,'lib/products/index.ts'));
 export const loadNesting=()=>load(path.join(root,'lib/nesting.ts'));
 export const loadInterference=()=>load(path.join(root,'lib/interference.ts'));
+export const loadCollisionRun=()=>load(path.join(root,'lib/collision-run.ts'));

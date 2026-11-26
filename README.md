@@ -227,12 +227,16 @@ manufacturing files. Its checks cover drawer boxes against their openings,
 slides and runners against box heights, machining features on the side panels,
 divider grids and interface keep-outs. **Check for intersecting parts** (under
 **Cut list & fit**, for every cabinet type and every product) renders the
-design's parts or groups of parts one at a time in a background worker, skips
+design's parts or groups of parts one at a time, spread over several background
+workers (one per processor core, keeping one for the page, at most four), skips
 pairs whose bounding boxes are apart and intersects the rest, then lists any two
-parts that would occupy the same space. It runs only when asked: a few seconds
-for the default media cart and about 1 to 20 seconds for each cabinet type's
-default design, longer for large designs. The test suite runs the same check on
-every starter and on seeded random designs.
+parts that would occupy the same space. It runs only when asked: about 2 seconds
+for the default media cart and 1 to 8 seconds for each cabinet type's default
+design on a four-core machine, longer for large designs. Renders and pair results
+are kept for the session, so checking an unchanged design again is immediate;
+after a settings change the parts are rendered again, and pairs of parts that came
+out exactly the same are not intersected again. The test suite runs the same check
+on every starter and on seeded random designs.
 
 The schematic preview is approximate. Browser layouts are not CNC toolpaths and
 do not include the Python final-contour audit. Hardware drilling defaults are

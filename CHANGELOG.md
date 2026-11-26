@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.25.0**) are separate from the bundled
+Application versions (currently **0.26.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,102 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.26.0 — 2026-11-26
+
+Faster 3D collision check, and a pocket overlap gate for every starter.
+
+- **The collision check runs on several workers.** **Check for intersecting
+  parts** spreads renders and intersections over a pool of workers
+  (`lib/collision-run.ts`): one per processor core, keeping one free for the
+  page, at most four. The pool stays open while the panel is shown, so each
+  worker loads the engine files once. The result now says how many workers ran.
+  Chromium on a four-core machine (three workers):
+
+  | Default design | Before (one worker) | After |
+  |---|---|---|
+  | Shop cart | 16.4 to 16.5 s | 6.4 to 7.5 s |
+  | Workbench (59 parts) | 9.4 s | 4.4 to 5.5 s |
+  | Media cart | 3.6 to 4.2 s | 2.2 to 2.7 s |
+
+  These are wall-clock times from the click, starting with no workers running.
+  "Before" was measured on 0.23.0 and 0.24.0 main (the check is unchanged
+  between them); "after" on this branch before and after merging main.
+  **Stop** ends the workers at once; parts already rendered are kept for the
+  next check.
+- **Results are reused between checks.** For the rest of the session the app
+  keeps each render, keyed by the engine files and the job's own source. It also
+  keeps each pair's shared volume, keyed by the two rendered parts' bytes. The
+  cache is limited to 128 MB of rendered parts, and the oldest are dropped first.
+  - Checking an unchanged design again takes under a second; the measured times
+    were 0.3 to 0.6 s, against 3.6 to 16.5 s before.
+  - Every job carries the whole design, so any settings change renders every part
+    again. Pairs whose two parts came out byte for byte the same are not
+    intersected again.
+  - The panel says what was reused.
+- **Pocket overlap gate.** New `tests/pocket-overlap.mjs` checks every pocket
+  output mode of every cabinet starter (121 starters, 1,193 pocket operations on
+  0.24.0).
+  No two operations may machine the same area, except the pairs the engine draws
+  to meet. CI runs it in the six sweep shards; it is also in `test:release`.
+- **The shop cart pocket "collisions" were false, as 0.24.0 found.** The shop
+  cart starter *3-Section Drawer Workbench* reproduces the 53
+  `POCKET_OPERATION_COLLISION` errors of 9,114.72 mm² each (native OpenSCAD).
+  - 9,114.72 mm² is exactly the area of the layout's registration frame ring. The
+    frame's far edge is drawn at 18147.2 but echoed in `EXPORT_FRAME` as 18147.3,
+    so the audit's fixed 0.05 mm tolerance did not recognise it, and the frame was
+    counted in every pocket operation. That is the diagnosis and fix that shipped
+    in 0.24.0.
+  - With 0.24.0's `validation.py` the preset passes the audit.
+  - The pockets themselves never overlapped: the exported pocket files of all
+    starters show no shared area between operations, before and after 0.24.0.
+  - The legacy `modular_organization_validate.py`, which ships in v3 project
+    exports, had the same fixed tolerance. It now uses 0.24.0's rule.
+
+Validation run for this release:
+
+- New `tests/pocket-overlap.mjs` on all 121 starters: clean, 6,109 operation
+  pairs compared. It was also clean on all 120 starters of 0.23.0.
+  - It reproduces the old fault: with the fixed tolerance put back, it reports
+    the same 53 pairs of 9,114.72 mm².
+  - Its self-checks cover overlapping, touching and nested (even-odd) contours,
+    the expected pairs, and a long layout's frame.
+- The Python audit of *3-Section Drawer Workbench* on 0.24.0 main: PASS. Before
+  that merge, with an equivalent tolerance fix on this branch, the whole
+  validation matrix (`tests/run_matrix.py`, native OpenSCAD 2021.01, written to a
+  scratch file) ran 90 configurations with 0 errors.
+- `tests/collision-worker.mjs`, rewritten for the pool: every product's and
+  cabinet type's default is clean on three workers. A second check comes entirely
+  from the cache, a changed media cart renders again, a part drawn twice is
+  caught, and bad requests (including duplicate job names) are refused.
+- Gates on this branch after merging 0.24.0, all passing: `tsc`; eslint on the
+  new and changed files; the engine-source, product-source and parity checks;
+  `scripts/engine-schema.py --check`; the Python unit tests (24); the unit suites
+  `units`, `settings-visibility`, `hardware`, `v5-integration`,
+  `stackable-controls`, `sections` and `nesting`; and the larger suites:
+  - `section-wasm`, `engine-fit` (121 starters), `layout-editor` and
+    `hardware-engine`;
+  - `golden` (121 starters) and `products` (37 starters);
+  - `engine-interference` (43 configurations, 1,604 pairs) and
+    `product-interference` (61 configurations, 1,122 pairs);
+  - a static build with `runtime-integrity` and `desktop-assets`.
+- After merging 0.25.0 (the stackable PR) the same full list, apart from the
+  static build, ran again and passed: `engine-interference` with 49
+  configurations and 1,740 pairs, `pocket-overlap` with 121 starters and 6,109
+  pairs.
+- The check driven in Chromium against main and this branch: the shop cart,
+  workbench and media cart at 1440 × 900, the shop cart and media cart at
+  390 × 844, and Stop then a restart. There was no horizontal scroll and no
+  console errors.
+
+Limitations:
+
+- Node timings are noisier than the browser's. The Node harness compiles the
+  engine in every run, so the workbench there took 6.6 to 12.7 s on three workers.
+- The first check pays for starting the workers.
+- The cache lasts only for the session.
+- The gate covers cabinet starters. Product pockets stay covered by
+  `tests/products.mjs`.
 
 ## 0.25.0 — 2026-11-26
 
