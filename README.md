@@ -11,7 +11,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.13.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.14.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -21,7 +21,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.13.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.14.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -143,6 +143,11 @@ are supported for single-column and section layouts. Behind a face frame,
 independent bays may hold open shelves, overlay doors, or drawers in a middle
 bay; for other arrangements behind a face frame the Layout tab builds the
 cabinet as sections instead.
+
+With tab-and-slot joinery, **Side tabs: blind** stops the tabs in pockets milled
+into the inside faces of the sides, so the outsides stay clean, with shoulder
+reliefs and screw holes beside the tabs (the default on stackable modules); see the
+[stackable reference](docs/STACKABLE_REFERENCE.md).
 
 ## Accuracy and its limits
 

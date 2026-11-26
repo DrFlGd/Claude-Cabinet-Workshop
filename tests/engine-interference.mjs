@@ -172,11 +172,17 @@ const CASES=[
  [0,undefined,{include_worktop:true,include_worktop_registration_holes:true,include_base_mounting_plate:true,base_style:'casters'}],
  [1,undefined,{base_style:'levelers',include_base_mounting_plate:true,include_base_hardware_drill_holes:true}],
  [3,undefined,{include_stack_base:true,drawer_mount:'metal_slides'}],
+ // Blind side tabs: every tab must stop inside its pocket without breaking the outside skin.
+ [3,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',slot_corner_relief:'t_bone',include_stack_base:true}],
+ [3,'stackable_door_module',{joinery_style:'tab_slot',side_tab_style:'blind',slot_corner_relief:'dogbone',blind_tab_skin:2,blind_tab_end_clearance:0}],
+ [1,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',back_style:'stretchers',slot_corner_relief:'t_bone'}],
+ [4,undefined,{joinery_style:'tab_slot',side_tab_style:'blind',shelf_style:'fixed',door_shelf_count:2,include_drawer_separators:true,drawer_count:2,back_style:'structural_panel'}],
+ [0,'shop_cart_open_service_cart',{joinery_style:'tab_slot',side_tab_style:'blind',slot_corner_relief:'t_bone'},true],
  [2,'benchtop_wide_6_drawer',{drawer_mount:'metal_slides',include_metal_slide_holes:true}],
 ];
 // ---- random sweep: construction choices, counts and sizes the engine accepts ----
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
-const CHOICES=['cabinet_contents','top_style','back_style','joinery_style','tab_count_mode','drawer_joinery_style','drawer_bottom_joinery','front_mount_style','shelf_style','drawer_height_mode','drawer_separator_style','hinge_style','single_door_hinge_side','drawer_mount','base_style','cabinet_mount_style','module_type','front_facing_style','face_frame_mid_rail_mode','face_frame_construction','drawer_bank_layout_mode','drawer_bank_partition_joinery','side_style','brace_style','slide_type','mount_mode'];
+const CHOICES=['cabinet_contents','top_style','back_style','joinery_style','side_tab_style','tab_count_mode','drawer_joinery_style','drawer_bottom_joinery','front_mount_style','shelf_style','drawer_height_mode','drawer_separator_style','hinge_style','single_door_hinge_side','drawer_mount','base_style','cabinet_mount_style','module_type','front_facing_style','face_frame_mid_rail_mode','face_frame_construction','drawer_bank_layout_mode','drawer_bank_partition_joinery','side_style','brace_style','slide_type','mount_mode'];
 const TOGGLES=['include_drawer_separators','include_door_hinge_partitions','include_mixed_bay_partitions','include_face_frame_center_stile','include_worktop','include_worktop_registration_holes','include_base_mounting_plate','include_stack_base','include_drawer_faces','include_drawer_divider_grid','include_metal_slide_holes','include_toe_kick'];
 const COUNTS={drawer_count:[1,6],door_count:[1,3],door_shelf_count:[0,3],drawer_bank_count:[1,3],back_stretcher_count:[1,3],tray_count:[1,4]};
 const SIZES={custom_cabinet_width:[300,1500],custom_cabinet_height:[300,2000],custom_cabinet_depth:[250,700]};

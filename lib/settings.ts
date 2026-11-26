@@ -124,6 +124,9 @@ export function inactiveReason(f:Field,v:Record<string,any>):string|null{
  if(k.startsWith('drawer_face_registration_')&&!v.include_drawer_faces)return 'Enable drawer faces';
  const tabs=v.joinery_style==='tab_slot',metal=v._family===6?v.slide_type!=='fixed_runner':v.drawer_mount==='metal_slides',wood=v.drawer_mount==='wood_rails';
  if(/^(tab_count_mode|joint_tab_|target_tab_spacing|max_auto_tab_count|minimum_joint_web)|^(top|bottom|shelf|separator)_tab_/.test(k)&&!tabs)return 'Requires tab-and-slot carcass joinery';
+ if((k==='side_tab_style'||k.startsWith('blind_tab_'))&&!tabs)return 'Requires tab-and-slot carcass joinery';
+ if(k.startsWith('blind_tab_')&&v.side_tab_style!=='blind')return 'Choose blind side tabs';
+ if(k==='blind_tab_screw_hole_diameter'&&!v.blind_tab_screw_holes)return 'Enable the blind-tab screw holes';
  if(k==='joint_tab_count'&&v.tab_count_mode!=='fixed')return 'Choose fixed tab count';
  if(['target_tab_spacing','max_auto_tab_count'].includes(k)&&v.tab_count_mode!=='adaptive')return 'Choose adaptive tab count';
  if(['dado_depth','dado_fit_clearance'].includes(k)&&v.joinery_style!=='dado')return 'Requires dado carcass joinery';

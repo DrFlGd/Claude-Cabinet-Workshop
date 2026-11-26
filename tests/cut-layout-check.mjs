@@ -177,6 +177,33 @@ if(process.argv[1]&&import.meta.url===new URL(process.argv[1],'file://').href){
   if(!matched||wrong)fail(`kerf ${kerf} mm: ${wrong} of ${matched} matched openings did not shrink by the kerf`);
   else console.log(`kerf ${kerf} mm: ${shrunk.length} openings each shrank by ${kerf} mm, outlines grew by ${kerf} mm, one contour per part.`);
  }
+ // 4. Blind side tabs: nothing is cut through the sides but round holes (the side outlines equal
+ // those of an unjoined butt carcass), the tabs land in pockets of the carcass-dado operation, and
+ // the layout still has one contour per part.
+ const sideIds=/^(CS-[LR]|STACK-BASE-[LR])$/;
+ const area=pts=>Math.abs(pts.reduce((a,[x,y],i)=>{const [u,v]=pts[(i+1)%pts.length];return a+x*v-u*y},0))/2;
+ const within=(b,p)=>b.x0>=p.x-TOL&&b.x1<=p.x+p.w+TOL&&b.y0>=p.y-TOL&&b.y1<=p.y+p.h+TOL;
+ // Area of each side part's outer outline, keyed by part id.
+ const sideAreas=(svg,places)=>{const polys=svgPolygons(svg).map(pts=>({pts,b:bbox(pts)})),out={};for(const p of places.filter(p=>sideIds.test(p.id))){const o=polys.find(q=>same(q.b.x0,p.x)&&same(q.b.y0,p.y)&&same(q.b.x1,p.x+p.w)&&same(q.b.y1,p.y+p.h));out[p.id]=o?area(o.pts):NaN}return out};
+ for(const [bf,bid,patch] of [[3,'stackable_door_module',{joinery_style:'tab_slot',slot_corner_relief:'t_bone',include_stack_base:true}],[1,'utility_3_drawer_base',{joinery_style:'tab_slot',back_style:'stretchers',slot_corner_relief:'dogbone'}]]){
+  const plain=valuesFor(bf,bid,{...patch,joinery_style:'butt',carcass_registration_enabled:false}),blind=valuesFor(bf,bid,{...patch,side_tab_style:'blind'});
+  const pb=await run(bf,plain,'bom'),pc=await run(bf,plain,'cut_layout');
+  const bb=await run(bf,blind,'bom'),bc=await run(bf,blind,'cut_layout'),bp=await run(bf,blind,'pocket_carcass_dados');
+  if([pb,pc,bb,bc,bp].some(m=>m.type!=='result')){fail(bid+' blind: a render failed');continue}
+  const brec=recordsOf(bb),bplaces=placements(brec);
+  for(const p of checkCutLayout({records:brec,svg:bc.output}))fail(bid+' blind: '+p);
+  const want=sideAreas(pc.output,placements(recordsOf(pb))),got=sideAreas(bc.output,bplaces);
+  const ids=Object.keys(got);
+  if(ids.length<2)fail(bid+' blind: side parts not found');
+  for(const id of ids)if(!(Math.abs(got[id]-want[id])<1))fail(`${bid} blind: ${id} outline area ${got[id]?.toFixed(1)} differs from the unjoined side ${want[id]?.toFixed(1)} (something is cut through or notched)`);
+  const big=innerContours(bc.output).filter(c=>bplaces.some(p=>sideIds.test(p.id)&&within(c,p))&&((c.x1-c.x0)>7||(c.y1-c.y0)>7)).length;
+  if(big)fail(`${bid} blind: ${big} opening(s) larger than a screw hole cut through the sides`);
+  const pockets=svgPolygons(bp.output).filter(pts=>{const b=bbox(pts);return (b.x1-b.x0)>6&&(b.y1-b.y0)>6&&(b.x1-b.x0)<300&&(b.y1-b.y0)<300}).length;
+  const depth=((bp.logs??[]).join('\n').match(/blind side-tab pocket depth = ", ([\d.]+)/)||[])[1];
+  if(!pockets)fail(bid+' blind: no pockets in the carcass-dado operation');
+  if(!depth)fail(bid+' blind: no pocket depth reported');
+  if(ids.length>=2&&ids.every(id=>Math.abs(got[id]-want[id])<1)&&!big&&pockets&&depth)console.log(`${bid} blind: ${ids.length} side outlines uncut, ${pockets} pockets ${depth} mm deep, one contour per part.`);
+ }
  if(failures){console.log(`Cut layout check: ${failures} failure(s).`);process.exitCode=1}
  else console.log('Cut layout check passed.');
 }

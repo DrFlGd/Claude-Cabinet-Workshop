@@ -319,6 +319,25 @@ joint_tab_edge_margin = 15;
 // features. Adaptive mode will reduce the tab count before violating this.
 minimum_joint_web = 30;
 
+// Tabs entering the cabinet sides (tab-and-slot joinery). through = the tabs
+// pass through the sides and show on the outside. blind = they stop in pockets
+// milled into the inside faces, leaving the outside faces unbroken; the
+// pockets are open where they reach a panel edge, so parts drop in from there.
+side_tab_style = "through"; // [through, blind]
+
+// Material left behind the floor of a blind pocket (the outside skin).
+blind_tab_skin = 4; // [0.5:0.5:20]
+
+// Gap between a blind tab's end and the pocket floor.
+blind_tab_end_clearance = 1; // [0:0.25:5]
+
+// Screw holes through the sides beside and between blind tabs, for screws
+// into the edges of the members.
+blind_tab_screw_holes = true;
+
+// Diameter of those holes (clearance for the screw shank).
+blind_tab_screw_hole_diameter = 4.5; // [2:0.1:10]
+
 /* [Structure / Tab Placement] */
 
 // Location-aware joinery inherited from Modular Storage v35 lets the same carcass use different tab placement

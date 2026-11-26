@@ -1574,7 +1574,7 @@ function mixed_bay_partition_entry_opposed(p,face,z) =
 // member on the bay's left (from its right face).
 function mixed_bay_fixed_shelf_end_length(b,s,end="left") =
     let(m=mixed_bay_bound(b)[end == "left" ? 0 : 1])
-    horizontal_joint_length(
+    side_or_member_joint_length(m,
         mixed_bay_partition_entry_opposed(
             m,end == "left" ? "right" : "left",mixed_bay_shelf_z(b,s)));
 
@@ -2061,7 +2061,7 @@ function section_divider_depth(h) =
 
 function section_divider_end_length(h,end="left") =
     let(m=end == "left" ? section_divider_left_end(h) : section_divider_right_end(h))
-    horizontal_joint_length(
+    side_or_member_joint_length(m,
         mixed_bay_partition_entry_opposed(
             m,end == "left" ? "right" : "left",section_divider_z(h)));
 
@@ -2776,7 +2776,7 @@ function horizontal_panel_global_x0() =
     carcass_joint_geometry == "dado"
         ? material_thickness-effective_dado_depth()
         : carcass_joint_geometry == "tab_slot"
-            ? 0
+            ? material_thickness-side_tab_length()
             : material_thickness;
 
 function horizontal_panel_local_x(global_x) =
@@ -3045,11 +3045,86 @@ function bottom_tab_count(span) = tab_count_for_location(span,"bottom");
 function bottom_tab_center(span,i) = tab_center_for_location(span,i,"bottom");
 function bottom_tab_start(span,i) = tab_start_for_location(span,i,"bottom");
 
+// ---------------------------
+// SIDE TAB STYLE (through or blind pockets)
+// ---------------------------
+// With tab-and-slot joinery, the tabs that enter the two cabinet sides either
+// pass through them (through) or stop in pockets milled into their inside
+// faces (blind), which leaves the outside faces unbroken. Interior joints
+// (partitions, dividers) keep through tabs. Primitives: tab_pocket.scad.
+function side_tabs_blind() =
+    carcass_joint_geometry == "tab_slot"
+    && !is_undef(side_tab_style)
+    && side_tab_style == "blind";
+
+function side_tab_skin() =
+    is_undef(blind_tab_skin) ? 4 : blind_tab_skin;
+
+function side_tab_pocket_depth() =
+    tp_pocket_depth(material_thickness,side_tab_skin());
+
+// Length of a tab entering a cabinet side (through: the side's thickness).
+function side_tab_length() =
+    side_tabs_blind()
+        ? tp_tab_length(
+            material_thickness,side_tab_skin(),
+            is_undef(blind_tab_end_clearance) ? 1 : blind_tab_end_clearance)
+        : material_thickness;
+
+// X range of a side receiver cut: the whole side, or the pocket from the
+// inside face (1 mm overshoot into the cabinet interior).
+function side_receiver_x_start(side) =
+    side == "left"
+        ? (side_tabs_blind() ? material_thickness-side_tab_pocket_depth() : -1)
+        : resolved_cabinet_width-material_thickness-1;
+
+function side_receiver_x_depth() =
+    side_tabs_blind() ? side_tab_pocket_depth()+1 : material_thickness+2;
+
+function side_tab_screw_holes_active() =
+    side_tabs_blind()
+    && (is_undef(blind_tab_screw_holes) || blind_tab_screw_holes)
+    && side_tab_screw_hole_diameter() > 0;
+
+function side_tab_screw_hole_diameter() =
+    is_undef(blind_tab_screw_hole_diameter) ? 4.5 : blind_tab_screw_hole_diameter;
+
+// Shoulder (T-bone) reliefs at the roots of tabs entering blind side pockets,
+// so the shoulder seats on the sharp mouth of the pocket.
+function side_tab_root_relief_active() =
+    side_tabs_blind() && slot_relief_is_active();
+
+// side_receiver_x_start() relative to that side's own outside face.
+function side_receiver_local_x_start(side) =
+    side_receiver_x_start(side)
+    - (side == "left" ? 0 : resolved_cabinet_width-material_thickness);
+
+// Screw holes beside and between the tabs of one side joint, as positions
+// along the joint. `starts` are the nominal tab starts, `w` the tab width.
+function side_tab_screw_positions(span,starts,w) =
+    side_tab_screw_holes_active()
+        ? tp_web_centres(span,starts,w,side_tab_screw_hole_diameter()+6)
+        : [];
+
+function side_tab_starts_for_location(span,location) =
+    [for (i=[0:tab_count_for_location(span,location)-1])
+        tab_start_for_location(span,i,location)];
+
+function side_tab_starts(span) =
+    [for (i=[0:effective_tab_count(span)-1]) tab_start(span,i)];
+
+// Tab-and-slot joint length where a horizontal member meets member m
+// (m == -1: a cabinet side).
+function side_or_member_joint_length(m,opposed) =
+    m == -1 && carcass_joint_geometry == "tab_slot"
+        ? side_tab_length()
+        : horizontal_joint_length(opposed);
+
 function joined_panel_width() =
     carcass_joint_geometry == "dado"
         ? inner_width + 2*effective_dado_depth()
         : carcass_joint_geometry == "tab_slot"
-            ? resolved_cabinet_width
+            ? inner_width + 2*side_tab_length()
             : inner_width;
 
 // Local X offset of the inner-width body in a flat horizontal carcass part.
@@ -3057,7 +3132,7 @@ function horizontal_panel_inner_x_offset() =
     carcass_joint_geometry == "dado"
         ? effective_dado_depth()
         : carcass_joint_geometry == "tab_slot"
-            ? material_thickness
+            ? side_tab_length()
             : 0;
 
 function door_shelf_z(s) =
@@ -3184,7 +3259,7 @@ function structural_back_cut_width() =
     carcass_joint_geometry == "dado"
         ? inner_width+2*structural_back_dado_depth
         : carcass_joint_geometry == "tab_slot"
-            ? resolved_cabinet_width
+            ? inner_width+2*side_tab_length()
             : inner_width;
 
 function structural_back_cut_height() =
@@ -3977,6 +4052,9 @@ function mo_joint_compatibility_key(location="default") =
     carcass_joint_geometry == "tab_slot"
         ? str(
             "STYLE=tab_slot;T=",material_thickness,
+            side_tabs_blind()
+                ? str(";BLIND=",side_tab_pocket_depth(),"/",side_tab_length())
+                : "",
             ";FIT=",joint_fit_clearance,
             ";SPAN=",span,
             ";COUNT=",tab_count_for_location(span,location),
@@ -4367,6 +4445,30 @@ function mo_side_circle_feature(
         "circle",y,z,r,operation,source
     );
 
+// Side tab receivers: through slots in the cut layout, or blind pockets from
+// the inside face in the carcass-dado pocket operation.
+function mo_side_tab_kind() = side_tabs_blind() ? "tab_pocket" : "through_slot";
+function mo_side_tab_mode() = side_tabs_blind() ? "blind_inner" : "through";
+function mo_side_tab_depth() = side_tabs_blind() ? side_tab_pocket_depth() : 0;
+function mo_side_tab_operation() =
+    side_tabs_blind() ? "pocket_carcass_dados" : "cut_layout";
+
+// Screw holes beside a member's blind tabs. along_y: the joint runs along Y
+// from `origin` at height `mid`; otherwise along Z at depth `mid`.
+function mo_side_tab_screw_features(
+    prefix,side,owner,origin,span,mid,starts,w,along_y=true,source="side_tab_screws"
+) =
+    let(ps=side_tab_screw_positions(span,starts,w)) [
+        for (i=[0:max(0,len(ps)-1)]) if (len(ps) > 0)
+            mo_side_circle_feature(
+                str(prefix,".screw.",i+1),side,"screw_hole",owner,
+                along_y ? origin+ps[i] : mid,
+                along_y ? mid : origin+ps[i],
+                side_tab_screw_hole_diameter(),
+                "through",0,"cut_layout",source
+            )
+    ];
+
 function mo_side_horizontal_features(
     side="left",y0=0,panel_depth=100,z0=0,
     location="default",prefix="joint",owner="carcass.joint"
@@ -4381,18 +4483,23 @@ function mo_side_horizontal_features(
             )
           ]
     : carcass_joint_geometry == "tab_slot"
-        ? let(c=joint_fit_clearance,n=tab_count_for_location(panel_depth,location)) [
+        ? let(c=joint_fit_clearance,n=tab_count_for_location(panel_depth,location)) concat([
             for (i=[0:max(0,n-1)]) if (n>0)
                 let(
                     sy=y0+tab_start_for_location(panel_depth,i,location)-c/2,
                     sw=tab_width_for(panel_depth)+c
                 )
                 mo_side_rect_feature(
-                    str(prefix,".slot.",i+1),side,"through_slot",owner,
+                    str(prefix,".slot.",i+1),side,mo_side_tab_kind(),owner,
                     sy,sy+sw,z0-c/2,z0+material_thickness+c/2,
-                    "through",0,"cut_layout","side_horizontal_joint"
+                    mo_side_tab_mode(),mo_side_tab_depth(),
+                    mo_side_tab_operation(),"side_horizontal_joint"
                 )
-          ]
+          ],
+          mo_side_tab_screw_features(
+            prefix,side,owner,y0,panel_depth,z0+material_thickness/2,
+            side_tab_starts_for_location(panel_depth,location),
+            tab_width_for(panel_depth)))
     : carcass_registration_enabled
         ? let(n=butt_reg_count(panel_depth)) [
             for (i=[0:max(0,n-1)]) if (n>0)
@@ -4426,10 +4533,15 @@ function mo_side_toe_features(side="left") =
                     zh=tab_width_for(toe_kick_height)+c
                 )
                 mo_side_rect_feature(
-                    str("toe.",side,".slot.",i+1),side,"through_slot","carcass.toe",
+                    str("toe.",side,".slot.",i+1),side,mo_side_tab_kind(),"carcass.toe",
                     toe_kick_setback-c/2,toe_kick_setback+material_thickness+c/2,
-                    zz,zz+zh,"through",0,"cut_layout","side_toe_joint"
-                )
+                    zz,zz+zh,mo_side_tab_mode(),mo_side_tab_depth(),
+                    mo_side_tab_operation(),"side_toe_joint"
+                ),
+            each mo_side_tab_screw_features(
+                str("toe.",side),side,"carcass.toe",
+                0,toe_kick_height,toe_kick_setback+material_thickness/2,
+                side_tab_starts(toe_kick_height),tab_width_for(toe_kick_height),false)
           ]
     : carcass_registration_enabled
         ? let(n=butt_reg_count(toe_kick_height)) [
@@ -4471,12 +4583,20 @@ function mo_side_back_stretcher_features(side="left") =
                             )
                             mo_side_rect_feature(
                                 str("back_stretcher.",side,".",b+1,".slot.",i+1),
-                                side,"through_slot","carcass.back_stretcher",
+                                side,mo_side_tab_kind(),"carcass.back_stretcher",
                                 back_stretcher_y-c/2,
                                 back_stretcher_y+material_thickness+c/2,
-                                zz,zz+zh,"through",0,"cut_layout",
+                                zz,zz+zh,mo_side_tab_mode(),mo_side_tab_depth(),
+                                mo_side_tab_operation(),
                                 "side_back_stretcher_joint"
-                            )
+                            ),
+                        each mo_side_tab_screw_features(
+                            str("back_stretcher.",side,".",b+1),side,
+                            "carcass.back_stretcher",
+                            back_stretcher_z(b),back_stretcher_height,
+                            back_stretcher_y+material_thickness/2,
+                            side_tab_starts(back_stretcher_height),
+                            tab_width_for(back_stretcher_height),false)
                       ]
                 : carcass_registration_enabled
                     ? let(n=butt_reg_count(back_stretcher_height)) [
@@ -4516,10 +4636,17 @@ function mo_side_structural_back_features(side="left") =
                 )
                 mo_side_rect_feature(
                     str("structural_back.",side,".slot.",i+1),side,
-                    "through_slot","carcass.back",
+                    mo_side_tab_kind(),"carcass.back",
                     structural_back_y-c/2,structural_back_y+material_thickness+c/2,
-                    zz,zz+zh,"through",0,"cut_layout","side_back_joint"
-                )
+                    zz,zz+zh,mo_side_tab_mode(),mo_side_tab_depth(),
+                    mo_side_tab_operation(),"side_back_joint"
+                ),
+            each mo_side_tab_screw_features(
+                str("structural_back.",side),side,"carcass.back",
+                captured_back_bottom_z,captured_back_height,
+                structural_back_y+material_thickness/2,
+                side_tab_starts(captured_back_height),
+                tab_width_for(captured_back_height),false)
           ]
     : carcass_registration_enabled
         ? let(n=butt_reg_count(captured_back_height)) [
@@ -5380,7 +5507,7 @@ function stack_base_cross_rail_cut_width() =
     carcass_joint_geometry == "dado"
         ? inner_width+2*effective_dado_depth()
         : carcass_joint_geometry == "tab_slot"
-            ? resolved_cabinet_width
+            ? inner_width+2*side_tab_length()
             : inner_width;
 
 stack_base_side_layout_y =

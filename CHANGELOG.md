@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.13.0**) are separate from the bundled
+Application versions (currently **0.14.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,95 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.14.0 — 2026-11-26
+
+Tab-and-slot carcasses can hide their tabs: the tabs entering the cabinet sides
+stop in blind pockets milled into the inside faces, as in the stackable cabinet
+plans the user supplied as a reference. The measured reference and the spec are
+in `docs/STACKABLE_REFERENCE.md`.
+
+- **Blind side tabs.** A new **Side tabs** setting (`side_tab_style`, through
+  or blind) on shop carts, utility, benchtop, stackable and kitchen cabinets
+  with tab-and-slot joinery. With **blind**, every member that enters a side
+  stops in a pocket and leaves the outside face whole. The members are the
+  bottom, top or top stretchers, fixed shelves, combo divider, drawer
+  separators, toe kick, rear stretchers, structural back, bay shelves and
+  section dividers that end at a side, and the stack base's cross rails.
+  - The pocket is the sheet thickness less `blind_tab_skin` (default 4 mm, so
+    14 mm in 18 mm sheet).
+  - The tab is `blind_tab_end_clearance` (default 1 mm) shorter than the
+    pocket, so the shoulder seats before the tab bottoms out.
+  - Pockets keep the slots' shapes, corner reliefs and open edges. A pocket
+    that reaches a panel edge is open there, so the part drops in from that
+    side. Pockets are milled in the carcass-dado pocket operation, which now
+    reports their depth. The side outlines in the cut layout have no slots.
+  - Members are as much shorter as their tabs (for example 2 × 4 mm in 18 mm
+    sheet), and the parts list and cut layout follow.
+- **Shoulder reliefs.** With slot corner relief on, blind tabs get a T-bone
+  relief of the cutter's radius beside each tab root, so the shoulder seats
+  on the sharp mouth of the pocket. A relief is left off where the tab is
+  flush with the member's own edge.
+- **Screw holes beside the tabs.** `blind_tab_screw_holes` (on by default)
+  drills through holes (`blind_tab_screw_hole_diameter`, 4.5 mm) on each
+  member's mid-thickness line, in the gaps beside and between its tabs, for
+  screws into the member's edge. Gaps narrower than the hole + 6 mm get none.
+  The holes are in the side-panel feature ledger with the pockets, so they
+  are checked against hinge, slide and shelf-pin holes.
+- **Defaults.** Stackable cabinets default to blind side tabs; the other cabinet
+  types keep through tabs. Through tabs, and every other joinery style, build
+  exactly as before. No starter uses tab-and-slot joinery, so no starter's
+  output changed: the golden outputs of all 110 starters are identical.
+  Interior joints (partitions and dividers meeting other interior members)
+  keep through tabs.
+- **Shared module.** The pocket depth, tab length, pocket and shoulder reliefs
+  and screw spacing are argument-only functions in the new engine file
+  `public/engine/v5/src/modular_organization/data/scad/tab_pocket.scad`, which
+  any cabinet type or product can include.
+- The parity table lists blind side pockets, and the settings list shows the
+  blind settings only when they apply.
+
+Validation performed:
+
+- **Static checks.** `pnpm exec tsc --noEmit`, the engine-source and parity
+  checks, units, nesting, settings visibility (with new assertions for the blind
+  settings in all five cabinet types), hardware, v5 integration, the native
+  OpenSCAD stackable-controls and sections tests (OpenSCAD 2021.01), the
+  section WASM workers, engine fit (110 starters and regressions), the layout
+  editor and hardware-engine suites all passed.
+- **Golden outputs.** All 110 starters match their recorded parts, reports and
+  cut/pocket layouts unchanged.
+- **Cut-layout check.** The check now renders a stackable door module with a
+  stack base and a utility base with rear stretchers in blind mode, and
+  confirms all of the following:
+  - every side outline equals the side of an unjoined carcass (nothing cut
+    through or notched);
+  - no opening larger than a screw hole passes through a side;
+  - the pockets are in the carcass-dado operation with their depth reported
+    (15.05 mm in 19.05 mm stock, 14 mm in 18 mm);
+  - the layout has one contour per part.
+- **Interference sweep.** `tests/engine-interference.mjs --all` ran in four
+  shards: 165 configurations with no overlapping parts, 1 random design skipped
+  as rejected by the engine. Two bay and section cases were re-run after the
+  last relief change, also clean. It includes five new blind cases (two stackable,
+  utility with rear stretchers, kitchen with fixed shelves, separators and a
+  structural back, and a split shop-cart bay layout), with a 2 mm skin and
+  zero end clearance among them. The random sweep can now choose the side-tab
+  style. Every blind tab stops inside its pocket without reaching the outside
+  skin.
+- **All starters in blind mode.** The 88 starters of the five cabinet types
+  were evaluated with tab-and-slot joinery, blind side tabs and T-bone relief,
+  with no engine errors or warnings. Four bay and section starters (shop-cart
+  open service cart and compact mixed cart, the photo section cabinet, utility
+  wide mixed base) also passed the cut-layout check.
+- **Manual check.** The blind cut, pocket and 3D outputs of a stackable door
+  module were rendered and inspected.
+
+Remaining limitations:
+
+- The screw holes are clearance holes only; pilot holes in the member edges are
+  left to the assembler.
+- Interior joints stay through.
 
 ## 0.13.0 — 2026-10-16
 

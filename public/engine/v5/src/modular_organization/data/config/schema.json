@@ -1214,6 +1214,78 @@
           "description": "Minimum amount of solid material requested between adjacent tab/slot features. Adaptive mode will reduce the tab count before violating this."
         },
         {
+          "id": "side_tab_style",
+          "group": "Structure / Frame Joinery",
+          "type": "enum",
+          "default": "through",
+          "enum": [
+            "through",
+            "blind"
+          ],
+          "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_skin",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4,
+          "unit": "mm",
+          "range": {
+            "min": 0.5,
+            "max": 20.0,
+            "step": 0.5
+          },
+          "description": "Material left behind the floor of a blind pocket (the outside skin).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_end_clearance",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 1,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.25
+          },
+          "description": "Gap between a blind tab's end and the pocket floor.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_holes",
+          "group": "Structure / Frame Joinery",
+          "type": "boolean",
+          "default": true,
+          "description": "Screw holes through the sides beside and between blind tabs, for screws into the edges of the members.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_hole_diameter",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of those holes (clearance for the screw shank).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
           "id": "edge_joinery_policy",
           "group": "Structure / Tab Placement",
           "type": "enum",
@@ -4694,6 +4766,78 @@
           "description": "Minimum amount of solid material requested between adjacent tab/slot features. Adaptive mode will reduce the tab count before violating this."
         },
         {
+          "id": "side_tab_style",
+          "group": "Structure / Frame Joinery",
+          "type": "enum",
+          "default": "through",
+          "enum": [
+            "through",
+            "blind"
+          ],
+          "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_skin",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4,
+          "unit": "mm",
+          "range": {
+            "min": 0.5,
+            "max": 20.0,
+            "step": 0.5
+          },
+          "description": "Material left behind the floor of a blind pocket (the outside skin).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_end_clearance",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 1,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.25
+          },
+          "description": "Gap between a blind tab's end and the pocket floor.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_holes",
+          "group": "Structure / Frame Joinery",
+          "type": "boolean",
+          "default": true,
+          "description": "Screw holes through the sides beside and between blind tabs, for screws into the edges of the members.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_hole_diameter",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of those holes (clearance for the screw shank).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
           "id": "edge_joinery_policy",
           "group": "Structure / Tab Placement",
           "type": "enum",
@@ -7933,6 +8077,78 @@
           "computed_default": true
         },
         {
+          "id": "side_tab_style",
+          "group": "Structure / Frame Joinery",
+          "type": "enum",
+          "default": "through",
+          "enum": [
+            "through",
+            "blind"
+          ],
+          "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_skin",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4,
+          "unit": "mm",
+          "range": {
+            "min": 0.5,
+            "max": 20.0,
+            "step": 0.5
+          },
+          "description": "Material left behind the floor of a blind pocket (the outside skin).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_end_clearance",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 1,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.25
+          },
+          "description": "Gap between a blind tab's end and the pocket floor.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_holes",
+          "group": "Structure / Frame Joinery",
+          "type": "boolean",
+          "default": true,
+          "description": "Screw holes through the sides beside and between blind tabs, for screws into the edges of the members.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_hole_diameter",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of those holes (clearance for the screw shank).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
           "id": "edge_joinery_policy",
           "group": "Structure / Tab Placement",
           "type": "enum",
@@ -10479,6 +10695,78 @@
           "type": "number",
           "default": 30,
           "description": "Minimum amount of solid material requested between adjacent tab/slot features. Adaptive mode will reduce the tab count before violating this."
+        },
+        {
+          "id": "side_tab_style",
+          "group": "Structure / Frame Joinery",
+          "type": "enum",
+          "default": "blind",
+          "enum": [
+            "through",
+            "blind"
+          ],
+          "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_skin",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4,
+          "unit": "mm",
+          "range": {
+            "min": 0.5,
+            "max": 20.0,
+            "step": 0.5
+          },
+          "description": "Material left behind the floor of a blind pocket (the outside skin).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_end_clearance",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 1,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.25
+          },
+          "description": "Gap between a blind tab's end and the pocket floor.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_holes",
+          "group": "Structure / Frame Joinery",
+          "type": "boolean",
+          "default": true,
+          "description": "Screw holes through the sides beside and between blind tabs, for screws into the edges of the members.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_hole_diameter",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of those holes (clearance for the screw shank).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
         },
         {
           "id": "bottom_tab_placement",
@@ -13832,6 +14120,78 @@
           "type": "number",
           "default": 30,
           "description": "Minimum amount of solid material requested between adjacent tab/slot features. Adaptive mode will reduce the tab count before violating this."
+        },
+        {
+          "id": "side_tab_style",
+          "group": "Structure / Frame Joinery",
+          "type": "enum",
+          "default": "through",
+          "enum": [
+            "through",
+            "blind"
+          ],
+          "description": "Tabs entering the cabinet sides. through = the tabs pass through the sides and show on the outside. blind = they stop in pockets milled into the inside faces, leaving the outside faces unbroken; pockets that reach a panel edge are open there, so parts drop in from that side.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_skin",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4,
+          "unit": "mm",
+          "range": {
+            "min": 0.5,
+            "max": 20.0,
+            "step": 0.5
+          },
+          "description": "Material left behind the floor of a blind pocket (the outside skin).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_end_clearance",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 1,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.25
+          },
+          "description": "Gap between a blind tab's end and the pocket floor.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_holes",
+          "group": "Structure / Frame Joinery",
+          "type": "boolean",
+          "default": true,
+          "description": "Screw holes through the sides beside and between blind tabs, for screws into the edges of the members.",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
+        },
+        {
+          "id": "blind_tab_screw_hole_diameter",
+          "group": "Structure / Frame Joinery",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of those holes (clearance for the screw shank).",
+          "visible_if": {
+            "joinery_style": "tab_slot"
+          }
         },
         {
           "id": "edge_joinery_policy",
