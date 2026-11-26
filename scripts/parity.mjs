@@ -90,6 +90,8 @@ const features=[
   ['Stacked modules located by keys in the rails below',has('include_stack_keys',true)],
   ['Puzzle-jointed worksurface with dog holes',has('include_worksurface',true)],
   ['Cut plywood pulls',has('handle_style','square')],
+  ['Pull drilling jig (block, plate and fence)',has('include_handle_jig')],
+  ['Screw marks on the assembly faces',has('include_screw_marks',true)],
  ]],
 ];
 const mark=b=>b?'✓':'—';

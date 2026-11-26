@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.21.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.22.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.21.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.22.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -79,8 +79,9 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    height, shelves and how many cells it spans, move it, stack a module on top
    (a module at bench height is split into two stacked halves; stacked modules
    are located by loose keys in the top rails below) or remove it.
-   **Fill empty cells** completes the grid. See
-   [the workbench design note](docs/MODULAR_WORKBENCH.md).
+   **Fill empty cells** completes the grid. The cut files spot every assembly
+   screw with shallow marks, and an optional drilling jig for the plywood pulls
+   can be added. See [the workbench design note](docs/MODULAR_WORKBENCH.md).
 3. **Work through the settings.** The section rail follows the order you
    would design in: Sizing, Structure, Drawers, Doors, Shelves and so on. The
    shop details (Materials, Hardware, Machining, Engine & export) are collapsed

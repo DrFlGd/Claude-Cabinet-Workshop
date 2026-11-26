@@ -89,7 +89,8 @@ and at the base of every tab.
   (50 mm from the cell edge) and spanning 50–150 and 250–350 mm of each cell.
 - **Handle holes**: 4.5 mm at 140 mm centres, 72.5 mm below the door top, centre
   117.5 mm from the latch edge.
-- The plans' 1.5 mm screw-marking dimples and their drilling jig are not modelled.
+- **Screw marks**: 4.5 mm, 1.5 mm deep on the machined faces (`pocket_screw_marks`),
+  see [Screw marks](#screw-marks).
 
 ### Worksurface
 
@@ -112,11 +113,63 @@ spaces between them to the higher one), with inside corners rounded to the cutte
 
 ### Handles
 
-Five pull profiles cut from 18 mm stock, all screwed on at 140 mm centres:
-square 162 × 45, rounded 162 × 45, chamfered 184 × 42, straight bar 202 × 45 and
-traditional 210 × 49 mm (`handle_style`). The engine draws its own parametric
-profiles at those sizes (finger recess and two screw lugs); the plans' exact
-curves are not reproduced. The plans' drilling block and hole jig are not modelled.
+Five pull profiles cut from handle stock (`handle_style`, `handle_thickness`), each
+screwed on from the back of the front through two 4.5 mm holes at 140 mm centres
+into 15 mm pilot holes (3.5 mm, `handle_pilot_diameter`) drilled in the ends of its
+legs. The engine builds each profile from circles, hulls and offsets using the
+measured dimensions below (feet on the front, x along the pull); nothing is traced.
+Compared with the reference outlines by rasterising both at 0.1 mm, every profile
+and drilling block differs by less than the rasterisation noise (0.06–0.6 % of the
+area).
+
+| Style | Size | Construction |
+|---|---|---|
+| Square | 162 × 45 | 22 mm legs; the recess is the hull of two 30 mm circles centred on the foot line 52 mm from each end, 30 mm high; top corners 3 mm radius, feet square |
+| Rounded | 162 × 45 | back: the hull of a 3 mm strip and two 42 mm circles centred 42 mm from the ends, 3 mm up; recess straight to 10 mm, then the hull of two 20 mm circles at 42 mm, 30 mm high |
+| Chamfered | 184 × 42 | 33 mm legs; outline the hull of 7.5 mm circles touching the ends (centre 6.04 mm up) and 15 mm circles touching the top (47.14 mm in), giving 37.5° chamfers; recess the hull of 7.5 mm circles touching the legs (9.30 mm up) and 15 mm circles 56.34 mm in, 12 mm up (27 mm high) |
+| Straight bar | 202 × 45 | 15 mm bar with 5 mm corners on two 22 × 30 mm legs 20 mm in from the ends; 10 mm fillets where the legs meet the bar |
+| Traditional | 210 × 49 | crown arc through the ends 17 mm up and the middle; wings and recess top on a 217.667 mm arc with its apex 34 mm up; 4.419 mm tips tangent to both arcs; legs 24–46 mm from each end at the feet, leaning in at 8°; 6.5 mm fillets under the wings and 15 mm in the recess |
+
+**Drilling jig** (`include_handle_jig`, off by default): three extra parts in the cut
+files, assembled beside the bench in the 3D view.
+
+- *Drilling block*, cut from handle stock: the finger recess of the chosen pull
+  (118 × 30 mm for square, rounded and straight bar; 118 × 27 chamfered; 121.3 × 34
+  traditional), with two dowel holes (`jig_dowel_diameter`, 8 mm) 70 mm apart and
+  15 mm from the foot line.
+- *Plate*, 240 × 97 mm in `jig_thickness` (12 mm) stock with 10 mm corners: a 40 mm
+  mortise for the fence 10 mm from the front edge (T-bone reliefs), the two dowel
+  holes 15 mm behind the fence, two 4.5 mm mounting holes, and two 10 mm deep drill
+  clearance notches (45° flanks, 8 mm fillets) under the guide holes.
+- *Fence*, 240 mm long and the handle stock plus 7 mm tall above the plate, with
+  10 mm top corners and a 40 mm tab in the mortise (T-bone reliefs at its root):
+  two guide holes (`handle_pilot_diameter`) at 140 mm centres, half the handle stock
+  above the plate.
+
+The pull lies flat over the block with its feet against the fence, and the leg
+pilots are drilled through the guide holes. The jig's slot reliefs are the
+engine's T-bone reliefs, not the reference's arc-shaped ones.
+
+### Screw marks
+
+With `include_screw_marks` (on) the `pocket_screw_marks` operation spots every
+assembly screw, as the reference does, with 4.5 mm marks 1.5 mm deep
+(`screw_mark_diameter`, `screw_mark_depth`) on each part's machined face. Their
+positions follow the joints, so they move with the module size:
+
+| Part | Marks | Reference (simple cabinet) |
+|---|---|---|
+| Side | into the back between the back fingers (the top field holds the rail), half the stock in from the rear edge; into the bottom in front of each bottom finger; into each top rail beside its finger, half the stock below the top | 52.1, 260.7, 469.3 / 31, 182 / 12.5 and 62.5 from each rail's front |
+| Side (modules with doors) | two hinge mounting-plate screws 32 mm apart about each hinge, 37 mm from the front edge, on both sides so a single door can be hung either way (`hinge_plate_setback`, `hinge_plate_screw_spacing`) | 74/106 and 624/656 |
+| Back | into the bottom in every gap between its bottom fingers | 31, 182, 333 |
+| Bottom (modules on the frame) | down into the frame strips: on each strip line under a cell, `frame_screw_offset` either side of the cell centre | ± 78 mm, 8 per cell |
+| Back rail | down into the back at each rear finger | 9 mm from the rear edge |
+| Top rails under the worksurface | up into the worksurface, beside each hand slot, half way between the slot and the rail's inner edge | 15.25 mm from the inner edge |
+| Drawer box front | four marks into the drawer face, 25 mm inside the corner joints | (engine design) |
+| Face panel | four marks into the module sides | (engine design) |
+
+Door handle holes stay through holes (the reference marks them 1.5 mm deep and
+drills them by hand).
 
 ### Drawer modules (engine design, matching the photo configurations)
 
@@ -226,7 +279,8 @@ dog holes inside seams, hinges and handles that do not fit their fronts, drawer 
 too low for their slides, slides that do not fit, no room for a door under the
 drawers, face-panel borders) and warnings for shelf sag on wide modules, unsupported
 worksurface cells, stacked modules with fewer than two keys, wide drawers and parts
-larger than the stock sheet. The repository tests check every starter's cut layout against
+larger than the stock sheet. Screw marks must leave 2 mm of stock and sit between a
+registration pocket and the crossing strip. The repository tests check every starter's cut layout against
 its part table and nest it on the stock sheet (`tests/golden.mjs`), render every
 part on its own and intersect every pair (`tests/engine-interference.mjs`,
 hand-picked layouts and a seeded random sweep of module layouts), and run the
