@@ -12,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.23.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.24.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -22,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.23.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.24.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -225,9 +225,14 @@ designs and the per-module fit results.
 Each change is evaluated by the same OpenSCAD engine that produces the
 manufacturing files. Its checks cover drawer boxes against their openings,
 slides and runners against box heights, machining features on the side panels,
-divider grids and interface keep-outs. The test suite additionally renders
-sub-assemblies of representative designs and confirms that no two parts occupy
-the same space.
+divider grids and interface keep-outs. **Check for intersecting parts** (under
+**Cut list & fit**, for every cabinet type and every product) renders the
+design's parts or groups of parts one at a time in a background worker, skips
+pairs whose bounding boxes are apart and intersects the rest, then lists any two
+parts that would occupy the same space. It runs only when asked: a few seconds
+for the default media cart and about 1 to 20 seconds for each cabinet type's
+default design, longer for large designs. The test suite runs the same check on
+every starter and on seeded random designs.
 
 The schematic preview is approximate. Browser layouts are not CNC toolpaths and
 do not include the Python final-contour audit. Hardware drilling defaults are
