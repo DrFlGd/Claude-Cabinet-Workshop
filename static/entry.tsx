@@ -2,6 +2,7 @@ import React from 'react';
 import {createRoot} from 'react-dom/client';
 import Home from '../app/page';
 import '../app/globals.css';
+import '../app/products/products.css';
 class StartupBoundary extends React.Component<React.PropsWithChildren,{error:string|null}>{
  state:{error:string|null}={error:null};
  static getDerivedStateFromError(error:Error){return {error:error.message};}

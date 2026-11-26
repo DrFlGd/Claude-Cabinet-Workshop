@@ -1,11 +1,19 @@
 import {defaults,families,legacyKeys,normalizeValues,schemas,Values} from './cabinet';
 import {treeErrors} from './sections';
 import type {Units} from './units';
-export type Design={version:2;engine:5;engineFamily:"modular_organization";bundleRevision?:5;family:number;name:string;displayUnits:Units;values:Values};
+import {productById,parseProductValues} from './products';
+// A product design (lib/products) carries the product id; its values are that product's
+// SCAD parameters and family is unused (0).
+export type Design={version:2;engine:5;engineFamily:"modular_organization";bundleRevision?:5;family:number;product?:string;name:string;displayUnits:Units;values:Values};
 export type Recent={id:string;updated:string;design:Design};
 export const PROJECT_STORE='cabinet-workshop-projects-v1';
 export function parseDesign(input:unknown):Design{
  const d=JSON.parse(JSON.stringify(input));
+ if(d&&d.product!==undefined){
+  const p=productById(d.product);
+  if(!p||d.version!==2||!d.values||typeof d.values!=='object'||Array.isArray(d.values))throw Error('Invalid product design.');
+  return {version:2,engine:5,engineFamily:"modular_organization",bundleRevision:5,family:0,product:p.id,name:typeof d.name==='string'?d.name.slice(0,160):p.name,displayUnits:d.displayUnits==='in'?'in':'mm',values:parseProductValues(p,d.values)};
+ }
  if(!d||![1,2].includes(d.version)||!Number.isInteger(d.family)||d.family<0||d.family>=families.length||!d.values||Array.isArray(d.values))throw Error('Invalid cabinet design.');
  if(d.engineFamily!=="modular_organization"&&![29,30,31,32].includes(d.engine)){for(const [old,key] of Object.entries(legacyKeys))if(d.values[old]!==undefined)d.values[key]=d.values[old];if(d.family===4)d.values.cabinet_nominal_depth=d.values.kitchen_family==='wall'?304.8:609.6;}
  const v=defaults(d.family);

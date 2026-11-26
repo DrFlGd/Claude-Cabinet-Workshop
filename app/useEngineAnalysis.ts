@@ -3,12 +3,14 @@ import {useEffect,useRef,useState} from 'react';
 import {assetUrl} from '@/lib/asset-url';
 import {configuredSource,renderSources,schemas,validate,Values} from '@/lib/cabinet';
 import {analyse,Plan} from '@/lib/analysis';
+import type {EngineTarget} from '@/lib/products/types';
 export type Analysis={state:'idle'|'waiting'|'running'|'ready'|'failed'|'invalid';plan:Plan|null;key:string;planKey:string;error:string;log:string;seconds:number};
 // Re-runs the engine's BOM/validation pass shortly after each edit. One worker is kept warm
 // between runs (the engine is compiled once and reused); an edit that lands mid-run terminates
 // that run and a fresh worker takes over. The last good plan stays visible (marked stale).
-export default function useEngineAnalysis(family:number,values:Values,delay=650):Analysis&{rerun:()=>void}{
- const key=JSON.stringify({family,values});
+// A product (target) supplies its own engine file, source and quick validation.
+export default function useEngineAnalysis(family:number,values:Values,delay=650,target?:EngineTarget):Analysis&{rerun:()=>void}{
+ const key=JSON.stringify({family,product:target?.id,values});
  const [state,setState]=useState<Analysis>({state:'idle',plan:null,key,planKey:'',error:'',log:'',seconds:0});
  const [nonce,setNonce]=useState(0);
  const worker=useRef<Worker|null>(null),running=useRef(false),generation=useRef(0);
@@ -17,7 +19,7 @@ export default function useEngineAnalysis(family:number,values:Values,delay=650)
  useEffect(()=>{
   const id=++generation.current;
   if(running.current)discard();
-  const invalid=validate(values);
+  const invalid=target?target.validate(values):validate(values);
   if(invalid.length){setState(s=>({...s,state:'invalid',key,error:invalid.join(' ')}));return}
   setState(s=>({...s,state:'waiting',key,error:''}));
   if(!worker.current)worker.current=spawn();
@@ -27,7 +29,7 @@ export default function useEngineAnalysis(family:number,values:Values,delay=650)
    setState(s=>({...s,state:'running'}));
    const started=performance.now();
    try{
-    const source=await configuredSource(family,values);
+    const source=target?target.source(values):await configuredSource(family,values);
     if(id!==generation.current)return;
     const job=worker.current??spawn();
     worker.current=job;running.current=true;
@@ -47,7 +49,7 @@ export default function useEngineAnalysis(family:number,values:Values,delay=650)
     };
     // The verbose system report adds the side-panel feature ledger (every hole the engine
     // drills in a cabinet side), which the Hardware view draws.
-    job.postMessage({filename:schemas[family].file,source,sources:renderSources,mode:'bom',report:'verbose'});
+    job.postMessage({filename:target?target.filename:schemas[family].file,source,sources:target?target.sources:renderSources,mode:'bom',report:'verbose'});
    }catch(e){if(id===generation.current)setState(s=>({...s,state:'failed',error:String(e)}))}
   },delay);
   return ()=>{clearTimeout(timer);if(timeout)clearTimeout(timeout)};

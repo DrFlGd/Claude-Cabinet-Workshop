@@ -1,11 +1,11 @@
 'use client';
-import {useState,useEffect,useRef} from 'react';
+import {useState,useEffect,useRef,useMemo} from 'react';
 import {Box,Download,Undo2,Redo2,Ruler,Layers,Check,FolderOpen,Save,ArrowUpRight,Search,Info,RotateCcw,ListChecks,FilePlus2,History,XCircle,ChevronDown,ChevronRight,LayoutTemplate,Zap,Plus,X,EyeOff,Wrench} from 'lucide-react';
 import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/components/ui/select';
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
 import {Toaster,toast} from 'sonner';
-import {defaults,schemas,families,label,thickness,validate,exportBundle,download,Values,starterValues,normalizeValues,geometry,Part} from '@/lib/cabinet';
+import {defaults,schemas,families,label,thickness,validate,exportBundle,download,zip,Values,starterValues,normalizeValues,geometry,Part} from '@/lib/cabinet';
 import LayoutEditor from './LayoutEditor';
 import WorkbenchEditor from './WorkbenchEditor';
 import {convertBays} from '@/lib/sections';
@@ -27,6 +27,8 @@ import HardwareView from './HardwareView';
 import {HARDWARE_PANEL_KEYS} from '@/lib/hardware';
 import FitGuide,{guideKeys} from './FitGuide';
 import {helpFor,optionLabel} from '@/lib/help';
+import {productById,productStarterValues,productTarget} from '@/lib/products';
+import ProductWorkspace from './products/ProductWorkspace';
 import {sectionOrder,shopSections,sectionTitles,sectionBlurbs,workbenchBlurbs,sectionFor,settingsGroup,isAdvanced,inactiveReason,presentFields,linkedChanges,LAYOUT_KEYS,LAYOUT_REASON,isAlternative,hasLayoutEditor,hasLayoutTab,hasGridEditor,fieldBounds,clampToBounds,Field} from '@/lib/settings';
 const titles:Record<string,string>={custom_cabinet_width:'Width',custom_cabinet_height:'Height',custom_cabinet_depth:'Depth',custom_top_style:'Top construction',back_style:'Back construction',joinery_style:'Carcass joinery',carcass_stock:'Carcass stock',custom_carcass_thickness:'Measured thickness',base_style:'Base style',include_worktop:'Add worktop',worktop_thickness:'Worktop thickness',cabinet_layout_mode:'Layout',custom_cabinet_contents:'Contents',custom_drawer_count:'Drawer count',custom_door_count:'Door count',mixed_bay_count:'Number of bays',bottom_width_style:'Bottom panel',cnc_tool_diameter:'CNC cutter diameter',slot_corner_relief:'Shared slot relief',side_relief:'Side-panel relief',router_bit_diameter:'CNC cutter diameter',layout_gap:'Gap between parts in cut layout',stock_width:'Sheet width',stock_height:'Sheet height',layout_show_stock:'Draw sheet outline in cut layout',engrave_label_size:'Engraved label size',engrave_label_min_size:'Smallest label size',engrave_drawer_divider_ids:'Engrave divider IDs',include_shared_export_bounding_box:'Shared export frame',export_bounding_box_margin:'Export frame margin',export_bounding_box_frame_width:'Export frame line width',apply_kerf_compensation:'Compensate for kerf',kerf:'Kerf width',circle_segments:'Circle smoothness (segments)',design_name:'Engine design label',output_mode:'Engine output mode',color_mode:'Render colours',dimension_report:'Dimension report',validation_report:'Validation report',system_contract_report:'Contract report',interface_keepout_policy:'Interface keep-out policy',hardware_drilling_mode:'Hardware drilling',fit_clearance:'Joint fit clearance',metal_slide_clearance_per_side:'Slide clearance per side',equipment_mass_kg:'Equipment mass (kg)',slide_load_rating_kg:'Slide load rating (kg)'};
 const NOMINAL:Record<string,number>={'1/8':3.175,'1/4':6.35,'3/8':9.525,'1/2':12.7,'5/8':15.875,'3/4':19.05,'1':25.4};
@@ -64,6 +66,10 @@ const DESIGN_META={version:2 as const,engine:5 as const,engineFamily:'modular_or
 export default function Home(){
  const [family,setFamily]=useState(0),[values,setValues]=useState<Values>(()=>defaults(0)),[step,setStep]=useState('Sizing'),[interior,setInterior]=useState(false),[exploded,setExploded]=useState(false),[dimensions,setDimensions]=useState(true),[tab,setTab]=useState('layout'),[exact,setExact]=useState(false),[query,setQuery]=useState(''),[view,setView]=useState<'design'|'export'>('design'),[busy,setBusy]=useState(false),[projectName,setProjectName]=useState('Workshop cart');
  const [units,setUnits]=useState<Units>('mm');
+ // A product (lib/products) replaces the cabinet editor with its own; values are then the
+ // product's SCAD parameters and family is unused.
+ const [productId,setProductId]=useState<string|null>(null),[openSection,setOpenSection]=useState<string|null>('shape');
+ const product=productById(productId),target=useMemo(()=>product?productTarget(product):undefined,[product]);
  const stockThickness=family===5?thickness(values,'drawer_stock','custom_drawer_material_thickness'):thickness(values);
  const fmt=(n:number)=>formatDimension(n,units);
  const [selected,setSelected]=useState<string|null>(null);
@@ -75,20 +81,27 @@ export default function Home(){
  const input=useRef<HTMLInputElement>(null);
  const current=useRef({family,values});
  current.current={family,values};
- const analysis=useEngineAnalysis(family,values);
+ const analysis=useEngineAnalysis(family,values,650,target);
  const solved=solvedDimensions(family,analysis);
  const fitActive=family===5||family===6||values.width_basis==='drawer_inside'||values.depth_basis==='drawer_inside';
  const previewValues=fitActive&&solved?{...values,custom_cabinet_width:solved.RESOLVED_CABINET_W,custom_cabinet_height:solved.RESOLVED_CABINET_H??values.custom_cabinet_height,custom_cabinet_depth:solved.RESOLVED_CARCASS_D}:values;
- const selectable=[...new Map([...geometry(previewValues,false,false),...geometry(previewValues,true,false)].map(p=>[p.id,p])).values()];
+ const selectable=product?[]:[...new Map([...geometry(previewValues,false,false),...geometry(previewValues,true,false)].map(p=>[p.id,p])).values()];
  const selectedPart=selectable.find(p=>p.id===selected);
  const selectPart=(p:Part|null)=>{setSelected(p?.id??null);if(p){setStep(partSection(p));setQuery('')}};
- const fields=presentFields(schemas[family].fields),errors=validate(values);
- const record=(next:(v:Values)=>Values)=>{setPast(p=>[...p.slice(-49),values]);setFuture([]);setValues(v=>normalizeValues(family,{...next(v),_starter:'edited'}))};
- const change=(key:string,val:any)=>record(v=>({...v,...(key==='cabinet_layout_mode'&&val==='sections'?{section_nodes:convertBays(v),width_basis:'outside',depth_basis:'outside'}:{}),...linkedChanges(key,val,v),[key]:val}));
+ const fields=presentFields(schemas[family].fields),errors=product?product.validate(values):validate(values);
+ const record=(next:(v:Values)=>Values)=>{setPast(p=>[...p.slice(-49),values]);setFuture([]);setValues(v=>product?{...next(v),_starter:'edited'}:normalizeValues(family,{...next(v),_starter:'edited'}))};
+ const change=(key:string,val:any)=>product?record(v=>({...v,...(product.linked?.(key,val,v)??{}),[key]:val})):record(v=>({...v,...(key==='cabinet_layout_mode'&&val==='sections'?{section_nodes:convertBays(v),width_basis:'outside',depth_basis:'outside'}:{}),...linkedChanges(key,val,v),[key]:val}));
  function startDesign(n:number,starter:string){
-  setFamily(n);setValues(starterValues(n,starter,defaults(n)));setPast([]);setFuture([]);
+  setProductId(null);setFamily(n);setValues(starterValues(n,starter,defaults(n)));setPast([]);setFuture([]);
   setProjectName(schemas[n].starters.find(p=>p.id===starter&&p.id!==schemas[n].defaultStarter)?.name??families[n].name);
   setStep('Sizing');setTab(hasLayoutTab(n)?'layout':'model');setQuery('');setSelected(null);setPickerOpen(false);
+  toast.success('New design started — review the size and materials');
+ }
+ function startProduct(id:string,starter:string){
+  const p=productById(id);if(!p)return;
+  setProductId(id);setFamily(0);setValues(productStarterValues(p,starter));setPast([]);setFuture([]);
+  setProjectName(p.starters.find(s=>s.id===starter&&s.id!==p.defaultStarter)?.name??p.name);
+  setOpenSection(p.sections[0]?.id??null);setQuery('');setSelected(null);setPickerOpen(false);
   toast.success('New design started — review the size and materials');
  }
  const undo=()=>{if(past.length){setFuture(f=>[values,...f]);setValues(past[past.length-1]);setPast(p=>p.slice(0,-1))}},
@@ -111,7 +124,7 @@ export default function Home(){
  },[]);
  // Opening a shop section from a part click or search keeps the rail group open.
  useEffect(()=>{if(shopSections.includes(step))setShopOpen(true)},[step]);
- const guidedKeys=step==='Sizing'&&family<5?guideKeys(values):new Set<string>();
+ const guidedKeys=!product&&step==='Sizing'&&family<5?guideKeys(values):new Set<string>();
  // A setting that does not apply stays visible but disabled, with the reason beneath it.
  function field(f:Field,reason:string|null=null,locked=false){
   const key=f.key,value=values[key],id='field-'+key+'-'+sectionFor(f),off=!!reason||locked;
@@ -129,17 +142,17 @@ export default function Home(){
  async function exportFiles(){
   if(errors.length)return;
   setBusy(true);
-  try{download(await exportBundle(family,values),'cabinet-workshop.zip');toast.success('OpenSCAD project downloaded')}
+  try{download(target?zip(target.projectFiles(values,projectName,units)):await exportBundle(family,values),target?(projectName.replace(/[^a-z0-9_-]+/gi,'-')||target.id)+'-openscad.zip':'cabinet-workshop.zip');toast.success('OpenSCAD project downloaded')}
   catch(e){toast.error(String(e))}
   finally{setBusy(false)}
  }
  function save(){
-  download(new Blob([JSON.stringify({...DESIGN_META,displayUnits:units,family,name:projectName,values},null,2)],{type:'application/json'}),(projectName.replace(/[^a-z0-9_-]+/gi,'-')||'design')+'.cabinet.json');
+  download(new Blob([JSON.stringify({...DESIGN_META,displayUnits:units,family,...(product?{product:product.id}:{}),name:projectName,values},null,2)],{type:'application/json'}),(projectName.replace(/[^a-z0-9_-]+/gi,'-')||'design')+'.cabinet.json');
   projects.markSaved();
   toast.success('Design downloaded to your device');
  }
- function restoreDesign(d:Design){setUnits(d.displayUnits);setFamily(d.family);setValues(d.values);setStep('Sizing');setProjectName(d.name);setPast([]);setFuture([]);setSelected(null);if(!hasLayoutTab(d.family))setTab(t=>t==='layout'?'model':t);if(d.family===7)setTab(t=>t==='hardware'?'model':t)}
- const projects=useProjects({...DESIGN_META,family,name:projectName,displayUnits:units,values},restoreDesign);
+ function restoreDesign(d:Design){setProductId(d.product??null);if(d.product)setOpenSection(productById(d.product)?.sections[0]?.id??null);setUnits(d.displayUnits);setFamily(d.family);setValues(d.values);setStep('Sizing');setProjectName(d.name);setPast([]);setFuture([]);setSelected(null);if(!hasLayoutTab(d.family))setTab(t=>t==='layout'?'model':t);if(d.family===7)setTab(t=>t==='hardware'?'model':t)}
+ const projects=useProjects({...DESIGN_META,family,...(product?{product:product.id}:{}),name:projectName,displayUnits:units,values},restoreDesign);
  async function load(file?:File){
   if(!file)return;
   try{
@@ -171,6 +184,7 @@ export default function Home(){
  const layoutMatches=searching&&hasLayoutEditor(family)&&visibleFields.some(f=>LAYOUT_KEYS.has(f.key)&&matches(f));
  function chooseStarter(id:string){
   setPast(p=>[...p.slice(-49),values]);setFuture([]);
+  if(product){setValues(productStarterValues(product,id));setProjectName(product.starters.find(s=>s.id===id)?.name??product.name);toast.success('Starter loaded — review dimensions and materials');return}
   setValues(starterValues(family,id,values));
   if(id==='photo_section_cabinet')setTab('layout');
   setProjectName(schemas[family].starters.find(p=>p.id===id)?.name??families[family].name);
@@ -191,7 +205,7 @@ export default function Home(){
  return <main>
   {projects.dialogs}
   <Toaster position='bottom-right'/>
-  <FamilyPicker open={pickerOpen} onOpenChange={setPickerOpen} family={family} units={units} onChoose={(n,s)=>projects.guard(()=>startDesign(n,s))}/>
+  <FamilyPicker open={pickerOpen} onOpenChange={setPickerOpen} family={family} product={product?.id} units={units} onChoose={(n,s)=>projects.guard(()=>startDesign(n,s))} onChooseProduct={(id,s)=>projects.guard(()=>startProduct(id,s))}/>
   <header className='app-header'>
    <a href='./' className='brand'><span className='brand-icon'><Box size={24}/></span><div>Cabinet<span>WORKSHOP</span></div></a>
    <div className='header-project'><span className='separator'/><input aria-label='Design name' value={projectName} onChange={e=>setProjectName(e.target.value)}/><span className='draft' role='status'>{projects.status}</span></div>
@@ -207,7 +221,11 @@ export default function Home(){
    </div>
    <input type='file' accept='.json' ref={input} hidden onChange={e=>load(e.target.files?.[0])}/>
   </header>
-  <div className='workspace cw-workspace' hidden={view==='export'}>
+  {product&&<div className='pw-host' hidden={view==='export'}><ProductWorkspace key={product.id} product={product} values={values} units={units} analysis={analysis} name={projectName} change={change}
+   undo={undo} redo={redo} canUndo={past.length>0} canRedo={future.length>0} onChangeType={()=>setPickerOpen(true)}
+   onStarter={id=>projects.guard(()=>chooseStarter(id))} onReset={()=>projects.guard(()=>{setPast(p=>[...p,values]);setFuture([]);setValues(productStarterValues(product,product.defaultStarter));toast.success('Default settings restored')})}
+   openSection={openSection} setOpenSection={setOpenSection}/></div>}
+  {!product&&<div className='workspace cw-workspace' hidden={view==='export'}>
    <aside className='config cw-config' aria-label='Cabinet settings'>
     <div className='config-top'>
      <div className='type-card'>
@@ -322,10 +340,10 @@ export default function Home(){
      <div className='status'>{errors.length?<><Info size={17}/>Check dimensions</>:outside?<><Check size={17}/>Engine-resolved size</>:<><Check size={17}/>Input ranges checked</>}</div>
     </div>
    </section>
-  </div>
+  </div>}
   <div className='export-page' hidden={view!=='export'}>
-   <ExportView units={units} family={family} values={values} name={projectName} errors={errors} projectBusy={busy} onDownloadProject={exportFiles}
-    onBack={()=>setView('design')} onEditSheets={()=>{setView('design');setShopOpen(true);setStep('Materials');setQuery('')}}/>
+   <ExportView units={units} family={family} values={values} name={projectName} errors={errors} projectBusy={busy} onDownloadProject={exportFiles} target={target}
+    onBack={()=>setView('design')} onEditSheets={()=>{setView('design');if(product){setOpenSection(product.sheetSection);return}setShopOpen(true);setStep('Materials');setQuery('')}}/>
   </div>
  </main>;
 }

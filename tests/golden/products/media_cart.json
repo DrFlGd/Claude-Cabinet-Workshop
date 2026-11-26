@@ -1,0 +1,390 @@
+{
+ "sloped_bins": {
+  "records": [
+   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
+   "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=sloped_bins|PROFILE=sloped|TOWER=None|CUBBIES=yes",
+   "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=276|CLEAR_D=176|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
+   "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=350|BACK_WALL_Z=550|DEPTH_FROM_ENTRANCE=189",
+   "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=389",
+   "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=589",
+   "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=276|CLEAR_H=125|CLEAR_D=582",
+   "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
+   "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
+   "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|SIDE_R|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|DECK|1|deck|CARCASS|18|900|600|as drawn",
+   "BOM|CUBBY_BACK|1|cubby_back|CARCASS|18|900|161|as drawn",
+   "BOM|CUBBY_DIV_1|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CUBBY_DIV_2|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CROSS_1|1|crosspiece|CARCASS|18|900|207|as drawn",
+   "BOM|CROSS_2|1|crosspiece|CARCASS|18|900|407|as drawn",
+   "BOM|CROSS_3|1|crosspiece|CARCASS|18|900|607|as drawn",
+   "BOM|CROSS_4|1|crosspiece|CARCASS|18|900|807|as drawn",
+   "BOM|FIN_1|1|fin|FIN|18|600|807|as drawn",
+   "BOM|FIN_2|1|fin|FIN|18|600|807|as drawn",
+   "PLACE|BOTTOM|X=0|Y=0|W=900|H=600",
+   "PLACE|SIDE_L|X=920|Y=0|W=600|H=932",
+   "PLACE|SIDE_R|X=1540|Y=0|W=600|H=932",
+   "PLACE|DECK|X=0|Y=952|W=900|H=600",
+   "PLACE|CUBBY_BACK|X=920|Y=952|W=900|H=161",
+   "PLACE|CUBBY_DIV_1|X=1840|Y=952|W=582|H=161",
+   "PLACE|CUBBY_DIV_2|X=0|Y=1572|W=582|H=161",
+   "PLACE|CROSS_1|X=602|Y=1572|W=900|H=207",
+   "PLACE|CROSS_2|X=1522|Y=1572|W=900|H=407",
+   "PLACE|CROSS_3|X=0|Y=1999|W=900|H=607",
+   "PLACE|CROSS_4|X=920|Y=1999|W=900|H=807",
+   "PLACE|FIN_1|X=1840|Y=1999|W=600|H=807",
+   "PLACE|FIN_2|X=0|Y=2826|W=600|H=807",
+   "HARDWARE|ID=screws|QTY=8|UNIT=each|NOTE=countersunk wood screws; clearance 4.5 mm, pilot 3 mm x 22 mm drilled into the panel edge at assembly",
+   "HARDWARE|ID=casters|QTY=4|UNIT=each|NOTE=plate casters, 85 mm floor to plate; two with brakes recommended",
+   "HARDWARE|ID=caster_bolts|QTY=16|UNIT=each|NOTE=bolts with washers and nuts through 8.5 mm holes",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "efa6aa33e60ca29db3a6dbbe",
+    "bytes": 103387,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados_flip": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "edcfe40421ff3dcb7ee68e0e",
+    "bytes": 87313,
+    "paths": 1
+   }
+  },
+  "sheets": "4 sheets: 3 × CARCASS 18 mm, 1 × FIN 18 mm"
+ },
+ "stepped_bins": {
+  "records": [
+   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
+   "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=stepped_bins|PROFILE=stepped|TOWER=None|CUBBIES=yes",
+   "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=276|CLEAR_D=176|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
+   "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=350|BACK_WALL_Z=550|DEPTH_FROM_ENTRANCE=189",
+   "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=389",
+   "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=589",
+   "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=276|CLEAR_H=125|CLEAR_D=582",
+   "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
+   "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
+   "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|SIDE_R|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|DECK|1|deck|CARCASS|18|900|600|as drawn",
+   "BOM|CUBBY_BACK|1|cubby_back|CARCASS|18|900|161|as drawn",
+   "BOM|CUBBY_DIV_1|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CUBBY_DIV_2|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CROSS_1|1|crosspiece|CARCASS|18|900|207|as drawn",
+   "BOM|CROSS_2|1|crosspiece|CARCASS|18|900|407|as drawn",
+   "BOM|CROSS_3|1|crosspiece|CARCASS|18|900|607|as drawn",
+   "BOM|CROSS_4|1|crosspiece|CARCASS|18|900|807|as drawn",
+   "BOM|FIN_1|1|fin|FIN|18|600|807|as drawn",
+   "BOM|FIN_2|1|fin|FIN|18|600|807|as drawn",
+   "PLACE|BOTTOM|X=0|Y=0|W=900|H=600",
+   "PLACE|SIDE_L|X=920|Y=0|W=600|H=932",
+   "PLACE|SIDE_R|X=1540|Y=0|W=600|H=932",
+   "PLACE|DECK|X=0|Y=952|W=900|H=600",
+   "PLACE|CUBBY_BACK|X=920|Y=952|W=900|H=161",
+   "PLACE|CUBBY_DIV_1|X=1840|Y=952|W=582|H=161",
+   "PLACE|CUBBY_DIV_2|X=0|Y=1572|W=582|H=161",
+   "PLACE|CROSS_1|X=602|Y=1572|W=900|H=207",
+   "PLACE|CROSS_2|X=1522|Y=1572|W=900|H=407",
+   "PLACE|CROSS_3|X=0|Y=1999|W=900|H=607",
+   "PLACE|CROSS_4|X=920|Y=1999|W=900|H=807",
+   "PLACE|FIN_1|X=1840|Y=1999|W=600|H=807",
+   "PLACE|FIN_2|X=0|Y=2826|W=600|H=807",
+   "HARDWARE|ID=screws|QTY=8|UNIT=each|NOTE=countersunk wood screws; clearance 4.5 mm, pilot 3 mm x 22 mm drilled into the panel edge at assembly",
+   "HARDWARE|ID=casters|QTY=4|UNIT=each|NOTE=plate casters, 85 mm floor to plate; two with brakes recommended",
+   "HARDWARE|ID=caster_bolts|QTY=16|UNIT=each|NOTE=bolts with washers and nuts through 8.5 mm holes",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "f224577f9b35f57f81a56620",
+    "bytes": 95497,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados_flip": {
+    "sha256": "988a7c2fcde70aaf68600594",
+    "bytes": 463,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "edcfe40421ff3dcb7ee68e0e",
+    "bytes": 87313,
+    "paths": 1
+   }
+  },
+  "sheets": "4 sheets: 3 × CARCASS 18 mm, 1 × FIN 18 mm"
+ },
+ "shelf_cart": {
+  "records": [
+   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
+   "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=shelf_cart|PROFILE=sloped|TOWER=Right|CUBBIES=no",
+   "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=208.333|CLEAR_D=176|FLOOR_Z=18|FRONT_ENTRANCE_Z=350",
+   "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=350|BACK_WALL_Z=550|DEPTH_FROM_ENTRANCE=332",
+   "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=532",
+   "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=732",
+   "DIM|MEDIA_CART|TOWER|SIDES=Right|CLEAR_W=185|OPENINGS=5|OPENING_H=168.4|SHELF_D=582",
+   "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
+   "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
+   "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|SIDE_R|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|CROSS_1|1|crosspiece|CARCASS|18|697|350|as drawn",
+   "BOM|CROSS_2|1|crosspiece|CARCASS|18|697|550|as drawn",
+   "BOM|CROSS_3|1|crosspiece|CARCASS|18|697|750|as drawn",
+   "BOM|CROSS_4|1|crosspiece|CARCASS|18|697|950|as drawn",
+   "BOM|FIN_1|1|fin|FIN|18|600|950|as drawn",
+   "BOM|FIN_2|1|fin|FIN|18|600|950|as drawn",
+   "BOM|TOWER_R|1|tower_wall|CARCASS|18|600|932|as drawn",
+   "BOM|TOWER_R_BACK|1|tower_back|CARCASS|18|221|914|as drawn",
+   "BOM|TOWER_R_TOP|1|tower_top|CARCASS|18|221|600|as drawn",
+   "BOM|TOWER_R_SHELF_1|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_2|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_3|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_4|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "PLACE|BOTTOM|X=0|Y=0|W=900|H=600",
+   "PLACE|SIDE_L|X=920|Y=0|W=600|H=932",
+   "PLACE|SIDE_R|X=1540|Y=0|W=600|H=932",
+   "PLACE|CROSS_1|X=0|Y=952|W=697|H=350",
+   "PLACE|CROSS_2|X=717|Y=952|W=697|H=550",
+   "PLACE|CROSS_3|X=1434|Y=952|W=697|H=750",
+   "PLACE|CROSS_4|X=0|Y=1722|W=697|H=950",
+   "PLACE|FIN_1|X=717|Y=1722|W=600|H=950",
+   "PLACE|FIN_2|X=1337|Y=1722|W=600|H=950",
+   "PLACE|TOWER_R|X=0|Y=2692|W=600|H=932",
+   "PLACE|TOWER_R_BACK|X=620|Y=2692|W=221|H=914",
+   "PLACE|TOWER_R_TOP|X=861|Y=2692|W=221|H=600",
+   "PLACE|TOWER_R_SHELF_1|X=1102|Y=2692|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_2|X=1343|Y=2692|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_3|X=1584|Y=2692|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_4|X=1825|Y=2692|W=221|H=582",
+   "HARDWARE|ID=screws|QTY=13|UNIT=each|NOTE=countersunk wood screws; clearance 4.5 mm, pilot 3 mm x 22 mm drilled into the panel edge at assembly",
+   "HARDWARE|ID=casters|QTY=4|UNIT=each|NOTE=plate casters, 85 mm floor to plate; two with brakes recommended",
+   "HARDWARE|ID=caster_bolts|QTY=16|UNIT=each|NOTE=bolts with washers and nuts through 8.5 mm holes",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "81296c18ffff8b603992c9ff",
+    "bytes": 124520,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "000ea2f0802c316220a3d9f6",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados": {
+    "sha256": "000ea2f0802c316220a3d9f6",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados_flip": {
+    "sha256": "000ea2f0802c316220a3d9f6",
+    "bytes": 463,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "421fe178860e6f067ec8d3e7",
+    "bytes": 116895,
+    "paths": 1
+   }
+  },
+  "sheets": "4 sheets: 3 × CARCASS 18 mm, 1 × FIN 18 mm"
+ },
+ "double_tower": {
+  "records": [
+   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=1200|H=1035|D=600",
+   "DIM|MEDIA_CART|BODY|W=1200|H=950|D=600|CASTER_H=85|SHAPE=custom|PROFILE=stepped|TOWER=Both|CUBBIES=yes",
+   "DIM|MEDIA_CART|BINS|ROWS=4|COLUMNS=2|CLEAR_W=370|CLEAR_D=127.5|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
+   "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=350|BACK_WALL_Z=500|DEPTH_FROM_ENTRANCE=189",
+   "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=500|BACK_WALL_Z=650|DEPTH_FROM_ENTRANCE=339",
+   "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=650|BACK_WALL_Z=800|DEPTH_FROM_ENTRANCE=489",
+   "DIM|MEDIA_CART|ROW|R4|FRONT_WALL_Z=800|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=639",
+   "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=240.667|CLEAR_H=125|CLEAR_D=582",
+   "DIM|MEDIA_CART|TOWER|SIDES=Both|CLEAR_W=185|OPENINGS=6|OPENING_H=137.333|SHELF_D=582",
+   "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
+   "BOM|BOTTOM|1|bottom_panel|CARCASS|18|1200|600|as drawn",
+   "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|SIDE_R|1|side_wall|CARCASS|18|600|932|as drawn",
+   "BOM|DECK|1|deck|CARCASS|18|794|600|as drawn",
+   "BOM|CUBBY_BACK|1|cubby_back|CARCASS|18|794|161|as drawn",
+   "BOM|CUBBY_DIV_1|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CUBBY_DIV_2|1|cubby_divider|CARCASS|18|582|161|as drawn",
+   "BOM|CROSS_1|1|crosspiece|CARCASS|18|794|207|as drawn",
+   "BOM|CROSS_2|1|crosspiece|CARCASS|18|794|357|as drawn",
+   "BOM|CROSS_3|1|crosspiece|CARCASS|18|794|507|as drawn",
+   "BOM|CROSS_4|1|crosspiece|CARCASS|18|794|657|as drawn",
+   "BOM|CROSS_5|1|crosspiece|CARCASS|18|794|807|as drawn",
+   "BOM|FIN_1|1|fin|FIN|18|600|807|as drawn",
+   "BOM|TOWER_L|1|tower_wall|CARCASS|18|600|932|as drawn",
+   "BOM|TOWER_L_BACK|1|tower_back|CARCASS|18|221|914|as drawn",
+   "BOM|TOWER_L_TOP|1|tower_top|CARCASS|18|221|600|as drawn",
+   "BOM|TOWER_L_SHELF_1|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_L_SHELF_2|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_L_SHELF_3|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_L_SHELF_4|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_L_SHELF_5|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R|1|tower_wall|CARCASS|18|600|932|as drawn",
+   "BOM|TOWER_R_BACK|1|tower_back|CARCASS|18|221|914|as drawn",
+   "BOM|TOWER_R_TOP|1|tower_top|CARCASS|18|221|600|as drawn",
+   "BOM|TOWER_R_SHELF_1|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_2|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_3|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_4|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "BOM|TOWER_R_SHELF_5|1|tower_shelf|CARCASS|18|221|582|as drawn",
+   "PLACE|BOTTOM|X=0|Y=0|W=1200|H=600",
+   "PLACE|SIDE_L|X=1220|Y=0|W=600|H=932",
+   "PLACE|SIDE_R|X=1840|Y=0|W=600|H=932",
+   "PLACE|DECK|X=0|Y=952|W=794|H=600",
+   "PLACE|CUBBY_BACK|X=814|Y=952|W=794|H=161",
+   "PLACE|CUBBY_DIV_1|X=1628|Y=952|W=582|H=161",
+   "PLACE|CUBBY_DIV_2|X=0|Y=1572|W=582|H=161",
+   "PLACE|CROSS_1|X=602|Y=1572|W=794|H=207",
+   "PLACE|CROSS_2|X=1416|Y=1572|W=794|H=357",
+   "PLACE|CROSS_3|X=0|Y=1949|W=794|H=507",
+   "PLACE|CROSS_4|X=814|Y=1949|W=794|H=657",
+   "PLACE|CROSS_5|X=1628|Y=1949|W=794|H=807",
+   "PLACE|FIN_1|X=0|Y=2776|W=600|H=807",
+   "PLACE|TOWER_L|X=620|Y=2776|W=600|H=932",
+   "PLACE|TOWER_L_BACK|X=1240|Y=2776|W=221|H=914",
+   "PLACE|TOWER_L_TOP|X=1481|Y=2776|W=221|H=600",
+   "PLACE|TOWER_L_SHELF_1|X=1722|Y=2776|W=221|H=582",
+   "PLACE|TOWER_L_SHELF_2|X=1963|Y=2776|W=221|H=582",
+   "PLACE|TOWER_L_SHELF_3|X=2204|Y=2776|W=221|H=582",
+   "PLACE|TOWER_L_SHELF_4|X=0|Y=3728|W=221|H=582",
+   "PLACE|TOWER_L_SHELF_5|X=241|Y=3728|W=221|H=582",
+   "PLACE|TOWER_R|X=482|Y=3728|W=600|H=932",
+   "PLACE|TOWER_R_BACK|X=1102|Y=3728|W=221|H=914",
+   "PLACE|TOWER_R_TOP|X=1343|Y=3728|W=221|H=600",
+   "PLACE|TOWER_R_SHELF_1|X=1584|Y=3728|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_2|X=1825|Y=3728|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_3|X=2066|Y=3728|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_4|X=0|Y=4680|W=221|H=582",
+   "PLACE|TOWER_R_SHELF_5|X=241|Y=4680|W=221|H=582",
+   "HARDWARE|ID=screws|QTY=18|UNIT=each|NOTE=countersunk wood screws; clearance 4.5 mm, pilot 3 mm x 22 mm drilled into the panel edge at assembly",
+   "HARDWARE|ID=casters|QTY=4|UNIT=each|NOTE=plate casters, 85 mm floor to plate; two with brakes recommended",
+   "HARDWARE|ID=caster_bolts|QTY=16|UNIT=each|NOTE=bolts with washers and nuts through 8.5 mm holes",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "d6177149f014715c768bde54",
+    "bytes": 240337,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "a917d3ccd6e074955405822a",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados": {
+    "sha256": "a917d3ccd6e074955405822a",
+    "bytes": 463,
+    "paths": 1
+   },
+   "pocket_dados_flip": {
+    "sha256": "a917d3ccd6e074955405822a",
+    "bytes": 463,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "717d6ad045c856c5f3ed5227",
+    "bytes": 222709,
+    "paths": 1
+   }
+  },
+  "sheets": "6 sheets: 5 × CARCASS 18 mm, 1 × FIN 18 mm"
+ },
+ "compact_sorter": {
+  "records": [
+   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "DIM|CABINET|OUTSIDE|W=600|H=520|D=400",
+   "DIM|MEDIA_CART|BODY|W=600|H=520|D=400|CASTER_H=0|SHAPE=custom|PROFILE=stepped|TOWER=None|CUBBIES=no",
+   "DIM|MEDIA_CART|BINS|ROWS=2|COLUMNS=4|CLEAR_W=134.125|CLEAR_D=180.95|FLOOR_Z=12.7|FRONT_ENTRANCE_Z=220",
+   "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=220|BACK_WALL_Z=370|DEPTH_FROM_ENTRANCE=207.3",
+   "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=370|BACK_WALL_Z=520|DEPTH_FROM_ENTRANCE=357.3",
+   "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
+   "BOM|BOTTOM|1|bottom_panel|CARCASS|12.7|600|400|as drawn",
+   "BOM|SIDE_L|1|side_wall|CARCASS|12.7|400|507.3|as drawn",
+   "BOM|SIDE_R|1|side_wall|CARCASS|12.7|400|507.3|as drawn",
+   "BOM|CROSS_1|1|crosspiece|CARCASS|12.7|600|220|as drawn",
+   "BOM|CROSS_2|1|crosspiece|CARCASS|12.7|600|370|as drawn",
+   "BOM|CROSS_3|1|crosspiece|CARCASS|12.7|600|520|as drawn",
+   "BOM|FIN_1|1|fin|FIN|12.7|400|520|as drawn",
+   "BOM|FIN_2|1|fin|FIN|12.7|400|520|as drawn",
+   "BOM|FIN_3|1|fin|FIN|12.7|400|520|as drawn",
+   "PLACE|BOTTOM|X=0|Y=0|W=600|H=400",
+   "PLACE|SIDE_L|X=620|Y=0|W=400|H=507.3",
+   "PLACE|SIDE_R|X=1040|Y=0|W=400|H=507.3",
+   "PLACE|CROSS_1|X=1460|Y=0|W=600|H=220",
+   "PLACE|CROSS_2|X=0|Y=527.3|W=600|H=370",
+   "PLACE|CROSS_3|X=620|Y=527.3|W=600|H=520",
+   "PLACE|FIN_1|X=1240|Y=527.3|W=400|H=520",
+   "PLACE|FIN_2|X=1660|Y=527.3|W=400|H=520",
+   "PLACE|FIN_3|X=0|Y=1067.3|W=400|H=520",
+   "HARDWARE|ID=screws|QTY=4|UNIT=each|NOTE=countersunk wood screws; clearance 4.5 mm, pilot 3 mm x 22 mm drilled into the panel edge at assembly",
+   "HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every joint"
+  ],
+  "svg": {
+   "cut_layout": {
+    "sha256": "d9ceee8caddfbba94b6f5e4e",
+    "bytes": 39890,
+    "paths": 1
+   },
+   "pocket_layout": {
+    "sha256": "6256de6e6c86394f05ef7e05",
+    "bytes": 467,
+    "paths": 1
+   },
+   "pocket_dados": {
+    "sha256": "6256de6e6c86394f05ef7e05",
+    "bytes": 467,
+    "paths": 1
+   },
+   "pocket_dados_flip": {
+    "sha256": "6256de6e6c86394f05ef7e05",
+    "bytes": 467,
+    "paths": 1
+   },
+   "engrave_layout": {
+    "sha256": "8689b7842fffd78619215287",
+    "bytes": 51899,
+    "paths": 1
+   }
+  },
+  "sheets": "2 sheets: 1 × CARCASS 12.7 mm, 1 × FIN 12.7 mm"
+ }
+}
