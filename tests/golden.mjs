@@ -23,7 +23,7 @@ const read=n=>JSON.parse(fs.readFileSync(new URL(n,root)));
 const schema=read('lib/schema.json'),bundle=read('lib/engine-sources.json');
 const sources=Object.entries(bundle).filter(([n])=>n.endsWith('.scad')).map(([name,text])=>({name,text}));
 const update=process.argv.includes('--update');
-const families=(process.env.FAMILIES??'0,1,2,3,4,5,6').split(',').map(Number);
+const families=(process.env.FAMILIES??'0,1,2,3,4,5,6,7').split(',').map(Number);
 const only=process.env.STARTERS?new Set(process.env.STARTERS.split(',')):null;
 const dir=new URL('tests/golden/',root);
 // lib/nesting.ts, transpiled the way the other Node suites load the app's TypeScript.

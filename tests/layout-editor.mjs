@@ -18,7 +18,7 @@ function load(name,deps={}){
  return m.exports;
 }
 const sections=load('sections');
-const cabinet=load('cabinet',{'./sections':sections,'./schema.json':schema,'./engine-sources.json':bundle});
+const cabinet=load('cabinet',{'./workbench':load('workbench'),'./sections':sections,'./schema.json':schema,'./engine-sources.json':bundle});
 const {analyse}=load('analysis',{'./manufacturing':load('manufacturing')});
 const L=load('layout',{'./cabinet':cabinet,'./sections':sections,'./settings':load('settings')});
 const configure=(f,values)=>{let s=bundle[schema[f].file];for(const fl of schema[f].fields){const v=values[fl.key];if(v!==undefined&&v!==null)s=s.replace(new RegExp('^('+fl.key+'\\s*=\\s*)[^;]+;','m'),(_m,p)=>p+JSON.stringify(v)+';')}return s};

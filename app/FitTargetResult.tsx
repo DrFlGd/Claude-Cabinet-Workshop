@@ -15,7 +15,7 @@ export function solvedDimensions(family:number,analysis:Analysis):Record<string,
  return ['RESOLVED_CABINET_W','RESOLVED_CARCASS_D','ACHIEVED_W','ACHIEVED_D'].every(k=>Number.isFinite(t[k]))?t:null;
 }
 export default function FitTargetResult({family,values,units,analysis}:{units:Units;family:number;values:Values;analysis:Analysis}){
- const active=family>=5||values.width_basis==='drawer_inside'||values.depth_basis==='drawer_inside';
+ const active=family===5||family===6||values.width_basis==='drawer_inside'||values.depth_basis==='drawer_inside';
  if(!active)return null;
  const r=solvedDimensions(family,analysis),f=(n:number)=>formatShop(n,units)+(units==='mm'?' mm':'');
  const busy=analysis.state==='waiting'||analysis.state==='running';

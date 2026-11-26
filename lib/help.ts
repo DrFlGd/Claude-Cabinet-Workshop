@@ -370,12 +370,18 @@ const OPTIONS:Record<string,Record<string,string>>={
  target_dimension_mode:{direct:'Enter inside sizes',modular_grid:'From a modular grid'},
  drawer_design_basis:{enclosure:'Fit an opening',outside_box:'Outside box size',inside_clear:'Inside clear size',modular_grid:'Modular grid'},
  ganging_sides:{both:'Both sides',left:'Left side',right:'Right side'},
+ frame_size:{small:'Small · 2 × 2 cells',medium:'Medium · 3 × 2 cells',large:'Large · 4 × 2 cells',custom:'Custom grid'},
+ frame_cross_members:{ends:'Under the end columns',every_column:'Under every column'},
+ worksurface_dog_holes:{all:'Every panel',none:'None',selected:'Selected panels'},
+ handle_style:{none:'No pulls',square:'Square',rounded:'Rounded',chamfered:'Chamfered',straight_bar:'Straight bar',traditional:'Traditional'},
 };
 export const optionLabel=(key:string,option:string)=>OPTIONS[key]?.[option];
 // Help for a setting: the hand-written text, else a sentence derived from the key's family
 // (render visibility toggles, measured thicknesses), else the engine's own description.
 const words=(s:string)=>s.replace(/_/g,' ');
-export function helpFor(key:string,description=''):string{
+export function helpFor(key:string,description='',family?:number):string{
+ // The workbench engine describes its own settings; several share names with other cabinet types.
+ if(family===7&&description)return description;
  if(HELP[key])return HELP[key];
  if(/^show_/.test(key))return 'Show the '+words(key.slice(5))+' in the 3D render and flat views. Hidden parts are still counted in the cut list and exports.';
  if(/^custom_.*_thickness$/.test(key))return 'Measured thickness of the '+words(key.replace(/^custom_/,'').replace(/_thickness$/,''))+' stock. Used only while that stock is set to Measured thickness.';

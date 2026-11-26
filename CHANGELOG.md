@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.14.0**) are separate from the bundled
+Application versions (currently **0.15.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.14.0 — 2026-11-26
+## 0.15.0 — 2026-11-26
 
 Your own products beside the cabinet types, starting with the media cart: a
 reviewed and corrected media-storage cart with its own editor, cut files and
@@ -79,6 +79,84 @@ Limitations: no load rating, racking or tipping analysis; 3D interference is
 swept in the test suite, not checked for each user design; the instant drawing
 is schematic (joinery shows in the 3D model and cut files); the flip pocket pass
 assumes each two-sided part is turned over within its own place in the layout.
+
+## 0.14.0 — 2026-11-26
+
+A new cabinet type, **Modular workbench**: a rolling base frame on a grid of
+400 mm cells, cabinet modules placed on whole cells (and stacked), and a
+puzzle-jointed worksurface with dog holes. It is modelled on the owner's
+reference plans (three base frames, a simple cabinet module, worksurfaces and a
+set of cut handles); the plans are not in the repository and no outline was
+traced. Every part is generated from parameters whose defaults reproduce the
+reference; [docs/MODULAR_WORKBENCH.md](docs/MODULAR_WORKBENCH.md) lists the
+measured dimensions, how they were derived and the decisions taken where the
+reference is silent.
+
+- **Base frame.** Small (2 × 2), medium (3 × 2) and large (4 × 2) frames, or a
+  custom grid up to 5 × 3 cells. 85 mm strips half-lap at every crossing (long
+  strips slotted from the top, cross strips from the bottom, cross strips under
+  the end columns or every column), with 50 × 13 mm registration tabs at every
+  cell centre, tapered ends, dogbone relief, and casters under the outer
+  crossings.
+- **Cabinet modules.** Each module covers whole cells (one or more wide and
+  deep), faces the front, back or either end, holds doors (one per cell width,
+  two hinged on the outer edges when wider) or is open, and has adjustable
+  shelves on 5 mm pins. Sides carry 14 mm housings for the back, bottom and top
+  rail fingers; the bottom has 51 × 19 mm pockets that drop over the frame tabs;
+  the top rails have hand slots under the dog-hole rows; doors get 35 mm hinge
+  cups and pull holes. Modules placed on others stack (the engine warns to
+  screw stacked modules down) and must be supported evenly.
+- **Worksurface.** 18 mm panels with a 50 mm overhang and rounded corners,
+  split on cell boundaries in the reference panel layout and joined with
+  30 mm dovetail puzzle joints at 180 mm pitch, with 16 mm dog holes on a
+  100 mm grid (all panels, none, or selected panels).
+- **Cut handles.** Square, rounded, chamfered, straight bar and traditional
+  plywood pulls (162–210 mm long, 140 mm screw centres) cut from the handle
+  stock, or none.
+- **Layout tab for the workbench.** A top view of the grid: click an empty cell
+  to place a module, click a module to set contents, facing, hinge side,
+  height, shelves and span, move it, stack a module on top (a module already
+  at bench height is split into two stacked halves) or remove it; **Fill empty
+  cells** completes the grid. Doors that would open into another module are
+  flagged under the drawing and by the engine.
+- **Seven starting points**: the medium 3 × 2 bench (default), small 2 × 2,
+  large 4 × 2, doors in front with open shelving behind, stacked half-height
+  modules, one simple cabinet on a 1 × 1 frame, and the medium bench in ¾″
+  stock.
+- Engine checks cover grid fit, support, door clearance, joint and pocket
+  depths, cutter access in puzzle necks, dog holes clear of seams, hinge and
+  handle fit, shelf sag on wide modules, unsupported worksurface cells, stacking
+  and stock size. The instant schematic, the summary bar (bench depth),
+  plain-language help and option labels, and the cut list names cover the new
+  type; the Hardware tab is not shown for it.
+
+Validation performed: `pnpm exec tsc`; engine-source and parity checks; units,
+nesting, settings visibility, hardware and `tests/v5-integration.cjs` (now all
+117 starters, plus workbench size, stacking, grid-fit, support and door-facing
+checks and setting visibility). Golden snapshots were added for the seven
+workbench starters; each starter's cut layout matched its part table (one
+outer contour per part) and nested on its stock sheets. The 3D interference
+check now renders every workbench part on its own and intersects each pair:
+all seven starters, two hand-picked layouts (a 4 × 3 grid with modules facing
+every way, stacked and two cells deep, fit clearances, cross strips under every
+column) and six seeded random module layouts showed no overlapping parts, and a
+deliberately shallow registration pocket and long fingers were caught. The
+existing interference sweep keeps drawing from the first seven cabinet types,
+so its seeded designs are unchanged. In headless Chrome at 1500 and 390 px:
+choosing the type and starters, placing, filling, stacking and turning modules
+(with the door-clearance message) and switching to inches; at 1500 px also the
+instant and Exact 3D views, the cut list and generating the export package;
+no console errors or horizontal scrolling. Not run
+here: the native OpenSCAD stackable and section tests and the full
+interference sweep (CI runs both).
+
+Remaining limitations: drawer modules and the plans' screw-marking dimples and
+drilling jigs are not modelled; the handle profiles are parametric
+approximations at the reference sizes rather than the plans' exact curves;
+casters are drawn as reference hardware; stacked modules have no registration
+between them; custom three-row grids pair worksurface panels row by row, so
+four panels meet at interior crossings; the Python request translators do not
+cover the workbench frontend yet.
 
 ## 0.13.0 — 2026-10-16
 
