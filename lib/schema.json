@@ -26313,7 +26313,7 @@
         "value": "raised",
         "expression": null,
         "section": "Mounting / Stacking",
-        "description": "raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom sits low in the tongue layer between the top stretchers and sides of the module below, as in the reference stackable plans: modules register in both directions, screws through the lower ears fix them together and the interface depth equals the sheet thickness. Needs tab-and-slot joinery and a single bay.",
+        "description": "raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom sits low in the tongue layer between the top stretchers and sides of the module below, as in the reference stackable plans: modules register in both directions, screws through the lower ears fix them together and the interface depth equals the sheet thickness. With dado or screw joinery the dado tongues and screw holes are kept to the full-height part of the side tongue; drawer-bank partitions stand on the bottom with their bottom joint over its depth.",
         "options": [
           "raised",
           "nested"
@@ -26453,6 +26453,35 @@
         "bounds": null,
         "step": 0.01,
         "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "side_outer_corner_radius",
+        "value": 0,
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "Rounded outer corners on the cabinet sides and base-frame sides, as in the reference stackable plans (3 mm). 0 keeps them square; at most half the sheet thickness.",
+        "options": null,
+        "bounds": null,
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "stack_interface_flank",
+        "value": "s_curve",
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "s_curve = radiused S transition between the stacking pads and the tongue. chamfer_45 = a straight 45-degree flank between two fillets of the corner radius, as in the reference stackable plans (r = 15 mm in 18 mm sheet); it self-centres a module set down slightly off position.",
+        "options": [
+          "s_curve",
+          "chamfer_45"
+        ],
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
         "visibleIf": null,
         "advanced": false
       },
@@ -26812,6 +26841,19 @@
         "expression": null,
         "section": "Hardware / Hinges",
         "description": "",
+        "options": null,
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
+        "key": "hinge_plate_marks_both_sides",
+        "value": false,
+        "expression": null,
+        "section": "Hardware / Hinges",
+        "description": "Engrave marks at the mounting-plate positions on the inside of both sides, as in the reference stackable plans, so the door can be hung either way. The hinge side keeps its plate holes.",
         "options": null,
         "bounds": null,
         "step": null,
@@ -30913,9 +30955,9 @@
           "include_stack_base": true,
           "stack_interface_depth": 18,
           "stack_base_height": 80,
-          "stack_interface_front_margin": 98,
-          "stack_interface_back_margin": 98,
-          "stack_interface_corner_radius": 9,
+          "stack_interface_front_margin": 98.8,
+          "stack_interface_back_margin": 98.8,
+          "stack_interface_corner_radius": 15,
           "stack_interface_clearance": 0.6,
           "stack_preview_explode_gap": 0,
           "ganging_style": "none",
@@ -31074,7 +31116,9 @@
           "interface_keepout_policy": "enforce",
           "side_tab_style": "blind",
           "stack_bottom_style": "nested",
-          "stack_link_screw_holes": true
+          "stack_link_screw_holes": true,
+          "stack_interface_flank": "chamfer_45",
+          "side_outer_corner_radius": 3
         }
       }
     ]

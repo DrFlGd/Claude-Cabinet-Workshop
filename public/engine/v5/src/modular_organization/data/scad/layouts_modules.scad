@@ -593,6 +593,18 @@ module face_frame_engrave_labels() {
 }
 
 
+// Hinge-plate marks on the cabinet sides (engraved on the face that is up
+// in the layout, the inside face).
+module hinge_plate_marks_engrave() {
+    if (hinge_plate_marks_active()) {
+        translate([0,-side_panel_bottom_z])
+            hinge_plate_marks_2d("left");
+        translate([resolved_cabinet_depth+layout_gap,-side_panel_bottom_z])
+            hinge_plate_marks_2d("right");
+    }
+}
+
+
 module stack_base_engrave_labels() {
     if (stack_base_active) {
         g = layout_gap;
@@ -655,6 +667,7 @@ module engrave_layout() {
         drawer_engrave_labels();
     else {
         carcass_engrave_labels();
+        hinge_plate_marks_engrave();
         drawer_engrave_labels();
         door_engrave_labels();
         accessory_engrave_labels();

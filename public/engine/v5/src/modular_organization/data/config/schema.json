@@ -11608,7 +11608,7 @@
             "raised",
             "nested"
           ],
-          "description": "raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom sits low in the tongue layer between the top stretchers and sides of the module below, as in the reference stackable plans: modules register in both directions, screws through the lower ears fix them together and the interface depth equals the sheet thickness. Needs tab-and-slot joinery and a single bay."
+          "description": "raised = the bottom sits on the stacking pads, above the side tongue. nested = the bottom sits low in the tongue layer between the top stretchers and sides of the module below, as in the reference stackable plans: modules register in both directions, screws through the lower ears fix them together and the interface depth equals the sheet thickness. With dado or screw joinery the dado tongues and screw holes are kept to the full-height part of the side tongue; drawer-bank partitions stand on the bottom with their bottom joint over its depth."
         },
         {
           "id": "stack_link_screw_holes",
@@ -11704,6 +11704,26 @@
           "unit": "mm",
           "description": "It is automatically kept large enough for the selected cutter + fit clearance and small enough for two fillets to fit inside the interface depth. With the default 18 mm interface depth, 9 mm gives two tangent quarter-circles with no vertical segment between them.",
           "step": 0.01
+        },
+        {
+          "id": "side_outer_corner_radius",
+          "group": "Mounting / Stacking",
+          "type": "number",
+          "default": 0,
+          "unit": "mm",
+          "description": "Rounded outer corners on the cabinet sides and base-frame sides, as in the reference stackable plans (3 mm). 0 keeps them square; at most half the sheet thickness.",
+          "step": 0.01
+        },
+        {
+          "id": "stack_interface_flank",
+          "group": "Mounting / Stacking",
+          "type": "enum",
+          "default": "s_curve",
+          "enum": [
+            "s_curve",
+            "chamfer_45"
+          ],
+          "description": "s_curve = radiused S transition between the stacking pads and the tongue. chamfer_45 = a straight 45-degree flank between two fillets of the corner radius, as in the reference stackable plans (r = 15 mm in 18 mm sheet); it self-centres a module set down slightly off position."
         },
         {
           "id": "stack_interface_clearance",
@@ -11951,6 +11971,13 @@
           "group": "Hardware / Hinges",
           "type": "boolean",
           "default": true
+        },
+        {
+          "id": "hinge_plate_marks_both_sides",
+          "group": "Hardware / Hinges",
+          "type": "boolean",
+          "default": false,
+          "description": "Engrave marks at the mounting-plate positions on the inside of both sides, as in the reference stackable plans, so the door can be hung either way. The hinge side keeps its plate holes."
         },
         {
           "id": "drawer_mount",

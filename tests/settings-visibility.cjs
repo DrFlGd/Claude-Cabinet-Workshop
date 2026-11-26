@@ -30,13 +30,15 @@ for(const family of [0,1,2,3,4]){
  check('blind_tab_skin',true,{joinery_style:'tab_slot',side_tab_style:'through'},family);check('blind_tab_skin',false,{joinery_style:'tab_slot',side_tab_style:'blind'},family);
  check('blind_tab_screw_hole_diameter',true,{joinery_style:'tab_slot',side_tab_style:'blind',blind_tab_screw_holes:false},family);
 }
-// Nested stacking needs tab-and-slot joinery and takes over the interface depth.
-check('stack_bottom_style',true,{joinery_style:'butt'},3);check('stack_bottom_style',false,{joinery_style:'tab_slot'},3);
-check('stack_link_screw_holes',true,{joinery_style:'tab_slot',stack_bottom_style:'raised'},3);check('stack_link_screw_holes',false,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);
-check('stack_interface_depth',true,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_interface_depth',false,{joinery_style:'butt'},3);
+// Nested stacking works with every carcass joinery and takes over the interface depth.
+check('stack_bottom_style',false,{joinery_style:'butt'},3);check('stack_bottom_style',false,{joinery_style:'dado'},3);check('stack_bottom_style',false,{joinery_style:'tab_slot'},3);
+check('stack_link_screw_holes',true,{joinery_style:'tab_slot',stack_bottom_style:'raised'},3);check('stack_link_screw_holes',false,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_link_screw_holes',false,{joinery_style:'screw',stack_bottom_style:'nested'},3);
+check('stack_interface_depth',true,{joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_interface_depth',true,{joinery_style:'dado',stack_bottom_style:'nested'},3);check('stack_interface_depth',false,{joinery_style:'butt'},3);
+// Hinge-plate marks need a hinge style.
+check('hinge_plate_marks_both_sides',true,{hinge_style:'none'},3);check('hinge_plate_marks_both_sides',false,{hinge_style:'euro_35mm',module_type:'door'},3);
 // The toe notch belongs to the flat-rail base frame (chosen or picked automatically for a nested bottom).
 check('stack_base_toe_notch_depth',true,{stack_base_style:'edge_rails'},3);check('stack_base_toe_notch_depth',false,{stack_base_style:'flat_rails'},3);
-check('stack_base_toe_notch_height',false,{stack_base_style:'auto',joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_base_toe_notch_height',true,{stack_base_style:'auto',stack_bottom_style:'raised'},3);
+check('stack_base_toe_notch_height',false,{stack_base_style:'auto',joinery_style:'tab_slot',stack_bottom_style:'nested'},3);check('stack_base_toe_notch_height',false,{stack_base_style:'auto',joinery_style:'screw',stack_bottom_style:'nested'},3);check('stack_base_toe_notch_height',true,{stack_base_style:'auto',stack_bottom_style:'raised'},3);
 check('stack_front_seam',true,{front_mount_style:'inset_flush'},3);check('stack_front_seam',false,{front_mount_style:'overlay'},3);
 console.log('Conditional controls: joinery, drawer modes, hardware, nested drilling and presets/help regressions passed.');
 

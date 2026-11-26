@@ -229,15 +229,15 @@ All screw holes are 4.5 mm, through, for 1-1/4 in screws.
   above the tongue, stacked overlay doors leave a gap of 2 × the edge reveal
   (4 mm by default) instead of about 23 mm (gap item 6). The gap sits at the
   lower edge of the stretchers above it rather than centred on them.
-- **Checks.** Nested needs tab-and-slot joinery and a single bay; other
-  choices are reported as errors. The interference test now places a second
+- **Checks.** Nested needed tab-and-slot joinery and a single bay; other
+  choices were reported as errors (both limits lifted in phase 4). The interference test now places a second
   module at the stack pitch and checks it against the first, and renders the
   stack base in place.
 - **Starter.** "Door Module, Nested (Reference Joinery)" builds a 475 × 633 ×
   550 module in 18 mm sheet with blind tabs, T-bone relief, 75 mm stretchers and
   a full-overlay door, close to the reference's proportions.
 
-### Phase 3: base frame and stacked fronts (next release)
+### Phase 3: base frame and stacked fronts (0.20.0)
 
 - **Base frame.** `stack_base_style` = `auto` | `edge_rails` | `flat_rails`
   (gap item 8). `flat_rails` builds the reference base:
@@ -266,14 +266,69 @@ All screw holes are 4.5 mm, through, for 1-1/4 in screws.
   reveal. Only the visible faces change; drawer boxes and their openings do
   not.
 
+### Phase 4: reference details and wider nesting (next release)
+
+- **45° stacking flanks.** `stack_interface_flank` = `s_curve` (default) |
+  `chamfer_45` (gap item 9). `chamfer_45` is a straight 45° flank between two
+  45° fillets of the stacking corner radius. One transition then runs
+  d + (2√2 − 2) r along the depth: 30.43 mm with d = 18 and r = 15. With
+  98.8 mm margins the tongue has its full height from 129.2 to 420.8 mm, as in
+  the reference. The flank self-centres a module that is set down slightly off
+  position. The S-curve keeps exactly its former geometry. A chamfered
+  interface adds `FL=45` to the stack compatibility key, so it never matches an
+  S-curve module.
+- **Rounded outer corners.** `side_outer_corner_radius` (default 0, at most
+  T/2) rounds every convex corner of the cabinet sides and the base-frame
+  sides. That includes the corners of the stacking profile and of the toe
+  notch.
+- **Hinge-plate marks.** `hinge_plate_marks_both_sides` engraves small marks
+  in the engrave layout at the mounting-plate screw positions. They go on the
+  inside of a side that has no plate holes, so a door can later be hung from
+  either side. The hinge side keeps its drilled holes.
+- **Nested bottom with every joinery.** `stack_bottom_style = nested` now works
+  with dado and screw joinery as well as tab-and-slot. The side has material
+  at the bottom's height only over the full-height part of its tongue, so the
+  joint is kept there. The range is pulled in from each end by the
+  stacking-transition keepout guard plus half the fit clearance.
+  - Dado: the bottom's dado tongues and the side grooves stop at that range.
+    Past it, the bottom's ends stop at the sides' inside faces, clear of the
+    lower module's ears. With slot relief on, the shoulders get T-bone reliefs.
+  - Screw: the registration holes are spaced along the range.
+  - A dado structural back on a nested bottom has no bottom tongue. Like the
+    tab-and-slot back, it stands on the lower module's rear stretcher.
+- **Nested bottom with drawer banks.** Drawer-bank partitions stand on the
+  nested bottom. Their bottom tabs or tongue cover only the depth where the
+  bottom is, not the full partition depth. With dado joinery under top
+  stretchers, their top tongue covers only the stretchers. A full-length tongue
+  would stand between the stretchers, where the module above puts its bottom.
+  Door-hinge and bay partitions follow the same rule in the shared code.
+  Stackable modules have one bay, so they never build those partitions.
+- **Starter.** "Door Module, Nested (Reference Joinery)" now uses the 45°
+  flank with r = 15 mm, 98.8 mm margins and 3 mm rounded side corners.
+- **Shared code.** The stacking profile and its arithmetic are in
+  `public/engine/v5/src/modular_organization/data/scad/stack_locator.scad`.
+  It includes:
+  - the flank shapes and their run;
+  - the recess (female, grown by the fit clearance) and tongue reliefs (male);
+  - the full-height tongue range;
+  - the nested-bottom span;
+  - the link-screw positions.
+
+  Like `tab_pocket.scad`, it takes arguments only, so other cabinet types and
+  products can locate stacked boxes the same way.
+
 ### Not implemented
 
-- 45° stacking flanks, rounded outer corners and hinge-plate marks on both
-  sides.
-- The back's top tabs already pass through notches at the back edge of the
-  rear stretcher and the back rests on the lower module's rear stretcher. The
-  reference's back is 12 mm stock in a 12 × 60 mm side pocket; CCW's structural
-  back is carcass thickness.
+- **Back stock.** The back already matches the reference in construction. Its
+  top tabs pass through notches at the back edge of the rear stretcher, and a
+  nested back rests on the lower module's rear stretcher. The difference is
+  the stock: the reference's back is 12 mm stock in a 12 × 60 mm side pocket,
+  while CCW's structural back is carcass thickness. A thinner structural back
+  would need its own thickness in every back joint and receiver, so it is
+  left as is.
+- **Hinge-plate marks in the starter.** The stackable starters have no hinges
+  (`hinge_style = none`), so the nested starter does not turn the marks on.
+  Choose European hinges to see them.
 
 ## Ambiguities and how they were resolved
 

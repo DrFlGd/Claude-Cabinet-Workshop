@@ -553,7 +553,8 @@ stack_interface_depth = 18;
 //          stackable plans. The interface depth then equals the sheet
 //          thickness, stacked modules register front-to-back and side-to-side,
 //          and screws through the lower module's ears fix it to the bottom
-//          above. Needs tab-and-slot joinery and a single bay.
+//          above. Works with every joinery: the side joint is kept to the
+//          full-height part of the side tongue.
 stack_bottom_style = "raised"; // [raised, nested]
 
 // Nested stacking: screw holes through the top of each side (and the base
@@ -602,6 +603,19 @@ stack_interface_back_margin = 80;
 // depth. With the default 18 mm interface depth, 9 mm gives two tangent
 // quarter-circles with no vertical segment between them.
 stack_interface_corner_radius = 9;
+
+// Rounded outer corners on the cabinet sides and base-frame sides, as in the
+// reference stackable plans (3 mm). 0 keeps them square.
+side_outer_corner_radius = 0;
+
+// Shape of the stacking flanks (stack_locator.scad).
+// s_curve    = the radiused S transition described above.
+// chamfer_45 = a straight 45-degree flank between two fillets of the radius
+//              above, as in the reference stackable plans (r = 15 mm in 18 mm
+//              sheet). It self-centres: a module set down slightly off
+//              position slides into the recess. Allows radii up to about
+//              1.7 x the interface depth.
+stack_interface_flank = "s_curve"; // [s_curve, chamfer_45]
 
 // Clearance is applied by offsetting the COMPLETE female mating profile.
 // The male bottom and female top therefore come from one canonical geometry.
@@ -686,6 +700,11 @@ hinge_plate_hole_spacing = 32;
 hinge_door_fixing_enabled = true;
 
 hinge_plate_holes_enabled = true;
+
+// Engrave marks at the mounting-plate positions on the inside of BOTH sides,
+// as in the reference stackable plans, so the door can be hung either way.
+// The hinge side keeps its plate holes; the other side gets the marks.
+hinge_plate_marks_both_sides = false;
 
 /* [Hardware / Slides] */
 

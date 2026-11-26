@@ -2850,12 +2850,17 @@ function depth_overlap_length(panel_y0,panel_depth) =
 // Joinery on a partition must occupy exactly the depth band its receiver cuts.
 // In combo contents the receiver is the divider, which starts at shelf_front_y
 // (behind inset fronts or a back-dadoed face frame), not at the carcass front.
+// A nested bottom stops short of the front and rear (bottom_panel_y0()).
 function drawer_bank_partition_bottom_joint_y0() =
-    combo_contents_active ? depth_overlap_start(shelf_front_y) : 0;
+    combo_contents_active
+        ? depth_overlap_start(shelf_front_y)
+        : depth_overlap_start(bottom_panel_y0());
 function drawer_bank_partition_bottom_joint_span() =
     combo_contents_active
         ? depth_overlap_length(shelf_front_y,shelf_depth)
-        : min(drawer_bank_partition_depth,resolved_cabinet_depth);
+        : min(
+            resolved_cabinet_depth,
+            depth_overlap_length(bottom_panel_y0(),bottom_panel_depth()));
 
 function drawer_bottom_cross_panel_local_x() =
     drawer_cross_panel_inner_x_offset()
@@ -3137,11 +3142,31 @@ function bottom_panel_depth() =
 
 // Global Y range where the side tongue has its full height.
 function stack_tongue_full_range() =
-    let(r=effective_stack_interface_corner_radius)
+    let(run=stack_interface_flank_run())
     [
-        effective_stack_front_margin+2*r,
-        resolved_cabinet_depth-effective_stack_back_margin-2*r
+        effective_stack_front_margin+run,
+        resolved_cabinet_depth-effective_stack_back_margin-run
     ];
+
+// Radius of the rounded outer corners of the cabinet sides and base sides
+// (0 = square). Kept below half the sheet thickness.
+function side_outer_corner_radius_value() =
+    is_undef(side_outer_corner_radius)
+        ? 0
+        : max(0,min(side_outer_corner_radius,material_thickness/2));
+
+// Stacking flank shape (stack_locator.scad): s_curve or chamfer_45.
+function stack_interface_flank_value() =
+    is_undef(stack_interface_flank) || stack_interface_flank != "chamfer_45"
+        ? "s_curve"
+        : "chamfer_45";
+
+// Horizontal run of one stacking transition (2 R for the S-profile).
+function stack_interface_flank_run() =
+    sl_flank_run(
+        effective_stack_interface_depth,
+        effective_stack_interface_corner_radius,
+        stack_interface_flank_value());
 
 // Panel-local range along the bottom where its side joints may sit: the
 // whole depth, or for a nested bottom the full-height tongue less a margin.
@@ -3149,12 +3174,28 @@ function bottom_joint_range() =
     stack_nested()
         ? let(
             t=stack_tongue_full_range(),
-            e=joint_fit_clearance/2+1,
+            // A dado groove or screw holes run along the whole range, so it
+            // also stays clear of the stacking-transition keepouts.
+            e=carcass_joint_geometry == "tab_slot"
+                ? joint_fit_clearance/2+1
+                : mo_stack_keepout_guard()+dado_fit_clearance/2+0.5,
             lo=max(0,t[0]+e-bottom_panel_y0()),
             hi=min(bottom_panel_depth(),t[1]-e-bottom_panel_y0())
           )
           [lo,max(lo+1,hi)]
         : [0,bottom_panel_depth()];
+
+// True when a nested bottom is joined with dados or butt screws: its side
+// joint (the dado tongue, the groove, the screw holes) is kept to
+// bottom_joint_range(), where the side has material at the bottom's height.
+function nested_bottom_joint_restricted() =
+    stack_nested() && carcass_joint_geometry != "tab_slot";
+
+// Global [y0, length] of the bottom's joint with the sides.
+function bottom_side_joint_span() =
+    nested_bottom_joint_restricted()
+        ? let(r=bottom_joint_range()) [bottom_panel_y0()+r[0],r[1]-r[0]]
+        : [bottom_panel_y0(),bottom_panel_depth()];
 
 function nested_bottom_tab_count() =
     let(r=bottom_joint_range()) effective_tab_count(r[1]-r[0]);
@@ -3171,18 +3212,17 @@ function stack_link_screws_active() =
     && side_tab_screw_hole_diameter() > 0;
 
 function stack_link_screw_ys() =
-    let(
-        d=side_tab_screw_hole_diameter(),
-        r=effective_stack_interface_corner_radius,
-        c=effective_stack_interface_clearance,
-        lo=bottom_panel_y0()+d/2+2,
-        fhi=effective_stack_front_margin+r-c-d/2-2,
-        bhi=effective_stack_back_margin+r-c-d/2-2
-    )
-    !stack_link_screws_active() ? [] : [
-        if (fhi >= lo) (lo+fhi)/2,
-        if (bhi >= lo) resolved_cabinet_depth-(lo+bhi)/2
-    ];
+    !stack_link_screws_active() ? [] :
+        sl_link_screw_ys(
+            resolved_cabinet_depth,
+            bottom_panel_y0(),
+            effective_stack_interface_depth,
+            effective_stack_interface_corner_radius,
+            effective_stack_front_margin,
+            effective_stack_back_margin,
+            effective_stack_interface_clearance,
+            side_tab_screw_hole_diameter(),
+            stack_interface_flank_value());
 
 // Height of those holes below a side's top edge.
 function stack_link_screw_drop() = material_thickness/2;
@@ -3411,9 +3451,19 @@ function structural_back_bottom_tab_length() =
         ? material_thickness
         : 0;
 
+// Dado structural backs have a tongue into the bottom only when the bottom
+// reaches the back plane; a nested back stands on the module below's rear
+// top stretcher instead.
+function structural_back_bottom_dado_depth() =
+    structural_back_panel_overlaps_horizontal(
+        bottom_panel_y0(),bottom_panel_depth())
+        ? structural_back_dado_depth
+        : 0;
+
 function structural_back_cut_height() =
     carcass_joint_geometry == "dado"
-        ? captured_back_height+2*structural_back_dado_depth
+        ? captured_back_height+structural_back_dado_depth
+          +structural_back_bottom_dado_depth()
         : carcass_joint_geometry == "tab_slot"
             ? captured_back_height+material_thickness
               +structural_back_bottom_tab_length()
@@ -4237,7 +4287,8 @@ function mo_stack_compatibility_key() =
         ";F=",effective_stack_front_margin,
         ";B=",effective_stack_back_margin,
         ";R=",effective_stack_interface_corner_radius,
-        ";C=",effective_stack_interface_clearance
+        ";C=",effective_stack_interface_clearance,
+        stack_interface_flank_value() == "chamfer_45" ? ";FL=45" : ""
     );
 
 // MOI-GANG-1 v2 signs every geometry-driving value, including hole diameters
@@ -4451,7 +4502,7 @@ function mo_stack_front_transition_range() = [
     min(
         resolved_cabinet_depth,
         effective_stack_front_margin
-        + 2*effective_stack_interface_corner_radius
+        + stack_interface_flank_run()
         + mo_stack_keepout_guard()
     )
 ];
@@ -4461,7 +4512,7 @@ function mo_stack_rear_transition_range() = [
         0,
         resolved_cabinet_depth
         - effective_stack_back_margin
-        - 2*effective_stack_interface_corner_radius
+        - stack_interface_flank_run()
         - mo_stack_keepout_guard()
     ),
     min(
@@ -4822,7 +4873,8 @@ function mo_side_carcass_joint_features(side="left") =
     concat(
         (!full_width_bottom_active)
             ? mo_side_horizontal_features(
-                side,bottom_panel_y0(),bottom_panel_depth(),bottom_above_toe,"bottom",
+                side,bottom_side_joint_span()[0],bottom_side_joint_span()[1],
+                bottom_above_toe,"bottom",
                 str("bottom.",side),"carcass.bottom")
             : [],
         top_style == "full"
@@ -5629,8 +5681,13 @@ stack_interface_min_nominal_radius =
 
 stack_interface_max_nominal_radius =
     min(
-        effective_stack_interface_depth/2,
-        max(1,stack_interface_center_span/4-1)
+        sl_flank_max_radius(
+            effective_stack_interface_depth,
+            stack_interface_flank_value()),
+        sl_flank_max_radius_for_span(
+            effective_stack_interface_depth,
+            stack_interface_center_span,
+            stack_interface_flank_value(),4)
     );
 
 effective_stack_interface_corner_radius =
