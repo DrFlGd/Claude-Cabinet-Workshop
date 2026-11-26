@@ -8,14 +8,6 @@
 include <joinery.scad>
 include <tab_pocket.scad>
 
-/* [Materials / Stock] */
-
-// Stock sheet the cut files are nested onto.
-stock_width = 2440; // [300:1:5000]
-
-// Short side of the stock sheet.
-stock_height = 1220; // [300:1:5000]
-
 /* [Materials / Measured Thickness] */
 
 // Base frame strips.
@@ -42,6 +34,9 @@ drawer_box_thickness = 12.00; // [3:0.01:40]
 // Drawer box bottoms.
 drawer_bottom_thickness = 12.00; // [3:0.01:40]
 
+// Handle drilling jig plate and fence.
+jig_thickness = 12.00; // [3:0.01:40]
+
 /* [Machining / Tool and Kerf] */
 
 // Cutter for through cuts and pockets; inside corners get at least its radius.
@@ -51,6 +46,20 @@ router_bit_diameter = 6.00; // [0.5:0.01:25]
 
 // Relief cut in the inside corners of slots and pockets so square parts seat fully.
 slot_corner_relief = "dogbone"; // [none,dogbone,t_bone]
+
+/* [Machining / Screw Marks] */
+
+// Shallow drill marks where the assembly screws go (sides, back, bottom, rails, drawer box fronts and face panels).
+include_screw_marks = true;
+
+// Diameter of each screw mark.
+screw_mark_diameter = 4.5; // [1:0.1:10]
+
+// Depth of each screw mark.
+screw_mark_depth = 1.5; // [0.2:0.1:5]
+
+// Cell centre to the screws into the frame strips, along each strip line under a module.
+frame_screw_offset = 78; // [10:0.5:190]
 
 /* [Machining / Frame Joints] */
 
@@ -83,26 +92,6 @@ grid_rows = 2; // [1:1:3]
 // Pitch of the grid cells; modules occupy whole cells.
 cell_size = 400; // [250:1:600]
 
-/* [Structure / Base] */
-
-// Height of the base frame strips, without the registration tabs.
-frame_height = 85; // [40:1:300]
-
-// Strip centre lines sit this far inside every cell edge.
-frame_rail_inset = 60; // [20:1:200]
-
-// Cross strips under the end columns only (as the reference frames) or under every column.
-frame_cross_members = "ends"; // [ends,every_column]
-
-// Strip ends taper inwards by this much at the floor.
-frame_foot_inset = 18.67; // [0:0.01:60]
-
-// Tabs on top of the frame strips at every cell centre locate the modules.
-registration_tab_length = 50; // [10:1:200]
-
-// How far the tabs stand above the strips.
-registration_tab_height = 13; // [1:0.1:40]
-
 /* [Structure / Layout] */
 
 // One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers]. Later rows stack on earlier ones.
@@ -134,6 +123,26 @@ hand_slot_length = 100; // [30:1:300]
 
 // Width of each hand slot.
 hand_slot_width = 25; // [10:1:60]
+
+/* [Structure / Base] */
+
+// Height of the base frame strips, without the registration tabs.
+frame_height = 85; // [40:1:300]
+
+// Strip centre lines sit this far inside every cell edge.
+frame_rail_inset = 60; // [20:1:200]
+
+// Cross strips under the end columns only (as the reference frames) or under every column.
+frame_cross_members = "ends"; // [ends,every_column]
+
+// Strip ends taper inwards by this much at the floor.
+frame_foot_inset = 18.67; // [0:0.01:60]
+
+// Tabs on top of the frame strips at every cell centre locate the modules.
+registration_tab_length = 50; // [10:1:200]
+
+// How far the tabs stand above the strips.
+registration_tab_height = 13; // [1:0.1:40]
 
 /* [Structure / Worktop] */
 
@@ -170,33 +179,10 @@ puzzle_angle = 15; // [0:1:30]
 // Gap cut around every puzzle tab on the receiving panel.
 puzzle_clearance = 0.00; // [0:0.01:2]
 
-/* [Doors / Layout] */
+/* [Fronts / Layout and Reveals] */
 
 // Total gap around a door (half on each edge) and between stacked or neighbouring doors.
 door_gap = 5; // [0:0.1:20]
-
-/* [Drawers / Layout] */
-
-// Height of each drawer front above the door of a drawer-and-door module.
-combo_drawer_height = 150; // [60:1:600]
-
-// Space left above and below each drawer box inside its share of the module.
-drawer_vertical_clearance = 20; // [4:0.5:100]
-
-// Gap between the back of a drawer box and the module back.
-drawer_rear_clearance = 5; // [0:1:100]
-
-// Target height of each finger in the drawer box corner joints (an odd number of fingers is used).
-drawer_finger_pitch = 35; // [10:1:150]
-
-// Drawer bottoms sit this far above the lower edge of the box.
-drawer_bottom_inset = 8; // [0:0.5:60]
-
-// Depth of the blind pockets in the box sides, front and back that take the bottom's tongues.
-drawer_bottom_pocket_depth = 6; // [1:0.1:30]
-
-// Length of the bottom's tongues; shorter than the pockets are deep.
-drawer_bottom_tongue = 5; // [1:0.1:30]
 
 /* [Shelves / Layout] */
 
@@ -230,6 +216,31 @@ shelf_pin_front_inset = 90; // [20:1:300]
 // Rear row of shelf pin holes, from the inside face of the back.
 shelf_pin_rear_inset = 50; // [20:1:300]
 
+/* [Drawers / Layout] */
+
+// Height of each drawer front above the door of a drawer-and-door module.
+combo_drawer_height = 150; // [60:1:600]
+
+// Gap between the back of a drawer box and the module back.
+drawer_rear_clearance = 5; // [0:1:100]
+
+// Target height of each finger in the drawer box corner joints (an odd number of fingers is used).
+drawer_finger_pitch = 35; // [10:1:150]
+
+// Depth of the blind pockets in the box sides, front and back that take the bottom's tongues.
+drawer_bottom_pocket_depth = 6; // [1:0.1:30]
+
+// Length of the bottom's tongues; shorter than the pockets are deep.
+drawer_bottom_tongue = 5; // [1:0.1:30]
+
+/* [Drawers / Clearances] */
+
+// Space left above and below each drawer box inside its share of the module.
+drawer_vertical_clearance = 20; // [4:0.5:100]
+
+// Drawer bottoms sit this far above the lower edge of the box.
+drawer_bottom_inset = 8; // [0:0.5:60]
+
 /* [Hardware / Hinges] */
 
 // Concealed hinge cup diameter.
@@ -244,7 +255,13 @@ hinge_cup_center_from_door_edge = 21; // [5:0.1:60]
 // Hinge cup centre from the top and bottom of the door.
 hinge_end_offset = 87.5; // [20:0.1:300]
 
-/* [Hardware / Drawer Slides] */
+// Front edge of the module side to the hinge mounting-plate screws.
+hinge_plate_setback = 37; // [10:0.1:100]
+
+// Spacing of the two mounting-plate screws, centred on the hinge.
+hinge_plate_screw_spacing = 32; // [10:0.1:80]
+
+/* [Hardware / Slides] */
 
 // Side-mount ball-bearing slides: space between the drawer box and each module side.
 metal_slide_clearance_per_side = 12.7; // [0:0.1:40]
@@ -257,6 +274,8 @@ metal_slide_front_setback = 3; // [0:0.5:50]
 
 // Height of the slide profile; a drawer box must be taller.
 metal_slide_envelope_height = 45; // [10:1:100]
+
+/* [Hardware / Slide Drilling] */
 
 // Drill the slide screw holes in the module sides and drawer boxes.
 include_metal_slide_holes = true;
@@ -284,6 +303,15 @@ handle_style = "square"; // [none,square,rounded,chamfered,straight_bar,traditio
 // Screw clearance holes for the pulls (140 mm centres).
 handle_hole_diameter = 4.5; // [2:0.1:10]
 
+// Pilot holes drilled 15 mm into the ends of the pull's legs.
+handle_pilot_diameter = 3.5; // [1:0.1:8]
+
+// Add the drilling jig (block, plate and fence) for the pulls' pilot holes to the cut files.
+include_handle_jig = false;
+
+// Dowels that locate the drilling block on the jig plate.
+jig_dowel_diameter = 8; // [3:0.1:12]
+
 // Latch edge of the door to the handle centre.
 handle_edge_offset = 117.5; // [20:0.1:600]
 
@@ -301,7 +329,7 @@ caster_plate_size = 60; // [20:1:200]
 /* [Output / View] */
 
 // What the engine renders: the assembly, flat parts, or a cut, pocket, engrave or BOM output.
-output_mode = "assembly"; // [assembly,flat_3d,cut_layout,engrave_layout,bom,pocket_carcass_dados,pocket_drawer_dados,pocket_hinge_cups,pocket_shelf_pins,pocket_slide_holes]
+output_mode = "assembly"; // [assembly,flat_3d,cut_layout,engrave_layout,bom,pocket_carcass_dados,pocket_drawer_dados,pocket_hinge_cups,pocket_shelf_pins,pocket_slide_holes,pocket_screw_marks]
 
 /* [Output / Visibility] */
 
@@ -318,6 +346,12 @@ show_doors = true;
 show_drawer_slides = true;
 
 /* [Output / Flat Layout] */
+
+// Stock sheet the cut files are nested onto.
+stock_width = 2440; // [300:1:5000]
+
+// Short side of the stock sheet.
+stock_height = 1220; // [300:1:5000]
 
 // Gap between parts in the flat cut layout.
 layout_gap = 25; // [1:1:200]
@@ -470,39 +504,106 @@ function hinge_count(Hd)=Hd>1500 ? 4 : Hd>1000 ? 3 : 2;
 function hinge_vs(Hd)=let(n=hinge_count(Hd)) [for(i=[0:n-1]) hinge_end_offset+i*(Hd-2*hinge_end_offset)/(n-1)];
 
 // ---------- handles ----------
-// Every handle in the set screws on at 140 mm centres.
+// Every handle in the set screws on at 140 mm centres from the back of the door, into 15 mm pilot
+// holes drilled in the ends of its two legs. The profiles are generated from the reference set's
+// dimensions (lengths, leg widths, radii, chamfer angle and arc radii); see docs/MODULAR_WORKBENCH.md.
+// Each profile is drawn with the feet on y = 0 and is the solid minus handle_air(): the finger
+// recess between the legs and, on the traditional pull, the notches under its wings.
 HSP=140;
 HL=handle_style=="chamfered" ? 184 : handle_style=="straight_bar" ? 202 : handle_style=="traditional" ? 210 : 162;
 HH=handle_style=="chamfered" ? 42 : handle_style=="traditional" ? 49 : 45;
 has_handles=handle_style!="none";
 module round_convex(r) { offset(r=r) offset(delta=-r) children(); }
 module round_concave(r) { offset(r=-r) offset(delta=r) children(); }
-module handle_profile() {
- L=HL; H=HH; c=L/2;
- if(handle_style=="square") difference() {
-  round_convex(3) square([L,H]);
-  intersection() { translate([22,-1]) square([L-44,31]); hull() { translate([52,0]) circle(r=30); translate([L-52,0]) circle(r=30); } }
-  translate([22,-1]) square([L-44,1.01]);
- }
- else if(handle_style=="rounded") difference() {
-  intersection() { square([L,H]); hull() { square([L,3]); translate([42,3]) circle(r=42); translate([L-42,3]) circle(r=42); } }
-  intersection() { translate([22,-1]) square([L-44,31]); hull() { translate([22,-1]) square([L-44,11]); translate([42,10]) circle(r=20); translate([L-42,10]) circle(r=20); } }
- }
- else if(handle_style=="chamfered") round_concave(3) difference() {
-  round_convex(3) polygon([[0,0],[L,0],[L,8],[L-44,H],[44,H],[0,8]]);
-  round_convex(3) polygon([[33,-5],[L-33,-5],[L-33,10],[L-56,27],[56,27],[33,10]]);
- }
- else if(handle_style=="straight_bar") round_concave(10) union() {
-  translate([0,30]) round_convex(5) square([L,15]);
-  for(x=[20,L-42]) square([22,31]);
- }
+module mirror_x(L) { children(); translate([L,0]) mirror([1,0]) children(); }
+// Traditional pull: a crown arc through the ends (17 mm high) and the middle (full height), wings
+// whose undersides follow a second, flatter arc that also forms the recess top (34 mm), rounded
+// tips tangent to both arcs, and legs leaning in at 8 degrees with 6.5 and 15 mm fillets.
+TR_END=17; TR_APEX=34; TR_R2=217.667; TR_TIP=4.419; TR_LEG=[24,46]; TR_LEAN=8; TR_NOTCH_R=6.5; TR_RECESS_R=15;
+TR_R1=((HL/2)*(HL/2)+(HH-TR_END)*(HH-TR_END))/(2*(HH-TR_END));
+TR_C1=HH-TR_R1; TR_C2=TR_APEX-TR_R2;            // y of the two arc centres (both on x = HL/2)
+// Tip circle centre: |P-C1| = R1-r and |P-C2| = R2+r.
+TR_TY=(pow(TR_R1-TR_TIP,2)-pow(TR_R2+TR_TIP,2))/(2*(TR_C2-TR_C1))+(TR_C1+TR_C2)/2;
+TR_TX=HL/2-sqrt(pow(TR_R1-TR_TIP,2)-pow(TR_TY-TR_C1,2));
+function tr_face(x0,s,y)=x0+s*y*tan(TR_LEAN);   // a leaning leg face, s = +1 leans right going up
+module tr_disc2() { translate([HL/2,TR_C2]) circle(r=TR_R2,$fn=720); }
+module tr_band(x0,s0,x1,s1) { polygon([[tr_face(x0,s0,-10),-10],[tr_face(x1,s1,-10),-10],[tr_face(x1,s1,60),60],[tr_face(x0,s0,60),60]]); }
+// Fillet between the inner leg face and the recess arc: its centre lies 15 mm off the face and
+// R2-15 from the arc centre; TR_FY is where it meets the face (the recess is widest there).
+TR_T=tan(TR_LEAN); TR_A=TR_LEG[1]+TR_RECESS_R/cos(TR_LEAN)-HL/2; TR_Q=TR_R2-TR_RECESS_R;
+TR_FCY=let(qa=TR_T*TR_T+1,qb=-2*TR_A*TR_T-2*TR_C2,qc=TR_A*TR_A+TR_C2*TR_C2-TR_Q*TR_Q) (-qb+sqrt(qb*qb-4*qa*qc))/(2*qa);
+TR_FY=TR_FCY-TR_RECESS_R*sin(TR_LEAN);
+// The finger recess between the legs (open below the feet).
+module handle_recess() {
+ L=HL;
+ if(handle_style=="square") intersection() { translate([0,-1]) square([L,31]); hull() for(x=[52,L-52]) translate([x,0]) circle(r=30); }
+ else if(handle_style=="rounded") intersection() { translate([22,-1]) square([L-44,31]); hull() { translate([22,-1]) square([L-44,11]); for(x=[42,L-42]) translate([x,10]) circle(r=20); } }
+ else if(handle_style=="chamfered") hull() { translate([33,-1]) square([L-66,1]); mirror_x(L) { translate([40.5,9.301]) circle(r=7.5); translate([56.337,12]) circle(r=15); } }
+ else if(handle_style=="straight_bar") translate([42,-1]) { round_convex(10) square([L-84,31]); square([L-84,11]); }
+ else if(handle_style=="traditional") round_convex(TR_RECESS_R) intersection() { tr_disc2(); tr_band(TR_LEG[1],-1,L-TR_LEG[1],1); }
+}
+module handle_air() {
+ handle_recess();
+ if(handle_style=="traditional") mirror_x(HL) round_convex(TR_NOTCH_R) intersection() { tr_disc2(); tr_band(-20,0,TR_LEG[0],1); }
+}
+module handle_solid() {
+ L=HL; H=HH;
+ if(handle_style=="square") hull() { square([L,H-3]); for(x=[3,L-3]) translate([x,H-3]) circle(r=3); }
+ else if(handle_style=="rounded") intersection() { square([L,H]); hull() { square([L,3]); for(x=[42,L-42]) translate([x,3]) circle(r=42); } }
+ else if(handle_style=="chamfered") intersection() { square([L,H]); hull() { square([L,1]); mirror_x(L) { translate([7.5,6.038]) circle(r=7.5); translate([47.138,27]) circle(r=15); } } }
+ else if(handle_style=="straight_bar") round_concave(10) union() { translate([0,30]) round_convex(5) square([L,15]); for(x=[20,L-42]) translate([x,0]) square([22,31]); }
  else if(handle_style=="traditional") {
-  R=((L/2)*(L/2)+(H-17)*(H-17))/(2*(H-17));
-  arc=[for(i=[0:24]) let(a=asin((L/2)/R)*(1-2*i/24)) [c+R*sin(a),H-R+R*cos(a)]];
-  round_concave(4) difference() {
-   polygon(concat([[24,0],[46,0],[46,6],[164,6],[164,0],[186,0],[186,7],[L,12]],[for(p=arc) p],[[0,12],[24,7]]));
-   round_convex(6) polygon([[46,-5],[164,-5],[164,10],[152,28],[58,28],[46,10]]);
+  // crown arc, trimmed at each end by the wedge between the tip circle's two tangent points
+  difference() {
+   intersection() { translate([L/2,TR_C1]) circle(r=TR_R1,$fn=720); square([L,H]); }
+   mirror_x(L) let(a=atan2(TR_TY-TR_C1,TR_TX-L/2),b0=atan2(TR_C2-TR_TY,L/2-TR_TX),b=b0<a ? b0+360 : b0)
+    translate([TR_TX,TR_TY]) polygon([[0,0],50*[cos(a),sin(a)],50*[cos((a+b)/2),sin((a+b)/2)],50*[cos(b),sin(b)]]);
   }
+  mirror_x(L) translate([TR_TX,TR_TY]) circle(r=TR_TIP);
+ }
+}
+module handle_profile() { difference() { handle_solid(); handle_air(); } }
+// Handle drilling jig: a block shaped like the finger recess (cut from handle stock), a plate with a
+// mortise for a fence, and the fence with two guide holes at 140 mm centres, half the handle stock
+// above the plate. The pull lies flat over the block with its feet against the fence, and the leg
+// pilot holes are drilled through the fence. Dowels in two holes 70 apart, 15 mm from the fence,
+// locate the block on the plate.
+HBX=handle_style=="square" || handle_style=="rounded" ? 22 : handle_style=="chamfered" ? 33 : handle_style=="straight_bar" ? 42 : tr_face(TR_LEG[1],-1,TR_FY);
+HBH=handle_style=="traditional" ? TR_APEX : handle_style=="chamfered" ? 27 : 30;   // recess height
+module handle_block() {
+ difference() {
+  intersection() { handle_recess(); square([HL,HBH+1]); }
+  for(s=[-1,1]) translate([HL/2+s*HSP/4,15]) circle(d=jig_dowel_diameter);
+ }
+}
+tj=jig_thickness;
+JIG_L=HSP+100; JIG_FY=10;                     // plate length; notched edge to the fence mortise
+JIG_D=JIG_FY+tj+75;                           // plate depth
+JIG_FH=th+7;                                  // fence height above the plate
+JIG_TAB=40;                                   // fence tab length
+module jig_plate() {
+ difference() {
+  intersection() {
+   round_convex(10) square([JIG_L,JIG_D]);
+   round_concave(8) round_convex(8) difference() {
+    square([JIG_L,JIG_D]);
+    // drill clearance notches under the guide holes
+    for(s=[-1,1]) translate([JIG_L/2+s*HSP/2,0]) polygon([[-26,-1],[26,-1],[15,10],[-15,10]]);
+   }
+  }
+  translate([JIG_L/2-(JIG_TAB+cl)/2,JIG_FY-cl/2]) tp_pocket_2d(JIG_TAB+cl,tj+cl,router_bit_diameter,relief_on ? "t_bone" : "none");
+  for(s=[-1,1]) translate([JIG_L/2+s*HSP/4,JIG_FY+tj+15]) circle(d=jig_dowel_diameter);
+  for(x=[17,JIG_L-17]) translate([x,16]) circle(d=handle_hole_diameter);
+ }
+}
+module jig_fence() {
+ difference() {
+  union() {
+   translate([0,tj]) hull() { square([JIG_L,1]); for(x=[10,JIG_L-10]) translate([x,JIG_FH-10]) circle(r=10); }
+   translate([JIG_L/2-JIG_TAB/2,0]) square([JIG_TAB,tj+0.01]);
+  }
+  if(relief_on) tp_tab_root_reliefs_2d(JIG_L/2-JIG_TAB/2,JIG_TAB,tj,router_bit_diameter);
+  for(s=[-1,1]) translate([JIG_L/2+s*HSP/2,tj+th/2]) circle(d=handle_pilot_diameter);
  }
 }
 
@@ -636,6 +737,7 @@ parts=concat(
  [for(i=[0:len(CROSS_X)-1]) [str("FR-C",i+1),"frame_cross",i,FD,hf+HT,tf,0,0,CROSS_X[i]]],
  [for(k=[0:1:NM-1]) each module_parts(k)],
  [for(i=[0:1:len(KEYS)-1]) [str("KEY-",i+1),"stack_key",KEYS[i][1],registration_tab_length,2*HT,tf,0,0,KEYS[i]]],
+ include_handle_jig && has_handles ? [["JIG-BLOCK","jig_block",0,HL-2*HBX,HBH,th,HBX,0,0],["JIG-PLATE","jig_plate",0,JIG_L,JIG_D,tj,0,0,0],["JIG-FENCE","jig_fence",0,JIG_L,tj+JIG_FH,tj,0,0,0]] : [],
  include_worksurface ? [for(i=[0:NP-1]) let(B=panel_bbox(i)) [str("TOP-",i+1),"top",i,B[2]-B[0],B[3]-B[1],tw,B[0],B[1],0]] : []);
 NPART=len(parts);
 
@@ -813,6 +915,30 @@ module rail_key_pockets(p) {
  back=p[1]=="rail_b";
  for(q=KEYS) if(q[1]==p[2] && q[5]==back) let(r=site_rect(p[2],[q[2],q[3],q[4]])) pocket_rect(r[0],r[1],r[2],r[3]);
 }
+// Screw marks: shallow drill points on the machined face where the assembly screws go.
+function web_gaps(F,span)=let(a=concat([0],[for(f=F) f[1]]),b=concat([for(f=F) f[0]],[span])) [for(i=[0:1:len(F)]) if(b[i]-a[i]>=screw_mark_diameter+2) (a[i]+b[i])/2];
+function on_frame(k)=mz(k)<=Zbase+0.01;
+function under_worksurface(k)=include_worksurface && abs(mtop(k)-Ztop)<0.01;
+function slot_edge(k,back)=include_hand_slots ? (back ? mD(k)-dog_hole_pitch/2-hand_slot_width/2 : dog_hole_pitch/2+hand_slot_width/2) : (back ? mD(k)-tc : td);
+function screw_marks(p)=let(k=p[1],m=p[2]) !include_screw_marks ? [] :
+ k=="side_l" || k=="side_r" ? let(Dc=mDc(m),H=mH(m),BF=back_fingers(H),Lf=H/(2*len(BF)+1),SF=bottom_side_fingers(m)) concat(
+  [for(i=[0:1:len(BF)-1]) [side_u(p,Dc-tc/2),(2*i+0.5)*Lf]],                                  // into the back, between its fingers
+  [for(i=[0:1:len(SF)-1]) [side_u(p,((i==0 ? 0 : SF[i-1][1])+SF[i][0])/2),tc/2]],             // into the bottom, in front of each finger
+  [for(y0=[0,back_rail_y0(m)-td]) for(c=[rail_finger[0]/2,(rail_finger[1]+RW)/2]) [side_u(p,y0+c),H-tc/2]],  // into the top rails
+  // hinge mounting plates, on both sides so a single door can be hung either way
+  door_count(m)>0 ? [for(v=hinge_vs(door_h(m))) for(s=[-1,1]) [side_u(p,hinge_plate_setback),door_gap/2+v+s*hinge_plate_screw_spacing/2]] : []) :
+ k=="back" ? [for(c=web_gaps(bottom_rear_fingers(m),mWi(m))) [tc+c,tc/2]] :                  // into the bottom
+ k=="bottom" && on_frame(m) ? let(D=mD(m),i0=frame_rail_inset,o=frame_screw_offset)              // down into the frame strips
+  [for(i=[0:mW(m)/C-1]) for(j=[0:mD(m)/C-1]) let(x=i*C,y=j*C) each concat(
+   [for(cx=[x+i0,x+C-i0]) for(s=[-1,1]) [cx,D-(y+C/2)+s*o]],
+   [for(cy=[y+i0,y+C-i0]) for(s=[-1,1]) [x+C/2+s*o,D-cy]])] :
+ k=="rail_f" || k=="rail_b" ? let(back=k=="rail_b",y0=back ? back_rail_y0(m) : td,inner=back ? y0 : y0+RW) concat(
+  back ? [for(f=rail_rear_fingers(m)) [tc+(f[0]+f[1])/2,y0+RW+tc/2]] : [],                     // down into the back
+  under_worksurface(m) ? [for(i=[0:mW(m)/C-1]) for(x=[i*C+C/4,i*C+3*C/4]) [x,(inner+slot_edge(m,back))/2]] : []) :  // up into the worksurface
+ k=="dr_front" ? let(L=p[3],h=p[4],lo=drawer_bottom_inset+tbb+12,hi=h-15)                          // into the drawer face
+  [for(u=[tx+25,L-tx-25]) for(v=hi-lo>=15 ? [lo,hi] : [(drawer_bottom_inset+tbb+h)/2]) [u,v]] :
+ k=="face" ? let(w=p[3],H=mH(m)) [for(u=[tc/2-door_gap/2,w+door_gap/2-tc/2]) for(z=[H/4,3*H/4]) [u,z-door_gap/2]] : [];  // into the module sides
+module screw_mark_holes(p) { for(q=screw_marks(p)) translate(q) circle(d=screw_mark_diameter); }
 module part_outline(p) {
  k=p[1];
  if(k=="frame_long" || k=="frame_cross") strip_outline(p);
@@ -831,6 +957,9 @@ module part_outline(p) {
  else if(k=="dr_front" || k=="dr_back") dr_cross_outline(p);
  else if(k=="dr_bottom") dr_bottom_outline(p);
  else if(k=="stack_key") square([p[3],p[4]]);
+ else if(k=="jig_block") handle_block();
+ else if(k=="jig_plate") jig_plate();
+ else if(k=="jig_fence") jig_fence();
 }
 module part_pockets(p,mode) {
  k=p[1];
@@ -843,12 +972,14 @@ module part_pockets(p,mode) {
  if(mode=="pocket_shelf_pins" && (k=="side_l" || k=="side_r")) side_pins(p);
  if(mode=="pocket_hinge_cups" && k=="door") door_cups(p);
  if(mode=="pocket_slide_holes") slide_holes(p);
+ if(mode=="pocket_screw_marks") screw_mark_holes(p);
 }
-POCKET_MODES=["pocket_carcass_dados","pocket_drawer_dados","pocket_shelf_pins","pocket_hinge_cups","pocket_slide_holes"];
+POCKET_MODES=["pocket_carcass_dados","pocket_drawer_dados","pocket_shelf_pins","pocket_hinge_cups","pocket_slide_holes","pocket_screw_marks"];
 // Slide holes go through the drawer box sides and are blind pilots in the module sides.
 function pocket_depth(mode,p)=mode=="pocket_carcass_dados" ? (p[1]=="side_l" || p[1]=="side_r" ? housing_depth : registration_pocket_depth) :
  mode=="pocket_drawer_dados" ? drawer_bottom_pocket_depth : mode=="pocket_shelf_pins" ? shelf_pin_depth :
- mode=="pocket_slide_holes" ? (p[1]=="dr_side_l" || p[1]=="dr_side_r" ? p[5] : slide_drill_depth) : hinge_cup_depth;
+ mode=="pocket_slide_holes" ? (p[1]=="dr_side_l" || p[1]=="dr_side_r" ? p[5] : slide_drill_depth) :
+ mode=="pocket_screw_marks" ? screw_mark_depth : hinge_cup_depth;
 
 // ---------- 3D ----------
 // Local part frame (u,v, z = thickness with z=t the machined face) -> module or world frame.
@@ -873,8 +1004,14 @@ function part_matrix(p)=let(k=p[1],m=p[2],t=p[5])
  k=="dr_back" ? [[1,0,0,dbox_x0(m)],[0,0,-1,td+dbox_d(m)],[0,1,0,dbox_z(m,p[8])],[0,0,0,1]] :
  k=="dr_bottom" ? [[1,0,0,dbox_x0(m)],[0,1,0,td],[0,0,1,dbox_z(m,p[8])+drawer_bottom_inset],[0,0,0,1]] :
  k=="stack_key" ? let(q=p[8],z=mtop(q[1])-HT) q[4]=="x" ? [[1,0,0,q[2]-p[3]/2],[0,0,-1,q[3]+t/2],[0,1,0,z],[0,0,0,1]] : [[0,0,1,q[2]-t/2],[1,0,0,q[3]-p[3]/2],[0,1,0,z],[0,0,0,1]] :
+ k=="jig_plate" ? [[1,0,0,JX],[0,1,0,0],[0,0,1,0],[0,0,0,1]] :
+ k=="jig_block" ? [[1,0,0,JX+JIG_L/2-HL/2],[0,1,0,JIG_FY+tj],[0,0,1,tj],[0,0,0,1]] :
+ k=="jig_fence" ? [[1,0,0,JX],[0,0,-1,JIG_FY+tj],[0,1,0,0],[0,0,0,1]] :
  [[1,0,0,0],[0,1,0,0],[0,0,1,Ztop],[0,0,0,1]];
-function is_module_part(p)=p[1]!="frame_long" && p[1]!="frame_cross" && p[1]!="top" && p[1]!="stack_key";
+// The drilling jig stands assembled on the floor beside the bench.
+JX=FL+worksurface_overhang+150;
+function is_jig_part(k)=k=="jig_block" || k=="jig_plate" || k=="jig_fence";
+function is_module_part(p)=p[1]!="frame_long" && p[1]!="frame_cross" && p[1]!="top" && p[1]!="stack_key" && !is_jig_part(p[1]);
 module panel3(p) {
  difference() {
   linear_extrude(p[5]) part_outline(p);
@@ -886,7 +1023,7 @@ module place3(p) {
  if(is_module_part(p)) multmatrix(mmatrix(p[2])) multmatrix(part_matrix(p)) panel3(p);
  else multmatrix(part_matrix(p)) panel3(p);
 }
-function part_colour(k)=k=="frame_long" || k=="frame_cross" || k=="stack_key" ? [0.72,0.58,0.40] : k=="top" ? [0.85,0.70,0.48] : k=="door" || k=="dr_face" || k=="face" ? [0.83,0.69,0.50] : k=="handle" || k=="dr_handle" ? [0.55,0.42,0.28] : k=="shelf" || k=="dr_bottom" ? [0.86,0.75,0.58] : k=="dr_side_l" || k=="dr_side_r" || k=="dr_front" || k=="dr_back" ? [0.88,0.78,0.60] : [0.78,0.65,0.45];
+function part_colour(k)=k=="frame_long" || k=="frame_cross" || k=="stack_key" ? [0.72,0.58,0.40] : is_jig_part(k) ? [0.66,0.60,0.52] : k=="top" ? [0.85,0.70,0.48] : k=="door" || k=="dr_face" || k=="face" ? [0.83,0.69,0.50] : k=="handle" || k=="dr_handle" ? [0.55,0.42,0.28] : k=="shelf" || k=="dr_bottom" ? [0.86,0.75,0.58] : k=="dr_side_l" || k=="dr_side_r" || k=="dr_front" || k=="dr_back" ? [0.88,0.78,0.60] : [0.78,0.65,0.45];
 function is_front_part(k)=k=="door" || k=="handle" || k=="dr_face" || k=="dr_handle" || k=="face";
 // Side-mount slides as reference hardware: cabinet and drawer members, closed.
 module slides() {
@@ -931,13 +1068,16 @@ module layout(mode) {
 
 // ---------- validation and reports ----------
 function bom_category(k)=k=="dr_side_l" || k=="dr_side_r" ? "drawer_side" : k=="dr_front" ? "drawer_front_box" : k=="dr_back" ? "drawer_back_box" :
- k=="dr_bottom" ? "drawer_bottom" : k=="dr_face" ? "drawer_face" : k=="dr_handle" ? "handle" : k=="face" ? "face_panel" : k;
-function bom_note(p)=let(k=p[1]) k=="bottom" ? "underside up: registration pockets" : k=="door" ? "inside face up: hinge cups" :
+ k=="dr_bottom" ? "drawer_bottom" : k=="dr_face" ? "drawer_face" : k=="dr_handle" ? "handle" : k=="face" ? "face_panel" : is_jig_part(k) ? "handle_jig" : k;
+function bom_note(p)=let(n=bom_note_base(p)) len(screw_marks(p))==0 ? n : n=="through cuts only" ? "machined face up: screw marks" : str(n,"; screw marks");
+function bom_note_base(p)=let(k=p[1]) k=="bottom" ? "underside up: registration pockets" : k=="door" ? "inside face up: hinge cups" :
  k=="side_l" || k=="side_r" ? str("inside face up: housings",len(pin_heights(p[2]))>0 ? " and shelf pins" : "",drawer_n(p[2])>0 && include_metal_slide_holes ? " and slide pilot holes" : "") :
  k=="handle" || k=="dr_handle" ? "drill two 15 mm pilot holes into the leg ends" :
  (k=="rail_f" || k=="rail_b") && len([for(q=KEYS) if(q[1]==p[2] && q[5]==(k=="rail_b")) 1])>0 ? "top face up: stacking key pockets" :
  k=="dr_side_l" || k=="dr_side_r" ? str("inside face up: bottom pockets",include_metal_slide_holes ? "; slide holes through" : "") :
- k=="dr_front" || k=="dr_back" ? "inside face up: bottom pockets" : k=="stack_key" ? "stands in a top-rail pocket and the registration pocket above" : "through cuts only";
+ k=="dr_front" || k=="dr_back" ? "inside face up: bottom pockets" : k=="stack_key" ? "stands in a top-rail pocket and the registration pocket above" :
+ k=="jig_block" ? "cut from handle stock; dowel holes through" : k=="jig_plate" ? "fence mortise, dowel and mounting holes through" :
+ k=="jig_fence" ? "drill the pull's leg pilots through its guide holes" : "through cuts only";
 module check(ok,code,msg) { if(!ok) echo(str("CHECK|ERROR|",code,"|",msg)); }
 module warn(ok,code,msg) { if(!ok) echo(str("CHECK|WARN|",code,"|",msg)); }
 module validate() {
@@ -954,6 +1094,11 @@ module validate() {
   check(SC>0,"SLIDE_CLEARANCE","Side-mount slides need clearance beside the drawer boxes");
  }
  check(layout_gap>=router_bit_diameter+1,"LAYOUT_GAP","Layout gap must separate cutter paths");
+ if(include_screw_marks) {
+  check(screw_mark_depth<=min(tc,tx,td)-2,"SCREW_MARK_DEPTH","Screw marks must leave at least 2 mm of the stock they are marked in");
+  check(frame_screw_offset>=KEY_L/2+screw_mark_diameter/2+2 && frame_screw_offset<=C/2-frame_rail_inset-tf/2-screw_mark_diameter/2,"FRAME_SCREWS","Frame screw marks must sit between a registration pocket and the crossing strip");
+ }
+ if(include_handle_jig) warn(has_handles,"HANDLE_JIG","No pull is selected, so the drilling jig is left out");
  check(NM>0 || !include_worksurface,"WORKSURFACE_SUPPORT","The worksurface needs at least one module to rest on");
  for(k=[0:1:NM-1]) {
   id=str("M",k+1);
@@ -1026,12 +1171,15 @@ module reports() {
   for(k=[0:1:NM-1]) for(j=[0:1:door_count(k)-1]) echo(str("DIM|DOOR|M",k+1,"-DOOR-",j+1,"|W=",door_w(k),"|H=",door_h(k),"|MOUNT=full_overlay|HINGE=",door_hinge_left(k,j) ? "left" : "right"));
   for(k=[0:1:NM-1]) for(i=[0:1:len(shelf_holes(k))-1]) echo(str("DIM|SHELF|M",k+1,"-SHELF-",i+1,"|STYLE=adjustable|CLEAR_SPAN_W=",mWi(k),"|CUT_W=",mWi(k)-2*shelf_side_clearance,"|D=",mD(k)-tc-shelf_rear_clearance-td-shelf_front_setback,"|Z=",shelf_z(k,i)));
   if(include_worksurface) echo(str("DIM|WORKSURFACE|W=",FL+2*OV,"|D=",FD+2*OV,"|Z=",Ztop,"|T=",tw,"|PANELS=",NP,"|DOG_HOLES=",len([for(i=[0:NP-1]) if(panel_dogs(i)) each dog_positions(i)])));
-  echo(str("DIM|machining|HOUSING_DEPTH=",housing_depth,"|REGISTRATION_POCKET_DEPTH=",registration_pocket_depth,"|HINGE_CUP_DEPTH=",hinge_cup_depth,"|SHELF_PIN_DEPTH=",shelf_pin_depth,"|HALF_LAP=",hf/2,"|DRAWER_BOTTOM_POCKET_DEPTH=",drawer_bottom_pocket_depth,"|SLIDE_PILOT_DEPTH=",slide_drill_depth));
+  if(has_handles) echo(str("DIM|HANDLE|STYLE=",handle_style,"|L=",HL,"|H=",HH,"|T=",th,"|HOLE_CENTRES=",HSP,"|PILOT_D=",handle_pilot_diameter,"|PILOT_DEPTH=15|QTY=",len([for(p=parts) if(p[1]=="handle" || p[1]=="dr_handle") 1])));
+  if(include_handle_jig && has_handles) echo(str("DIM|HANDLE_JIG|BLOCK=",HL-2*HBX,"x",HBH,"x",th,"|PLATE=",JIG_L,"x",JIG_D,"x",tj,"|FENCE=",JIG_L,"x",tj+JIG_FH,"x",tj,"|GUIDE_HOLE_HEIGHT=",th/2,"|DOWEL_D=",jig_dowel_diameter));
+  if(include_screw_marks) echo(str("DIM|SCREW_MARKS|QTY=",len([for(p=parts) each screw_marks(p)]),"|D=",screw_mark_diameter,"|DEPTH=",screw_mark_depth));
+  echo(str("DIM|machining|HOUSING_DEPTH=",housing_depth,"|REGISTRATION_POCKET_DEPTH=",registration_pocket_depth,"|HINGE_CUP_DEPTH=",hinge_cup_depth,"|SHELF_PIN_DEPTH=",shelf_pin_depth,"|HALF_LAP=",hf/2,"|DRAWER_BOTTOM_POCKET_DEPTH=",drawer_bottom_pocket_depth,"|SLIDE_PILOT_DEPTH=",slide_drill_depth,"|SCREW_MARK_DEPTH=",include_screw_marks ? screw_mark_depth : 0));
  }
  if(system_contract_report!="off") {
   echo("SYSTEM|CONTRACT=MOI-4|ENGINE=modular_organization_v5");
   echo(str("MODULE|ID=workbench|KIND=workbench|W=",FL,"|D=",FD,"|H=",Ztop+(include_worksurface ? tw : 0)));
-  echo("COVERAGE|SCOPE=workbench|CHECKS=grid_fit;module_support;stack_keys;facing;shelf_pins;hinge_room;handle_room;drawer_fit;slide_length;hand_slots;dog_holes;puzzle_neck;stock;cut_and_pocket_contours|STRUCTURAL=false");
+  echo("COVERAGE|SCOPE=workbench|CHECKS=grid_fit;module_support;stack_keys;facing;shelf_pins;hinge_room;handle_room;drawer_fit;slide_length;screw_marks;hand_slots;dog_holes;puzzle_neck;stock;cut_and_pocket_contours|STRUCTURAL=false");
  }
  check(layout_gap>0,"LAYOUT_OVERLAP",str("layout_gap is ",layout_gap," mm; parts of the flat cut layout would overlap."));
  if(output_mode=="bom") {

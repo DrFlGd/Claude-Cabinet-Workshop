@@ -144,10 +144,11 @@ const CASES=[
  // with a cross strip under every column, a worksurface over three rows, fit clearances.
  [7,undefined,{frame_size:'custom',grid_columns:4,grid_rows:3,frame_cross_members:'every_column',handle_style:'traditional',joint_fit_clearance:0.2,puzzle_clearance:0.2,
   modules:[[0,0,1,1,365,'open',0,'front','left'],[0,0,1,1,365,'door',0,'front','left'],[1,0,2,1,730,'door',1,'front','left'],[3,0,1,2,730,'door',2,'right','left'],[0,1,1,2,730,'door',1,'left','right'],[1,1,2,1,730,'open',1,'front','left'],[1,2,1,1,730,'door',1,'back','left'],[2,2,1,1,730,'door',1,'back','right'],[3,2,1,1,730,'open',3,'back','left']]}],
- [7,'workbench_stacked',{handle_style:'chamfered',include_worksurface:false}],
+ // Both with the pull drilling jig, assembled beside the bench (block, plate and fence).
+ [7,'workbench_stacked',{handle_style:'chamfered',include_worksurface:false,include_handle_jig:true}],
  // Drawer, drawer-and-door and framed modules, stacked on modules turned to every side (keys in
  // front and back rails, along both axes), with fit clearances and the traditional pull.
- [7,undefined,{handle_style:'traditional',joint_fit_clearance:0.2,registration_clearance:0.3,
+ [7,undefined,{handle_style:'traditional',include_handle_jig:true,joint_fit_clearance:0.2,registration_clearance:0.3,
   modules:[[0,0,1,2,365,'drawers',0,'left','left',2],[0,0,1,1,365,'framed',1,'front','left'],[0,1,1,1,365,'door',0,'back','left'],[1,0,2,1,365,'door',0,'front','left'],
    [1,0,1,1,365,'drawers',0,'front','left',1],[2,0,1,1,365,'drawers',0,'right','left',3],[1,1,2,1,730,'drawer_door',1,'back','right',2]]}],
 ];
