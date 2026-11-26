@@ -130,8 +130,12 @@ const num=(v:number)=>String(Math.round(v*1000)/1000);
 // extent lies within a placed part's strip rectangle (widened by `slack`, the kerf
 // compensation) moves with that part. Subpaths outside every part, such as the
 // registration frame, are left out. Returns one entry per part with its polygons.
-export function sheetPolygons(svg:string,sheet:Sheet,slack=0){
- const polys=svgPolygons(svg);
+// A second-face operation (see SheetFlip) is drawn by the engine for the whole layout
+// turned over left to right about x = flipAxis: its contours are turned back to find
+// their parts, placed, and the sheet is turned over the same way about its own vertical
+// center line, so the sheet output registers on the same pins after the sheet is flipped.
+export function sheetPolygons(svg:string,sheet:Sheet,slack=0,flipAxis?:number){
+ const polys=svgPolygons(svg).map(poly=>flipAxis===undefined?poly:poly.map(([x,y])=>[2*flipAxis-x,y]) as Poly);
  const out:{id:string;polys:Poly[]}[]=sheet.placements.map(p=>({id:p.id,polys:[]}));
  for(const poly of polys){
   const b=bbox(poly);
@@ -141,30 +145,47 @@ export function sheetPolygons(svg:string,sheet:Sheet,slack=0){
   const k=sheet.placements.findIndex(p=>b.x0>=p.src.x-t&&b.y0>=p.src.y-t&&b.x1<=p.src.x+p.src.w+t&&b.y1<=p.src.y+p.src.h+t);
   if(k<0)continue;
   const p=sheet.placements[k];
-  out[k].polys.push(poly.map(([x,y])=>{const rx=x-p.src.x,ry=y-p.src.y;return p.rot?[p.x+(p.src.h-ry),p.y+rx]:[p.x+rx,p.y+ry]}) as Poly);
+  out[k].polys.push(poly.map(([x,y])=>{const rx=x-p.src.x,ry=y-p.src.y,q=p.rot?[p.x+(p.src.h-ry),p.y+rx]:[p.x+rx,p.y+ry];return flipAxis===undefined?q:[sheet.w-q[0],q[1]]}) as Poly);
  }
  return out;
 }
 
+// Second-face machining for one sheet. flipAxis: the engine layout's flip line, given for
+// operations whose names end in _flip. pins: registration holes on the sheet's vertical
+// center line, in the margin, drilled with the first face's pockets; a sheet turned over
+// left to right lands on the same pins.
+export type SheetFlip={flipAxis?:number;pins?:{x:number;y:number;d:number}[]};
+// Two pin holes on the vertical center line, centered in the bottom and top margins.
+// None when the margin is under 10 mm (too narrow to hold a pin away from the edge).
+export function registrationPins(sheet:Sheet,margin:number){
+ const m=Math.min(margin,Math.min(sheet.w,sheet.h)/3);
+ if(m<10)return [];
+ const d=Math.min(6,m/2);
+ return [{x:sheet.w/2,y:m/2,d},{x:sheet.w/2,y:sheet.h-m/2,d}];
+}
+const circle=(c:{x:number;y:number;d:number},n=24):Poly=>Array.from({length:n},(_,i)=>[c.x+c.d/2*Math.cos(2*Math.PI*i/n),c.y+c.d/2*Math.sin(2*Math.PI*i/n)] as [number,number]);
+
 // One sheet's layout for one operation, in the engine's SVG convention (millimetres,
 // y negated, one path per part) with a registration frame around the stock.
-export function sheetSvg(svg:string,sheet:Sheet,operation:string,slack=0){
- const parts=sheetPolygons(svg,sheet,slack);
+export function sheetSvg(svg:string,sheet:Sheet,operation:string,slack=0,flip:SheetFlip={}){
+ const parts=sheetPolygons(svg,sheet,slack,flip.flipAxis),pins=(flip.pins??[]).map(c=>circle(c));
  const d=(polys:Poly[])=>polys.map(pts=>'M '+pts.map(([x,y])=>num(x)+','+num(-y)).join(' L ')+' z').join('\n');
  const W=sheet.w,H=sheet.h,f=0.2;
  const frame=`M 0,0 L ${num(W)},0 L ${num(W)},${num(-H)} L 0,${num(-H)} z\nM ${num(f)},${num(-f)} L ${num(f)},${num(-(H-f))} L ${num(W-f)},${num(-(H-f))} L ${num(W-f)},${num(-f)} z`;
  return `<?xml version="1.0" standalone="no"?>\n<svg width="${num(W)}mm" height="${num(H)}mm" viewBox="0 ${num(-H)} ${num(W)} ${num(H)}" xmlns="http://www.w3.org/2000/svg" version="1.1">\n<title>${esc(operation)} · sheet ${sheet.index} · ${esc(sheet.material)} ${num(sheet.thickness)} mm</title>\n<path id="stock-frame" d="\n${frame}\n" fill="none" stroke="#7a8c94" stroke-width="0.5"/>\n`+
-  parts.filter(p=>p.polys.length).map(p=>`<path id="${esc(p.id)}" d="\n${d(p.polys)}\n" fill="lightgray" stroke="black" stroke-width="0.5"/>`).join('\n')+'\n</svg>\n';
+  parts.filter(p=>p.polys.length).map(p=>`<path id="${esc(p.id)}" d="\n${d(p.polys)}\n" fill="lightgray" stroke="black" stroke-width="0.5"/>`).join('\n')+
+  (pins.length?`\n<path id="registration-pins" d="\n${d(pins)}\n" fill="none" stroke="#c0392b" stroke-width="0.5"/>`:'')+'\n</svg>\n';
 }
 
 // The same sheet as a minimal DXF (millimetres, closed LWPOLYLINE per contour, one
-// layer per operation, the stock outline on layer STOCK).
-export function sheetDxf(svg:string,sheet:Sheet,operation:string,slack=0){
- const parts=sheetPolygons(svg,sheet,slack),lines:string[]=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','9','$INSUNITS','70','4','0','ENDSEC','0','SECTION','2','ENTITIES'];
+// layer per operation, the stock outline on layer STOCK, pins on REGISTRATION-PINS).
+export function sheetDxf(svg:string,sheet:Sheet,operation:string,slack=0,flip:SheetFlip={}){
+ const parts=sheetPolygons(svg,sheet,slack,flip.flipAxis),lines:string[]=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','9','$INSUNITS','70','4','0','ENDSEC','0','SECTION','2','ENTITIES'];
  const poly=(pts:Poly,layer:string)=>{lines.push('0','LWPOLYLINE','8',layer,'90',String(pts.length),'70','1');for(const [x,y] of pts)lines.push('10',num(x),'20',num(y))};
  poly([[0,0],[sheet.w,0],[sheet.w,sheet.h],[0,sheet.h]],'STOCK');
  const layer=operation.toUpperCase().replace(/[^A-Z0-9]+/g,'-');
  for(const p of parts)for(const pts of p.polys)poly(pts,layer);
+ for(const c of flip.pins??[])poly(circle(c),'REGISTRATION-PINS');
  lines.push('0','ENDSEC','0','EOF');
  return lines.join('\r\n')+'\r\n';
 }

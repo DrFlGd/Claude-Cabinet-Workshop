@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.18.0**) are separate from the bundled
+Application versions (currently **0.19.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.18.0 — 2026-11-26
+## 0.19.0 — 2026-11-26
 
 Modular workbench modules can now hold drawers, drawers over a door, or an open
 front behind a framed face panel, as in the photo grid of module configurations
@@ -108,6 +108,71 @@ Remaining limitations:
   reference are still not modelled.
 - Two-cell-wide drawer modules get one wide drawer per level, not two side by
   side.
+
+## 0.18.0 — 2026-11-26
+
+Media cart: the limitations listed with 0.15.0, except the in-app collision
+check, which follows separately.
+
+- **Tip-over check.** The engine check now computes the cart's weight and center
+  of gravity (every part's outline × thickness × sheet density, plus stated
+  contents per bin, cubby and tower opening) for three loadings: empty, fully
+  loaded, and loaded only in the highest bin row and tower opening. For each it
+  reports the level push at the top that tips the cart forward, backward, left
+  or right about its caster centers (or the bottom panel's edges without
+  casters), and the downward lean on the front edge of the bins that tips it
+  forward. An error is raised when the weight alone is outside the support, and a
+  warning when the stated push (default 50 N) or lean (default 250 N) would tip
+  it. A new **Stability** section sets the forces, the contents and the density.
+  The old height-to-depth note is gone.
+- **Racking.** The report lists what resists shear side to side and front to
+  back, and warns when only glued butt joints do.
+- **In the editor.** The drawing marks the center of gravity of the weakest
+  loading and shows a stability summary (per-loading weight, weakest push and
+  lean, what resists racking, and the assumptions) that opens the Stability
+  settings.
+- **Joinery in the instant drawing.** After the engine check, both elevations
+  outline the tabs, slots and half-laps, dados and holes of the parts each view
+  shows (from new `FEAT|` records in the engine report), with a legend and a
+  Joinery toggle; they fade while a newer check runs.
+- **Second-face dados register.** `pocket_dados_flip` is drawn for the whole
+  layout turned over left to right about its vertical center line instead of
+  each part flipped in its own place. Per sheet, the export turns the second-face
+  contours over about the sheet's center line and adds two registration-pin holes
+  on that line in the margins of `pocket_dados` and `pocket_dados_flip` (none when
+  the margin is under 10 mm). The READ-ME, the sheet notes, the operation note and
+  START-HERE give the order: up face, turn the sheet over onto the same pins,
+  second face, turn back, drill and cut.
+- **Default design has no warnings.** Holes smaller than the cutter (the 4.5 mm
+  screw clearance holes with the 6.35 mm cutter) leave the cut layout and go to a
+  new `drill_layout` operation (drill at the circle centers), reported as a note
+  instead of a warning. Caster bolt holes stay in the cut layout.
+- **Shared joinery module.** Receivers, slots and dados with their corner relief,
+  and new shoulder reliefs at the roots of tabs and tongues, come from the
+  engine's shared `data/scad/tab_pocket.scad`. Products can now include shared
+  engine files (`engineIncludes`; the workers, tests and downloads carry them).
+
+Validation run for this release: `tsc --noEmit`; eslint on the changed files (no
+new findings); `tests/nesting.cjs` (new: second-face contours turned back to
+their part and over about the sheet center, registration pins); `tests/products.mjs`
+(every starter through the production workers with the new drill layout and the
+second-face containment check, plus two extra configurations with dados on both
+faces of the walls; golden snapshots updated and reviewed);
+`tests/product-interference.mjs --all` (31 designs, 1,231 part pairs intersected, no shared volume; 6 random designs skipped as rejected); `tests/units.cjs`,
+`settings-visibility.cjs`, `hardware.cjs`, `v5-integration.cjs`,
+`stackable-controls.cjs`, `sections.cjs`, `section-wasm.mjs`, `golden.mjs` (118 starters unchanged), `layout-editor.mjs`,
+`hardware-engine.mjs`, `engine-fit.mjs`, `cut-layout-check.mjs`, the
+engine-source, product-source and parity checks; and the editor in Chromium at
+1440 × 900 and 390 × 844 (stability summary and settings, joinery outlines,
+center of gravity; a two-tower design with dados exported, and the per-sheet
+second-face files turned back over their sheet and overlaid on the cut layout).
+
+Limitations: the stability check is static (no rolling over a threshold, no
+caster catching) and rates no joint, panel, shelf or caster strength; the
+compact sorter starter (no casters, 11 kg) tips under the default 50 N push
+and says so; the instant drawing shows joinery only after an engine check and
+only for the parts each view sees face on or edge on; the per-design 3D
+collision check is not in the app yet.
 
 ## 0.17.0 — 2026-11-26
 

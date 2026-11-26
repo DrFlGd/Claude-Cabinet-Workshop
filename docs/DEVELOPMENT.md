@@ -162,7 +162,14 @@ To add one:
    at least one `CHECK|...` record, and `HARDWARE|ID=|QTY=|UNIT=|NOTE=` lines.
    Add `render_part` under Hidden for the interference test.
 2. Run `node scripts/sync-product-sources.mjs` and list the file with its output
-   modes in `public/openscad/product-files.js`.
+   modes in `public/openscad/product-files.js`. A product may `use` shared engine
+   modules as `../../engine/<key>` (key as in lib/engine-sources.json, for example
+   `v5/src/modular_organization/data/scad/tab_pocket.scad`): list `engine/<key>` under
+   the product in the manifest's `files` and the key in the definition's
+   `engineIncludes`; the workers, tests and downloads then carry the file. A layout
+   for the second face is named `<op>_flip`, drawn for the whole layout turned over
+   left to right, and `bom` mode echoes `FLIP|AXIS_X=<x>` with that line; the export
+   then turns it over per sheet and adds registration pins.
 3. Add a definition module beside lib/products/media-cart.ts (sections and
    controls, starters, quick validation, summary, assembly steps, coverage) and add
    it to the list in lib/products/index.ts.

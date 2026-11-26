@@ -1,8 +1,8 @@
 {
  "sloped_bins": {
   "records": [
-   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
-   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "CHECK|INFO|DRILL_HOLES|8 hole(s) of 4.5 mm are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.",
    "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
    "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=sloped_bins|PROFILE=sloped|TOWER=None|CUBBIES=yes",
    "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=276|CLEAR_D=176|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
@@ -10,6 +10,11 @@
    "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=389",
    "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=589",
    "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=276|CLEAR_H=125|CLEAR_D=582",
+   "DIM|MEDIA_CART|STABILITY|CASE=empty|MASS=47.1818|COM_X=450|COM_Y=362.207|COM_Z=409.859|TIP_FRONT=130.676|TIP_BACK=75.037|TIP_LEFT=169.936|TIP_RIGHT=169.936|LEAN_FRONT=1932.13",
+   "DIM|MEDIA_CART|STABILITY|CASE=loaded|MASS=107.182|COM_X=450|COM_Y=326.124|COM_Z=388.526|TIP_FRONT=260.196|TIP_BACK=207.117|TIP_LEFT=386.041|TIP_RIGHT=386.041|LEAN_FRONT=3847.18",
+   "DIM|MEDIA_CART|STABILITY|CASE=top_loaded|MASS=62.1818|COM_X=450|COM_Y=394|COM_Z=441.373|TIP_FRONT=190.957|TIP_BACK=80.1553|TIP_LEFT=223.963|TIP_RIGHT=223.963|LEAN_FRONT=2823.44",
+   "DIM|MEDIA_CART|STABILITY_BASIS|PUSH=50|LEAN=250|PUSH_Z=1035|SUPPORT=70,830,70,530|DENSITY=600|BIN_LOAD=5|CUBBY_LOAD=5|SHELF_LOAD=5|LIFT=85",
+   "DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=4 crosspieces (tab_slot), cubby back (tab_slot)|FRONT_TO_BACK=side walls (screwed), 2 fin(s) (half-laps), 2 cubby divider(s) (tab_slot)",
    "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
    "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
    "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
@@ -44,8 +49,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "efa6aa33e60ca29db3a6dbbe",
-    "bytes": 103387,
+    "sha256": "849cdbc5100df7c835450b20",
+    "bytes": 142715,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "dd8de1b3f632c6057f59047d",
+    "bytes": 5083,
     "paths": 1
    },
    "pocket_layout": {
@@ -59,7 +69,7 @@
     "paths": 1
    },
    "pocket_dados_flip": {
-    "sha256": "988a7c2fcde70aaf68600594",
+    "sha256": "0ac4571c23e5859c79592d09",
     "bytes": 463,
     "paths": 1
    },
@@ -73,8 +83,8 @@
  },
  "stepped_bins": {
   "records": [
-   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
-   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "CHECK|INFO|DRILL_HOLES|8 hole(s) of 4.5 mm are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.",
    "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
    "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=stepped_bins|PROFILE=stepped|TOWER=None|CUBBIES=yes",
    "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=276|CLEAR_D=176|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
@@ -82,6 +92,11 @@
    "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=389",
    "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=589",
    "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=276|CLEAR_H=125|CLEAR_D=582",
+   "DIM|MEDIA_CART|STABILITY|CASE=empty|MASS=44.6675|COM_X=450|COM_Y=364.396|COM_Z=393.433|TIP_FRONT=124.638|TIP_BACK=70.112|TIP_LEFT=160.881|TIP_RIGHT=160.881|LEAN_FRONT=1842.87",
+   "DIM|MEDIA_CART|STABILITY|CASE=loaded|MASS=104.668|COM_X=450|COM_Y=326.191|COM_Z=381.004|TIP_FRONT=254.159|TIP_BACK=202.192|TIP_LEFT=376.985|TIP_RIGHT=376.985|LEAN_FRONT=3757.92",
+   "DIM|MEDIA_CART|STABILITY|CASE=top_loaded|MASS=59.6675|COM_X=450|COM_Y=396.977|COM_Z=430.405|TIP_FRONT=184.92|TIP_BACK=75.2303|TIP_LEFT=214.907|TIP_RIGHT=214.907|LEAN_FRONT=2734.18",
+   "DIM|MEDIA_CART|STABILITY_BASIS|PUSH=50|LEAN=250|PUSH_Z=1035|SUPPORT=70,830,70,530|DENSITY=600|BIN_LOAD=5|CUBBY_LOAD=5|SHELF_LOAD=5|LIFT=85",
+   "DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=4 crosspieces (tab_slot), cubby back (tab_slot)|FRONT_TO_BACK=side walls (screwed), 2 fin(s) (half-laps), 2 cubby divider(s) (tab_slot)",
    "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
    "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
    "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
@@ -116,8 +131,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "f224577f9b35f57f81a56620",
-    "bytes": 95497,
+    "sha256": "0b4a26fc56c6d354de62aee5",
+    "bytes": 129998,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "dd8de1b3f632c6057f59047d",
+    "bytes": 5083,
     "paths": 1
    },
    "pocket_layout": {
@@ -131,7 +151,7 @@
     "paths": 1
    },
    "pocket_dados_flip": {
-    "sha256": "988a7c2fcde70aaf68600594",
+    "sha256": "0ac4571c23e5859c79592d09",
     "bytes": 463,
     "paths": 1
    },
@@ -145,8 +165,8 @@
  },
  "shelf_cart": {
   "records": [
-   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
-   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "CHECK|INFO|DRILL_HOLES|13 hole(s) of 4.5 mm are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.",
    "DIM|CABINET|OUTSIDE|W=900|H=1035|D=600",
    "DIM|MEDIA_CART|BODY|W=900|H=950|D=600|CASTER_H=85|SHAPE=shelf_cart|PROFILE=sloped|TOWER=Right|CUBBIES=no",
    "DIM|MEDIA_CART|BINS|ROWS=3|COLUMNS=3|CLEAR_W=208.333|CLEAR_D=176|FLOOR_Z=18|FRONT_ENTRANCE_Z=350",
@@ -154,6 +174,11 @@
    "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=550|BACK_WALL_Z=750|DEPTH_FROM_ENTRANCE=532",
    "DIM|MEDIA_CART|ROW|R3|FRONT_WALL_Z=750|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=732",
    "DIM|MEDIA_CART|TOWER|SIDES=Right|CLEAR_W=185|OPENINGS=5|OPENING_H=168.4|SHELF_D=582",
+   "DIM|MEDIA_CART|STABILITY|CASE=empty|MASS=56.095|COM_X=489.221|COM_Y=344.106|COM_Z=465.986|TIP_FRONT=145.737|TIP_BACK=98.8366|TIP_LEFT=222.893|TIP_RIGHT=181.186|LEAN_FRONT=2154.83",
+   "DIM|MEDIA_CART|STABILITY|CASE=loaded|MASS=126.095|COM_X=498.536|COM_Y=317.837|COM_Z=450.014|TIP_FRONT=296.205|TIP_BACK=253.569|TIP_LEFT=512.169|TIP_RIGHT=396.153|LEAN_FRONT=4379.6",
+   "DIM|MEDIA_CART|STABILITY|CASE=top_loaded|MASS=76.095|COM_X=481.212|COM_Y=370.164|COM_Z=497.253|TIP_FRONT=216.493|TIP_BACK=115.281|TIP_LEFT=296.586|TIP_RIGHT=251.562|LEAN_FRONT=3201",
+   "DIM|MEDIA_CART|STABILITY_BASIS|PUSH=50|LEAN=250|PUSH_Z=1035|SUPPORT=70,830,70,530|DENSITY=600|BIN_LOAD=5|CUBBY_LOAD=5|SHELF_LOAD=5|LIFT=85",
+   "DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=4 crosspieces (tab_slot), 1 tower back(s) (tab_slot)|FRONT_TO_BACK=side walls (screwed), 2 fin(s) (half-laps), tower walls",
    "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
    "BOM|BOTTOM|1|bottom_panel|CARCASS|18|900|600|as drawn",
    "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
@@ -194,8 +219,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "81296c18ffff8b603992c9ff",
-    "bytes": 124520,
+    "sha256": "abd0673fff70d3cbf0087bcb",
+    "bytes": 172415,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "74c66730032ab0fe5a8e2168",
+    "bytes": 8002,
     "paths": 1
    },
    "pocket_layout": {
@@ -209,7 +239,7 @@
     "paths": 1
    },
    "pocket_dados_flip": {
-    "sha256": "000ea2f0802c316220a3d9f6",
+    "sha256": "63d2807432ab8582b7624f74",
     "bytes": 463,
     "paths": 1
    },
@@ -223,8 +253,8 @@
  },
  "double_tower": {
   "records": [
-   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
-   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "CHECK|INFO|DRILL_HOLES|18 hole(s) of 4.5 mm are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.",
    "DIM|CABINET|OUTSIDE|W=1200|H=1035|D=600",
    "DIM|MEDIA_CART|BODY|W=1200|H=950|D=600|CASTER_H=85|SHAPE=custom|PROFILE=stepped|TOWER=Both|CUBBIES=yes",
    "DIM|MEDIA_CART|BINS|ROWS=4|COLUMNS=2|CLEAR_W=370|CLEAR_D=127.5|FLOOR_Z=161|FRONT_ENTRANCE_Z=350",
@@ -234,6 +264,11 @@
    "DIM|MEDIA_CART|ROW|R4|FRONT_WALL_Z=800|BACK_WALL_Z=950|DEPTH_FROM_ENTRANCE=639",
    "DIM|MEDIA_CART|CUBBIES|COLUMNS=3|CLEAR_W=240.667|CLEAR_H=125|CLEAR_D=582",
    "DIM|MEDIA_CART|TOWER|SIDES=Both|CLEAR_W=185|OPENINGS=6|OPENING_H=137.333|SHELF_D=582",
+   "DIM|MEDIA_CART|STABILITY|CASE=empty|MASS=79.8897|COM_X=600|COM_Y=340.32|COM_Z=490.568|TIP_FRONT=204.691|TIP_BACK=143.628|TIP_LEFT=401.324|TIP_RIGHT=401.324|LEAN_FRONT=3026.5",
+   "DIM|MEDIA_CART|STABILITY|CASE=loaded|MASS=194.89|COM_X=600|COM_Y=313.065|COM_Z=479.214|TIP_FRONT=448.993|TIP_BACK=400.726|TIP_LEFT=979.024|TIP_RIGHT=979.024|LEAN_FRONT=6638.68",
+   "DIM|MEDIA_CART|STABILITY|CASE=top_loaded|MASS=99.8897|COM_X=600|COM_Y=353.196|COM_Z=543.897|TIP_FRONT=268.124|TIP_BACK=167.395|TIP_LEFT=501.793|TIP_RIGHT=501.793|LEAN_FRONT=3964.4",
+   "DIM|MEDIA_CART|STABILITY_BASIS|PUSH=50|LEAN=250|PUSH_Z=1035|SUPPORT=70,1130,70,530|DENSITY=600|BIN_LOAD=5|CUBBY_LOAD=5|SHELF_LOAD=5|LIFT=85",
+   "DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=5 crosspieces (tab_slot), 2 tower back(s) (tab_slot), cubby back (tab_slot)|FRONT_TO_BACK=side walls (screwed), 1 fin(s) (half-laps), 2 cubby divider(s) (tab_slot), tower walls",
    "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
    "BOM|BOTTOM|1|bottom_panel|CARCASS|18|1200|600|as drawn",
    "BOM|SIDE_L|1|side_wall|CARCASS|18|600|932|as drawn",
@@ -300,8 +335,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "d6177149f014715c768bde54",
-    "bytes": 240337,
+    "sha256": "b9e11c3fc1560fff9d039bcf",
+    "bytes": 344781,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "2306aa9ec4080acc9ef97b05",
+    "bytes": 10961,
     "paths": 1
    },
    "pocket_layout": {
@@ -315,7 +355,7 @@
     "paths": 1
    },
    "pocket_dados_flip": {
-    "sha256": "a917d3ccd6e074955405822a",
+    "sha256": "0919b5377dd3015e48563bcb",
     "bytes": 463,
     "paths": 1
    },
@@ -329,13 +369,19 @@
  },
  "compact_sorter": {
   "records": [
-   "CHECK|WARN|DRILL_HOLES|4.5 mm screw holes are smaller than the 6.35 mm cutter: drill them or use a smaller cutter.",
-   "CHECK|INFO|VALIDATION_SCOPE|Geometric and manufacturing checks only; no load rating, stability or CAM verification.",
+   "CHECK|INFO|DRILL_HOLES|4 hole(s) of 4.5 mm are smaller than the 6.35 mm cutter: they are in drill_layout (drill at the circle centers), not in the cut layout.",
+   "CHECK|WARN|TIP_PUSH|empty, a 50 N push at the top tips the cart forward (it holds 48 N) or backward (it holds 34 N). Widen or deepen the base, lower the rear or fasten the cart to a wall or bench.",
+   "CHECK|INFO|VALIDATION_SCOPE|Geometric, manufacturing and static tip-over checks; no load rating of joints or panels and no CAM verification.",
    "DIM|CABINET|OUTSIDE|W=600|H=520|D=400",
    "DIM|MEDIA_CART|BODY|W=600|H=520|D=400|CASTER_H=0|SHAPE=custom|PROFILE=stepped|TOWER=None|CUBBIES=no",
    "DIM|MEDIA_CART|BINS|ROWS=2|COLUMNS=4|CLEAR_W=134.125|CLEAR_D=180.95|FLOOR_Z=12.7|FRONT_ENTRANCE_Z=220",
    "DIM|MEDIA_CART|ROW|R1|FRONT_WALL_Z=220|BACK_WALL_Z=370|DEPTH_FROM_ENTRANCE=207.3",
    "DIM|MEDIA_CART|ROW|R2|FRONT_WALL_Z=370|BACK_WALL_Z=520|DEPTH_FROM_ENTRANCE=357.3",
+   "DIM|MEDIA_CART|STABILITY|CASE=empty|MASS=10.9332|COM_X=300|COM_Y=234.995|COM_Z=160.608|TIP_FRONT=48.4698|TIP_BACK=34.0337|TIP_LEFT=61.8776|TIP_RIGHT=61.8776|LEAN_FRONT=-1",
+   "DIM|MEDIA_CART|STABILITY|CASE=loaded|MASS=50.9332|COM_X=300|COM_Y=207.512|COM_Z=155.301|TIP_FRONT=199.393|TIP_BACK=184.957|TIP_LEFT=288.262|TIP_RIGHT=288.262|LEAN_FRONT=-1",
+   "DIM|MEDIA_CART|STABILITY|CASE=top_loaded|MASS=30.9332|COM_X=300|COM_Y=274.971|COM_Z=180.484|TIP_FRONT=160.464|TIP_BACK=72.9625|TIP_LEFT=175.07|TIP_RIGHT=175.07|LEAN_FRONT=-1",
+   "DIM|MEDIA_CART|STABILITY_BASIS|PUSH=50|LEAN=250|PUSH_Z=520|SUPPORT=0,600,0,400|DENSITY=600|BIN_LOAD=5|CUBBY_LOAD=5|SHELF_LOAD=5|LIFT=0",
+   "DIM|MEDIA_CART|RACKING|SIDE_TO_SIDE=3 crosspieces (tab_slot)|FRONT_TO_BACK=side walls (screwed), 3 fin(s) (half-laps)",
    "DIM|MEDIA_CART|JOINERY|CROSSPIECES=tab_slot|PANELS=tab_slot|FIT=0.2|DADO_DEPTH=6|RELIEF=dogbone|CUTTER=6.35",
    "BOM|BOTTOM|1|bottom_panel|CARCASS|12.7|600|400|as drawn",
    "BOM|SIDE_L|1|side_wall|CARCASS|12.7|400|507.3|as drawn",
@@ -360,8 +406,13 @@
   ],
   "svg": {
    "cut_layout": {
-    "sha256": "d9ceee8caddfbba94b6f5e4e",
-    "bytes": 39890,
+    "sha256": "1fb0c0b9f839f64e598a8953",
+    "bytes": 53050,
+    "paths": 1
+   },
+   "drill_layout": {
+    "sha256": "eb8e2d736d18c02c429a3d52",
+    "bytes": 2815,
     "paths": 1
    },
    "pocket_layout": {
@@ -375,7 +426,7 @@
     "paths": 1
    },
    "pocket_dados_flip": {
-    "sha256": "6256de6e6c86394f05ef7e05",
+    "sha256": "717a75d14c5c960e72dbf383",
     "bytes": 467,
     "paths": 1
    },
