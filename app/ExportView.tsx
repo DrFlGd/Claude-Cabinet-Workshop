@@ -93,13 +93,15 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
    const blocking=analyse(text).issues.filter(i=>i.severity==='error');
    if(blocking.length)throw Error(blocking.map(c=>c.code+': '+c.message).join('\n'));
    const cut=await operation({...request,mode:'cut_layout'},controller.signal);
+   // Holes smaller than the cutter (the screw holes) are drilled from their own layout.
+   const drill=target.exportModes.includes('drill_layout')?await operation({...request,mode:'drill_layout'},controller.signal):null;
    const recs=records(text),parts=partRecords(recs),slack=snapshot.apply_kerf_compensation?(Number(snapshot.kerf)||0)/2:0;
    const nested=nest(parts,placementRecords(recs),nestOptions(snapshot,'needed'));
    const problems=checkNesting(nested,parts,cut.output,slack);
    if(!nested.sheets.length||problems.length)throw Error(problems[0]??'The coupon does not fit the stock sheet.');
    // One SVG and DXF per stock (the cleat section may be cut from other stock).
-   const files=nested.sheets.flatMap(sh=>{const base=`fit-coupon-${sh.material.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${String(Math.round(sh.thickness*100)/100).replace('.','_')}mm`;return [{name:base+'.svg',data:sheetSvg(cut.output,sh,'cut_layout',slack)},{name:base+'.dxf',data:sheetDxf(cut.output,sh,'cut_layout',slack)}]});
-   setCoupon({svg:cut.output,key,entries:[...files,{name:'logs/bom.txt',data:text},{name:'source/'+target.filename,data:source},...target.sources.map(f=>({name:'source/'+f.name,data:f.text})),{name:'READ-ME.txt',data:`${target.coupon.label}\n\n${target.coupon.note}\n\nThrough cuts at full stock thickness, in millimeters. The engine's fit checks are geometric: they show the parts fit as drawn, not how your machine, cutter and stock cut. This coupon is the physical check.\n`}]});
+   const files=nested.sheets.flatMap(sh=>{const base=`fit-coupon-${sh.material.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${String(Math.round(sh.thickness*100)/100).replace('.','_')}mm`;const ops:[string,string][]=[['cut_layout',cut.output],...(drill&&!drill.empty?[['drill_layout',drill.output] as [string,string]]:[])];return ops.flatMap(([op,svg])=>[{name:`${base}/${op}.svg`,data:sheetSvg(svg,sh,op,slack)},{name:`${base}/${op}.dxf`,data:sheetDxf(svg,sh,op,slack)}])});
+   setCoupon({svg:cut.output,key,entries:[...files,{name:'logs/bom.txt',data:text},{name:'source/'+target.filename,data:source},...target.sources.map(f=>({name:'source/'+f.name,data:f.text})),{name:'READ-ME.txt',data:`${target.coupon.label}\n\n${target.coupon.note}\n\nOne folder per stock: cut_layout (through cuts at full stock thickness) and, when present, drill_layout (holes smaller than the cutter: drill at the circle centers), in millimeters. The engine's fit checks are geometric: they show the parts fit as drawn, not how your machine, cutter and stock cut. This coupon is the physical check.\n`}]});
   }catch(e){setCouponError(e instanceof Error?e.message:String(e))}finally{setCouponBusy(false)}
  }
  const parsed=result?parseManufacturing(result.text):null,stale=!!result&&result.key!==key;

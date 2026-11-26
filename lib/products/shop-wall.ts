@@ -242,7 +242,7 @@ export const shopWall:Product={
   if(m.cleat&&!(m.ct>0&&m.ct<=50))e.push('Cleat thickness must be more than 0 and at most 50 mm.');
   for(const k of ['width','depth','height']){const p=param(k)!,x=Number(v[k]);if(!(x>=p.min!&&x<=p.max!))e.push(`${k[0].toUpperCase()+k.slice(1)} must be between ${p.min} and ${p.max} mm.`)}
   if(!m.coupon&&!(m.W>=3*m.t+20&&m.D>=2*m.t+20&&m.H>=3*m.t+20))e.push('The module is too small for its stock: make it at least three boards plus 20 mm wide and high.');
-  for(const s of this.sections)for(const c of s.controls)if(c.kind==='count'&&!c.when?.(v)){const x=Number(v[c.key]);if(!Number.isInteger(x)||x<(c.min??1)||x>(c.max??12))e.push(`${c.label} must be a whole number from ${c.min??1} to ${c.max??12}.`)}
+  for(const s of shopWall.sections)for(const c of s.controls)if(c.kind==='count'&&!c.when?.(v)){const x=Number(v[c.key]);if(!Number.isInteger(x)||x<(c.min??1)||x>(c.max??12))e.push(`${c.label} must be a whole number from ${c.min??1} to ${c.max??12}.`)}
   if(!(m.fit>=0&&m.fit<m.t/4))e.push('Slot fit clearance must be at least 0 and less than a quarter of the stock.');
   if(!(m.tool>0))e.push('The cutter diameter must be more than 0.');
   if(m.cleat&&!m.coupon){
