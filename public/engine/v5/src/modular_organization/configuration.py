@@ -91,7 +91,8 @@ def compile_config(frontend,*,preset=None,parameters=None,common=None,hardware_i
         profiles=json.loads((CONFIG_DIR/file).read_text())['profiles']
         profile=next((p for p in profiles if p['id']==hardware_id),None)
         if profile is None or frontend not in profile.get('targets',[]):raise ValueError('Hardware profile unavailable for this frontend')
-        for key,value in profile.get('apply',{}).items():
+        from .hardware import applicable
+        for key,value in applicable(frontend,profile.get('apply',{})).items():
             if key not in ps: raise ValueError(f'Hardware patch key not supported: {key}')
             values[key]=check_parameter(ps[key],value)
         warnings.append('Hardware values are reference data; verify purchased hardware and drilling. Equipment travel/rating patches reset to zero.')

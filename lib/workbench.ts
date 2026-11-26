@@ -4,8 +4,8 @@
 export type Values=Record<string,any>;
 export type Facing='front'|'back'|'left'|'right';
 export type Contents='door'|'open'|'drawers'|'drawer_door'|'framed';
-export type ModuleRow=[number,number,number,number,number,Contents,number,Facing,'left'|'right',number];
-export type Module={index:number;col:number;row:number;spanX:number;spanY:number;height:number;contents:Contents;shelves:number;facing:Facing;hinge:'left'|'right';drawers:number;z:number;top:number};
+export type ModuleRow=[number,number,number,number,number,Contents,number,Facing,'left'|'right',number,1|2];
+export type Module={index:number;col:number;row:number;spanX:number;spanY:number;height:number;contents:Contents;shelves:number;facing:Facing;hinge:'left'|'right';drawers:number;columns:1|2;z:number;top:number};
 export const FACINGS:Facing[]=['front','back','left','right'];
 export const CONTENTS:Contents[]=['door','drawers','drawer_door','open','framed'];
 export const CONTENTS_LABEL:Record<Contents,string>={door:'Doors',drawers:'Drawers',drawer_door:'Drawers + door',open:'Open',framed:'Framed opening'};
@@ -13,6 +13,9 @@ const hasDrawers=(c:Contents)=>c==='drawers'||c==='drawer_door';
 export const drawerCount=(m:Module)=>hasDrawers(m.contents)?m.drawers:0;
 export const doorCount=(m:Module,C:number)=>m.contents==='door'||m.contents==='drawer_door'?(moduleSize(m,C).w<=C+0.01?1:2):0;
 export const opens=(m:Module,C:number)=>doorCount(m,C)>0||drawerCount(m)>0;
+// Two drawers side by side (with a centre partition) on an all-drawer module two or more cells wide, as the engine's dcols().
+export const canSplitDrawers=(m:Module,C:number)=>m.contents==='drawers'&&moduleSize(m,C).w>=2*C-0.01;
+export const drawerColumns=(m:Module,C:number):1|2=>m.columns===2&&canSplitDrawers(m,C)?2:1;
 export const FRAME_SIZES:Record<string,[number,number]>={small:[2,2],medium:[3,2],large:[4,2]};
 const num=(x:unknown,d:number)=>{const n=Number(x);return Number.isFinite(n)?n:d};
 
@@ -29,7 +32,7 @@ export function normalizeRow(m:unknown):ModuleRow{
  const f=at(7,'front');
  return [Math.max(0,Math.floor(num(at(0,0),0))),Math.max(0,Math.floor(num(at(1,0),0))),Math.max(1,Math.floor(num(at(2,1),1))),Math.max(1,Math.floor(num(at(3,1),1))),
   num(at(4,730),730),(CONTENTS.includes(at(5,'door'))?at(5,'door'):'door') as Contents,Math.max(0,Math.min(8,Math.floor(num(at(6,1),1)))),(FACINGS.includes(f)?f:'front') as Facing,at(8,'right')==='left'?'left':'right',
-  Math.max(1,Math.min(8,Math.floor(num(at(9,3),3))))];
+  Math.max(1,Math.min(8,Math.floor(num(at(9,3),3)))),at(10,1)===2?2:1];
 }
 export const rows=(v:Values):ModuleRow[]=>(Array.isArray(v.modules)?v.modules:[]).filter(Array.isArray).map(normalizeRow);
 const overlap=(a:Module,b:Module)=>a.col<b.col+b.spanX&&b.col<a.col+a.spanX&&a.row<b.row+b.spanY&&b.row<a.row+a.spanY;
@@ -39,7 +42,7 @@ export const baseHeight=(v:Values)=>num(v.caster_height,75)+num(v.frame_height,8
 export function modules(v:Values):Module[]{
  const zb=baseHeight(v),out:Module[]=[];
  rows(v).forEach((r,index)=>{
-  const m:Module={index,col:r[0],row:r[1],spanX:r[2],spanY:r[3],height:r[4],contents:r[5],shelves:r[6],facing:r[7],hinge:r[8],drawers:r[9],z:zb,top:0};
+  const m:Module={index,col:r[0],row:r[1],spanX:r[2],spanY:r[3],height:r[4],contents:r[5],shelves:r[6],facing:r[7],hinge:r[8],drawers:r[9],columns:r[10],z:zb,top:0};
   m.z=Math.max(zb,...out.filter(o=>overlap(o,m)).map(o=>o.top));m.top=m.z+m.height;out.push(m);
  });
  return out;
@@ -132,14 +135,17 @@ export function schematic(v:Values,interior:boolean,explode:boolean):SchematicPa
   if(drawerCount(m)){
    const sc=num(v.metal_slide_clearance_per_side,12.7),vc=num(v.drawer_vertical_clearance,20),room=D-td-tc-num(v.drawer_rear_clearance,5);
    const fit=[250,300,350,400,450,500,550,600,650,700].filter(s=>s<=room),slide=num(v.metal_slide_length,0)>0?num(v.metal_slide_length,0):fit.length?Math.max(...fit):100;
-   drawerBands(m,v).forEach(([a,b],j)=>{
-    const id='DRAWER-'+(j+1)+'-',z0=Math.max(tc,a)+vc/2,bh=Math.min(H-tc,b)-Math.max(tc,a)-vc,out=interior?0:ex*0.4;
-    box(id+'BOX','Drawer box',tc+sc,td-out,z0,W-2*tc-2*sc,Math.max(100,slide),bh,'#e0c79c','drawer');
+   const n=drawerColumns(m,C),cellW=n===2?(W-3*tc)/2:W-2*tc;
+   if(n===2)box('PARTITION','Drawer partition',W/2-tc/2,td,0,tc,D-td-tc,H,'#bd8e59','carcass');
+   drawerBands(m,v).forEach(([a,b],j)=>{for(let c=0;c<n;c++){
+    const id='DRAWER-'+(j+1)+(n===2?(c?'R':'L'):'')+'-',z0=Math.max(tc,a)+vc/2,bh=Math.min(H-tc,b)-Math.max(tc,a)-vc,out=interior?0:ex*0.4;
+    const bx=c?W/2+tc/2+sc:tc+sc,fw=W/n-gap,fx=c*W/n+gap/2;
+    box(id+'BOX','Drawer box',bx,td-out,z0,cellW-2*sc,Math.max(100,slide),bh,'#e0c79c','drawer');
     if(fronts){
-     const fh=b-a-gap;box(id+'FACE','Drawer face',gap/2,-ex*0.6-out,a+gap/2,W-gap,td,fh,'#d4b182','front');
-     if(pull)box(id+'HANDLE','Pull',W/2-70,-th-ex*0.6-out,a+gap/2+fh-Math.min(hTop,fh/2)-12,140,th,24,'#6d5034','hardware');
+     const fh=b-a-gap;box(id+'FACE','Drawer face',fx,-ex*0.6-out,a+gap/2,fw,td,fh,'#d4b182','front');
+     if(pull)box(id+'HANDLE','Pull',fx+fw/2-70,-th-ex*0.6-out,a+gap/2+fh-Math.min(hTop,fh/2)-12,140,th,24,'#6d5034','hardware');
     }
-   });
+   }});
   }
  }
  const s=size(v);
