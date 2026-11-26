@@ -1,11 +1,11 @@
 'use client';
 import {useEffect,useMemo,useState} from 'react';
-import {Archive,ChefHat,Inbox,Layers3,Printer,ShoppingCart,SquareStack,ArrowRight} from 'lucide-react';
+import {Archive,ChefHat,Inbox,Layers3,Printer,ShoppingCart,SquareStack,ArrowRight,Grid3x3} from 'lucide-react';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {families,schemas,starterValues} from '@/lib/cabinet';
 import {formatShop,Units} from '@/lib/units';
 
-export const familyIcons=[ShoppingCart,Archive,SquareStack,Layers3,ChefHat,Inbox,Printer];
+export const familyIcons=[ShoppingCart,Archive,SquareStack,Layers3,ChefHat,Inbox,Printer,Grid3x3];
 
 function starterSize(family:number,id:string,units:Units){
  try{

@@ -1,0 +1,35 @@
+{
+  "fileFormatVersion": "1",
+  "parameterSets": {
+    "Small 2 \u00d7 2 workbench": {
+      "frame_size": "small",
+      "modules": "[[0, 0, 1, 1, 730, \"door\", 1, \"front\", \"left\"], [1, 0, 1, 1, 730, \"door\", 1, \"front\", \"right\"], [0, 1, 2, 1, 730, \"door\", 1, \"back\", \"left\"]]"
+    },
+    "Large 4 \u00d7 2 workbench": {
+      "frame_size": "large",
+      "modules": "[[0, 0, 1, 1, 730, \"door\", 1, \"front\", \"left\"], [1, 0, 2, 1, 730, \"door\", 1, \"front\", \"left\"], [3, 0, 1, 1, 730, \"door\", 1, \"front\", \"right\"], [0, 1, 1, 1, 730, \"door\", 1, \"back\", \"right\"], [1, 1, 1, 1, 730, \"door\", 1, \"back\", \"right\"], [2, 1, 1, 1, 730, \"door\", 1, \"back\", \"left\"], [3, 1, 1, 1, 730, \"door\", 1, \"back\", \"left\"]]"
+    },
+    "Doors in front, open shelving behind": {
+      "modules": "[[0, 0, 1, 1, 730, \"door\", 1, \"front\", \"left\"], [1, 0, 2, 1, 730, \"door\", 1, \"front\", \"left\"], [0, 1, 1, 1, 730, \"open\", 2, \"back\", \"left\"], [1, 1, 1, 1, 730, \"open\", 2, \"back\", \"left\"], [2, 1, 1, 1, 730, \"open\", 2, \"back\", \"left\"]]"
+    },
+    "Stacked half-height modules": {
+      "modules": "[[0, 0, 1, 1, 365, \"door\", 0, \"front\", \"left\"], [0, 0, 1, 1, 365, \"door\", 0, \"front\", \"left\"], [1, 0, 2, 1, 730, \"door\", 1, \"front\", \"left\"], [0, 1, 1, 1, 365, \"open\", 0, \"back\", \"left\"], [0, 1, 1, 1, 365, \"open\", 0, \"back\", \"left\"], [1, 1, 1, 1, 730, \"door\", 1, \"back\", \"right\"], [2, 1, 1, 1, 730, \"door\", 1, \"back\", \"left\"]]"
+    },
+    "One simple cabinet on a 1 \u00d7 1 frame": {
+      "frame_size": "custom",
+      "grid_columns": "1",
+      "grid_rows": "1",
+      "include_worksurface": "false",
+      "modules": "[[0, 0, 1, 1, 730, \"door\", 1, \"front\", \"left\"]]"
+    },
+    "Medium 3 \u00d7 2 in \u00be\u2033 stock": {
+      "frame_thickness": "19.05",
+      "carcass_thickness": "19.05",
+      "door_thickness": "19.05",
+      "worksurface_thickness": "19.05",
+      "handle_thickness": "19.05",
+      "shelf_thickness": "12.7",
+      "router_bit_diameter": "6.35"
+    }
+  }
+}
