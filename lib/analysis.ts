@@ -39,7 +39,7 @@ const PART_NAMES:Record<string,string>={
  cleat_wall:'French cleat (on wall)',backer:'Cleat backer',spacer:'Stabilizer',runner:'Tray runner',
 };
 const CARCASS_NAMES:Record<string,string>={'CS-L':'Left side','CS-R':'Right side',BOTTOM:'Bottom',TOP:'Top','TOP-F':'Front top stretcher','TOP-R':'Rear top stretcher',BASE:'Base',TOP_FRONT:'Front top rail',TOP_REAR:'Rear top rail',UPPER_SHELF:'Upper shelf'};
-export const MATERIAL_NAMES:Record<string,string>={CARCASS:'Carcass',BACK:'Back',DRAWER_WALL:'Drawer boxes',DRAWER_BOTTOM:'Drawer bottoms',DRAWER_FRONT:'Drawer faces',DOOR:'Doors',FACE_FRAME:'Face frame',WOOD_RAIL:'Drawer rails',WOOD_RUNNER:'Drawer runners',WORKTOP:'Worktop',DRAWER_DIVIDER:'Drawer dividers',plywood:'Sheet stock'};
+export const MATERIAL_NAMES:Record<string,string>={CARCASS:'Carcass',BACK:'Back',DRAWER_WALL:'Drawer boxes',DRAWER_BOTTOM:'Drawer bottoms',DRAWER_FRONT:'Drawer faces',DOOR:'Doors',FACE_FRAME:'Face frame',WOOD_RAIL:'Drawer rails',WOOD_RUNNER:'Drawer runners',WORKTOP:'Worktop',DRAWER_DIVIDER:'Drawer dividers',FIN:'Fins (bin dividers)',plywood:'Sheet stock'};
 const human=(s:string)=>s.replace(/_/g,' ').replace(/^\w/,c=>c.toUpperCase());
 export function partName(id:string,category:string){
  if(CARCASS_NAMES[id])return CARCASS_NAMES[id];

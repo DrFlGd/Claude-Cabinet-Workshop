@@ -1,4 +1,7 @@
-import manifest from './engine-v5-files.js';
+import engine from './engine-v5-files.js';
+import products from './product-files.js';
+// Product engines are self-contained files with their own output list.
+const engineFor=filename=>typeof filename==='string'&&Object.hasOwn(products.frontends,filename)?{frontends:products.frontends,files:products.files[filename]}:engine;
 // One worker serves jobs in sequence so the compiled engine is reused; terminating it still
 // cancels synchronous WASM work. A 'warm' message compiles the engine before the first job.
 let compiled=null;
@@ -13,6 +16,7 @@ self.onmessage=async({data})=>{
  const logs=[];const log=line=>logs.push(String(line));
  try{
   const {filename,source,sources,mode}=data;
+  const manifest=engineFor(filename);
   const modern=Object.hasOwn(manifest.frontends,filename);
   if(!modern||!manifest.frontends[filename].includes(mode)||!['bom','cut_layout','engrave_layout',...manifest.frontends[filename].filter(m=>m.startsWith('pocket_'))].includes(mode)||typeof source!=='string'||source.length>2000000||!Array.isArray(sources)||sources.length!==manifest.files.length||!manifest.files.every(name=>sources.some(f=>f.name===name&&typeof f.text==='string'&&f.text.length<2000000)))throw Error('Invalid export request. Refresh the app and try again.');
   const {default:OpenSCAD}=await import('./openscad.js');
@@ -20,7 +24,7 @@ self.onmessage=async({data})=>{
   const engine=await OpenSCAD(await engineOptions({noInitialRun:true,locateFile:path=>new URL(path,self.location.href).href,print:log,printErr:log}));
   if(font){engine.FS.mkdirTree('/fonts');engine.FS.writeFile('/fonts/DejaVuSans.ttf',font);}
   for(const f of sources){engine.FS.mkdirTree('/'+f.name.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+f.name,f.text);}
-  engine.FS.writeFile('/'+filename,source);
+  engine.FS.mkdirTree('/'+filename.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+filename,source);
   const path=mode==='bom'?'/report.echo':'/layout.svg';
   const code=engine.callMain(['/'+filename,'-D','output_mode='+JSON.stringify(mode),'-D','dimension_report="full"','-D','system_contract_report='+(data.report==='verbose'?'"verbose"':'"summary"'),'-D','validation_report="verbose"','-D','interface_keepout_policy="enforce"','-o',path]);
   let output='';try{output=engine.FS.readFile(path,{encoding:'utf8'})}catch{}

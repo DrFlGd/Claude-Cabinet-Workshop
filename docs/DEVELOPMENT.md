@@ -23,6 +23,8 @@ local serving and deployment. Application versioning is defined in the
 | Native engine package | public/engine/v5/ |
 | Generated UI schema and embedded source | lib/schema.json, lib/engine-sources.json |
 | Application-owned kitchen catalog | catalog/kitchen-standard-recipes.json |
+| Products (own editor, own engine file) | lib/products/, app/products/, public/products/, public/openscad/product-files.js |
+| Product engine sources (generated) | lib/products/product-sources.json |
 
 ## Checks
 
@@ -71,6 +73,21 @@ pnpm run build:static
 - `scripts/parity.mjs --check`: `docs/PARITY.md`, the generated table of features,
   options and front layouts per cabinet type, must be current (`pnpm run parity`
   regenerates it).
+
+- `scripts/sync-product-sources.mjs --check`: products render from the embedded
+  copies in lib/products/product-sources.json; run the script without `--check`
+  after editing a file under public/products.
+- `tests/products.mjs`: every starter of every product through the production
+  export and render workers: no engine errors or undefined values, the cut layout
+  against its placement table, per-sheet nesting, every pocket and label inside its
+  part, and golden snapshots in `tests/golden/products/` (`--update` rewrites them;
+  review the diff). Also unit checks of the product framework (parameters read from
+  the SCAD file, saved designs, linked settings, the editor's quick check).
+- `tests/product-interference.mjs`: renders every part of each product design on
+  its own and intersects every pair whose extents meet; any shared volume over
+  1 mm³ fails. `--all` adds 24 seeded random designs; CI runs it sharded with the
+  cabinet sweep. `CASES='[["media_cart","stepped_bins",{"rows":1}]]'` runs chosen
+  designs.
 
 `pnpm run test:engine` runs the three engine suites alone (about six minutes on a
 two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.
@@ -129,3 +146,30 @@ native OpenSCAD, like the existing stackable tests.
 harness: photo assembly, flat parts, BOM, cut, hinge pockets and engraving. It
 checks the full embedded source allowlist and shared SVG registration. This is
 worker integration coverage, not a visual browser interaction test.
+
+## Products
+
+A product is a design with its own OpenSCAD file and its own editor beside the
+cabinet types (the media cart is the first; see
+[MEDIA_CART_REVIEW.md](MEDIA_CART_REVIEW.md)). The SCAD file is the single source of
+defaults: lib/products/scad-params.ts reads its Customizer parameters (everything
+above `/* [Hidden] */`), and settings are applied by rewriting those assignments.
+To add one:
+
+1. Put the engine at `public/products/<id>/<id>.scad`. It must accept
+   `output_mode` (`bom` plus its layouts) and, in `bom` mode, echo the shared
+   records: `BOM|id|qty|category|material|t|W|H|notes`, `PLACE|id|X=|Y=|W=|H=`,
+   at least one `CHECK|...` record, and `HARDWARE|ID=|QTY=|UNIT=|NOTE=` lines.
+   Add `render_part` under Hidden for the interference test.
+2. Run `node scripts/sync-product-sources.mjs` and list the file with its output
+   modes in `public/openscad/product-files.js`.
+3. Add a definition module beside lib/products/media-cart.ts (sections and
+   controls, starters, quick validation, summary, assembly steps, coverage) and add
+   it to the list in lib/products/index.ts.
+4. Optionally register an instant drawing in app/products/diagrams.ts; without
+   one the editor opens on the 3D model.
+5. Run `node tests/products.mjs --update`, review the snapshot, and run
+   `node tests/product-interference.mjs --all`.
+
+The editor (app/products/ProductWorkspace.tsx), engine check, cut list, export page,
+nesting, saved designs and recovery need no changes for a new product.

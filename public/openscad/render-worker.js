@@ -1,4 +1,7 @@
-import manifest from './engine-v5-files.js';
+import engine from './engine-v5-files.js';
+import products from './product-files.js';
+// Product engines are self-contained files with their own output list.
+const engineFor=filename=>typeof filename==='string'&&Object.hasOwn(products.frontends,filename)?{frontends:products.frontends,files:products.files[filename]}:engine;
 // One engine instance per job, built from a module compiled once per worker. Terminating the
 // worker cancels synchronous WASM work. A 'warm' message compiles the engine before the first job.
 let compiled=null;
@@ -14,6 +17,7 @@ self.onmessage = async ({data}) => {
  const log=(line)=>{line=String(line).slice(0,2000);logs.push(line);if(logs.length>150)logs.shift();self.postMessage({type:'log',line})};
  try {
   const {filename,source,mode}=data;
+  const manifest=engineFor(filename);
   if(!Object.hasOwn(manifest.frontends,filename)||!manifest.frontends[filename].includes(mode)||!['assembly','flat_3d','carcass_only','drawers_only'].includes(mode)||typeof source!=='string'||source.length>2000000)throw Error('Invalid render request. Refresh the app and try again.');
   self.postMessage({type:'stage',stage:'Loading OpenSCAD…'});
   const sources=data.sources;
@@ -21,7 +25,7 @@ self.onmessage = async ({data}) => {
   const {default:OpenSCAD}=await import('./openscad.js');
   const engine=await OpenSCAD(await engineOptions({noInitialRun:true,locateFile:path=>new URL(path,self.location.href).href,print:log,printErr:log}));
   for(const f of sources){engine.FS.mkdirTree('/'+f.name.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+f.name,f.text);}
-  engine.FS.writeFile('/'+filename,source);
+  engine.FS.mkdirTree('/'+filename.split('/').slice(0,-1).join('/'));engine.FS.writeFile('/'+filename,source);
   self.postMessage({type:'stage',stage:'Rendering cabinet…'});
   let code;
   try{code=engine.callMain(['/'+filename,'--backend=Manifold','--export-format=binstl','-D','output_mode='+JSON.stringify(mode),'-o','/cabinet.stl'])}catch(e){if(typeof e==='number'&&engine.formatException)throw Error(engine.formatException(e));throw e}

@@ -10,19 +10,21 @@ import {assemblyPacket} from '@/lib/assembly';
 import {analyse,records,MATERIAL_NAMES} from '@/lib/analysis';
 import {nest,nestOptions,partRecords,placementRecords,sheetSvg,sheetDxf,nestingReport,nestingSummary,checkNesting,NestResult,Rotate} from '@/lib/nesting';
 import {formatDimension,formatShop,Units} from '@/lib/units';
+import type {EngineTarget} from '@/lib/products/types';
 import {ArrowLeft,Download,Check,Info,LoaderCircle,TriangleAlert,FileCode2,Layers,PackageCheck} from 'lucide-react';
 function SvgPreview({data}:{data:string}){const [url,setUrl]=useState('');useEffect(()=>{const u=URL.createObjectURL(new Blob([data],{type:'image/svg+xml'}));setUrl(u);return()=>URL.revokeObjectURL(u)},[data]);return url?<img className='svg-review' src={url} alt='OpenSCAD manufacturing layout preview'/>:null}
 type Package={entries:Entry[];text:string;packet:string;key:string;name:string;full:boolean;nesting?:NestResult;nestingProblems?:string[]};
-type Props={family:number;values:Values;name:string;errors:string[];units?:Units;onBack:()=>void;onEditSheets:()=>void;onDownloadProject:()=>void;projectBusy:boolean};
+// target: a product (lib/products) with its own engine file, output modes, project files and packet.
+type Props={family:number;values:Values;name:string;errors:string[];units?:Units;onBack:()=>void;onEditSheets:()=>void;onDownloadProject:()=>void;projectBusy:boolean;target?:EngineTarget};
 const ROTATIONS:{value:Rotate;title:string;note:string}[]=[
  {value:'needed',title:'Keep the drawn orientation',note:'A part turns a quarter only when it cannot fit on the sheet as drawn.'},
  {value:'never',title:'Never turn parts',note:'Grain runs exactly as drawn; a part too long for the sheet is reported.'},
  {value:'free',title:'Turn parts freely',note:'Denser sheets, but grain direction is ignored.'},
 ];
-export default function ExportView({family,values,name,errors,units='mm',onBack,onEditSheets,onDownloadProject,projectBusy}:Props){
+export default function ExportView({family,values,name,errors,units='mm',onBack,onEditSheets,onDownloadProject,projectBusy,target}:Props){
  const invalid=errors.length>0;
  const [rotate,setRotate]=useState<Rotate>('needed'),[running,setRunning]=useState(false),[status,setStatus]=useState(''),[error,setError]=useState(''),[log,setLog]=useState(''),[result,setResult]=useState<Package|null>(null),[svg,setSvg]=useState('svg/cut_layout.svg');
- const task=useRef<AbortController|null>(null),key=JSON.stringify({family,values,name,units});
+ const task=useRef<AbortController|null>(null),key=JSON.stringify({family,product:target?.id,values,name,units});
  useEffect(()=>()=>{const active=task.current;task.current=null;active?.abort()},[]);
  function operation(data:object,signal:AbortSignal):Promise<{output:string;logs:string[];empty:boolean}>{return new Promise((resolve,reject)=>{
   signal.throwIfAborted();const worker=new Worker(assetUrl('/openscad/export-worker.js'),{type:'module'});let finished=false;
@@ -35,12 +37,12 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
  })}
  async function generate(full:boolean){
   task.current?.abort();const controller=new AbortController();task.current=controller;setRunning(true);setError('');setLog('');setResult(null);
-  const snapshot=JSON.parse(JSON.stringify(values)),filename=schemas[family].file;const entries:Entry[]=[],notes:string[]=[];let text='';
+  const snapshot=JSON.parse(JSON.stringify(values)),filename=target?target.filename:schemas[family].file;const entries:Entry[]=[],notes:string[]=[];let text='';
   try{
-   const source=await configuredSource(family,snapshot,controller.signal),supported=schemas[family].fields.find(f=>f.key==='output_mode')?.options??[],modes=full?['bom',...supported.filter(mode=>mode==='cut_layout'||mode==='engrave_layout'||mode.startsWith('pocket_'))]:['bom'];
+   const source=target?target.source(snapshot):await configuredSource(family,snapshot,controller.signal),supported=target?target.exportModes:schemas[family].fields.find(f=>f.key==='output_mode')?.options??[],sources=target?target.sources:renderSources,modes=full?['bom',...supported.filter(mode=>mode==='cut_layout'||mode==='engrave_layout'||mode.startsWith('pocket_'))]:['bom'];
    for(let i=0;i<modes.length;i++){
     controller.signal.throwIfAborted();const mode=modes[i];setStatus(`${i+1} / ${modes.length} · ${mode==='bom'?'BOM and dimensions':mode.replaceAll('_',' ')}`);
-    const output=await operation({filename,source,sources:renderSources,mode},controller.signal);
+    const output=await operation({filename,source,sources,mode},controller.signal);
     const outputLog=output.logs.join('\n')+(mode==='bom'?'\n'+output.output:'');entries.push({name:`logs/${mode}.txt`,data:outputLog});
     if(mode==='bom'){text=outputLog;const health=designHealth(text),blocking=analyse(text).issues.filter(i=>i.severity==='error');if(health.status==='UNVERIFIED'||blocking.length){setLog(text);throw Error(blocking.map(c=>c.code+': '+c.message).join('\n')||'No validation report returned. Manufacturing package blocked.')}entries.push(...reports(text))}
     else if(!output.empty)entries.push({name:`svg/${mode}.svg`,data:output.output});
@@ -61,9 +63,10 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
     if(nestingProblems.length)entries.push({name:'sheets/PROBLEMS.txt',data:nestingProblems.join('\n')+'\n'});
     notes.push('sheets: '+nestingSummary(nesting,m=>MATERIAL_NAMES[m]??m)+(nestingProblems.length?` · ${nestingProblems.length} problem(s), see sheets/PROBLEMS.txt`:''));
    }
-   const packet=assemblyPacket(name,snapshot,text,units);
-   entries.push({name:'assembly-packet.html',data:packet},{name:`source/${filename}`,data:source},...Object.entries(engineSources).filter(([name])=>name!==filename).map(([name,text])=>({name:'source/'+name,data:text})),{name:'design.cabinet.json',data:JSON.stringify({version:2,engine:5,engineFamily:"modular_organization",bundleRevision:5,family,name,displayUnits:units,values:snapshot},null,2)});
-   entries.push({name:'READ-ME.txt',data:`${name}\nGenerated ${new Date().toISOString()} from settings captured when generation started.\n\nOpen assembly-packet.html in a browser, then Print / Save as PDF. The exploded arrangement is schematic; labels correspond to the actual BOM. The panel BOM does not provide a complete purchased-hardware count.\n\nSVGs are OpenSCAD layouts in millimeters. Preserve original scale and registration frame in CAM. These strip layouts are not toolpaths. Never machine registration frames as cabinet parts.\n\nsheets/: the same operations nested per stock sheet (sheet size, margin and part spacing from the Flat Layout settings; parts keep the engine's orientation unless a part cannot fit as drawn or free turning was chosen). One folder per sheet with an SVG and a DXF per operation, nesting.json with every placement, and PROBLEMS.txt only when a part did not fit.\n\ncut_layout: through cuts. engrave_layout: labels. pocket_layout: combined reference only, potentially multiple depths. Use separate operation SVGs and their logs for depths and machining faces, including face-frame BACK dados. Disabled operations may contain only the registration frame.\n\nBOM dimensions are cut sizes; grouped BOM only combines matching category, material, dimensions and notes. Original reports retain full precision in mm.\n\n${notes.join('\n')}`});
+   const packet=target?.packet?target.packet(name,snapshot,text,units):assemblyPacket(name,snapshot,text,units);
+   if(target)entries.push({name:'assembly-packet.html',data:packet},...target.projectFiles(snapshot,name,units).map(f=>({name:f.name==='design.cabinet.json'?f.name:'source/'+f.name,data:f.data})));
+   else entries.push({name:'assembly-packet.html',data:packet},{name:`source/${filename}`,data:source},...Object.entries(engineSources).filter(([name])=>name!==filename).map(([name,text])=>({name:'source/'+name,data:text})),{name:'design.cabinet.json',data:JSON.stringify({version:2,engine:5,engineFamily:"modular_organization",bundleRevision:5,family,name,displayUnits:units,values:snapshot},null,2)});
+   entries.push({name:'READ-ME.txt',data:`${name}\nGenerated ${new Date().toISOString()} from settings captured when generation started.\n\nOpen assembly-packet.html in a browser, then Print / Save as PDF. The exploded arrangement is schematic; labels correspond to the actual BOM. The panel BOM does not provide a complete purchased-hardware count.\n\nSVGs are OpenSCAD layouts in millimeters. Preserve original scale and registration frame in CAM. These strip layouts are not toolpaths. Never machine registration frames as cabinet parts.\n\nsheets/: the same operations nested per stock sheet (sheet size, margin and part spacing from the ${target?'Sheets & layout':'Flat Layout'} settings; parts keep the engine's orientation unless a part cannot fit as drawn or free turning was chosen). One folder per sheet with an SVG and a DXF per operation, nesting.json with every placement, and PROBLEMS.txt only when a part did not fit.\n\ncut_layout: through cuts. engrave_layout: labels. pocket_layout: combined reference only, potentially multiple depths. Use separate operation SVGs and their logs for depths and machining faces, including face-frame BACK dados. Disabled operations may contain only the registration frame.\n\nBOM dimensions are cut sizes; grouped BOM only combines matching category, material, dimensions and notes. Original reports retain full precision in mm.\n\n${notes.join('\n')}`});
    controller.signal.throwIfAborted();setResult({entries,text,packet,key,name,full,nesting,nestingProblems});setStatus('Ready for review. Nothing has been downloaded yet.');
   }catch(e){if(task.current===controller){setError(e instanceof Error?e.message:String(e));setStatus('')}}finally{if(task.current===controller)setRunning(false)}
  }
@@ -72,7 +75,7 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
  const materials=new Map<string,number>();parsed?.bom.forEach(r=>{const k=r.material+' · '+formatDimension(r.thickness,units)+' '+units;materials.set(k,(materials.get(k)??0)+r.qty)});
  const svgs=result?.entries.filter(e=>(e.name.startsWith('svg/')||e.name.startsWith('sheets/'))&&e.name.endsWith('.svg'))??[],selectedSvg=svgs.find(e=>e.name===svg)??svgs[0];
  const allWarnings=[...new Set(result?.entries.filter(e=>e.name.startsWith('logs/')).flatMap(e=>parseManufacturing(e.data).warnings)??[])];
- const filename=(result?.name.replace(/[^a-z0-9_-]/gi,'-')||'cabinet');
+ const filename=(result?.name.replace(/[^a-z0-9_-]/gi,'-')||(target?target.id:'cabinet'));
  const cap=(t:string)=>t.charAt(0).toUpperCase()+t.slice(1),opName=(n:string)=>cap(n.replaceAll('_',' ').replace(/ layout$/,''));
  const operationsList=svgs.filter(e=>e.name.startsWith('svg/'));
  const sheets=new Map<string,typeof svgs>();for(const e of svgs.filter(e=>e.name.startsWith('sheets/'))){const folder=e.name.split('/')[1];sheets.set(folder,[...(sheets.get(folder)??[]),e])}
@@ -132,8 +135,8 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
     </section>}
     <section className='export-card'>
      <h2><FileCode2 size={18}/>Editable OpenSCAD project</h2>
-     <p className='export-includes-line'><Check size={15}/>Your cabinet and all current settings</p>
-     <p className='export-includes-line'><Check size={15}/>Shared geometry and manufacturing layouts</p>
+     <p className='export-includes-line'><Check size={15}/>Your {target?target.label.toLowerCase():'cabinet'} and all current settings</p>
+     <p className='export-includes-line'><Check size={15}/>{target?'Its engine file with every manufacturing layout':'Shared geometry and manufacturing layouts'}</p>
      <p className='export-includes-line'><Check size={15}/>BOM export script and editable design file</p>
      <div className='note'><Info size={18}/><p>Open the included .scad file in OpenSCAD to render exact geometry and export cut, pocket, engraving or BOM outputs. The cut list tab and the manufacturing package evaluate the same engine directly in your browser.</p></div>
      <button className='primary download-button' disabled={projectBusy||invalid} onClick={onDownloadProject}><Download size={18}/>{projectBusy?'Preparing project…':'Download OpenSCAD project'}</button>
