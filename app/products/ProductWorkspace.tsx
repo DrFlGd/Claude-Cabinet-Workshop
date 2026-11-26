@@ -16,6 +16,8 @@ import {formatDimension,type Units} from '@/lib/units';
 import DimensionInput from '../DimensionInput';
 import SettingHelp from '../SettingHelp';
 import OpenSCADView from '../OpenSCADView';
+import CollisionCheck from '../CollisionCheck';
+import {productJobs,PRODUCT_THRESHOLD} from '@/lib/interference';
 import PlanPanel,{StatusChip} from '../PlanPanel';
 import type {Analysis} from '../useEngineAnalysis';
 import {diagrams} from './diagrams';
@@ -138,7 +140,9 @@ export default function ProductWorkspace({product,values,units,analysis,name,cha
      <div className='native-content'><OpenSCADView family={0} values={values} active={tab==='model'} parts={[]} target={target}/></div>
     </TabsContent>
     <TabsContent value='plan' className='plan-content'>
-     <PlanPanel analysis={analysis} units={units} name={name} values={values} coverage={product.coverage} sheetsWhere='Sheets & layout under Shop details'/>
+     <PlanPanel analysis={analysis} units={units} name={name} values={values} coverage={product.coverage} sheetsWhere='Sheets & layout under Shop details'
+      collision={<CollisionCheck designKey={analysis.key} filename={target.filename} sources={target.sources} threshold={PRODUCT_THRESHOLD} unit='part'
+       jobs={()=>analysis.state==='ready'&&!recsStale?productJobs(product.id,target.source(values),analysis.log):'Wait for the engine check of these settings to finish, then check again.'}/>}/>
     </TabsContent>
     <TabsContent value='assembly' className='plan-content'>
      <div className='plan pw-assembly'>

@@ -5,7 +5,9 @@ import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from '@/compo
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Switch} from '@/components/ui/switch';
 import {Toaster,toast} from 'sonner';
-import {defaults,schemas,families,label,thickness,validate,exportBundle,download,zip,Values,starterValues,normalizeValues,geometry,Part} from '@/lib/cabinet';
+import {defaults,schemas,families,label,thickness,validate,exportBundle,download,zip,Values,starterValues,normalizeValues,geometry,Part,applySettings,engineSources,renderSources} from '@/lib/cabinet';
+import CollisionCheck from './CollisionCheck';
+import {cabinetJobs,CABINET_THRESHOLD} from '@/lib/interference';
 import LayoutEditor from './LayoutEditor';
 import WorkbenchEditor from './WorkbenchEditor';
 import {convertBays} from '@/lib/sections';
@@ -333,7 +335,9 @@ export default function Home(){
       <HardwareView family={family} values={values} units={units} analysis={analysis} kind={hardwareKind} setKind={setHardwareKind}/>
      </TabsContent>
      <TabsContent value='plan' className='plan-content'>
-      <PlanPanel analysis={analysis} units={units} name={projectName} values={values}/>
+      <PlanPanel analysis={analysis} units={units} name={projectName} values={values}
+       collision={<CollisionCheck designKey={analysis.key} filename={schemas[family].file} sources={renderSources} threshold={CABINET_THRESHOLD} unit='part group'
+        jobs={()=>analysis.state==='ready'&&analysis.planKey===analysis.key?cabinetJobs({id:schemas[family].id,fields:schemas[family].fields,configure:v=>applySettings(engineSources[schemas[family].file],family,v as Values)},values,analysis.log):'Wait for the engine check of these settings to finish, then check again.'}/>}/>
      </TabsContent>
     </Tabs>
     <div className='summary-bar'>

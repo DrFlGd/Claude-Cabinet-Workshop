@@ -280,8 +280,8 @@ export const shopWall:Product={
   return steps;
  },
  coverage:{
-  checked:['Every tab against its slot: clearance on both axes, tab length against the panel it passes through, cutter reach and corner reliefs','Shoulder reliefs beside every tab and at the hooks\' inside corners','Screw holes in solid wood, clear of slots, notches and openings, with room for the pilot in the edge','Assembly order: each part goes on along its tabs','French cleat: rail position, hook depth and tip, notch height, nothing behind the wall, other rails on the wall','Doors, drawers, sliding leaves and bins clear their openings with the gap setting','Flat cut layout and sheet nesting: every part placed once, no overlapping outlines'],
-  notChecked:['Parts intersecting in 3D for this exact design (every starter and a seeded set of random designs are swept in the test suite)','A physical cut: these are geometric checks. Cut the fit test coupon (Export) before a full module','Load rating, wall anchoring and stud location'],
+  checked:['Every tab against its slot: clearance on both axes, tab length against the panel it passes through, cutter reach and corner reliefs','Shoulder reliefs beside every tab and at the hooks\' inside corners','Screw holes in solid wood, clear of slots, notches and openings, with room for the pilot in the edge','Assembly order: each part goes on along its tabs','French cleat: rail position, hook depth and tip, notch height, nothing behind the wall, other rails on the wall','Doors, drawers, sliding leaves and bins clear their openings with the gap setting','Flat cut layout and sheet nesting: every part placed once, no overlapping outlines','Parts intersecting in 3D for this exact design, on demand: Check for intersecting parts above (every starter and a seeded set of random designs are also swept in the test suite)'],
+  notChecked:['A physical cut: these are geometric checks. Cut the fit test coupon (Export) before a full module','Load rating, wall anchoring and stud location'],
  },
  sheetSection:'sheets',
 };
