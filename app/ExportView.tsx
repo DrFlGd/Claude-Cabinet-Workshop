@@ -11,7 +11,7 @@ import {analyse,records,MATERIAL_NAMES} from '@/lib/analysis';
 import {nest,nestOptions,partRecords,placementRecords,sheetSvg,sheetDxf,nestingReport,nestingSummary,checkNesting,NestResult,Rotate} from '@/lib/nesting';
 import {formatDimension,formatShop,Units} from '@/lib/units';
 import type {EngineTarget} from '@/lib/products/types';
-import {ArrowLeft,Download,Check,Info,LoaderCircle,TriangleAlert,FileCode2,Layers,PackageCheck} from 'lucide-react';
+import {ArrowLeft,Download,Check,Info,LoaderCircle,TriangleAlert,FileCode2,Layers,PackageCheck,Ruler} from 'lucide-react';
 function SvgPreview({data}:{data:string}){const [url,setUrl]=useState('');useEffect(()=>{const u=URL.createObjectURL(new Blob([data],{type:'image/svg+xml'}));setUrl(u);return()=>URL.revokeObjectURL(u)},[data]);return url?<img className='svg-review' src={url} alt='OpenSCAD manufacturing layout preview'/>:null}
 type Package={entries:Entry[];text:string;packet:string;key:string;name:string;full:boolean;nesting?:NestResult;nestingProblems?:string[]};
 // target: a product (lib/products) with its own engine file, output modes, project files and packet.
@@ -25,6 +25,7 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
  const invalid=errors.length>0;
  const [rotate,setRotate]=useState<Rotate>('needed'),[running,setRunning]=useState(false),[status,setStatus]=useState(''),[error,setError]=useState(''),[log,setLog]=useState(''),[result,setResult]=useState<Package|null>(null),[svg,setSvg]=useState('svg/cut_layout.svg');
  const task=useRef<AbortController|null>(null),key=JSON.stringify({family,product:target?.id,values,name,units});
+ const [coupon,setCoupon]=useState<{entries:Entry[];svg:string;key:string}|null>(null),[couponBusy,setCouponBusy]=useState(false),[couponError,setCouponError]=useState('');
  useEffect(()=>()=>{const active=task.current;task.current=null;active?.abort()},[]);
  function operation(data:object,signal:AbortSignal):Promise<{output:string;logs:string[];empty:boolean}>{return new Promise((resolve,reject)=>{
   signal.throwIfAborted();const worker=new Worker(assetUrl('/openscad/export-worker.js'),{type:'module'});let finished=false;
@@ -71,6 +72,26 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
   }catch(e){if(task.current===controller){setError(e instanceof Error?e.message:String(e));setStatus('')}}finally{if(task.current===controller)setRunning(false)}
  }
 
+ // Fit test coupon: the product's coupon with this design's stock, clearances, cutter and
+ // bevel, checked by the engine and nested on one sheet like the full package.
+ async function makeCoupon(){
+  if(!target?.coupon)return;
+  const controller=new AbortController();setCouponBusy(true);setCouponError('');setCoupon(null);
+  try{
+   const snapshot=JSON.parse(JSON.stringify(values)),source=target.coupon.source(snapshot),request={filename:target.filename,source,sources:target.sources};
+   const bom=await operation({...request,mode:'bom'},controller.signal),text=bom.logs.join('\n')+'\n'+bom.output;
+   const blocking=analyse(text).issues.filter(i=>i.severity==='error');
+   if(blocking.length)throw Error(blocking.map(c=>c.code+': '+c.message).join('\n'));
+   const cut=await operation({...request,mode:'cut_layout'},controller.signal);
+   const recs=records(text),parts=partRecords(recs),slack=snapshot.apply_kerf_compensation?(Number(snapshot.kerf)||0)/2:0;
+   const nested=nest(parts,placementRecords(recs),nestOptions(snapshot,'needed'));
+   const problems=checkNesting(nested,parts,cut.output,slack);
+   if(!nested.sheets.length||problems.length)throw Error(problems[0]??'The coupon does not fit the stock sheet.');
+   // One SVG and DXF per stock (the cleat section may be cut from other stock).
+   const files=nested.sheets.flatMap(sh=>{const base=`fit-coupon-${sh.material.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${String(Math.round(sh.thickness*100)/100).replace('.','_')}mm`;return [{name:base+'.svg',data:sheetSvg(cut.output,sh,'cut_layout',slack)},{name:base+'.dxf',data:sheetDxf(cut.output,sh,'cut_layout',slack)}]});
+   setCoupon({svg:cut.output,key,entries:[...files,{name:'logs/bom.txt',data:text},{name:'source/'+target.filename,data:source},...target.sources.map(f=>({name:'source/'+f.name,data:f.text})),{name:'READ-ME.txt',data:`${target.coupon.label}\n\n${target.coupon.note}\n\nThrough cuts at full stock thickness, in millimeters. The engine's fit checks are geometric: they show the parts fit as drawn, not how your machine, cutter and stock cut. This coupon is the physical check.\n`}]});
+  }catch(e){setCouponError(e instanceof Error?e.message:String(e))}finally{setCouponBusy(false)}
+ }
  const parsed=result?parseManufacturing(result.text):null,stale=!!result&&result.key!==key;
  const materials=new Map<string,number>();parsed?.bom.forEach(r=>{const k=r.material+' · '+formatDimension(r.thickness,units)+' '+units;materials.set(k,(materials.get(k)??0)+r.qty)});
  const svgs=result?.entries.filter(e=>(e.name.startsWith('svg/')||e.name.startsWith('sheets/'))&&e.name.endsWith('.svg'))??[],selectedSvg=svgs.find(e=>e.name===svg)??svgs[0];
@@ -132,6 +153,18 @@ export default function ExportView({family,values,name,errors,units='mm',onBack,
       <button disabled={stale} onClick={()=>download(new Blob([result.packet],{type:'text/html'}),filename+'-assembly.html')}><Download size={16}/>Assembly packet only</button>
      </div>
      <p className='field-note'>The package holds the operation SVGs, the sheets folder (SVG and DXF per sheet and operation), reports, the printable assembly packet and the editable source. Open the assembly packet in a browser and choose Print / Save as PDF.</p>
+    </section>}
+    {target?.coupon&&<section className='export-card'>
+     <h2><Ruler size={18}/>{target.coupon.label}</h2>
+     <p className='export-lede'>{target.coupon.note}</p>
+     <p className='field-note'>The engine&rsquo;s fit checks are geometric: they show the parts fit as drawn. Only a cut shows how your machine, cutter and sheet behave.</p>
+     <div className='manufacturing-actions'>
+      <button disabled={couponBusy||invalid} onClick={makeCoupon}>{couponBusy?<LoaderCircle size={16} className='spin'/>:<Ruler size={16}/>}Generate the coupon</button>
+      {coupon&&<button className='primary' disabled={coupon.key!==key} onClick={()=>download(zip(coupon.entries),'fit-coupon.zip')}><Download size={16}/>Download SVG and DXF</button>}
+     </div>
+     {couponError&&<p className='error' role='alert'>{couponError}</p>}
+     {coupon&&coupon.key!==key&&<p className='error' role='status'>Settings changed since the coupon was generated. Generate it again.</p>}
+     {coupon&&<div className='export-preview-frame'><SvgPreview data={coupon.svg}/></div>}
     </section>}
     <section className='export-card'>
      <h2><FileCode2 size={18}/>Editable OpenSCAD project</h2>

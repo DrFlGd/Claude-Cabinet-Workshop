@@ -6,9 +6,11 @@ import type {Units} from '../units';
 import type {EngineTarget,Product} from './types';
 import {applyParams} from './scad-params';
 import {mediaCart} from './media-cart';
+import {shopWall} from './shop-wall';
+import engineBundle from '../engine-sources.json';
 import {productPacket} from './packet';
 
-export const products:Product[]=[mediaCart];
+export const products:Product[]=[mediaCart,shopWall];
 export const productById=(id:string|null|undefined)=>products.find(p=>p.id===id);
 export function productDefaults(p:Product):Values{return Object.fromEntries(p.params.map(x=>[x.key,x.value]))}
 export function productStarterValues(p:Product,id:string):Values{
@@ -33,16 +35,27 @@ export function parseProductValues(p:Product,input:Record<string,unknown>):Value
  v._starter=p.starters.some(s=>s.id===input._starter)?input._starter:'edited';
  return v;
 }
+// Shared engine files of a product, named as its includes resolve them from the product
+// file (products/<id>/<id>.scad includes ../../engine/<key>).
+export const productEngineSources=(p:Product)=>(p.engineFiles??[]).map(key=>{
+ const text=(engineBundle as Record<string,string>)[key];
+ if(typeof text!=='string')throw Error(`${p.id}: engine file ${key} is not bundled`);
+ return {name:'engine/'+key,text};
+});
+const MEDIA_START=(p:Product)=>`${p.name}: open ${p.file} in OpenSCAD 2021.01 or later. All selected settings are applied.\n\nSet output_mode to assembly for the 3D model, cut_layout for through cuts, pocket_dados for dados on the face that is up, pocket_dados_flip for dados on the other face (turn the part over left to right), engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. All layouts share one registration frame.\n`;
 export function productTarget(p:Product):EngineTarget{
+ const sources=productEngineSources(p);
  return {
-  id:p.id,label:p.name,filename:p.file,sources:[],
+  id:p.id,label:p.name,filename:p.file,sources,
   source:v=>productSource(p,v),validate:p.validate,
   renderModes:p.renderModes,exportModes:p.exportModes,sheetSection:p.sheetSection,
   projectFiles:(v,name,units)=>[
    {name:p.file,data:productSource(p,v)},
    {name:'design.cabinet.json',data:productDesignFile(p,v,name,units)},
-   {name:'START-HERE.txt',data:`${p.name}: open ${p.file} in OpenSCAD 2021.01 or later. All selected settings are applied.\n\nSet output_mode to assembly for the 3D model, cut_layout for through cuts, pocket_dados for dados on the face that is up, pocket_dados_flip for dados on the other face (turn the part over left to right), engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. All layouts share one registration frame.\n`},
+   ...sources.map(f=>({name:f.name,data:f.text})),
+   {name:'START-HERE.txt',data:p.startHere??MEDIA_START(p)},
   ],
+  coupon:p.coupon?{label:p.coupon.label,note:p.coupon.note,source:v=>productSource(p,{...v,module_type:p.coupon!.module})}:undefined,
   packet:(name,v,text,units)=>productPacket(p,name,v,text,units),
  };
 }

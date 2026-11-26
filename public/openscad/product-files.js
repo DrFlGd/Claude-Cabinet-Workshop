@@ -1,3 +1,3 @@
-// Product engines the workers accept, with the outputs each supports. Products are single
-// self-contained SCAD files, so they take no extra engine sources.
-export default {"frontends":{"products/media_cart/media_cart.scad":["assembly","flat_3d","bom","cut_layout","pocket_layout","pocket_dados","pocket_dados_flip","engrave_layout"]},"files":{"products/media_cart/media_cart.scad":[]}};
+// Product engines the workers accept, with the outputs each supports, and the shared engine
+// files each one includes (sent as sources, written beside it as engine/...).
+export default {"frontends":{"products/media_cart/media_cart.scad":["assembly","flat_3d","bom","cut_layout","pocket_layout","pocket_dados","pocket_dados_flip","engrave_layout"],"products/shop_wall/shop_wall.scad":["assembly","flat_3d","bom","cut_layout","engrave_layout"]},"files":{"products/media_cart/media_cart.scad":[],"products/shop_wall/shop_wall.scad":["engine/v5/src/modular_organization/data/scad/tab_pocket.scad","engine/v5/src/modular_organization/data/scad/joinery.scad","engine/v5/src/modular_organization/data/scad/seam_joinery.scad","engine/v5/src/modular_organization/data/scad/cleat.scad","engine/v5/src/modular_organization/data/scad/wall_mount.scad","engine/v5/src/modular_organization/data/scad/placement.scad"]}};

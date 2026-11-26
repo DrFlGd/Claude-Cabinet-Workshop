@@ -30,11 +30,11 @@ type Props={
 };
 
 function Control({c,values,units,change}:{c:ProductControl;values:Values;units:Units;change:(k:string,v:unknown)=>void}){
- const value=values[c.key],reason=c.when?.(values)??null,id='product-'+c.key,off=!!reason;
+ const value=values[c.key],reason=c.when?.(values)??null,id='product-'+c.key,off=!!reason,label=c.labelFor?.(values)??c.label;
  const toggle=c.kind==='toggle'||typeof value==='boolean';
  return <div className={'field'+(off?' is-inactive':'')+(toggle?' toggle-field':'')} aria-disabled={off||undefined}>
-  {c.kind==='count'?<Stepper id={id} label={c.label} value={Number(value)} min={1} max={12} onChange={n=>change(c.key,n)}/>:<>
-   <SettingHelp id={id} title={c.label} help={c.help??''} advanced={c.advanced}/>
+  {c.kind==='count'?<Stepper id={id} label={label} value={Number(value)} min={c.min??1} max={c.max??12} onChange={n=>change(c.key,n)}/>:<>
+   <SettingHelp id={id} title={label} help={c.help??''} advanced={c.advanced}/>
    {toggle?<Switch id={id} checked={!!value} onCheckedChange={v=>change(c.key,v)}/>:
     c.kind==='choice'||c.options?<Select value={String(value)} onValueChange={v=>change(c.key,v)}><SelectTrigger id={id} className='choice'><SelectValue/></SelectTrigger><SelectContent>{Object.entries(c.options??{}).map(([k,l])=><SelectItem key={k} value={k}>{l}</SelectItem>)}</SelectContent></Select>:
     c.kind==='length'?<DimensionInput id={id} value={Number(value)} units={units} onChange={v=>{if(v!==null)change(c.key,v)}}/>:
@@ -105,7 +105,7 @@ export default function ProductWorkspace({product,values,units,analysis,name,cha
    </div>
    <div className='pw-sections'>
     {main.map(card)}
-    <button type='button' className='pw-shop-toggle' aria-expanded={shopShown} onClick={()=>{if(shopShown&&shop.some(s=>s.id===openSection))setOpenSection(null);setShopOpen(!shopShown)}}><ChevronRight size={14} className={shopShown?'turned':''}/>Shop details<small>materials, joinery, machining, casters, sheets</small></button>
+    <button type='button' className='pw-shop-toggle' aria-expanded={shopShown} onClick={()=>{if(shopShown&&shop.some(s=>s.id===openSection))setOpenSection(null);setShopOpen(!shopShown)}}><ChevronRight size={14} className={shopShown?'turned':''}/>Shop details<small>{shop.map(s=>s.title.toLowerCase()).join(', ')}</small></button>
     {shopShown&&shop.map(card)}
    </div>
    <div className='config-footer'><span>{product.name} engine</span><strong>{product.file.split('/').pop()}</strong></div>
