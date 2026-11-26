@@ -11,6 +11,10 @@ export type ScadParam={key:string;value:string|number|boolean;options?:string[];
 
 export type ProductControl={
  key:string;label:string;help?:string;
+ // A label that depends on the design (for example the opening a rack's module holds).
+ labelFor?:(v:Values)=>string;
+ // count: the range of the − and + buttons (1 to 12 when absent).
+ min?:number;max?:number;
  // length: millimeters shown in the chosen units; count: whole numbers with − and + buttons.
  kind?:'length'|'number'|'count'|'choice'|'toggle';
  options?:Record<string,string>;
@@ -19,7 +23,7 @@ export type ProductControl={
  when?:(v:Values)=>string|null;
 };
 export type ProductSection={id:string;title:string;blurb?:string;shop?:boolean;controls:ProductControl[];summary?:(v:Values,units:Units)=>string};
-export type ProductStarter={id:string;name:string;description?:string;values:Values};
+export type ProductStarter={id:string;name:string;description?:string;group?:string;values:Values};
 
 // What the shared engine views need to run a design: the worker file name, its source
 // with the settings applied, the extra engine files, and the outputs it supports.
@@ -36,6 +40,9 @@ export type EngineTarget={
  packet?:(name:string,v:Values,text:string,units:Units)=>string;
  // Sheet nesting and layout settings live in this section of the editor.
  sheetSection?:string;
+ // A small test piece cut with the design's stock, clearances and cutter, offered on the
+ // export page: its source has the same settings with the coupon chosen.
+ coupon?:{label:string;note:string;source:(v:Values)=>string};
 };
 
 export type Product={
@@ -44,6 +51,12 @@ export type Product={
  // Shared engine modules the SCAD file `use`s, as keys of lib/engine-sources.json. They are
  // written next to the product under engine/ (the file includes ../../engine/<key>).
  engineIncludes?:string[];
+ // Where the picker lists it ("Your products" when absent).
+ area?:string;
+ // START-HERE.txt of the OpenSCAD project download.
+ startHere?:string;
+ // A fit test coupon: the module_type value that builds it, and what it is for.
+ coupon?:{module:string;label:string;note:string};
  sections:ProductSection[];
  starters:ProductStarter[];defaultStarter:string;
  renderModes:{id:string;label:string}[];exportModes:string[];

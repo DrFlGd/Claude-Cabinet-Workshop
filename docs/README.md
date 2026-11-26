@@ -8,6 +8,7 @@
 - [Stackable reference](STACKABLE_REFERENCE.md): measured joinery of the reference stackable cabinet and the spec CCW implements from it.
 - [Modular workbench](MODULAR_WORKBENCH.md): reference dimensions, layout rules and decisions for the workbench type.
 - [Media cart review](MEDIA_CART_REVIEW.md): problems found in the original media cart model and how the product engine corrects them.
+- [Shop wall](SHOP_WALL.md): the 31 French-cleat organizers, their settings, the shared core they use, the review of the original modules and the per-module fit results.
 - [Development](DEVELOPMENT.md): source layout, checks and engine maintenance.
 - [Changelog](../CHANGELOG.md): consolidated application and engine history.
 - [VERSION](../VERSION): application release number; the engine version is separate.

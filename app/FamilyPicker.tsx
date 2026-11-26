@@ -1,6 +1,6 @@
 'use client';
-import {useEffect,useMemo,useState} from 'react';
-import {Archive,ChefHat,Inbox,Layers3,Printer,ShoppingCart,SquareStack,ArrowRight,Grid3x3,Package} from 'lucide-react';
+import {Fragment,useEffect,useMemo,useState} from 'react';
+import {Archive,ChefHat,Inbox,Layers3,Printer,ShoppingCart,SquareStack,ArrowRight,Grid3x3,Package,PanelsTopLeft} from 'lucide-react';
 import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {families,schemas,starterValues} from '@/lib/cabinet';
 import {formatShop,Units} from '@/lib/units';
@@ -23,7 +23,8 @@ function productSize(id:string,starter:string,units:Units){
 }
 type Entry={id:string;name:string;group?:string};
 // One place to choose what to build: a cabinet type or one of your products first, then a
-// starting configuration. Products (lib/products) open their own editor.
+// starting configuration. Products (lib/products) open their own editor and are listed under
+// their area (the Shop wall area holds the wall-mounted organizers).
 export default function FamilyPicker({open,onOpenChange,family,product,units,onChoose,onChooseProduct}:{open:boolean;onOpenChange:(o:boolean)=>void;family:number;product?:string;units:Units;onChoose:(family:number,starter:string)=>void;onChooseProduct:(id:string,starter:string)=>void}){
  const current=product?'p:'+product:'f:'+family;
  const [active,setActive]=useState(current);
@@ -50,10 +51,12 @@ export default function FamilyPicker({open,onOpenChange,family,product,units,onC
      {families.map((f,i)=>{const Icon=familyIcons[i];return <button key={f.name} role='option' aria-selected={active==='f:'+i} className={active==='f:'+i?'is-active':''} onClick={()=>setActive('f:'+i)}>
       <Icon size={22}/><span><strong>{f.name}</strong><small>{f.sub}</small></span>
      </button>})}
-     <span className='family-group-heading'>Your products</span>
-     {products.map(p=><button key={p.id} role='option' aria-selected={active==='p:'+p.id} className={active==='p:'+p.id?'is-active':''} onClick={()=>setActive('p:'+p.id)}>
-      <Package size={22}/><span><strong>{p.name}</strong><small>{p.sub}</small></span>
-     </button>)}
+     {[...new Set(products.map(p=>p.area??'Your products'))].map(area=><Fragment key={area}>
+      <span className='family-group-heading'>{area}</span>
+      {products.filter(p=>(p.area??'Your products')===area).map(p=>{const Icon=p.area?PanelsTopLeft:Package;return <button key={p.id} role='option' aria-selected={active==='p:'+p.id} className={active==='p:'+p.id?'is-active':''} onClick={()=>setActive('p:'+p.id)}>
+       <Icon size={22}/><span><strong>{p.name}</strong><small>{p.sub}</small></span>
+      </button>})}
+     </Fragment>)}
     </div>
     <div className='starter-list' aria-label={'Starting points for '+title}>
      {groups.map(([group,starters])=><section key={group}>

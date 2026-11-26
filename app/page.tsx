@@ -89,7 +89,7 @@ export default function Home(){
  const selectedPart=selectable.find(p=>p.id===selected);
  const selectPart=(p:Part|null)=>{setSelected(p?.id??null);if(p){setStep(partSection(p));setQuery('')}};
  const fields=presentFields(schemas[family].fields),errors=product?product.validate(values):validate(values);
- const record=(next:(v:Values)=>Values)=>{setPast(p=>[...p.slice(-49),values]);setFuture([]);setValues(v=>product?{...next(v),_starter:'edited'}:normalizeValues(family,{...next(v),_starter:'edited'}))};
+ const record=(next:(v:Values)=>Values)=>{setPast(p=>[...p.slice(-49),values]);setFuture([]);setValues(v=>{if(!product)return normalizeValues(family,{...next(v),_starter:'edited'});const n=next(v);return {...n,_starter:n._starter!==v._starter?n._starter:'edited'}})};
  const change=(key:string,val:any)=>product?record(v=>({...v,...(product.linked?.(key,val,v)??{}),[key]:val})):record(v=>({...v,...(key==='cabinet_layout_mode'&&val==='sections'?{section_nodes:convertBays(v),width_basis:'outside',depth_basis:'outside'}:{}),...linkedChanges(key,val,v),[key]:val}));
  function startDesign(n:number,starter:string){
   setProductId(null);setFamily(n);setValues(starterValues(n,starter,defaults(n)));setPast([]);setFuture([]);
