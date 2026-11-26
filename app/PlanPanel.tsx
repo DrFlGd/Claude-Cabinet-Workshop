@@ -25,8 +25,8 @@ export function sheetCounts(log:string,values:Values){
 const sheetKey=(m:{material:string;thickness:number})=>m.material+'|'+m.thickness.toFixed(3);
 // What the engine's validation pass does and does not establish. Shown with every passing result.
 export const COVERAGE_SHORT='OpenSCAD checked envelope and opening sizes, drawer and shelf fit, joinery limits, hardware conflicts and the flat cut layout. Parts intersecting in 3D are checked for every starter and for randomized designs in the test suite, not for this exact design.';
-const COVERED=['Envelope, opening and section sizes against minimums','Drawer box fit: side, top and bottom running clearances','Shelf, door and face reveals; face-frame and mid-rail rules','Joinery depth, tab counts and web limits for the chosen stock','Hardware drilling conflicts (slides, hinges, ganging, registration holes)','Stackable interface keep-outs','Flat cut layout: every part has its own place and no two outlines overlap','Sheet nesting: every part placed on the stock sheet with the layout gap, one SVG and DXF per sheet in the package'];
-const NOT_COVERED=['Parts intersecting each other in 3D for this exact design (every starter and randomized designs, worktop, base hardware and slides included, are swept in the test suite)','Machining features colliding on panels other than the two sides','Grain direction and edge banding'];
+const COVERED=['Envelope, opening and section sizes against minimums','Drawer box fit: side, top and bottom running clearances','Shelf, door and face reveals; face-frame and mid-rail rules','Joinery depth, tab counts and web limits for the chosen stock','Hardware drilling conflicts (slides, hinges, ganging, registration holes)','Stackable interface keep-outs','Flat cut layout: every part has its own place and no two outlines overlap','Sheet nesting: every part placed on the stock sheet with the layout gap, one SVG and DXF per sheet in the package','Parts intersecting in 3D for this exact design, on demand: Check for intersecting parts above (every starter and randomized designs are also swept in the test suite)'];
+const NOT_COVERED=['Machining features colliding on panels other than the two sides','Grain direction and edge banding'];
 function areaText(mm2:number,units:Units){return units==='in'?(mm2/92903.04).toFixed(1)+' ft²':(mm2/1e6).toFixed(2)+' m²'}
 
 export function StatusChip({analysis,onClick}:{analysis:Analysis;onClick?:()=>void}){
@@ -67,7 +67,8 @@ export function printablePlan(plan:Plan,name:string,units:Units,values:Values,co
 }
 
 // coverage and sheetsWhere let a product (lib/products) state its own checks and where its sheet settings are.
-export default function PlanPanel({analysis,units,name,values,coverage,sheetsWhere='Sheet width and height under Materials'}:{analysis:Analysis;units:Units;name:string;values:Values;coverage?:{checked:string[];notChecked:string[]};sheetsWhere?:string}){
+// collision: the on-demand 3D collision check for this design (app/CollisionCheck.tsx).
+export default function PlanPanel({analysis,units,name,values,coverage,sheetsWhere='Sheet width and height under Materials',collision}:{analysis:Analysis;units:Units;name:string;values:Values;coverage?:{checked:string[];notChecked:string[]};sheetsWhere?:string;collision?:React.ReactNode}){
  const plan=analysis.plan,stale=analysis.planKey!==analysis.key;
  const nested=plan&&analysis.log?sheetCounts(analysis.log,values):null;
  const [copied,setCopied]=useState(false);
@@ -97,13 +98,14 @@ export default function PlanPanel({analysis,units,name,values,coverage,sheetsWhe
    {notes.map((i,k)=><p key={k}><strong>{i.code.replaceAll('_',' ').toLowerCase()}</strong>{i.message}</p>)}
   </details>}
   {!errors.length&&<p className='plan-ok'><Check size={16}/> The engine’s fit and machining checks passed for this design. Measure your actual sheet thickness and make a test cut before production.</p>}
+  {collision}
   <details className='plan-coverage'>
    <summary><Info size={15}/> What this check does and does not cover</summary>
    <div className='coverage-columns'>
     <div><strong>Checked by the engine</strong><ul>{(coverage?.checked??COVERED).map(c=><li key={c}><Check size={13}/>{c}</li>)}</ul></div>
     <div><strong>Not checked yet</strong><ul>{(coverage?.notChecked??NOT_COVERED).map(c=><li key={c}><AlertTriangle size={13}/>{c}</li>)}</ul></div>
    </div>
-   <p className='field-note'>Review the Exact view and the exported cut layout before cutting. Interference and layout-overlap checks are on the reliability roadmap.</p>
+   <p className='field-note'>Review the Exact view and the exported cut layout before cutting.</p>
   </details>
   <h3 className='plan-heading'>Sheet goods</h3>
   <div className='material-cards'>

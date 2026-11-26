@@ -466,3 +466,24 @@
 .export-preview-frame .svg-review{max-width:100%;max-height:70vh}
 @media(max-width:1100px){.export-grid{grid-template-columns:1fr}.export-preview{position:static}}
 @media(max-width:800px){.export-view{padding:18px 16px 32px}.export-head h1{font-size:22px}}
+/* On-demand 3D collision check (app/CollisionCheck.tsx) */
+.collision-check{border:1px solid #d5e0e3;border-radius:8px;padding:12px 14px;font-size:13px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.collision-check.is-stale .collision-result,.collision-check.is-stale .collision-stats{opacity:.55}
+.collision-head{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.collision-head>svg{margin-top:2px;color:#4f6a74;flex-shrink:0}
+.collision-head>div{display:flex;flex-direction:column;gap:2px;flex:1 1 220px;min-width:0}
+.collision-head strong{font-size:14px;color:#1f3a44}
+.collision-head small{color:#6b8088;line-height:1.4}
+.collision-head button{display:inline-flex;align-items:center;gap:6px;border:1px solid #c9d7db;background:#fff;border-radius:6px;padding:7px 12px;font-size:13px;color:#24434e;min-height:36px}
+.collision-head button.primary{background:#243f49;border-color:#243f49;color:#fff}
+.collision-progress{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#415861}
+.collision-progress span{flex:1 1 200px;min-width:0;overflow-wrap:anywhere}
+.collision-progress progress{flex:1 1 120px;height:8px;accent-color:#ce572b}
+.collision-result{display:flex;flex-direction:column;gap:4px;margin:0;border-radius:6px;padding:8px 10px}
+p.collision-result{flex-direction:row;align-items:center;gap:7px}
+.collision-result p{display:flex;align-items:center;gap:7px;margin:0}
+.collision-result ul{margin:0;padding-left:22px;line-height:1.6}
+.collision-result.is-ok{background:#e9f6ef;color:#1c5f3a}
+.collision-result.is-bad{background:#fdeae7;color:#7e1f12}
+.collision-stale{margin:0;color:#9c3f1b}
+.collision-stats{margin:0;color:#6b8088;font-size:12px;line-height:1.5}
