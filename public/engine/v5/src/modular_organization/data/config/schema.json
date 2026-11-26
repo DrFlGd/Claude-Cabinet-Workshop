@@ -11630,6 +11630,56 @@
           "step": 0.01
         },
         {
+          "id": "stack_base_style",
+          "group": "Mounting / Stacking",
+          "type": "enum",
+          "default": "auto",
+          "enum": [
+            "auto",
+            "edge_rails",
+            "flat_rails"
+          ],
+          "description": "edge_rails = two side rails with the stacking recess and on-edge cross rails at the front and back. flat_rails = as in the reference stackable plans: side rails with the stacking recess and a front toe notch, two flat rails like a module's top stretchers, and a set-back kick board that carries a nested bottom. auto = flat_rails for a nested bottom, edge_rails otherwise.",
+          "visible_if": {
+            "include_stack_base": true
+          }
+        },
+        {
+          "id": "stack_base_toe_notch_depth",
+          "group": "Mounting / Stacking",
+          "type": "number",
+          "default": 57.5,
+          "unit": "mm",
+          "description": "Flat-rail base: depth of the toe notch at the front bottom corner of each base side (0 for none).",
+          "visible_if": {
+            "include_stack_base": true
+          },
+          "step": 0.01
+        },
+        {
+          "id": "stack_base_toe_notch_height",
+          "group": "Mounting / Stacking",
+          "type": "number",
+          "default": 47,
+          "unit": "mm",
+          "description": "Flat-rail base: height of the toe notch (0 for none).",
+          "visible_if": {
+            "include_stack_base": true
+          },
+          "step": 0.01
+        },
+        {
+          "id": "stack_front_seam",
+          "group": "Mounting / Stacking",
+          "type": "enum",
+          "default": "rail_centre",
+          "enum": [
+            "rail_centre",
+            "module_edge"
+          ],
+          "description": "rail_centre = overlay doors and drawer fronts cover half of the top stretcher, so the gap between stacked fronts is centred on it, as in the reference plans. module_edge = fronts stop at the module's front opening."
+        },
+        {
           "id": "stack_interface_front_margin",
           "group": "Mounting / Stacking",
           "type": "number",

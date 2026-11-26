@@ -4183,6 +4183,12 @@ module stack_base_side_profile_2d() {
         // The separate base uses the SAME female profile as every module.
         stack_top_notch_cutout_2d(
             stack_base_height);
+
+        // Flat-rail base: toe notch at the front bottom corner.
+        toe = stack_base_toe_notch();
+        if (toe[0] > 0 && toe[1] > 0)
+            translate([-0.01,-0.01])
+                square([toe[0]+0.01,toe[1]+0.01]);
     }
 }
 
@@ -4548,7 +4554,9 @@ module stack_base_side_receiver_cuts_3d(
 
 // Screw holes beside the blind tabs of the base frame's cross rails.
 module stack_base_side_screw_holes_2d() {
-    if (stack_base_active && side_tab_screw_holes_active())
+    if (stack_base_flat())
+        stack_base_flat_screw_holes_2d();
+    else if (stack_base_active && side_tab_screw_holes_active())
         for (front=[true,false])
             side_tab_screw_holes_2d(
                 0,stack_base_height,
@@ -4559,7 +4567,9 @@ module stack_base_side_screw_holes_2d() {
 
 // pockets=true: only blind tab pockets (the carcass-dado pocket operation).
 module stack_base_side_receivers_through_2d(pockets=false) {
-    if (stack_base_active) {
+    if (stack_base_flat())
+        stack_base_flat_receivers_2d(pockets);
+    else if (stack_base_active) {
         c = joint_fit_clearance;
 
         if (!pockets) {
@@ -4606,7 +4616,9 @@ module stack_base_side_receivers_through_2d(pockets=false) {
 
 
 module stack_base_side_dado_pockets_2d() {
-    if (
+    if (stack_base_flat())
+        stack_base_flat_dado_pockets_2d();
+    else if (
         stack_base_active
         && carcass_joint_geometry == "dado"
     ) {
@@ -4632,7 +4644,9 @@ module stack_base_side_rail_3d(
     x0,
     side
 ) {
-    if (stack_base_active)
+    if (stack_base_flat())
+        stack_base_flat_side_3d(x0,side);
+    else if (stack_base_active)
         difference() {
             sheet_box(
                 [
@@ -4698,6 +4712,20 @@ module stack_base_side_rail_print_part() {
 
 module stack_base_cross_rail_3d(
     y0
+) {
+    if (stack_base_flat())
+        joined_horizontal_panel_3d(
+            y0,top_stretcher_depth,
+            stack_base_height-material_thickness,"top");
+    else
+        stack_base_on_edge_member_3d(y0,stack_base_height);
+}
+
+// An on-edge member of the base frame at Y = y0, from the floor up to
+// stack_base_height (shadowed: the edge rails' or the kick board's height).
+module stack_base_on_edge_member_3d(
+    y0,
+    stack_base_height
 ) {
     if (stack_base_active) {
         if (carcass_joint_geometry == "butt") {
@@ -4766,6 +4794,18 @@ module stack_base_cross_rail_3d(
 
 
 module stack_base_cross_rail_cut() {
+    if (stack_base_flat())
+        joined_horizontal_panel_cut(top_stretcher_depth,"top");
+    else
+        stack_base_on_edge_member_cut(stack_base_height);
+}
+
+// An on-edge member of the base frame (edge rail or kick board) as a cut
+// part: local X across the cabinet, local Y its height. The parameter shadows
+// the global base height so that one body serves both members.
+module stack_base_on_edge_member_cut(
+    stack_base_height
+) {
     if (stack_base_active) {
         if (carcass_joint_geometry == "butt") {
             cut_part(
@@ -4806,6 +4846,11 @@ module stack_base_cross_rail_cut() {
 
 
 module stack_base_assembly_3d() {
+    stack_base_sides_3d();
+    stack_base_members_3d();
+}
+
+module stack_base_sides_3d() {
     if (stack_base_active && show_stack_base) {
         paint("stack_base_side")
             stack_base_side_rail_3d(
@@ -4818,17 +4863,156 @@ module stack_base_assembly_3d() {
                 resolved_cabinet_width-material_thickness,
                 "right"
             );
-
-        paint("stack_base_cross")
-            stack_base_cross_rail_3d(
-                0
-            );
-
-        paint("stack_base_cross")
-            stack_base_cross_rail_3d(
-                resolved_cabinet_depth-material_thickness
-            );
     }
+}
+
+// Cross rails (and the flat-rail base's kick board).
+module stack_base_members_3d() {
+    if (stack_base_active && show_stack_base) {
+        paint("stack_base_cross")
+            stack_base_cross_rail_3d(
+                stack_base_flat()
+                    ? stack_base_flat_rail_y(true)
+                    : 0
+            );
+
+        paint("stack_base_cross")
+            stack_base_cross_rail_3d(
+                stack_base_flat()
+                    ? stack_base_flat_rail_y(false)
+                    : resolved_cabinet_depth-material_thickness
+            );
+
+        if (stack_base_kick_active())
+            paint("stack_base_cross")
+                stack_base_on_edge_member_3d(
+                    stack_base_kick_y(),
+                    stack_base_kick_height()
+                );
+    }
+}
+
+// ---------------------------
+// FLAT-RAIL BASE FRAME (reference construction)
+// ---------------------------
+// The side rails carry the module-top recess, the flat rails' joints at the
+// top (exactly as a module side takes its top stretchers) and the kick
+// board's joint, closed on all sides, behind the front rail. All features are
+// 2D in side-local Y (depth) / Z (height) coordinates.
+
+module stack_base_flat_receivers_2d(pockets=false) {
+    T = material_thickness;
+    c = joint_fit_clearance;
+    tsd = top_stretcher_depth;
+    hk = stack_base_kick_height();
+
+    if (carcass_joint_geometry == "tab_slot" && side_tabs_blind() == pockets) {
+        for (front=[true,false])
+            for (i=[0:tab_count_for_location(tsd,"top")-1])
+                translate([
+                    stack_base_flat_rail_y(front)
+                        + tab_start_for_location(tsd,i,"top")-c/2,
+                    stack_base_height-T-c/2
+                ])
+                    slot_shape_2d(
+                        tab_width_for(tsd)+c,T+c,
+                        false,false,false,true);
+
+        if (stack_base_kick_active())
+            for (i=[0:effective_tab_count(hk)-1])
+                translate([
+                    stack_base_kick_y()-c/2,
+                    tab_start(hk,i)-c/2
+                ])
+                    slot_shape_2d(T+c,tab_width_for(hk)+c);
+    }
+
+    if (!pockets) {
+        stack_base_flat_screw_holes_2d();
+        stack_link_screw_holes_2d(stack_base_height);
+
+        for (front=[true,false])
+            side_horizontal_butt_registration_2d(
+                stack_base_flat_rail_y(front),tsd,stack_base_height-T);
+
+        if (stack_base_kick_active()
+            && carcass_joint_geometry == "butt"
+            && carcass_registration_enabled)
+            for (i=[0:butt_reg_count(hk)-1])
+                round_hole_2d(
+                    stack_base_kick_y()+T/2,
+                    butt_reg_pos(hk,i),
+                    butt_registration_hole_diameter);
+    }
+}
+
+module stack_base_flat_screw_holes_2d() {
+    if (side_tab_screw_holes_active()) {
+        T = material_thickness;
+        tsd = top_stretcher_depth;
+        hk = stack_base_kick_height();
+
+        for (front=[true,false])
+            side_tab_screw_holes_2d(
+                stack_base_flat_rail_y(front),tsd,stack_base_height-T/2,
+                side_tab_starts_for_location(tsd,"top"),
+                tab_width_for(tsd));
+
+        if (stack_base_kick_active())
+            side_tab_screw_holes_2d(
+                0,hk,stack_base_kick_y()+T/2,
+                side_tab_starts(hk),tab_width_for(hk),false);
+    }
+}
+
+module stack_base_flat_dado_pockets_2d() {
+    if (carcass_joint_geometry == "dado") {
+        T = material_thickness;
+        c = dado_fit_clearance;
+
+        for (front=[true,false])
+            translate([
+                stack_base_flat_rail_y(front)-c/2,
+                stack_base_height-T-c/2
+            ])
+                square([top_stretcher_depth+c,T+c]);
+
+        if (stack_base_kick_active())
+            translate([stack_base_kick_y()-c/2,-c/2])
+                square([T+c,stack_base_kick_height()+c]);
+    }
+}
+
+// Base side rail built from its 2D outline and features: through features
+// cross the whole thickness, pockets are milled from the inside face.
+module stack_base_flat_side_3d(x0,side) {
+    T = material_thickness;
+    inside = side == "left" ? x0+T : x0;
+
+    difference() {
+        yz_extrude_3d(x0,T)
+            stack_base_side_profile_2d();
+
+        yz_extrude_3d(x0-1,T+2)
+            stack_base_flat_receivers_2d(false);
+
+        if (side_tabs_blind()) {
+            pd = side_tab_pocket_depth();
+            yz_extrude_3d(side == "left" ? inside-pd : inside-0.01,pd+0.01)
+                stack_base_flat_receivers_2d(true);
+        }
+
+        if (carcass_joint_geometry == "dado") {
+            dd = effective_dado_depth();
+            yz_extrude_3d(side == "left" ? inside-dd : inside-0.01,dd+0.01)
+                stack_base_flat_dado_pockets_2d();
+        }
+    }
+}
+
+module stack_base_kick_cut() {
+    if (stack_base_kick_active())
+        stack_base_on_edge_member_cut(stack_base_kick_height());
 }
 
 

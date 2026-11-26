@@ -237,12 +237,43 @@ All screw holes are 4.5 mm, through, for 1-1/4 in screws.
   550 module in 18 mm sheet with blind tabs, T-bone relief, 75 mm stretchers and
   a full-overlay door, close to the reference's proportions.
 
+### Phase 3: base frame and stacked fronts (next release)
+
+- **Base frame.** `stack_base_style` = `auto` | `edge_rails` | `flat_rails`
+  (gap item 8). `flat_rails` builds the reference base:
+  - Sides: the module-top recess, the flat rails' joints at the top (as a
+    module side takes its top stretchers) and a front toe notch
+    (`stack_base_toe_notch_depth` × `_height`, 57.5 × 47 mm by default).
+  - Rails: two flat rails identical to the module's top stretchers
+    (`top_stretcher_depth` deep, same tabs).
+  - Kick board: on edge directly behind the front rail, from the floor up to
+    the recess floor (base height − interface depth, 62 mm in an 80 mm base),
+    joined into closed pockets. A nested bottom rests on it.
+  - The lowest module sits on the base exactly as on another module: its
+    nested bottom drops between the base's rails and sides, and the link
+    screws pass through the base sides.
+  - The toe notch is reduced, with a warning, where it would leave less than
+    10 mm in front of the kick board or below the front rail. A base too low
+    for a 20 mm kick board is built without one, with a warning.
+  - `auto` (the default) picks flat rails for a nested bottom and keeps edge
+    rails otherwise, so raised designs build as before.
+- **Fronts centred on the rail.** `stack_front_seam` = `rail_centre` (default)
+  | `module_edge` (gap item 6). Overlay doors and drawer fronts that reach the
+  bottom of the module start one reveal above d − T/2 (the middle of the lower
+  module's top stretcher). Those that reach the top stop one reveal below
+  H − T/2. Stacked fronts then leave a 2 × reveal gap centred on the
+  stretcher: 11.5–621.5 mm in the reference's 633 mm module with a 2.5 mm
+  reveal. Only the visible faces change; drawer boxes and their openings do
+  not.
+
 ### Not implemented
 
-- The reference base frame (flat top rails, toe notch, set-back kick board that
-  supports the bottom). CCW's stack base is unchanged.
-- 45° stacking flanks, rounded outer corners, hinge-plate marks on both sides,
-  and a back panel with top tabs through notches in the rear rail.
+- 45° stacking flanks, rounded outer corners and hinge-plate marks on both
+  sides.
+- The back's top tabs already pass through notches at the back edge of the
+  rear stretcher and the back rests on the lower module's rear stretcher. The
+  reference's back is 12 mm stock in a 12 × 60 mm side pocket; CCW's structural
+  back is carcass thickness.
 
 ## Ambiguities and how they were resolved
 

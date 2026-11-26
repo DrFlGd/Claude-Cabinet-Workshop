@@ -1143,9 +1143,39 @@ door_region_height =
 door_region_bottom_z = content_bottom_z;
 door_region_top_z = door_region_bottom_z + door_region_height;
 
+// Stacked fronts centred on the stretcher (stack_front_seam = rail_centre).
+// The module below's top stretcher shows between two stacked modules; its
+// mid-height is T/2 below the lower module's top, which is d - T/2 above the
+// upper module's base (d = interface depth). Overlay fronts that reach the
+// module's bottom start one reveal above that line, and fronts that reach the
+// top stop one reveal below the middle of this module's top member, so the
+// gap between stacked fronts is two reveals wide and centred on the rail.
+// Only the visible faces move: drawer boxes and their openings are unchanged.
+function stack_interface_depth_value() =
+    !stackable_mode ? 0
+    : stack_nested() ? material_thickness
+    : min(max(2,stack_interface_depth),max(2,cabinet_height/3));
+
+function stack_front_seam_active() =
+    stackable_mode
+    && !fronts_inset_flush
+    && !face_frame_active
+    && !is_undef(stack_front_seam)
+    && stack_front_seam == "rail_centre";
+
+function stack_front_seam_bottom_z() =
+    stack_interface_depth_value()-material_thickness/2+front_edge_reveal;
+
+function stack_front_seam_top_z() =
+    cabinet_height-material_thickness/2-front_edge_reveal;
+
 // The visible door front may overlap the bottom-panel lip.
 door_face_bottom_z =
-    has_doors ? front_panel_bottom_z : door_region_bottom_z;
+    has_doors
+        ? stack_front_seam_active()
+            ? stack_front_seam_bottom_z()
+            : front_panel_bottom_z
+        : door_region_bottom_z;
 
 // Doors-only wall cabinets can overlay the top-panel front edge all the way
 // to the cabinet top. Combo cabinets intentionally keep the normal region top
@@ -1161,6 +1191,10 @@ door_face_top_z =
           && wall_doors_flush_top
           && !fronts_inset_flush
             ? cabinet_height
+        : has_doors
+          && stack_front_seam_active()
+          && (mixed_bay_mode || cabinet_contents == "doors")
+            ? stack_front_seam_top_z()
             : door_region_top_z;
 
 door_face_height =
@@ -2270,23 +2304,48 @@ function drawer_face_z(i,b=0) =
 
 // Optional decorative-only extension for the TOP drawer face. Every bank's
 // top face may reach the cabinet top while its box geometry stays unchanged.
+// In a stack with the seam centred on the rail, the top face instead reaches
+// the stack seam line (and never the cabinet top, where the module above's
+// fronts start).
 function drawer_face_top_extension(i,b=0) =
-    include_drawer_faces
-    && extend_top_drawer_face_to_top
-    && !fronts_inset_flush
-    && i == 0
-    && (!section_layout_active || mixed_bay_bound(b)[3] == -1)
-        ? max(0,cabinet_height-content_top_z)
-        : 0;
+    standalone_drawer_active
+    || !include_drawer_faces
+    || fronts_inset_flush
+    || i != 0
+    || (section_layout_active && mixed_bay_bound(b)[3] != -1)
+        ? 0
+        : stack_front_seam_active()
+            ? max(0,stack_front_seam_top_z()-content_top_z)
+            : extend_top_drawer_face_to_top
+                ? max(0,cabinet_height-content_top_z)
+                : 0;
+
+// Decorative change at the BOTTOM of the lowest face of a bank that starts at
+// the cabinet's front-stack bottom: positive trims it from below, negative
+// extends it, so that it starts at the stack seam line.
+function drawer_face_bottom_trim(i,b=0) =
+    standalone_drawer_active
+    || !include_drawer_faces
+    || !stack_front_seam_active()
+    || (section_layout_active && mixed_bay_bound(b)[2] != -1)
+    || abs(drawer_face_z(i,b)-drawer_stack_bottom_z) > 0.01
+        ? 0
+        : stack_front_seam_bottom_z()-drawer_face_z(i,b);
+
+// Bottom of the visible face (drawer_face_z is the face's nominal bottom,
+// which also bounds the drawer box's opening).
+function drawer_face_visible_z(i,b=0) =
+    drawer_face_z(i,b)+drawer_face_bottom_trim(i,b);
 
 function drawer_face_height_for(i,b=0) =
     standalone_drawer_active
         ? standalone_drawer_face_height
         : drawer_face_nominal_height(i,b)
-          + drawer_face_top_extension(i,b);
+          + drawer_face_top_extension(i,b)
+          - drawer_face_bottom_trim(i,b);
 
 function drawer_face_top_z(i,b=0) =
-    drawer_face_z(i,b)
+    drawer_face_visible_z(i,b)
     + drawer_face_height_for(i,b);
 
 function effective_drawer_vertical_clearance_for(b=0) =
@@ -2729,7 +2788,7 @@ function drawer_face_reg_box_local_z(i,b=0) =
     + drawer_face_registration_vertical_offset;
 
 function drawer_face_reg_face_local_z(i,b=0) =
-    drawer_face_reg_global_z(i,b)-drawer_face_z(i,b);
+    drawer_face_reg_global_z(i,b)-drawer_face_visible_z(i,b);
 
 function drawer_face_registration_blind_depth() =
     drawer_front_thickness/2;
@@ -5610,6 +5669,65 @@ stack_preview_total_height =
           + cabinet_height
         : cabinet_height;
 
+// ---------------------------
+// BASE FRAME STYLE
+// ---------------------------
+// flat_rails: the base frame of the reference stackable plans. Its sides have
+// the module-top recess (and a front toe notch), its rails are flat like a
+// module's top stretchers, and an on-edge kick board set back behind the front
+// rail carries the bottom of the module above at the level of its underside.
+function stack_base_flat() =
+    stack_base_active
+    && !is_undef(stack_base_style)
+    && (stack_base_style == "flat_rails"
+        || (stack_base_style == "auto" && stack_nested()));
+
+// Height of the cross rails as cut parts: flat rails are as deep as the
+// module's top stretchers, edge rails as tall as the base.
+function stack_base_cross_rail_cut_height() =
+    stack_base_flat() ? top_stretcher_depth : stack_base_height;
+
+// Global Y of a cross rail's front face.
+function stack_base_flat_rail_y(front=true) =
+    front ? 0 : resolved_cabinet_depth-top_stretcher_depth;
+
+// Kick board: directly behind the front rail, from the floor up to the
+// level of the recess floor, where the module above's tongue (and a nested
+// bottom's underside) sits. It may not rise higher: its ends enter the base
+// sides, where the tongue of the module above occupies the recess.
+function stack_base_kick_y() = top_stretcher_depth;
+
+function stack_base_kick_height() =
+    stack_base_height-effective_stack_interface_depth;
+
+function stack_base_kick_active() =
+    stack_base_flat()
+    && stack_base_kick_height() >= 20
+    && stack_base_kick_y()+material_thickness
+       <= resolved_cabinet_depth-top_stretcher_depth;
+
+// Toe notch at the front bottom corner of each base side, kept clear of the
+// kick-board joint and of the front rail's joint by 10 mm.
+function stack_base_toe_notch() =
+    let(
+        d=is_undef(stack_base_toe_notch_depth) ? 0 : stack_base_toe_notch_depth,
+        h=is_undef(stack_base_toe_notch_height) ? 0 : stack_base_toe_notch_height,
+        dmax=stack_base_kick_y()-10,
+        hmax=stack_base_height-material_thickness-10
+    )
+    !stack_base_flat() || d <= 0 || h <= 0
+        ? [0,0]
+        : [max(0,min(d,dmax)),max(0,min(h,hmax))];
+
+function stack_base_toe_notch_clamped() =
+    let(n=stack_base_toe_notch())
+    stack_base_flat()
+    && !is_undef(stack_base_toe_notch_depth)
+    && stack_base_toe_notch_depth > 0
+    && stack_base_toe_notch_height > 0
+    && (abs(n[0]-stack_base_toe_notch_depth) > 0.001
+        || abs(n[1]-stack_base_toe_notch_height) > 0.001);
+
 function stack_base_cross_rail_cut_width() =
     carcass_joint_geometry == "dado"
         ? inner_width+2*effective_dado_depth()
@@ -5624,11 +5742,18 @@ stack_base_cross_layout_y =
     stack_base_side_layout_y
     + (stack_base_active ? stack_base_height+layout_gap : 0);
 
+stack_base_kick_layout_y =
+    stack_base_cross_layout_y
+    + (stack_base_active
+        ? stack_base_cross_rail_cut_height()+layout_gap
+        : 0);
+
 stack_base_layout_end_y =
     stack_base_active
-        ? stack_base_cross_layout_y
-          + stack_base_height
-          + layout_gap
+        ? stack_base_kick_layout_y
+          + (stack_base_kick_active()
+              ? stack_base_kick_height()+layout_gap
+              : 0)
         : accessory_layout_end_y;
 
 

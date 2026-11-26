@@ -26353,6 +26353,71 @@
         "advanced": false
       },
       {
+        "key": "stack_base_style",
+        "value": "auto",
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "edge_rails = two side rails with the stacking recess and on-edge cross rails at the front and back. flat_rails = as in the reference stackable plans: side rails with the stacking recess and a front toe notch, two flat rails like a module's top stretchers, and a set-back kick board that carries a nested bottom. auto = flat_rails for a nested bottom, edge_rails otherwise.",
+        "options": [
+          "auto",
+          "edge_rails",
+          "flat_rails"
+        ],
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": {
+          "include_stack_base": true
+        },
+        "advanced": false
+      },
+      {
+        "key": "stack_base_toe_notch_depth",
+        "value": 57.5,
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "Flat-rail base: depth of the toe notch at the front bottom corner of each base side (0 for none).",
+        "options": null,
+        "bounds": null,
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": {
+          "include_stack_base": true
+        },
+        "advanced": true
+      },
+      {
+        "key": "stack_base_toe_notch_height",
+        "value": 47,
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "Flat-rail base: height of the toe notch (0 for none).",
+        "options": null,
+        "bounds": null,
+        "step": 0.01,
+        "unit": "mm",
+        "visibleIf": {
+          "include_stack_base": true
+        },
+        "advanced": true
+      },
+      {
+        "key": "stack_front_seam",
+        "value": "rail_centre",
+        "expression": null,
+        "section": "Mounting / Stacking",
+        "description": "rail_centre = overlay doors and drawer fronts cover half of the top stretcher, so the gap between stacked fronts is centred on it, as in the reference plans. module_edge = fronts stop at the module's front opening.",
+        "options": [
+          "rail_centre",
+          "module_edge"
+        ],
+        "bounds": null,
+        "step": null,
+        "unit": "scalar",
+        "visibleIf": null,
+        "advanced": false
+      },
+      {
         "key": "stack_interface_front_margin",
         "value": 80,
         "expression": null,
@@ -30721,7 +30786,7 @@
           "front_mount_style": "overlay",
           "inset_front_back_clearance": 2,
           "overlay_width_style": "full",
-          "front_edge_reveal": 2,
+          "front_edge_reveal": 2.5,
           "fronts_cover_bottom_lip": true,
           "door_gap": 3,
           "drawer_gap": 3,
@@ -30847,7 +30912,7 @@
           "stack_preview_count": 4,
           "include_stack_base": true,
           "stack_interface_depth": 18,
-          "stack_base_height": 70,
+          "stack_base_height": 80,
           "stack_interface_front_margin": 98,
           "stack_interface_back_margin": 98,
           "stack_interface_corner_radius": 9,

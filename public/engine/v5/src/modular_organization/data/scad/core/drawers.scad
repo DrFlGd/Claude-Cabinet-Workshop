@@ -926,13 +926,13 @@ module drawer_face_3d(i=0,b=0) {
             [
                 drawer_face_x(b),
                 decorative_front_y(drawer_front_thickness),
-                drawer_face_z(i,b)
+                drawer_face_visible_z(i,b)
             ]
         );
 
         if (include_drawer_handle_holes) {
             cx = drawer_face_x(b) + drawer_face_width(b)/2;
-            cz = drawer_face_z(i,b)
+            cz = drawer_face_visible_z(i,b)
                  + fh/2
                  + drawer_handle_vertical_offset;
 
