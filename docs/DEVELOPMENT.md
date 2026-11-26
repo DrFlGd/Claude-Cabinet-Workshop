@@ -90,10 +90,19 @@ pnpm run build:static
   1 mm³ fails. `--all` adds 24 seeded random designs; CI runs it sharded with the
   cabinet sweep. `CASES='[["media_cart","stepped_bins",{"rows":1}]]'` runs chosen
   designs. Its per-part jobs also come from lib/interference.ts.
-- `tests/collision-worker.mjs`: the in-app collision check
-  (public/openscad/interference-worker.js) through the production worker: the media
-  cart's and every cabinet type's default design check clean, a part drawn twice is
-  reported, bad requests are refused; prints the timings.
+- `tests/collision-worker.mjs`: the in-app collision check (lib/collision-run.ts
+  over a pool of public/openscad/interference-worker.js) through the production
+  worker: every product's and every cabinet type's default design checks clean, a
+  second check of the same design comes entirely from the cache, a changed design
+  renders again, a part drawn twice is reported, bad requests are refused; prints
+  the timings. `WORKERS=n` sets the pool size.
+- `tests/pocket-overlap.mjs`: every pocket output mode of every starter through the
+  production export worker; no two pocket operations may machine the same area
+  (except the pairs the engine draws to meet, as in the Python audit). The
+  registration frame is removed with a tolerance that grows with the coordinate
+  (EXPORT_FRAME has six significant digits), extents are compared and meeting
+  contours are intersected exactly with OpenSCAD. CI runs it sharded with the
+  interference sweeps; `SHARD=k/n`, `FAMILIES` and `STARTERS` pick a subset.
 
 `pnpm run test:engine` runs the three engine suites alone (about six minutes on a
 two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.

@@ -216,7 +216,10 @@ def closed_loops_from_segments(segments: list[tuple[tuple[float, float], tuple[f
 
 def _bounds_close(a: tuple[float, float, float, float],
                   b: tuple[float, float, float, float], tol: float = 0.05) -> bool:
-    return all(abs(x - y) <= tol for x, y in zip(a, b))
+    # OpenSCAD echoes numbers to six significant digits, so on a layout more than 10 m long the
+    # EXPORT_FRAME record can differ from the drawn frame by 0.1 mm; allow for that (as v5's
+    # validation.py does).
+    return all(abs(x - y) <= max(tol, 2e-5 * abs(y)) for x, y in zip(a, b))
 
 
 def contour_polygons(path: Path, frame: dict[str, float] | None) -> tuple[list[Polygon], list[dict]]:
