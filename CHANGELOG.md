@@ -117,7 +117,7 @@ Validation performed:
     `pnpm run build:static`.
 - **Golden outputs.** Only the nested starter differed: its cut-layout and
   pocket-layout SVGs, from the new side profile and the moved bottom tabs.
-  The diff was reviewed and re-recorded. All 120 starters match.
+  The diff was reviewed and re-recorded. All 121 starters match after merging main at 0.24.0.
 - **Cut-layout check.** The new section passed. The nested dado bottom is
   notched to the full-height tongue, the rounded corners take off only corner
   material, and there is one contour per part.
