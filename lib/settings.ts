@@ -51,12 +51,22 @@ export const GRID_REASON='Arranged in the Layout tab';
 // types (door_gap, joint_fit_clearance, hinge_cup_*) but not their rules, so it has its own list.
 function workbenchInactive(f:Field,v:Record<string,any>):string|null{
  const k=f.key,s=f.section,mods=(Array.isArray(v.modules)?v.modules:[]).filter(Array.isArray);
- const doors=mods.some((m:any[])=>m[5]!=='open'),shelves=mods.some((m:any[])=>Number(m[6]??1)>0);
+ const kind=(m:any[])=>m[5]??'door',doors=mods.some((m:any[])=>['door','drawer_door'].includes(kind(m))),drawers=mods.some((m:any[])=>['drawers','drawer_door'].includes(kind(m)));
+ const fronts=doors||drawers,shelves=mods.some((m:any[])=>kind(m)!=='drawers'&&Number(m[6]??1)>0);
+ // Two modules sharing a cell means one stands on the other.
+ const cell=(m:any[],i:number,d:number)=>Number(m[i]??d),stacked=mods.some((a:any[],i:number)=>mods.some((b:any[],j:number)=>j>i&&cell(a,0,0)<cell(b,0,0)+cell(b,2,1)&&cell(b,0,0)<cell(a,0,0)+cell(a,2,1)&&cell(a,1,0)<cell(b,1,0)+cell(b,3,1)&&cell(b,1,0)<cell(a,1,0)+cell(a,3,1)));
  if(k==='modules')return GRID_REASON;
  if(f.visibleIf){const unmet=Object.entries(f.visibleIf).filter(([key,value])=>v[key]!==value);if(unmet.length)return k.startsWith('grid_')?'Choose a custom frame size':'Choose selected dog-hole panels'}
  if((s==='Structure / Worktop'&&k!=='include_worksurface'||k==='worksurface_thickness'||k==='show_worksurface')&&v.include_worksurface===false)return 'Enable the worksurface';
  if(k.startsWith('hand_slot_')&&!v.include_hand_slots)return 'Enable hand slots';
- if((s.startsWith('Doors /')||k.startsWith('hinge_')||k.startsWith('handle_')||k==='door_thickness'||k==='show_doors')&&!doors)return 'No module has doors';
+ if((s.startsWith('Doors /')||k.startsWith('hinge_'))&&!doors)return 'No module has doors';
+ if((k.startsWith('handle_')||k==='door_thickness')&&!fronts)return 'No module has doors or drawers';
+ if(k==='show_doors'&&!fronts&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module has doors, drawers or face panels';
+ if((s.startsWith('Drawers /')||s==='Hardware / Drawer Slides'||k.startsWith('drawer_box')||k==='drawer_bottom_thickness'||k==='show_drawer_slides')&&!drawers)return 'No module has drawers';
+ if(k==='combo_drawer_height'&&!mods.some((m:any[])=>kind(m)==='drawer_door'))return 'No module has drawers over a door';
+ if(k.startsWith('metal_slide_')&&k.endsWith('holes_x')||k.endsWith('hole_diameter')&&k.startsWith('metal_slide_')||k==='slide_drill_depth')if(v.include_metal_slide_holes===false)return 'Enable slide holes';
+ if(s==='Structure / Faces'&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module is framed';
+ if(k==='include_stack_keys'&&!stacked)return 'No module is stacked';
  if((k.startsWith('handle_')&&k!=='handle_style'||k==='handle_thickness')&&v.handle_style==='none')return 'Select a handle style';
  if((s.startsWith('Shelves /')||k==='shelf_thickness')&&!shelves)return 'No module has shelves';
  if(k==='caster_plate_size'&&Number(v.caster_height)<=0)return 'Set a caster height';

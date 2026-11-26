@@ -86,6 +86,8 @@ const features=[
  ['Modular workbench',[
   ['Grid base frame with registration tabs',has('frame_size')],
   ['Cabinet modules placed on grid cells (stackable)',has('modules')],
+  ['Drawer, drawer-and-door and framed-opening modules',has('combo_drawer_height')],
+  ['Stacked modules located by keys in the rails below',has('include_stack_keys',true)],
   ['Puzzle-jointed worksurface with dog holes',has('include_worksurface',true)],
   ['Cut plywood pulls',has('handle_style','square')],
  ]],
