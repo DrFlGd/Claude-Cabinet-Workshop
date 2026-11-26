@@ -268,6 +268,10 @@
 .lay-note{display:flex;gap:7px;font-size:12px;line-height:1.5;color:#6b8088}
 .lay-note svg{flex-shrink:0;margin-top:2px}
 .wb-tools{display:flex;gap:6px;flex-shrink:0}
+.segmented.wb-contents{display:grid;grid-template-columns:repeat(3,1fr)}
+.segmented.wb-contents button{border-bottom:1px solid #cfdadd}
+.segmented.wb-contents button:nth-child(3n){border-right:0}
+.segmented.wb-contents button:nth-child(n+4){border-bottom:0}
 .wb-tools button,.wb-move button{display:inline-flex;align-items:center;gap:6px;border:1px solid #cfdadd;border-radius:7px;background:#fff;color:#2b4a56;font-size:12.5px;padding:7px 10px}
 .wb-tools button:disabled,.wb-move button:disabled{opacity:.45}
 .wb-move{display:flex;gap:6px}

@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.19.0**) are separate from the bundled
+Application versions (currently **0.20.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -17,7 +17,7 @@ history starts with repository setup and the source import. This document record
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
 
-## 0.19.0 — 2026-11-26
+## 0.20.0 — 2026-11-26
 
 In-app 3D collision check for every design.
 
@@ -35,23 +35,24 @@ In-app 3D collision check for every design.
 - **One definition of the jobs.** The groups and per-part jobs moved from the
   test sweeps into `lib/interference.ts`; `tests/engine-interference.mjs` and
   `tests/product-interference.mjs` now use the same jobs as the app (the cabinet
-  cases intersect the same 977 group pairs as before, the product cases the same
-  507 part pairs).
+  cases intersect the same group pairs as before the move, the product cases the
+  same part pairs).
 - The coverage lists name the 3D check as available on demand.
 
 Timings through the production worker in Node (one worker, as in the browser; the
-browser precompiles the engine and is usually as fast or faster): media cart
-default 5.4 s (14 parts, 43 of 91 pairs intersected); cabinet defaults: shop cart
-17.3 s, utility 5.0 s, benchtop 6.7 s, stackable 6.5 s, kitchen 7.6 s, drawer
-0.7 s, equipment stand 1.9 s, workbench 14.6 s (59 parts, 123 of 1,711 pairs
-intersected). In Chromium: media cart 3.9 s, shop cart 16 s.
+browser precompiles the engine and is usually as fast or faster), on this
+release's main: media cart default 7.3 s (14 parts, 43 of 91 pairs intersected);
+cabinet defaults: shop cart 18.8 s, utility 6.2 s, benchtop 8.3 s, stackable
+6.7 s, kitchen 10.1 s, drawer 0.9 s, equipment stand 2.3 s, workbench 15.9 s (59
+parts, 123 of 1,711 pairs intersected). An earlier run on a less loaded machine
+was 15 to 30% faster. In Chromium: media cart 3.9 s, shop cart 16 s.
 
 Validation run for this release: `tsc --noEmit`; eslint on the new and changed
 files (no new findings); new `tests/collision-worker.mjs` (the media cart and all
 eight cabinet types' defaults check clean through the production worker, a part
 drawn twice is reported, malformed requests are refused); `tests/engine-interference.mjs`
-(hand-picked cases, 37 configurations, before and after the move: 977 pairs both
-times); `tests/product-interference.mjs` (13 configurations, 507 pairs);
+(hand-picked cases: before and after the move on 0.18.0, 37 configurations and 977
+pairs both times; after merging 0.19.0, 38 configurations and 1,200 pairs, clean); `tests/product-interference.mjs` (13 configurations, 507 pairs);
 `tests/products.mjs`, `section-wasm.mjs`, `units.cjs`, `nesting.cjs`,
 `settings-visibility.cjs`, `hardware.cjs`, `v5-integration.cjs`,
 `stackable-controls.cjs`, `sections.cjs`, the engine-source, product-source and
@@ -63,6 +64,98 @@ Limitations: the check runs one worker and is not cached; very large designs
 (many workbench modules, many section members) can take minutes. Hardware is only
 as complete as the engine draws it (screws and bolts are not modelled). Shared
 volume below the thresholds is ignored.
+
+## 0.19.0 — 2026-11-26
+
+Modular workbench modules can now hold drawers, drawers over a door, or an open
+front behind a framed face panel, as in the photo grid of module configurations
+from the owner's reference set, and stacked modules are located by keys instead
+of only being screwed down. No cut files came with those configurations, so the
+drawer and face-panel construction is designed parametrically in the engine
+around the reference cabinet; [docs/MODULAR_WORKBENCH.md](docs/MODULAR_WORKBENCH.md)
+records the construction and the decisions.
+
+- **New module contents.** Besides doors and open:
+  - **Drawers**: one to eight equal overlay drawer fronts over the whole
+    height, each with a drawer box on side-mount full-extension slides.
+  - **Drawers + door**: one to eight 150 mm drawer fronts
+    (`combo_drawer_height`) above a door, with shelves only below the drawers.
+  - **Framed opening**: an open module behind a door-sized face panel with a
+    rounded opening (40 mm border, 60 mm corner radius).
+  Fronts line up with the doors (full overlay, 5 mm gaps) and carry the selected
+  pull, centred.
+- **Drawer boxes.** 12 mm sides, front and back with through finger joints at
+  the corners, and a 12 mm bottom with tongues on all four edges in blind 6 mm
+  pockets, using the shared tab-in-pocket corner reliefs. Boxes are 338.6 mm
+  wide in a one-cell module (12.7 mm slide clearance per side) and as deep as
+  the slide; the slide length is picked automatically (350 mm in a one-cell
+  module) or set. Slide screw holes are drilled in the module sides (8 mm
+  pilots) and through the box sides on the equipment stand's generic hole
+  arrays. Bottom pockets and slide holes are in the new `pocket_drawer_dados`
+  and `pocket_slide_holes` files of the export. Each drawer reports its
+  outside, inside and opening sizes, so the drawer-fit table covers it, and the
+  hardware list counts slide pairs by length.
+- **Stacking keys.** A module standing on another is located by 50 × 26 mm keys
+  of frame stock. Each key stands in a 14 mm pocket milled into a top rail of
+  the module below and in one of the registration pockets already under the
+  module above (on modules facing any way). A module stacked on a one-cell
+  module gets two keys; a stacked module with fewer than two reports
+  `STACK_KEYS`. `include_stack_keys` turns them off.
+- **Checks.** Drawers or doors that open into another module, drawer boxes too
+  low for their slides, slides that do not fit the module, no room for a door
+  under the drawers, corner fingers narrower than the cutter, pulls that do not
+  fit a drawer front, face-panel borders and pocket depths are errors; wide
+  drawers are a warning. The side-panel notes in the parts list no longer
+  mention shelf pins on modules too low to have any.
+- **Layout tab.** Contents are now Doors, Drawers, Drawers + door, Open or
+  Framed opening, with a drawer count. The grid labels each module (for
+  example "4 drawers · 730"), and the drawing checks drawer counts against the
+  module height before the engine runs. The instant 3D view draws drawer
+  fronts, boxes and framed face panels.
+- **Two new starters**: *Drawers, cubbies and a drawer-and-door cabinet*
+  (medium 3 × 2) and *Small 2 × 2 drawer bank*.
+- The default and the other reference starters keep their cut and pocket files
+  unchanged; the stacked starter gains its keys and rail pockets.
+
+Validation performed:
+
+- `pnpm exec tsc --noEmit`, the engine-source and parity checks, units,
+  settings visibility, hardware, v5 integration (new assertions for drawer
+  counts, box heights, schematic ids, drawers opening into a module, too many
+  drawers, no room for the door, and the visibility of the new settings),
+  stackable-controls and sections passed, as did nesting, runtime integrity,
+  schematic orbit, diagram depth, desktop assets, layout editor, engine fit
+  (all 120 starters), hardware-engine, cut-layout check, section WASM workers,
+  products, product interference and `pnpm run build:static`.
+- `tests/engine-interference.mjs` for the three workbench drawer, drawer-bank
+  and stacked cases: no overlapping parts (579 group pairs). The full sharded
+  sweep was left to CI.
+- Golden snapshots were updated for the nine workbench starters only; all 120
+  starters then matched. In the
+  seven existing ones only report records changed (module lines gained a drawer
+  count, the machining line two depths, side-panel notes and screw totals), and
+  only the stacked starter's cut layout changed (its keys and rail pockets).
+- Every workbench starter, a hand-picked layout (drawers on a sideways module
+  carrying a framed and a door module, single- and three-drawer modules stacked
+  on a two-cell module and on one turned to the right, a two-cell drawer-and-door
+  module, fit clearances) and six seeded random layouts with the new contents:
+  each cut layout matched its part table, and every part rendered on its own
+  and intersected with every other showed no overlap. A deliberately long
+  bottom tongue and tall keys were reported as overlapping parts.
+- In headless Chrome at 1500 px: the new starter's Layout tab, changing a
+  module to eight drawers and to drawers + door (both problems shown), back to
+  one drawer and to a framed opening, the instant 3D view, an Exact render
+  (10 s) and the Cut list, with no console errors or horizontal scroll.
+
+Remaining limitations:
+
+- Drawers use metal side-mount slides only; the slide hole arrays are generic and
+  must be checked against the purchased slides.
+- Drawer fronts are screwed to the box fronts and face panels to the carcass
+  edges without drilled positions; the screw-marking dimples and jigs of the
+  reference are still not modelled.
+- Two-cell-wide drawer modules get one wide drawer per level, not two side by
+  side.
 
 ## 0.18.0 — 2026-11-26
 
