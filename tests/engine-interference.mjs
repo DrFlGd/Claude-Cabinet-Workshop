@@ -19,9 +19,11 @@
 //   CASES='[[4,"kitchen_standard_B36",{}]]' node ...   ad-hoc configurations
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import {loadInterference} from './product-load.mjs';
 const root=new URL('../',import.meta.url);
 const read=n=>JSON.parse(fs.readFileSync(new URL(n,root)));
 const schema=read('lib/schema.json'),bundle=read('lib/engine-sources.json');
+const I=loadInterference();
 globalThis.self??={location:{href:'http://test/openscad/x.js'}};
 globalThis.fetch=async url=>{const p=new URL(String(url),'http://test').pathname;try{return new Response(fs.readFileSync(new URL('public'+p,root)),{headers:{'Content-Type':p.endsWith('.wasm')?'application/wasm':'text/plain'}})}catch{return new Response('',{status:404})}};
 const {default:OpenSCAD}=await import(new URL('public/openscad/openscad.js',root).href);
@@ -46,53 +48,7 @@ function extent(buf){
 }
 const extentsMeet=(a,b)=>[0,1,2].every(k=>a.lo[k]<b.hi[k]-0.01&&b.lo[k]<a.hi[k]-0.01);
 const configure=(f,values)=>{let s=bundle[schema[f].file];for(const fl of schema[f].fields){const v=values[fl.key];if(v!==undefined&&v!==null)s=s.replace(new RegExp('^('+fl.key+'\\s*=\\s*)[^;]+;','m'),(_m,p)=>p+JSON.stringify(v)+';')}return s};
-const FLAGS=['show_carcass_sides','show_carcass_bottom','show_carcass_top','show_toe_kick','show_base_hardware','show_worktop','show_back_construction','show_combo_divider','show_shelves','show_door_hinge_partitions','show_drawer_separators','show_drawer_bank_partitions','show_mixed_bay_partitions','show_drawer_slide_parts','show_stack_base'];
-const drawers=parity=>`if (has_drawers) for (b=[0:active_drawer_bank_count()-1]) if (drawer_bank_drawer_count(b) > 0) for (i=[0:drawer_bank_drawer_count(b)-1]) if ((i+b)%2==${parity}) { drawer_box(i,b); if (show_drawer_slide_parts) drawer_mounted_wood_slides(i,b); }`;
-const GROUPS={
- sides:{on:['show_carcass_sides'],code:'carcass();'},
- caps:{on:['show_carcass_bottom','show_carcass_top','show_toe_kick'],code:'carcass();'},
- back:{on:['show_back_construction'],code:'carcass();'},
- shelves:{on:['show_shelves'],code:'carcass();'},
- // Horizontal and vertical interior members are separate groups so partition tabs and
- // tongues are checked against the divider and separators that receive them.
- horizontals:{on:['show_combo_divider','show_drawer_separators'],code:'carcass();'},
- verticals:{on:['show_door_hinge_partitions','show_drawer_bank_partitions','show_mixed_bay_partitions'],code:'carcass();'},
- rails:{on:['show_drawer_slide_parts'],code:'carcass();'},
- frame:{on:[],code:'face_frame_assembly_3d();'},
- drawersA:{on:['show_drawer_slide_parts'],code:drawers(0)},
- drawersB:{on:['show_drawer_slide_parts'],code:drawers(1)},
- doors:{on:[],code:'doors();'},
- // Hardware and accessories.
- worktop:{on:['show_worktop'],code:'carcass();'},
- base:{on:['show_base_hardware'],code:'carcass();'},
- // The stack base sits below the module (in module coordinates, at -stack_first_module_z),
- // and a second module sits one stacking pitch above it: the stacking interface, the
- // nested bottom and the fronts must clear the module below.
- stackBase:{on:['show_stack_base'],code:'if (stackable_mode) translate([0,0,-stack_first_module_z]) stack_base_assembly_3d();'},
- stackUpper:{on:FLAGS.filter(k=>k!=='show_stack_base'),code:'if (stackable_mode) translate([0,0,stack_module_pitch]) cabinet_unit_assembly();'},
- // The slide envelope is the space a metal slide needs between the drawer box and the
- // cabinet side or partition; nothing else may enter it.
- slideEnvelopes:{on:['show_drawer_slide_parts'],envelopes:true,code:'carcass();',when:v=>v.drawer_mount==='metal_slides'},
-};
-// The standalone drawer renders drawer boxes only.
-const DRAWER_GROUPS={drawersA:GROUPS.drawersA,drawersB:GROUPS.drawersB};
-// The equipment stand has its own engine; its parts are grouped by kind from its part table.
-const standGroup=kinds=>({code:`for(p=parts) if(${kinds.map(k=>`p[1]=="${k}"`).join('||')}) if(p[1]=="runner") translate([0,0,tz(p[5])-runner_height]) assemble_part(p); else assemble_part(p);`});
-const STAND_GROUPS={
- sides:standGroup(['side']),horizontals:standGroup(['horizontal']),trays:standGroup(['tray','lip']),cheeks:standGroup(['cheek']),
- backs:standGroup(['back','structural','applied']),runners:standGroup(['runner']),cleats:standGroup(['cleat_stand','cleat_wall']),backers:standGroup(['backer','spacer','shim']),
- slides:{code:'if(slide_type=="side_mount") for(i=[0:N-1]) for(s=[0:1]) { translate([s==0 ? t : W-t-sg,tray_inset+metal_slide_front_setback,slide_z(i)-metal_slide_envelope_height/2]) cube([sg/2,metal_slide_length,metal_slide_envelope_height]); translate([s==0 ? t+sg/2 : W-t-sg/2,tray_inset+metal_slide_front_setback-ext,slide_z(i)-metal_slide_envelope_height/2]) cube([sg/2,metal_slide_length,metal_slide_envelope_height]); }'},
-};
 const files0=Object.fromEntries(Object.entries(bundle).filter(([n])=>n.endsWith('.scad')));
-const isStand=f=>schema[f].id==='equipment_stand',isDrawer=f=>schema[f].id==='drawer',isBench=f=>schema[f].id==='workbench';
-// The modular workbench renders every part of its part table on its own (frame strips, each
-// module's panels, doors, pulls, worksurface panels) plus the casters, so a part is checked
-// against its neighbours in the same module as well as against the frame and other modules.
-async function benchGroups(f,values,text){
- const ids=[...new Set([...(text??(await report(f,values)).text).matchAll(/BOM\|([^|"]+)\|/g)].map(m=>m[1]))];
- assert(ids.length>0,'workbench report lists no parts');
- return {...Object.fromEntries(ids.map(id=>[id,{code:`render_ids(["${id}"]);`}])),casters:{code:'casters();'}};
-}
 // Engine report of a design (bom mode): LAYOUT records, CHECK records and OpenSCAD messages.
 async function report(f,values){
  const files={...files0},main=schema[f].file;
@@ -101,43 +57,27 @@ async function report(f,values){
  const t=r.echo+'\n'+r.logs.join('\n');
  return {text:t,errors:[...t.matchAll(/CHECK\|ERROR\|([A-Z_]+)/g)].map(m=>m[1]),broken:r.logs.filter(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l))};
 }
-// Interior members of bay and section layouts, from the engine's LAYOUT report.
-function members(t){
- const ids=re=>[...new Set([...t.matchAll(re)].map(m=>+m[1]-1))];
- return {vm:ids(/LAYOUT\|MEMBER\|MB(\d+)/g),hm:ids(/LAYOUT\|MEMBER\|SD(\d+)/g),fs:ids(/LAYOUT\|SHELF\|B(\d+)-SH\d+\|[^"]*STYLE=fixed/g)};
-}
+// The groups are the in-app collision check's (lib/interference.ts): each one the design
+// with only that group's parts drawn, rendered on its own; pairs whose extents meet are
+// intersected. split: each partition, section divider and bay's fixed shelves on its own.
 async function overlaps(f,values,split=false,text){
  const files={...files0},main=schema[f].file,stl={},ext={};
- const groups=isStand(f)?{...STAND_GROUPS}:isDrawer(f)?{...DRAWER_GROUPS}:isBench(f)?await benchGroups(f,values,text):{...GROUPS};
- if(split&&!isStand(f)&&!isDrawer(f)&&!isBench(f)){
-  // Each partition, section divider and bay's fixed shelves on its own, so members
-  // that meet from opposite faces of another member are checked against each other.
-  const m=members(text??(await report(f,values)).text);
-  groups.verticals={on:['show_door_hinge_partitions','show_drawer_bank_partitions'],code:'carcass();'};
-  groups.horizontals={on:['show_drawer_separators'],code:'carcass();'};
-  groups.shelves={on:[],code:'for (b=[0:layout_bay_count-1]) if (mixed_bay_has_adjustable_shelves(b)) for (s=[1:mixed_bay_shelf_count(b)]) mixed_bay_adjustable_shelf_3d(b,mixed_bay_shelf_z(b,s));'};
-  for(const p of m.vm)groups['partition'+p]={on:[],code:`mixed_bay_partition_3d(${p});`};
-  for(const h of m.hm)groups['divider'+h]={on:[],code:`section_divider_3d(${h});`};
-  for(const b of m.fs)groups['fixedShelves'+b]={on:[],code:`for (s=[1:mixed_bay_shelf_count(${b})]) mixed_bay_fixed_shelf_3d(${b},mixed_bay_shelf_z(${b},s),s);`};
-  assert(m.vm.length+m.hm.length+m.fs.length>0,'split check found no members');
- }
- for(const [g,def] of Object.entries(groups)){
-  if(def.when&&!def.when(values))continue;
-  // Probe mode renders nothing of its own; the appended code renders one group. The
-  // equipment stand renders its flat layout for any mode but bom, so bom is its probe.
-  const v={...values,output_mode:isStand(f)?'bom':'__probe__',show_metal_slide_envelopes:!!def.envelopes};
-  for(const k of FLAGS)if(schema[f].fields.some(x=>x.key===k))v[k]=(def.on??[]).includes(k);
-  files[main]=configure(f,v)+'\n'+def.code+'\n';
+ const engine={id:schema[f].id,fields:schema[f].fields,configure:v=>configure(f,v)};
+ // The report lists the workbench's parts and the members a split check takes apart.
+ const report_=text??(split||schema[f].id==='workbench'?(await report(f,values)).text:'');
+ if(split===true&&!['equipment_stand','drawer','workbench'].includes(schema[f].id)){const m=I.layoutMembers(report_);assert(m.vm.length+m.hm.length+m.fs.length>0,'split check found no members')}
+ for(const job of I.cabinetJobs(engine,values,report_,split)){
+  files[main]=job.source;
   const r=await scad(files,main,['--export-format=binstl','-o','/o.stl']);
-  assert(!r.logs.some(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l)),g+': '+r.logs.filter(l=>/ERROR|WARNING/.test(l)).slice(0,3).join(' '));
-  if(r.out&&r.out.length>84){stl[g]=r.out;ext[g]=extent(r.out)}
+  assert(!r.logs.some(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l)),job.name+': '+r.logs.filter(l=>/ERROR|WARNING/.test(l)).slice(0,3).join(' '));
+  if(r.out&&r.out.length>84){stl[job.name]=r.out;ext[job.name]=extent(r.out)}
  }
  const names=Object.keys(stl),bad={};let pairs=0;
  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
   if(!extentsMeet(ext[names[i]],ext[names[j]]))continue;
   pairs++;
   const r=await scad({'a.stl':stl[names[i]],'b.stl':stl[names[j]],'i.scad':'intersection(){import("/a.stl");import("/b.stl");}'},'i.scad',['--export-format=binstl','-o','/o.stl']);
-  const v=volume(r.out)/1000;if(v>0.05)bad[names[i]+'×'+names[j]]=+v.toFixed(2);
+  const v=volume(r.out);if(v>I.CABINET_THRESHOLD)bad[names[i]+'×'+names[j]]=+(v/1000).toFixed(2);
  }
  return {bad,groups:names.length,pairs};
 }
@@ -262,7 +202,7 @@ for(const j of jobs){
  if(j.optional||split==='auto'){
   const r=await report(j.f,values);text=r.text;
   if(j.optional&&(r.errors.length||r.broken.length)){skipped++;console.log(`skip ${name}: engine rejects it (${[...r.errors,...r.broken].slice(0,2).join('; ')})`);continue}
-  if(split==='auto'){const m=members(text);split=m.vm.length+m.hm.length+m.fs.length>0}
+  if(split==='auto'){const m=I.layoutMembers(text);split=m.vm.length+m.hm.length+m.fs.length>0}
  }
  try{
   const r=await overlaps(j.f,values,split,text);

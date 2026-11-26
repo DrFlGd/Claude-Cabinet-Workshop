@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.18.0**) are separate from the bundled
+Application versions (currently **0.19.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,53 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.19.0 — 2026-11-26
+
+In-app 3D collision check for every design.
+
+- **Check for intersecting parts**, under **Cut list & fit** for every cabinet
+  type and for the media cart. On request, a background worker
+  (`public/openscad/interference-worker.js`) renders each part (products) or each
+  group of parts (cabinets: sides, caps, back, shelves, interior members, rails,
+  face frame, drawers, doors, worktop, base hardware, stack base, the next module
+  in a stack, slide envelopes; every workbench part) on its own in assembly
+  position, compares their bounding boxes, intersects only the pairs that meet,
+  and lists any pair that shares more than 1 mm³ (products) or 50 mm³ (cabinets).
+  It shows progress, can be stopped, reports the time taken and marks the result
+  out of date when the settings change. It needs a finished engine check of the
+  current settings.
+- **One definition of the jobs.** The groups and per-part jobs moved from the
+  test sweeps into `lib/interference.ts`; `tests/engine-interference.mjs` and
+  `tests/product-interference.mjs` now use the same jobs as the app (the cabinet
+  cases intersect the same 977 group pairs as before, the product cases the same
+  507 part pairs).
+- The coverage lists name the 3D check as available on demand.
+
+Timings through the production worker in Node (one worker, as in the browser; the
+browser precompiles the engine and is usually as fast or faster): media cart
+default 5.4 s (14 parts, 43 of 91 pairs intersected); cabinet defaults: shop cart
+17.3 s, utility 5.0 s, benchtop 6.7 s, stackable 6.5 s, kitchen 7.6 s, drawer
+0.7 s, equipment stand 1.9 s, workbench 14.6 s (59 parts, 123 of 1,711 pairs
+intersected). In Chromium: media cart 3.9 s, shop cart 16 s.
+
+Validation run for this release: `tsc --noEmit`; eslint on the new and changed
+files (no new findings); new `tests/collision-worker.mjs` (the media cart and all
+eight cabinet types' defaults check clean through the production worker, a part
+drawn twice is reported, malformed requests are refused); `tests/engine-interference.mjs`
+(hand-picked cases, 37 configurations, before and after the move: 977 pairs both
+times); `tests/product-interference.mjs` (13 configurations, 507 pairs);
+`tests/products.mjs`, `section-wasm.mjs`, `units.cjs`, `nesting.cjs`,
+`settings-visibility.cjs`, `hardware.cjs`, `v5-integration.cjs`,
+`stackable-controls.cjs`, `sections.cjs`, the engine-source, product-source and
+parity checks; `tests/desktop-assets.cjs` (now also lists the new worker) on a
+local static build; and the check driven in Chromium at 1440 × 900 (media cart) and
+390 × 844 (default cabinet), no horizontal scroll.
+
+Limitations: the check runs one worker and is not cached; very large designs
+(many workbench modules, many section members) can take minutes. Hardware is only
+as complete as the engine draws it (screws and bolts are not modelled). Shared
+volume below the thresholds is ignored.
 
 ## 0.18.0 — 2026-11-26
 

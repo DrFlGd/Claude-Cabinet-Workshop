@@ -13,9 +13,9 @@
 //   SHARD=1/6 node tests/product-interference.mjs --all   one sixth of that job list
 //   CASES='[["media_cart","stepped_bins",{"rows":1}]]' node ...   ad-hoc configurations
 import fs from 'node:fs';
-import {loadProducts} from './product-load.mjs';
+import {loadProducts,loadInterference} from './product-load.mjs';
 const root=new URL('../',import.meta.url);
-const P=loadProducts();
+const P=loadProducts(),I=loadInterference();
 globalThis.self??={location:{href:'http://test/openscad/x.js'}};
 globalThis.fetch=async url=>{const p=new URL(String(url),'http://test').pathname;try{return new Response(fs.readFileSync(new URL('public'+p,root)),{headers:{'Content-Type':p.endsWith('.wasm')?'application/wasm':'text/plain'}})}catch{return new Response('',{status:404})}};
 const {default:OpenSCAD}=await import(new URL('public/openscad/openscad.js',root).href);
@@ -46,9 +46,10 @@ async function overlaps(p,values){
  const text=bom.logs.join('\n')+'\n'+(bom.data?new TextDecoder().decode(bom.data):'');
  const errors=[...text.matchAll(/CHECK\|ERROR\|[^"\n]*/g)].map(m=>m[0]);
  if(errors.length)return {errors};
- const ids=[...new Set([...text.matchAll(/BOM\|([^|]+)\|/g)].map(m=>m[1]))],stl={},ext={};
- for(const id of [...ids,'CASTERS']){
-  const r=await scad(at(hook(hook(source,'output_mode','assembly'),'render_part',id)),p.file,['--export-format=binstl','-o','/o.stl'],'/o.stl');
+ // The jobs are the in-app collision check's (lib/interference.ts): one per part, plus casters.
+ const stl={},ext={};
+ for(const {name:id,source:job} of I.productJobs(source,text,true)){
+  const r=await scad(at(job),p.file,['--export-format=binstl','-o','/o.stl'],'/o.stl');
   const bad=r.logs.filter(l=>/^ERROR|^WARNING: (undefined operation|Ignoring unknown variable)/.test(l));
   if(bad.length)return {errors:bad.map(l=>id+': '+l)};
   if(r.data&&r.data.length>84){stl[id]=r.data;ext[id]=extent(r.data)}
@@ -59,7 +60,7 @@ async function overlaps(p,values){
   if(!meet(ext[names[i]],ext[names[j]]))continue;
   pairs++;
   const r=await scad({'a.stl':stl[names[i]],'b.stl':stl[names[j]],'i.scad':'intersection(){import("/a.stl");import("/b.stl");}'},'i.scad',['--export-format=binstl','-o','/o.stl'],'/o.stl');
-  const v=volume(r.data);if(v>1)bad[names[i]+'×'+names[j]]=+v.toFixed(1);
+  const v=volume(r.data);if(v>I.PRODUCT_THRESHOLD)bad[names[i]+'×'+names[j]]=+v.toFixed(1);
  }
  return {errors:[],bad,parts:names.length,pairs};
 }

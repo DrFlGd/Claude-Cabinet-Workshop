@@ -50,6 +50,8 @@ pnpm run build:static
   bundled OpenSCAD WASM and intersects every pair, so tabs and tongues are checked
   against the parts that receive them. Correct joinery only touches; any overlap
   volume fails the test. `CASES='[[family,starter,{...}]]'` runs chosen designs.
+  The groups come from lib/interference.ts, the same jobs the in-app collision
+  check runs.
 
 - `tests/layout-editor.mjs`: the Layout tab's model (lib/layout.ts) against the
   engine. Every starter of the five cabinet types with a layout editor must map
@@ -87,7 +89,11 @@ pnpm run build:static
   its own and intersects every pair whose extents meet; any shared volume over
   1 mm³ fails. `--all` adds 24 seeded random designs; CI runs it sharded with the
   cabinet sweep. `CASES='[["media_cart","stepped_bins",{"rows":1}]]'` runs chosen
-  designs.
+  designs. Its per-part jobs also come from lib/interference.ts.
+- `tests/collision-worker.mjs`: the in-app collision check
+  (public/openscad/interference-worker.js) through the production worker: the media
+  cart's and every cabinet type's default design check clean, a part drawn twice is
+  reported, bad requests are refused; prints the timings.
 
 `pnpm run test:engine` runs the three engine suites alone (about six minutes on a
 two-core machine). The release tests require native OpenSCAD on PATH for stackable geometry checks.

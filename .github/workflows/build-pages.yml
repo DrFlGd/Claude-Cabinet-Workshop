@@ -59,6 +59,8 @@ jobs:
         run: node scripts/sync-product-sources.mjs --check
       - name: Products through the production workers, cut-layout gate and golden outputs
         run: node --no-memory-protection-keys tests/products.mjs
+      - name: In-app collision check through the production worker (media cart and every cabinet type's default)
+        run: node --no-memory-protection-keys tests/collision-worker.mjs
       # Portable release build: relative base path, so the folder can be served from any URL path.
       - run: pnpm run build:static
         env:
