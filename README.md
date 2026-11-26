@@ -2,7 +2,8 @@
 
 A browser-based cabinet planner built on a parametric OpenSCAD engine. Choose a
 shop cart, utility cabinet, benchtop drawer unit, stackable module, kitchen
-cabinet, standalone drawer or equipment stand, set its size and contents, and get
+cabinet, standalone drawer, equipment stand or modular workbench, set its size
+and contents, and get
 an engine-calculated cut list, fit report, exact 3D model and CNC-ready SVG
 layouts. Everything runs locally in the browser with bundled OpenSCAD WebAssembly.
 
@@ -11,7 +12,7 @@ plan accuracy (parts that actually fit together) and a simpler workflow; 0.7.0
 adds the visual layout editor. See the [changelog](CHANGELOG.md) for the full
 list of changes and how they were verified.
 
-Application version: **0.13.0**. Bundled engine: **Modular Organization 5.3.0**
+Application version: **0.14.0**. Bundled engine: **Modular Organization 5.3.0**
 (engine family v5, interface MOI-4) with the patches recorded in the changelog.
 [Documentation guide](docs/README.md).
 
@@ -21,7 +22,7 @@ Download `claude-cabinet-workshop-web-v<version>.zip` from the latest GitHub
 release, unzip it and serve the folder over HTTP, for example:
 
 ```sh
-python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.13.0
+python3 -m http.server 8080 --directory claude-cabinet-workshop-web-v0.14.0
 ```
 
 Then open http://localhost:8080/. The release build uses relative paths, so it
@@ -52,7 +53,7 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
 
 1. **Pick what to build.** The cabinet-type card at the top of the settings
    panel shows the current type and starting point. **Change** (or **New** in
-   the header) opens the picker: choose a type, then one of 110 starting
+   the header) opens the picker: choose a type, then one of 117 starting
    points, including 48 standard US kitchen sizes. The previous design stays in
    **Recent**.
 2. **Arrange the front in the Layout tab.** The **Layout** tab (the first tab
@@ -71,6 +72,13 @@ builds and GitHub Pages, and [development notes](docs/DEVELOPMENT.md) for tests.
    arrangement is not possible for a cabinet type. Fronts are drawn at the
    positions the engine reports; dashed fronts are estimates while it
    recalculates.
+   For the **modular workbench** the Layout tab is a top view of the base
+   frame's grid instead: click an empty cell to place a cabinet module, click a
+   module to set its contents (doors or open), the side it faces, hinge side,
+   height, shelves and how many cells it spans, move it, stack a module on top
+   (a module at bench height is split into two stacked halves) or remove it.
+   **Fill empty cells** completes the grid. See
+   [the workbench design note](docs/MODULAR_WORKBENCH.md).
 3. **Work through the settings.** The section rail follows the order you
    would design in: Sizing, Structure, Drawers, Doors, Shelves and so on. The
    shop details (Materials, Hardware, Machining, Engine & export) are collapsed

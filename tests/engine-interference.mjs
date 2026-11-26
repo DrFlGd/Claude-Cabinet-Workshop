@@ -80,7 +80,15 @@ const STAND_GROUPS={
  slides:{code:'if(slide_type=="side_mount") for(i=[0:N-1]) for(s=[0:1]) { translate([s==0 ? t : W-t-sg,tray_inset+metal_slide_front_setback,slide_z(i)-metal_slide_envelope_height/2]) cube([sg/2,metal_slide_length,metal_slide_envelope_height]); translate([s==0 ? t+sg/2 : W-t-sg/2,tray_inset+metal_slide_front_setback-ext,slide_z(i)-metal_slide_envelope_height/2]) cube([sg/2,metal_slide_length,metal_slide_envelope_height]); }'},
 };
 const files0=Object.fromEntries(Object.entries(bundle).filter(([n])=>n.endsWith('.scad')));
-const isStand=f=>schema[f].id==='equipment_stand',isDrawer=f=>schema[f].id==='drawer';
+const isStand=f=>schema[f].id==='equipment_stand',isDrawer=f=>schema[f].id==='drawer',isBench=f=>schema[f].id==='workbench';
+// The modular workbench renders every part of its part table on its own (frame strips, each
+// module's panels, doors, pulls, worksurface panels) plus the casters, so a part is checked
+// against its neighbours in the same module as well as against the frame and other modules.
+async function benchGroups(f,values,text){
+ const ids=[...new Set([...(text??(await report(f,values)).text).matchAll(/BOM\|([^|"]+)\|/g)].map(m=>m[1]))];
+ assert(ids.length>0,'workbench report lists no parts');
+ return {...Object.fromEntries(ids.map(id=>[id,{code:`render_ids(["${id}"]);`}])),casters:{code:'casters();'}};
+}
 // Engine report of a design (bom mode): LAYOUT records, CHECK records and OpenSCAD messages.
 async function report(f,values){
  const files={...files0},main=schema[f].file;
@@ -96,8 +104,8 @@ function members(t){
 }
 async function overlaps(f,values,split=false,text){
  const files={...files0},main=schema[f].file,stl={},ext={};
- const groups=isStand(f)?{...STAND_GROUPS}:isDrawer(f)?{...DRAWER_GROUPS}:{...GROUPS};
- if(split&&!isStand(f)&&!isDrawer(f)){
+ const groups=isStand(f)?{...STAND_GROUPS}:isDrawer(f)?{...DRAWER_GROUPS}:isBench(f)?await benchGroups(f,values,text):{...GROUPS};
+ if(split&&!isStand(f)&&!isDrawer(f)&&!isBench(f)){
   // Each partition, section divider and bay's fixed shelves on its own, so members
   // that meet from opposite faces of another member are checked against each other.
   const m=members(text??(await report(f,values)).text);
@@ -173,6 +181,11 @@ const CASES=[
  [1,undefined,{base_style:'levelers',include_base_mounting_plate:true,include_base_hardware_drill_holes:true}],
  [3,undefined,{include_stack_base:true,drawer_mount:'metal_slides'}],
  [2,'benchtop_wide_6_drawer',{drawer_mount:'metal_slides',include_metal_slide_holes:true}],
+ // Modular workbench: modules turned to every side, stacked, two cells deep, on a custom grid
+ // with a cross strip under every column, a worksurface over three rows, fit clearances.
+ [7,undefined,{frame_size:'custom',grid_columns:4,grid_rows:3,frame_cross_members:'every_column',handle_style:'traditional',joint_fit_clearance:0.2,puzzle_clearance:0.2,
+  modules:[[0,0,1,1,365,'open',0,'front','left'],[0,0,1,1,365,'door',0,'front','left'],[1,0,2,1,730,'door',1,'front','left'],[3,0,1,2,730,'door',2,'right','left'],[0,1,1,2,730,'door',1,'left','right'],[1,1,2,1,730,'open',1,'front','left'],[1,2,1,1,730,'door',1,'back','left'],[2,2,1,1,730,'door',1,'back','right'],[3,2,1,1,730,'open',3,'back','left']]}],
+ [7,'workbench_stacked',{handle_style:'chamfered',include_worksurface:false}],
 ];
 // ---- random sweep: construction choices, counts and sizes the engine accepts ----
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
@@ -180,8 +193,31 @@ const CHOICES=['cabinet_contents','top_style','back_style','joinery_style','tab_
 const TOGGLES=['include_drawer_separators','include_door_hinge_partitions','include_mixed_bay_partitions','include_face_frame_center_stile','include_worktop','include_worktop_registration_holes','include_base_mounting_plate','include_stack_base','include_drawer_faces','include_drawer_divider_grid','include_metal_slide_holes','include_toe_kick'];
 const COUNTS={drawer_count:[1,6],door_count:[1,3],door_shelf_count:[0,3],drawer_bank_count:[1,3],back_stretcher_count:[1,3],tray_count:[1,4]};
 const SIZES={custom_cabinet_width:[300,1500],custom_cabinet_height:[300,2000],custom_cabinet_depth:[250,700]};
+// The general sweep draws from the first seven cabinet types, as before the workbench existed, so
+// its seeded designs stay the same; the workbench has its own sweep of random module layouts.
+const SWEEP_FAMILIES=7;
+function randomBench(random){
+ const f=schema.findIndex(x=>x.id==='workbench'),pick=list=>list[Math.floor(random()*list.length)];
+ const custom=random()<0.4,cols=custom?1+Math.floor(random()*5):0,rows=custom?1+Math.floor(random()*3):0;
+ const size=custom?'custom':pick(['small','medium','large']),C=custom?cols:{small:2,medium:3,large:4}[size],R=custom?rows:2;
+ const facing=(c,r,w,d)=>r===0?'front':r+d===R?'back':c===0?'left':c+w===C?'right':null;
+ const taken=new Set(),modules=[];
+ for(let r=0;r<R;r++)for(let c=0;c<C;c++){
+  if(taken.has(c+','+r)||random()<0.15)continue;
+  const w=c+1<C&&!taken.has((c+1)+','+r)&&random()<0.35?2:1,face=facing(c,r,w,1);
+  if(!face)continue;
+  for(let i=0;i<w;i++)taken.add((c+i)+','+r);
+  const contents=random()<0.7?'door':'open',hinge=pick(['left','right']);
+  if(random()<0.25)modules.push([c,r,w,1,365,contents,0,face,hinge],[c,r,w,1,365,pick(['door','open']),0,face,hinge]);
+  else modules.push([c,r,w,1,pick([600,730,730,900]),contents,Math.floor(random()*4),face,hinge]);
+ }
+ const patch={frame_size:size,modules,handle_style:pick(['none','square','rounded','chamfered','straight_bar','traditional']),include_worksurface:random()<0.7,frame_cross_members:pick(['ends','every_column'])};
+ if(custom)Object.assign(patch,{grid_columns:cols,grid_rows:rows});
+ if(random()<0.3)Object.assign(patch,{joint_fit_clearance:0.15,puzzle_clearance:0.2});
+ return [f,undefined,patch];
+}
 function randomDesign(random){
- const f=Math.floor(random()*schema.length),fam=schema[f],keys=new Set(fam.fields.map(x=>x.key));
+ const f=Math.floor(random()*SWEEP_FAMILIES),fam=schema[f],keys=new Set(fam.fields.map(x=>x.key));
  const starter=fam.starters[Math.floor(random()*fam.starters.length)].id,patch={};
  const pick=list=>list[Math.floor(random()*list.length)];
  const field=k=>fam.fields.find(x=>x.key===k);
@@ -202,6 +238,7 @@ let jobs=only?only.map(c=>({label:'case',f:c[0],starter:c[1],patch:c[2]??{},spli
 if(!only&&(flag('--starters')||flag('--all')))for(let f=0;f<schema.length;f++)for(const s of schema[f].starters)jobs.push({label:'starter',f,starter:s.id,patch:{},split:'auto'});
 const randomCount=flag('--all')?24:Number(after('--random')??0);
 if(!only&&randomCount>0){const random=rng(Number(process.env.SEED??20261015));let made=0,tries=0;while(made<randomCount&&tries<randomCount*4){tries++;const [f,starter,patch]=randomDesign(random);jobs.push({label:'random',f,starter,patch,split:'auto',optional:true});made++}}
+if(!only&&randomCount>0){const random=rng(Number(process.env.SEED??20261015)+7);for(let i=0;i<Math.max(1,Math.round(randomCount/4));i++){const [f,starter,patch]=randomBench(random);jobs.push({label:'random',f,starter,patch,split:'auto',optional:true})}}
 if(process.env.SHARD){const [i,n]=process.env.SHARD.split('/').map(Number);jobs=jobs.filter((_,k)=>k%n===i-1)}
 // ---- run ----
 const started=Date.now();let failures=0,checked=0,skipped=0,pairs=0;

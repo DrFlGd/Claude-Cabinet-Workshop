@@ -10,7 +10,7 @@ export type Values=Record<string,any>;
 export type Category='drawer_slide'|'hinge';
 export type Profile={id:string;category:string;manufacturer:string;family:string;model:string;label:string;targets?:string[]|null;
  verification:{status:string;notes?:string};apply?:Record<string,any>|null;source?:Record<string,any>;geometry_support?:{status:string;notes?:string};mounting_specs?:Record<string,any>};
-const FAMILY_IDS=['shop_cart','utility','benchtop','stackable','kitchen','drawer','equipment_stand'];
+const FAMILY_IDS=['shop_cart','utility','benchtop','stackable','kitchen','drawer','equipment_stand','workbench'];
 export const PROFILE_KEY:Record<Category,string>={drawer_slide:'_slide_profile',hinge:'_hinge_profile'};
 export const GENERIC='generic';
 

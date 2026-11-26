@@ -15,10 +15,10 @@ function load(name,deps={}){
  return m.exports;
 }
 const sections=load('sections');
-const cabinet=load('cabinet',{'./sections':sections,'./schema.json':schema,'./engine-sources.json':bundle});
+const cabinet=load('cabinet',{'./workbench':load('workbench'),'./sections':sections,'./schema.json':schema,'./engine-sources.json':bundle});
 const settings=load('settings');
 const layout=load('layout',{'./cabinet':cabinet,'./sections':sections,'./settings':settings});
-const names=['Shop cart','Utility','Benchtop','Stackable','Kitchen','Drawer','Equipment stand'];
+const names=['Shop cart','Utility','Benchtop','Stackable','Kitchen','Drawer','Equipment stand','Workbench'];
 const F=schema.map((_,i)=>i);
 const field=(f,k)=>schema[f].fields.find(x=>x.key===k);
 // An option is offered when the setting exists, lists the option, and the app keeps it.
@@ -76,8 +76,14 @@ const features=[
   ['Dado / tab-and-slot drawer boxes',any(has('drawer_joinery_style','dado'),has('drawer_joinery_style','tab_slot'))],
  ]],
  ['Shelves',[
-  ['Adjustable shelves',any(has('shelf_style','adjustable'),f=>!!field(f,'mixed_bay_shelf_styles'))],
+  ['Adjustable shelves',any(has('shelf_style','adjustable'),f=>!!field(f,'mixed_bay_shelf_styles'),f=>!!field(f,'shelf_pin_pitch'))],
   ['Fixed shelves',any(has('shelf_style','fixed'),f=>!!field(f,'mixed_bay_shelf_styles'))],
+ ]],
+ ['Modular workbench',[
+  ['Grid base frame with registration tabs',has('frame_size')],
+  ['Cabinet modules placed on grid cells (stackable)',has('modules')],
+  ['Puzzle-jointed worksurface with dog holes',has('include_worksurface',true)],
+  ['Cut plywood pulls',has('handle_style','square')],
  ]],
 ];
 const mark=b=>b?'✓':'—';

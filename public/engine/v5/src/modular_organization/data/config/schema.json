@@ -18811,6 +18811,913 @@
         "Output / Labels",
         "System / Reports"
       ]
+    },
+    "workbench": {
+      "file": "workbench.scad",
+      "design_type": "workbench",
+      "parameters": [
+        {
+          "id": "stock_width",
+          "group": "Materials / Stock",
+          "type": "number",
+          "default": 2440,
+          "range": {
+            "min": 300.0,
+            "max": 5000.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "stock_height",
+          "group": "Materials / Stock",
+          "type": "number",
+          "default": 1220,
+          "range": {
+            "min": 300.0,
+            "max": 5000.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "frame_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 18.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "carcass_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 18.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "door_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 18.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "shelf_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 12.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "worksurface_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 18.0,
+          "range": {
+            "min": 3.0,
+            "max": 60.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "handle_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 18.0,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "router_bit_diameter",
+          "group": "Machining / Tool and Kerf",
+          "type": "number",
+          "default": 6.0,
+          "range": {
+            "min": 0.5,
+            "max": 25.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "slot_corner_relief",
+          "group": "Machining / Shared Slot Relief",
+          "type": "enum",
+          "default": "dogbone",
+          "enum": [
+            "none",
+            "dogbone",
+            "t_bone"
+          ]
+        },
+        {
+          "id": "joint_fit_clearance",
+          "group": "Machining / Frame Joints",
+          "type": "number",
+          "default": 0.0,
+          "range": {
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "housing_depth",
+          "group": "Machining / Frame Joints",
+          "type": "number",
+          "default": 14.0,
+          "range": {
+            "min": 1.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "finger_length",
+          "group": "Machining / Frame Joints",
+          "type": "number",
+          "default": 13.0,
+          "range": {
+            "min": 1.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "registration_clearance",
+          "group": "Machining / Frame Joints",
+          "type": "number",
+          "default": 0.5,
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "registration_pocket_depth",
+          "group": "Machining / Frame Joints",
+          "type": "number",
+          "default": 14.0,
+          "range": {
+            "min": 1.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "frame_size",
+          "group": "Sizing / Modular Grid",
+          "type": "enum",
+          "default": "medium",
+          "enum": [
+            "small",
+            "medium",
+            "large",
+            "custom"
+          ]
+        },
+        {
+          "id": "grid_columns",
+          "group": "Sizing / Modular Grid",
+          "type": "number",
+          "default": 3,
+          "range": {
+            "min": 1.0,
+            "max": 5.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "grid_rows",
+          "group": "Sizing / Modular Grid",
+          "type": "number",
+          "default": 2,
+          "range": {
+            "min": 1.0,
+            "max": 3.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "cell_size",
+          "group": "Sizing / Modular Grid",
+          "type": "number",
+          "default": 400,
+          "range": {
+            "min": 250.0,
+            "max": 600.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "frame_height",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 85,
+          "range": {
+            "min": 40.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "frame_rail_inset",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 60,
+          "range": {
+            "min": 20.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "frame_cross_members",
+          "group": "Structure / Base",
+          "type": "enum",
+          "default": "ends",
+          "enum": [
+            "ends",
+            "every_column"
+          ]
+        },
+        {
+          "id": "frame_foot_inset",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 18.67,
+          "range": {
+            "min": 0.0,
+            "max": 60.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "registration_tab_length",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 50,
+          "range": {
+            "min": 10.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "registration_tab_height",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 13,
+          "range": {
+            "min": 1.0,
+            "max": 40.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "modules",
+          "group": "Structure / Layout",
+          "type": "array",
+          "default": [
+            [
+              0,
+              0,
+              1,
+              1,
+              730,
+              "door",
+              1,
+              "front",
+              "left"
+            ],
+            [
+              1,
+              0,
+              2,
+              1,
+              730,
+              "door",
+              1,
+              "front",
+              "right"
+            ],
+            [
+              0,
+              1,
+              1,
+              1,
+              730,
+              "door",
+              1,
+              "back",
+              "right"
+            ],
+            [
+              1,
+              1,
+              1,
+              1,
+              730,
+              "door",
+              1,
+              "back",
+              "right"
+            ],
+            [
+              2,
+              1,
+              1,
+              1,
+              730,
+              "door",
+              1,
+              "back",
+              "right"
+            ]
+          ]
+        },
+        {
+          "id": "top_rail_width",
+          "group": "Structure / Top",
+          "type": "number",
+          "default": 75,
+          "range": {
+            "min": 30.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "include_hand_slots",
+          "group": "Structure / Top",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "hand_slot_length",
+          "group": "Structure / Top",
+          "type": "number",
+          "default": 100,
+          "range": {
+            "min": 30.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "hand_slot_width",
+          "group": "Structure / Top",
+          "type": "number",
+          "default": 25,
+          "range": {
+            "min": 10.0,
+            "max": 60.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "include_worksurface",
+          "group": "Structure / Worktop",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "worksurface_overhang",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 50,
+          "range": {
+            "min": 0.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "worksurface_corner_radius",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 15,
+          "range": {
+            "min": 0.0,
+            "max": 100.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "worksurface_dog_holes",
+          "group": "Structure / Worktop",
+          "type": "enum",
+          "default": "all",
+          "enum": [
+            "all",
+            "none",
+            "selected"
+          ]
+        },
+        {
+          "id": "worksurface_dog_hole_panels",
+          "group": "Structure / Worktop",
+          "type": "array",
+          "default": [
+            1
+          ]
+        },
+        {
+          "id": "dog_hole_diameter",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 16,
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "dog_hole_pitch",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 100,
+          "range": {
+            "min": 40.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "puzzle_depth",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 30,
+          "range": {
+            "min": 10.0,
+            "max": 80.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "puzzle_pitch",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 180,
+          "range": {
+            "min": 60.0,
+            "max": 400.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "puzzle_angle",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 15,
+          "range": {
+            "min": 0.0,
+            "max": 30.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "puzzle_clearance",
+          "group": "Structure / Worktop",
+          "type": "number",
+          "default": 0.0,
+          "range": {
+            "min": 0.0,
+            "max": 2.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "door_gap",
+          "group": "Doors / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 0.0,
+            "max": 20.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "shelf_front_setback",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 20,
+          "range": {
+            "min": 0.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_rear_clearance",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 0.0,
+            "max": 100.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_side_clearance",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 0.0,
+          "range": {
+            "min": 0.0,
+            "max": 5.0,
+            "step": 0.01
+          },
+          "step": 0.01
+        },
+        {
+          "id": "shelf_pin_diameter",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "shelf_pin_depth",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 10,
+          "range": {
+            "min": 2.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "shelf_pin_first_height",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 175,
+          "range": {
+            "min": 20.0,
+            "max": 1000.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_pin_pitch",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 50,
+          "range": {
+            "min": 10.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_pin_top_clearance",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 200,
+          "range": {
+            "min": 20.0,
+            "max": 1000.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_pin_front_inset",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 90,
+          "range": {
+            "min": 20.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "shelf_pin_rear_inset",
+          "group": "Shelves / Layout",
+          "type": "number",
+          "default": 50,
+          "range": {
+            "min": 20.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "hinge_cup_diameter",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 35,
+          "range": {
+            "min": 10.0,
+            "max": 60.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "hinge_cup_depth",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 12,
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "hinge_cup_center_from_door_edge",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 21,
+          "range": {
+            "min": 5.0,
+            "max": 60.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "hinge_end_offset",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 87.5,
+          "range": {
+            "min": 20.0,
+            "max": 300.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "handle_style",
+          "group": "Hardware / Handles",
+          "type": "enum",
+          "default": "square",
+          "enum": [
+            "none",
+            "square",
+            "rounded",
+            "chamfered",
+            "straight_bar",
+            "traditional"
+          ]
+        },
+        {
+          "id": "handle_hole_diameter",
+          "group": "Hardware / Handles",
+          "type": "number",
+          "default": 4.5,
+          "range": {
+            "min": 2.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "handle_edge_offset",
+          "group": "Hardware / Handles",
+          "type": "number",
+          "default": 117.5,
+          "range": {
+            "min": 20.0,
+            "max": 600.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "handle_top_offset",
+          "group": "Hardware / Handles",
+          "type": "number",
+          "default": 72.5,
+          "range": {
+            "min": 10.0,
+            "max": 600.0,
+            "step": 0.1
+          },
+          "step": 0.1
+        },
+        {
+          "id": "caster_height",
+          "group": "Hardware / Base",
+          "type": "number",
+          "default": 75,
+          "range": {
+            "min": 0.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "caster_plate_size",
+          "group": "Hardware / Base",
+          "type": "number",
+          "default": 60,
+          "range": {
+            "min": 20.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "output_mode",
+          "group": "Output / View",
+          "type": "enum",
+          "default": "assembly",
+          "enum": [
+            "assembly",
+            "flat_3d",
+            "cut_layout",
+            "engrave_layout",
+            "bom",
+            "pocket_carcass_dados",
+            "pocket_hinge_cups",
+            "pocket_shelf_pins"
+          ]
+        },
+        {
+          "id": "show_hardware",
+          "group": "Output / Visibility",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "show_worksurface",
+          "group": "Output / Visibility",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "show_doors",
+          "group": "Output / Visibility",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "layout_gap",
+          "group": "Output / Flat Layout",
+          "type": "number",
+          "default": 25,
+          "range": {
+            "min": 1.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "step": 1.0
+        },
+        {
+          "id": "label_parts",
+          "group": "Output / Labels",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "id": "validation_report",
+          "group": "System / Reports",
+          "type": "enum",
+          "default": "summary",
+          "enum": [
+            "off",
+            "summary",
+            "verbose"
+          ]
+        },
+        {
+          "id": "system_contract_report",
+          "group": "System / Reports",
+          "type": "enum",
+          "default": "summary",
+          "enum": [
+            "off",
+            "summary",
+            "verbose"
+          ]
+        },
+        {
+          "id": "dimension_report",
+          "group": "System / Reports",
+          "type": "string",
+          "default": "summary"
+        }
+      ],
+      "presets": [
+        "Small 2 \u00d7 2 workbench",
+        "Large 4 \u00d7 2 workbench",
+        "Doors in front, open shelving behind",
+        "Stacked half-height modules",
+        "One simple cabinet on a 1 \u00d7 1 frame",
+        "Medium 3 \u00d7 2 in \u00be\u2033 stock"
+      ],
+      "capabilities": {
+        "carcass_joinery": true,
+        "drawer_joinery": false,
+        "screw_guides": false,
+        "decimal_stock": true,
+        "flat_3d": true,
+        "rear_construction": false,
+        "french_cleat": false,
+        "equipment_trays": false,
+        "cabinet_stack_interface": false,
+        "equipment_stack_interface": false,
+        "drawer_organizers": false,
+        "modular_grid": true,
+        "common_joinery_parameter": "joinery_style"
+      },
+      "groups": [
+        "Materials / Stock",
+        "Materials / Measured Thickness",
+        "Machining / Tool and Kerf",
+        "Machining / Shared Slot Relief",
+        "Machining / Frame Joints",
+        "Sizing / Modular Grid",
+        "Structure / Base",
+        "Structure / Layout",
+        "Structure / Top",
+        "Structure / Worktop",
+        "Doors / Layout",
+        "Shelves / Layout",
+        "Hardware / Hinges",
+        "Hardware / Handles",
+        "Hardware / Base",
+        "Output / View",
+        "Output / Visibility",
+        "Output / Flat Layout",
+        "Output / Labels",
+        "System / Reports"
+      ]
     }
   },
   "parameter_layout": {
