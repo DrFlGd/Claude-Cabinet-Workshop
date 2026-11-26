@@ -35,6 +35,11 @@ assert.deepEqual(s.sectionOrder.slice(0,2),['Sizing','Structure']);assert(s.shop
  assert(s.inactiveReason(field('grid_columns'),v));assert.equal(s.inactiveReason(field('grid_columns'),{...v,frame_size:'custom'}),null);
  assert(s.inactiveReason(field('hand_slot_length'),{...v,include_hand_slots:false}));assert(s.inactiveReason(field('handle_edge_offset'),{...v,handle_style:'none'}));
  assert.equal(s.inactiveReason(field('joint_fit_clearance'),v),null);assert.equal(s.inactiveReason(field('hinge_cup_diameter'),v),null);
+ // Drilling jig and screw-mark detail controls follow their switches.
+ assert.equal(s.inactiveReason(field('include_handle_jig'),v),null);assert.match(s.inactiveReason(field('jig_thickness'),v),/Enable the handle jig/);
+ assert.equal(s.inactiveReason(field('jig_thickness'),{...v,include_handle_jig:true}),null);assert.match(s.inactiveReason(field('include_handle_jig'),{...v,handle_style:'none'}),/handle style/);
+ assert.equal(s.inactiveReason(field('screw_mark_depth'),v),null);assert.match(s.inactiveReason(field('frame_screw_offset'),{...v,include_screw_marks:false}),/Enable screw marks/);
+ assert.equal(field('jig_thickness').unit,'mm');assert(c.schemas[7].fields.find(f=>f.key==='output_mode').options.includes('pocket_screw_marks'));
  assert.equal(u.isLengthField(field('modules')),false);assert.equal(u.isLengthField(field('grid_columns')),false);assert.equal(u.isLengthField(field('cell_size')),true);}
 const stand=c.schemas[6].fields;
 for(const k of ['equipment_mass_kg','slide_load_rating_kg','cleat_angle','cleat_safety_factor','tray_count'])assert.equal(u.isLengthField(stand.find(f=>f.key===k)),false,k);

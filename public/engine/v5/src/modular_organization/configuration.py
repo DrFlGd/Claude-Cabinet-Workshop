@@ -59,9 +59,12 @@ def check_parameter(p,value,*,native=False):
 def common_patch(frontend,common):
     ps=spec(frontend); out={}
     for key,value in common.items():
-        if key=='joinery':out['drawer_joinery_style' if frontend=='drawer' else 'joinery_style']=value
+        if key=='joinery' and frontend=='workbench':
+            raise ValueError('The workbench has fixed finger-and-housing carcass joinery; joinery is not a workbench setting')
+        elif key=='joinery':out['drawer_joinery_style' if frontend=='drawer' else 'joinery_style']=value
         elif key=='material_thickness':
             if frontend=='equipment_stand':out['material_thickness']=value
+            elif frontend=='workbench':out['carcass_thickness']=value
             else:
                 target,stock=('custom_drawer_material_thickness','drawer_stock') if frontend=='drawer' else ('custom_carcass_thickness','carcass_stock')
                 out[target]=value

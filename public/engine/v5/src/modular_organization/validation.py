@@ -51,6 +51,7 @@ POCKET_MODES = [
     "pocket_worktop_registration",
     "pocket_face_frame_dados",
     "pocket_ganging",
+    "pocket_screw_marks",
 ]
 ALL_MODES = ["cut_layout", *POCKET_MODES]
 EXPECTED_POCKET_OVERLAPS = {
@@ -274,6 +275,11 @@ def run_audit(scad: Path, openscad: str = "openscad", param_json: Path | None = 
               preset: str | None = None, defines: list[str] | None = None) -> dict:
     defines = defines or []
     audit_modes = ALL_MODES if "equipment_stand" in scad.name else [m for m in ALL_MODES if m != "pocket_slide_holes"]
+    if "workbench" in scad.name:
+        # The workbench renders nothing (and OpenSCAD fails) for modes it does not offer.
+        from .schema import parse_frontend
+        offered = next(p.get("enum", []) for p in parse_frontend(scad) if p["id"] == "output_mode")
+        audit_modes = [m for m in ALL_MODES if m in offered]
     issues: list[dict] = []
     with tempfile.TemporaryDirectory(prefix="modular_organization_v5_audit_") as td:
         td = Path(td)

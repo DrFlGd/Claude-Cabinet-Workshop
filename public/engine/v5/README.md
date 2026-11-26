@@ -1,6 +1,6 @@
 # Modular Organization 5.3
 
-Parametric cabinetry, drawers and pull-out equipment stands, with OpenSCAD geometry and a Python integration API. Seven frontends share manufacturing, validation, hardware and composition services.
+Parametric cabinetry, drawers, pull-out equipment stands and a modular workbench, with OpenSCAD geometry and a Python integration API. Eight frontends share manufacturing, validation, hardware and composition services.
 
 ## Install
 
@@ -40,7 +40,7 @@ Use `api.describe()` for frontend parameters, capabilities and presets. Use `api
 - `project.py`, `interfaces.py`: composition and compatibility.
 - `bom.py`, `validation.py`, `export.py`, `nesting.py`: production outputs and checks.
 - `hardware.py`, `equipment_hardware.py`: hardware catalog resolution.
-- `data/scad/`: seven frontends, companion presets, shared geometry. `core/` separates resolution/contracts, frame geometry and drawer geometry.
+- `data/scad/`: eight frontends, companion presets, shared geometry. `core/` separates resolution/contracts, frame geometry and drawer geometry.
 - `data/config/`: schema, contracts, module registry and hardware catalogs.
 - `examples/`, `tests/`, `docs/`: integration inputs, regressions and review evidence.
 
@@ -54,7 +54,7 @@ python tests/run_matrix.py
 python -m modular_organization.hardware --check
 ```
 
-The matrix regenerates 82 manufacturing audits and requires OpenSCAD. It is more expensive than the regression suite. See [review](docs/REVIEW.md), [integration](docs/INTEGRATION.md), [migration](docs/MIGRATION.md) and [machining](docs/MACHINING.md).
+The matrix regenerates the manufacturing audits of every preset (the saved matrix predates the workbench and holds 82) and requires OpenSCAD. It is more expensive than the regression suite. See [review](docs/REVIEW.md), [integration](docs/INTEGRATION.md), [migration](docs/MIGRATION.md) and [machining](docs/MACHINING.md).
 
 No structural certification or engineering load guarantee is provided by these geometric checks. Confirm material, hardware, loads and installation for the intended use. Distribution licensing and ownership should be confirmed before public publication; this cleanup does not assign a new license.
 

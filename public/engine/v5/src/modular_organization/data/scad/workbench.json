@@ -31,6 +31,7 @@
       "shelf_thickness": "12.7",
       "drawer_box_thickness": "12.7",
       "drawer_bottom_thickness": "12.7",
+      "jig_thickness": "12.7",
       "router_bit_diameter": "6.35"
     },
     "Drawers, cubbies and a drawer-and-door cabinet": {

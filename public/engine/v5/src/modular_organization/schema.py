@@ -53,8 +53,14 @@ def infer(value,expr,mod):
 
 def parse_frontend(path):
     section=''; comments=[]; out=[]
-    for raw in path.read_text().splitlines():
+    lines=iter(path.read_text().splitlines())
+    for raw in lines:
         s=raw.strip()
+        # A bracketed default may span several lines (one row per line); join it up to its ';'.
+        if re.match(r'[A-Za-z_][A-Za-z0-9_]*\s*=\s*\[',s) and ';' not in s:
+            for more in lines:
+                s+=more.strip()
+                if ';' in more: break
         sm=re.match(r'/\* \[(.*?)\] \*/',s)
         if sm:
             section=sm.group(1); comments=[]; continue
@@ -262,7 +268,7 @@ def build(root):
         frontend['presets']=list(json.loads((root/(kind+'.json')).read_text())['parameterSets'])
         ids={x['id'] for x in frontend['parameters']}
         frontend['capabilities']={
-            'carcass_joinery':'joinery_style' in ids,
+            'carcass_joinery':'joinery_style' in ids or kind=='workbench',
             'drawer_joinery':'drawer_joinery_style' in ids,
             'screw_guides':True,'decimal_stock':True,'flat_3d':True,
             'rear_construction':'back_style' in ids,
@@ -272,6 +278,7 @@ def build(root):
             'equipment_stack_interface':kind=='equipment_stand',
             'drawer_organizers':'include_drawer_divider_grid' in ids,
             'common_joinery_parameter':'drawer_joinery_style' if kind=='drawer' else 'joinery_style'}
+        if kind=='workbench': frontend['capabilities']['modular_grid']=True
         for parameter in frontend['parameters']:
             if parameter['type']=='expression':
                 parameter['type']='number'

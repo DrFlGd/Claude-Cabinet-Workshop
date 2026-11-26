@@ -5,7 +5,8 @@ from modular_organization.paths import FRONTENDS,SCAD_DIR
 jobs=[]
 for m,(scad,presets) in FRONTENDS.items():
  for preset in json.loads((SCAD_DIR/presets).read_text())['parameterSets']:jobs.append((m,preset,{}))
- for j in ('butt','screw','dado','tab_slot'):
+ # The workbench has no joinery selector; its presets cover its constructions.
+ for j in (() if m=='workbench' else ('butt','screw','dado','tab_slot')):
   jobs.append((m,None,{'drawer_joinery_style' if m=='drawer' else 'joinery_style':j}))
 def one(job):
  m,p,d=job;st=time.time()
