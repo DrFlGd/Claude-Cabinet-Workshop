@@ -31,6 +31,7 @@ POCKET_MODES=[
     "pocket_shelf_pins","pocket_hinge_cups","pocket_face_registration",
     "pocket_base_hardware","pocket_worktop_registration",
     "pocket_face_frame_dados","pocket_ganging",
+    "pocket_screw_marks",
 ]
 
 
@@ -237,7 +238,12 @@ def main(argv=None) -> int:
         write_preview_svg(plan,root/'PLANNING'/'nesting_preview.svg')
 
         statuses=[]
-        jobs=[('CUT','cut_layout'),('ENGRAVE','engrave_layout')]+[('POCKET',m) for m in POCKET_MODES if m != "pocket_slide_holes" or "equipment_stand" in scad.name]
+        jobs=[('CUT','cut_layout'),('ENGRAVE','engrave_layout')]+[('POCKET',m) for m in POCKET_MODES if m != "pocket_slide_holes" or "equipment_stand" in scad.name or "workbench" in scad.name]
+        if "workbench" in scad.name:
+            # Only the operations the workbench offers; it renders nothing for the others.
+            from .schema import parse_frontend
+            offered=next(p.get('enum',[]) for p in parse_frontend(scad) if p['id']=='output_mode')
+            jobs=[j for j in jobs if j[1] in offered]
         for folder,mode in jobs:
             for fmt in formats:
                 out=root/folder/f'{mode}.{fmt}'

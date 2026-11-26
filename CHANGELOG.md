@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.19.0**) are separate from the bundled
+Application versions (currently **0.20.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,111 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.20.0 — 2026-11-26
+
+Modular workbench: the pulls now follow the reference handle set's dimensions, the
+cut files spot every assembly screw, the pulls' drilling jig can be added to the
+export, and the Python package covers the workbench. Nothing from the reference
+files is traced or committed; every outline is generated from measured dimensions
+(radii, chamfer angle, arc radii, leg widths), listed in
+[docs/MODULAR_WORKBENCH.md](docs/MODULAR_WORKBENCH.md).
+
+- **Pull profiles.** The five `handle_style` profiles are rebuilt from the
+  reference dimensions: the square pull's feet are now square (only its top
+  corners are rounded, 3 mm); the chamfered pull gets its 37.5° chamfers from 7.5
+  and 15 mm circles; the straight bar's two legs stand 20 mm in from the ends with
+  10 mm fillets (before, both legs were drawn at its left end); the traditional pull is two arcs (crown and wing)
+  with tangent tips, legs leaning in at 8° and 6.5/15 mm fillets. Each profile and
+  drilling block matches the reference outline to within 0.6 % of its area at a
+  0.1 mm raster (the rasterisation noise). Every pull reports its size, hole
+  centres and pilot holes (`DIM|HANDLE`).
+- **Drilling jig** (`include_handle_jig`, off by default). A drilling block shaped
+  like the chosen pull's finger recess (cut from handle stock), a 240 × 97 mm plate
+  and a fence with two guide holes at 140 mm centres, half the handle stock above
+  the plate (`jig_thickness` 12 mm, `handle_pilot_diameter` 3.5 mm,
+  `jig_dowel_diameter` 8 mm). The parts go into the cut files and stand assembled
+  beside the bench in the 3D view; the pull lies over the block with its feet
+  against the fence and its leg pilots are drilled through the fence.
+- **Screw marks** (`include_screw_marks`, on). A new `pocket_screw_marks`
+  operation: 4.5 mm marks 1.5 mm deep on the machined faces where the assembly
+  screws go: sides into the back, bottom and top rails, between their fingers;
+  hinge mounting-plate screws 37 mm from the front, 32 mm apart, on both sides of
+  door modules; back into the bottom; bottom down into the frame strips (78 mm
+  either side of each cell centre, `frame_screw_offset`); back rail down into the
+  back; top rails up into the worksurface beside the hand slots; drawer box fronts
+  into the drawer faces; face panels into the module sides. On the reference
+  simple cabinet the side, back, bottom and rail marks land where the plans put
+  them. The count is reported (`DIM|SCREW_MARKS`); depth and frame-screw position
+  are checked (`SCREW_MARK_DEPTH`, `FRAME_SCREWS`). Door handle holes stay drilled
+  through.
+- **Settings regrouped** to the groups the other cabinet types use for the same
+  settings: sheet size under the flat layout (the app still shows it under
+  sheet stock), the front gap under fronts, drawer clearances under drawer
+  clearances, slides and slide drilling under their own hardware groups.
+- **Python package.** `workbench` is now an eighth frontend: `api.describe()`,
+  `inspect`, `preview`, `manufacture`, the exhaustive audit and the matrix script
+  cover it. The workbench's engine schema entry is now the package generator's own
+  output. OpenSCAD 2021 parameter files drop vectors of vectors such as the
+  module rows, so every OpenSCAD call now repeats those values as `-D` literals
+  (only bracketed literals of numbers, names and quoted words). The audit and
+  export only run the operations the workbench offers. The common `joinery`
+  setting is rejected for the workbench (its carcass joinery is fixed) and
+  `material_thickness` sets the carcass stock. The schema parser reads
+  multi-line array defaults.
+
+Validation performed:
+
+- **Shapes against the reference** (scratch tooling, nothing committed): each
+  pull profile and drilling block rendered by the engine and the matching
+  reference outline were rasterised at 0.1 mm and compared; the differences are
+  0.06–0.6 % of the area, within the rasterisation noise. The jig fence differs
+  by 0.6 %; the plate differs only at the mortise, whose reliefs are drawn
+  differently. With native OpenSCAD 2021.01 a pull of each style placed on its
+  jig (over the block, feet against the fence) intersects the block, plate and
+  fence with zero volume.
+- **Screw marks**: for the default design and every workbench starter (146 to
+  320 marks each), every mark lies inside its part's material, at least 1 mm from
+  any edge, and clear of every other pocket and hole operation.
+- `pnpm exec tsc --noEmit`, the engine-source and parity checks, units, settings
+  visibility, hardware, v5 integration (new assertions for the jig and
+  screw-mark controls and the new operation), stackable-controls, sections,
+  nesting, runtime integrity, desktop assets, engine fit, hardware-engine,
+  cut-layout check, section WASM workers, layout editor, products and
+  `pnpm run build:static` passed.
+- `tests/golden.mjs --update` changed only `tests/golden/workbench.json` (report
+  records and the pulls' cut outlines); all 120 starters then matched.
+- `tests/engine-interference.mjs` for the three hand-picked workbench cases, now
+  with the jig (chamfered, traditional and straight-bar pulls): no overlapping
+  parts (631 group pairs). The full sharded sweep was left to CI.
+- **Python package** (Python 3.13, OpenSCAD 2021.01, shapely 2.2): the unit
+  tests run 24 tests; the new workbench tests and the eight-frontend inspection
+  pass, and the two failures are the schema-equality and parameter-contract
+  tests described below, which also fail on 0.19.0. The package's exhaustive
+  CUT/POCKET audit of the default design, the default with the traditional pull
+  and jig, and all eight workbench presets reported no errors (shelf-span
+  warnings only).
+- **Headless Chrome** at 1500 px: the Hardware settings show the jig switch with
+  its details inactive until it is on; with the jig on, the Exact render (8 s)
+  shows it beside the bench and the cut list lists the three jig parts; the
+  exported package of the drawers starter contains the `pocket_screw_marks` SVG
+  and DXF files; no console errors or horizontal scroll. At 390 px the drawers
+  starter's 3D, Exact render and cut list showed no console errors or horizontal
+  scroll.
+
+Remaining limitations:
+
+- The jig's mortise and tab reliefs are the engine's T-bone reliefs, not the
+  reference's arc-shaped ones, and the handle profiles' fixed dimensions do not
+  scale with `handle_thickness` (the guide holes and fence height do).
+- Screw marks for the drawer box fronts and face panels are an engine design; the
+  reference has no cut files for those parts.
+- The Python package's schema-equality and parameter-contract tests still fail for
+  the cabinet types whose settings changed in earlier releases without the
+  package's generated schema and contract hashes being refreshed; the workbench
+  entry and its contract hash pass, and the saved validation matrix
+  (`docs/validation_matrix.json`) still holds the 82 audits from before the
+  workbench.
 
 ## 0.19.0 — 2026-11-26
 

@@ -62,12 +62,14 @@ function workbenchInactive(f:Field,v:Record<string,any>):string|null{
  if((s.startsWith('Doors /')||k.startsWith('hinge_'))&&!doors)return 'No module has doors';
  if((k.startsWith('handle_')||k==='door_thickness')&&!fronts)return 'No module has doors or drawers';
  if(k==='show_doors'&&!fronts&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module has doors, drawers or face panels';
- if((s.startsWith('Drawers /')||s==='Hardware / Drawer Slides'||k.startsWith('drawer_box')||k==='drawer_bottom_thickness'||k==='show_drawer_slides')&&!drawers)return 'No module has drawers';
+ if((s.startsWith('Drawers /')||s==='Hardware / Slides'||s==='Hardware / Slide Drilling'||k.startsWith('drawer_box')||k==='drawer_bottom_thickness'||k==='show_drawer_slides')&&!drawers)return 'No module has drawers';
  if(k==='combo_drawer_height'&&!mods.some((m:any[])=>kind(m)==='drawer_door'))return 'No module has drawers over a door';
  if(k.startsWith('metal_slide_')&&k.endsWith('holes_x')||k.endsWith('hole_diameter')&&k.startsWith('metal_slide_')||k==='slide_drill_depth')if(v.include_metal_slide_holes===false)return 'Enable slide holes';
  if(s==='Structure / Faces'&&!mods.some((m:any[])=>kind(m)==='framed'))return 'No module is framed';
  if(k==='include_stack_keys'&&!stacked)return 'No module is stacked';
  if((k.startsWith('handle_')&&k!=='handle_style'||k==='handle_thickness')&&v.handle_style==='none')return 'Select a handle style';
+ if(k==='include_handle_jig'||k.startsWith('jig_')){if(!fronts)return 'No module has doors or drawers';if(v.handle_style==='none')return 'Select a handle style';if(k!=='include_handle_jig'&&!v.include_handle_jig)return 'Enable the handle jig'}
+ if((k.startsWith('screw_mark_')||k==='frame_screw_offset')&&v.include_screw_marks===false)return 'Enable screw marks';
  if((s.startsWith('Shelves /')||k==='shelf_thickness')&&!shelves)return 'No module has shelves';
  if(k==='caster_plate_size'&&Number(v.caster_height)<=0)return 'Set a caster height';
  return null;

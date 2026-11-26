@@ -19195,39 +19195,17 @@
       "design_type": "workbench",
       "parameters": [
         {
-          "id": "stock_width",
-          "group": "Materials / Stock",
-          "type": "number",
-          "default": 2440,
-          "range": {
-            "min": 300.0,
-            "max": 5000.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "stock_height",
-          "group": "Materials / Stock",
-          "type": "number",
-          "default": 1220,
-          "range": {
-            "min": 300.0,
-            "max": 5000.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
           "id": "frame_thickness",
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 18.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Base frame strips.",
           "step": 0.01
         },
         {
@@ -19235,11 +19213,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 18.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Module sides, bottoms, backs and top rails.",
           "step": 0.01
         },
         {
@@ -19247,11 +19227,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 18.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Door stock.",
           "step": 0.01
         },
         {
@@ -19259,11 +19241,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 12.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Adjustable shelf stock (thinner sheet in the reference plans).",
           "step": 0.01
         },
         {
@@ -19271,11 +19255,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 18.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 60.0,
             "step": 0.01
           },
+          "description": "Worksurface panel stock.",
           "step": 0.01
         },
         {
@@ -19283,11 +19269,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 18.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Stock the plywood pulls are cut from.",
           "step": 0.01
         },
         {
@@ -19295,11 +19283,13 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 12.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Drawer box sides, fronts and backs (cut from the shelf sheet in the reference set).",
           "step": 0.01
         },
         {
@@ -19307,11 +19297,27 @@
           "group": "Materials / Measured Thickness",
           "type": "number",
           "default": 12.0,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Drawer box bottoms.",
+          "step": 0.01
+        },
+        {
+          "id": "jig_thickness",
+          "group": "Materials / Measured Thickness",
+          "type": "number",
+          "default": 12.0,
+          "unit": "mm",
+          "range": {
+            "min": 3.0,
+            "max": 40.0,
+            "step": 0.01
+          },
+          "description": "Handle drilling jig plate and fence.",
           "step": 0.01
         },
         {
@@ -19319,11 +19325,13 @@
           "group": "Machining / Tool and Kerf",
           "type": "number",
           "default": 6.0,
+          "unit": "mm",
           "range": {
             "min": 0.5,
             "max": 25.0,
             "step": 0.01
           },
+          "description": "Cutter for through cuts and pockets; inside corners get at least its radius.",
           "step": 0.01
         },
         {
@@ -19335,18 +19343,70 @@
             "none",
             "dogbone",
             "t_bone"
-          ]
+          ],
+          "description": "Relief cut in the inside corners of slots and pockets so square parts seat fully."
+        },
+        {
+          "id": "include_screw_marks",
+          "group": "Machining / Screw Marks",
+          "type": "boolean",
+          "default": true,
+          "description": "Shallow drill marks where the assembly screws go (sides, back, bottom, rails, drawer box fronts and face panels)."
+        },
+        {
+          "id": "screw_mark_diameter",
+          "group": "Machining / Screw Marks",
+          "type": "number",
+          "default": 4.5,
+          "unit": "mm",
+          "range": {
+            "min": 1.0,
+            "max": 10.0,
+            "step": 0.1
+          },
+          "description": "Diameter of each screw mark.",
+          "step": 0.01
+        },
+        {
+          "id": "screw_mark_depth",
+          "group": "Machining / Screw Marks",
+          "type": "number",
+          "default": 1.5,
+          "unit": "mm",
+          "range": {
+            "min": 0.2,
+            "max": 5.0,
+            "step": 0.1
+          },
+          "description": "Depth of each screw mark.",
+          "step": 0.01
+        },
+        {
+          "id": "frame_screw_offset",
+          "group": "Machining / Screw Marks",
+          "type": "number",
+          "default": 78,
+          "unit": "mm",
+          "range": {
+            "min": 10.0,
+            "max": 190.0,
+            "step": 0.5
+          },
+          "description": "Cell centre to the screws into the frame strips, along each strip line under a module.",
+          "step": 0.01
         },
         {
           "id": "joint_fit_clearance",
           "group": "Machining / Frame Joints",
           "type": "number",
           "default": 0.0,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 2.0,
             "step": 0.01
           },
+          "description": "Extra width of every slot, notch and housing across the mating stock (0 reproduces the reference plans).",
           "step": 0.01
         },
         {
@@ -19354,11 +19414,13 @@
           "group": "Machining / Frame Joints",
           "type": "number",
           "default": 14.0,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Depth of the housings in the module sides; fingers enter finger_length of it.",
           "step": 0.01
         },
         {
@@ -19366,11 +19428,13 @@
           "group": "Machining / Frame Joints",
           "type": "number",
           "default": 13.0,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Length of the back, bottom and rail fingers that enter the side housings.",
           "step": 0.01
         },
         {
@@ -19378,11 +19442,13 @@
           "group": "Machining / Frame Joints",
           "type": "number",
           "default": 0.5,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 5.0,
             "step": 0.01
           },
+          "description": "Clearance on every side of a base-frame tab in a module's registration pocket.",
           "step": 0.01
         },
         {
@@ -19390,11 +19456,13 @@
           "group": "Machining / Frame Joints",
           "type": "number",
           "default": 14.0,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 40.0,
             "step": 0.01
           },
+          "description": "Depth of the pockets under each module bottom that take the frame tabs; must exceed the tab height.",
           "step": 0.01
         },
         {
@@ -19407,7 +19475,8 @@
             "medium",
             "large",
             "custom"
-          ]
+          ],
+          "description": "Small 2 \u00d7 2, medium 3 \u00d7 2, large 4 \u00d7 2 cells, or a custom grid."
         },
         {
           "id": "grid_columns",
@@ -19419,7 +19488,7 @@
             "max": 5.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Cells along the length of a custom frame."
         },
         {
           "id": "grid_rows",
@@ -19431,7 +19500,7 @@
             "max": 3.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Cells front to back of a custom frame."
         },
         {
           "id": "cell_size",
@@ -19443,77 +19512,7 @@
             "max": 600.0,
             "step": 1.0
           },
-          "step": 1.0
-        },
-        {
-          "id": "frame_height",
-          "group": "Structure / Base",
-          "type": "number",
-          "default": 85,
-          "range": {
-            "min": 40.0,
-            "max": 300.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "frame_rail_inset",
-          "group": "Structure / Base",
-          "type": "number",
-          "default": 60,
-          "range": {
-            "min": 20.0,
-            "max": 200.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "frame_cross_members",
-          "group": "Structure / Base",
-          "type": "enum",
-          "default": "ends",
-          "enum": [
-            "ends",
-            "every_column"
-          ]
-        },
-        {
-          "id": "frame_foot_inset",
-          "group": "Structure / Base",
-          "type": "number",
-          "default": 18.67,
-          "range": {
-            "min": 0.0,
-            "max": 60.0,
-            "step": 0.01
-          },
-          "step": 0.01
-        },
-        {
-          "id": "registration_tab_length",
-          "group": "Structure / Base",
-          "type": "number",
-          "default": 50,
-          "range": {
-            "min": 10.0,
-            "max": 200.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "registration_tab_height",
-          "group": "Structure / Base",
-          "type": "number",
-          "default": 13,
-          "range": {
-            "min": 1.0,
-            "max": 40.0,
-            "step": 0.1
-          },
-          "step": 0.1
+          "description": "Pitch of the grid cells; modules occupy whole cells."
         },
         {
           "id": "modules",
@@ -19575,13 +19574,15 @@
               "back",
               "right"
             ]
-          ]
+          ],
+          "description": "One row per module: [column, row, cells wide, cells deep, height mm, contents door|open|drawers|drawer_door|framed, shelves, facing front|back|left|right, hinge left|right, drawers]. Later rows stack on earlier ones."
         },
         {
           "id": "include_stack_keys",
           "group": "Structure / Stacking",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Loose keys cut from frame stock locate a stacked module: each sits in a pocket in a top rail of the module below and in a registration pocket under the module above."
         },
         {
           "id": "face_opening_border",
@@ -19593,91 +19594,186 @@
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Framed modules: width of the face panel around its rounded opening."
         },
         {
           "id": "face_opening_radius",
           "group": "Structure / Faces",
           "type": "number",
           "default": 60,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Framed modules: corner radius of the opening.",
+          "step": 0.01
         },
         {
           "id": "top_rail_width",
           "group": "Structure / Top",
           "type": "number",
           "default": 75,
+          "unit": "mm",
           "range": {
             "min": 30.0,
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Module top rails: depth of each rail.",
+          "step": 0.01
         },
         {
           "id": "include_hand_slots",
           "group": "Structure / Top",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Hand slots in the top rails, centred on the dog-hole rows."
         },
         {
           "id": "hand_slot_length",
           "group": "Structure / Top",
           "type": "number",
           "default": 100,
+          "unit": "mm",
           "range": {
             "min": 30.0,
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Length of each hand slot.",
+          "step": 0.01
         },
         {
           "id": "hand_slot_width",
           "group": "Structure / Top",
           "type": "number",
           "default": 25,
+          "unit": "mm",
           "range": {
             "min": 10.0,
             "max": 60.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Width of each hand slot.",
+          "step": 0.01
+        },
+        {
+          "id": "frame_height",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 85,
+          "unit": "mm",
+          "range": {
+            "min": 40.0,
+            "max": 300.0,
+            "step": 1.0
+          },
+          "description": "Height of the base frame strips, without the registration tabs.",
+          "step": 0.01
+        },
+        {
+          "id": "frame_rail_inset",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 60,
+          "unit": "mm",
+          "range": {
+            "min": 20.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "description": "Strip centre lines sit this far inside every cell edge.",
+          "step": 0.01
+        },
+        {
+          "id": "frame_cross_members",
+          "group": "Structure / Base",
+          "type": "enum",
+          "default": "ends",
+          "enum": [
+            "ends",
+            "every_column"
+          ],
+          "description": "Cross strips under the end columns only (as the reference frames) or under every column."
+        },
+        {
+          "id": "frame_foot_inset",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 18.67,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 60.0,
+            "step": 0.01
+          },
+          "description": "Strip ends taper inwards by this much at the floor.",
+          "step": 0.01
+        },
+        {
+          "id": "registration_tab_length",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 50,
+          "unit": "mm",
+          "range": {
+            "min": 10.0,
+            "max": 200.0,
+            "step": 1.0
+          },
+          "description": "Tabs on top of the frame strips at every cell centre locate the modules.",
+          "step": 0.01
+        },
+        {
+          "id": "registration_tab_height",
+          "group": "Structure / Base",
+          "type": "number",
+          "default": 13,
+          "unit": "mm",
+          "range": {
+            "min": 1.0,
+            "max": 40.0,
+            "step": 0.1
+          },
+          "description": "How far the tabs stand above the strips.",
+          "step": 0.01
         },
         {
           "id": "include_worksurface",
           "group": "Structure / Worktop",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Puzzle-jointed worksurface over the whole frame, resting on the modules."
         },
         {
           "id": "worksurface_overhang",
           "group": "Structure / Worktop",
           "type": "number",
           "default": 50,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Worksurface overhang past the frame on every side.",
+          "step": 0.01
         },
         {
           "id": "worksurface_corner_radius",
           "group": "Structure / Worktop",
           "type": "number",
           "default": 15,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 100.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Radius of the four outer worksurface corners.",
+          "step": 0.01
         },
         {
           "id": "worksurface_dog_holes",
@@ -19688,7 +19784,8 @@
             "all",
             "none",
             "selected"
-          ]
+          ],
+          "description": "all, none, or only the panels listed in worksurface_dog_hole_panels (numbered from 1)."
         },
         {
           "id": "worksurface_dog_hole_panels",
@@ -19696,19 +19793,22 @@
           "type": "array",
           "default": [
             1
-          ]
+          ],
+          "description": "Worksurface panels that get dog holes when dog holes are set to selected."
         },
         {
           "id": "dog_hole_diameter",
           "group": "Structure / Worktop",
           "type": "number",
           "default": 16,
+          "unit": "mm",
           "range": {
             "min": 3.0,
             "max": 40.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Bench dog hole diameter.",
+          "step": 0.01
         },
         {
           "id": "dog_hole_pitch",
@@ -19720,19 +19820,21 @@
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Dog hole grid pitch; the grid starts half a pitch in from each cell edge."
         },
         {
           "id": "puzzle_depth",
           "group": "Structure / Worktop",
           "type": "number",
           "default": 30,
+          "unit": "mm",
           "range": {
             "min": 10.0,
             "max": 80.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Puzzle joints between worksurface panels: depth across the seam, pitch along it, dovetail flank angle.",
+          "step": 0.01
         },
         {
           "id": "puzzle_pitch",
@@ -19744,7 +19846,7 @@
             "max": 400.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Distance between puzzle tabs along a seam."
         },
         {
           "id": "puzzle_angle",
@@ -19756,150 +19858,76 @@
             "max": 30.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Dovetail flank angle of the puzzle tabs, degrees."
         },
         {
           "id": "puzzle_clearance",
           "group": "Structure / Worktop",
           "type": "number",
           "default": 0.0,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 2.0,
             "step": 0.01
           },
+          "description": "Gap cut around every puzzle tab on the receiving panel.",
           "step": 0.01
         },
         {
           "id": "door_gap",
-          "group": "Doors / Layout",
+          "group": "Fronts / Layout and Reveals",
           "type": "number",
           "default": 5,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 20.0,
             "step": 0.1
           },
-          "step": 0.1
-        },
-        {
-          "id": "combo_drawer_height",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 150,
-          "range": {
-            "min": 60.0,
-            "max": 600.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "drawer_vertical_clearance",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 20,
-          "range": {
-            "min": 4.0,
-            "max": 100.0,
-            "step": 0.5
-          },
-          "step": 0.5
-        },
-        {
-          "id": "drawer_rear_clearance",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 5,
-          "range": {
-            "min": 0.0,
-            "max": 100.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "drawer_finger_pitch",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 35,
-          "range": {
-            "min": 10.0,
-            "max": 150.0,
-            "step": 1.0
-          },
-          "step": 1.0
-        },
-        {
-          "id": "drawer_bottom_inset",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 8,
-          "range": {
-            "min": 0.0,
-            "max": 60.0,
-            "step": 0.5
-          },
-          "step": 0.5
-        },
-        {
-          "id": "drawer_bottom_pocket_depth",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 6,
-          "range": {
-            "min": 1.0,
-            "max": 30.0,
-            "step": 0.1
-          },
-          "step": 0.1
-        },
-        {
-          "id": "drawer_bottom_tongue",
-          "group": "Drawers / Layout",
-          "type": "number",
-          "default": 5,
-          "range": {
-            "min": 1.0,
-            "max": 30.0,
-            "step": 0.1
-          },
-          "step": 0.1
+          "description": "Total gap around a door (half on each edge) and between stacked or neighbouring doors.",
+          "step": 0.01
         },
         {
           "id": "shelf_front_setback",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 20,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Shelves stop this far behind the front edge of the sides.",
+          "step": 0.01
         },
         {
           "id": "shelf_rear_clearance",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 5,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 100.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Gap between a shelf and the back panel.",
+          "step": 0.01
         },
         {
           "id": "shelf_side_clearance",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 0.0,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 5.0,
             "step": 0.01
           },
+          "description": "Gap between a shelf and each side (0 reproduces the reference fit).",
           "step": 0.01
         },
         {
@@ -19907,36 +19935,42 @@
           "group": "Shelves / Layout",
           "type": "number",
           "default": 5,
+          "unit": "mm",
           "range": {
             "min": 2.0,
             "max": 10.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Shelf pin hole diameter.",
+          "step": 0.01
         },
         {
           "id": "shelf_pin_depth",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 10,
+          "unit": "mm",
           "range": {
             "min": 2.0,
             "max": 30.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Shelf pin hole depth.",
+          "step": 0.01
         },
         {
           "id": "shelf_pin_first_height",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 175,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 1000.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Height of the lowest shelf pin hole above the module bottom.",
+          "step": 0.01
         },
         {
           "id": "shelf_pin_pitch",
@@ -19948,67 +19982,171 @@
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Spacing of the shelf pin holes."
         },
         {
           "id": "shelf_pin_top_clearance",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 200,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 1000.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "No shelf pin holes closer than this to the module top.",
+          "step": 0.01
         },
         {
           "id": "shelf_pin_front_inset",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 90,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Front row of shelf pin holes, from the front edge of the side.",
+          "step": 0.01
         },
         {
           "id": "shelf_pin_rear_inset",
           "group": "Shelves / Layout",
           "type": "number",
           "default": 50,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Rear row of shelf pin holes, from the inside face of the back.",
+          "step": 0.01
+        },
+        {
+          "id": "combo_drawer_height",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 150,
+          "unit": "mm",
+          "range": {
+            "min": 60.0,
+            "max": 600.0,
+            "step": 1.0
+          },
+          "description": "Height of each drawer front above the door of a drawer-and-door module.",
+          "step": 0.01
+        },
+        {
+          "id": "drawer_rear_clearance",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 5,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 100.0,
+            "step": 1.0
+          },
+          "description": "Gap between the back of a drawer box and the module back.",
+          "step": 0.01
+        },
+        {
+          "id": "drawer_finger_pitch",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 35,
+          "range": {
+            "min": 10.0,
+            "max": 150.0,
+            "step": 1.0
+          },
+          "description": "Target height of each finger in the drawer box corner joints (an odd number of fingers is used)."
+        },
+        {
+          "id": "drawer_bottom_pocket_depth",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 6,
+          "unit": "mm",
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "description": "Depth of the blind pockets in the box sides, front and back that take the bottom's tongues.",
+          "step": 0.01
+        },
+        {
+          "id": "drawer_bottom_tongue",
+          "group": "Drawers / Layout",
+          "type": "number",
+          "default": 5,
+          "range": {
+            "min": 1.0,
+            "max": 30.0,
+            "step": 0.1
+          },
+          "description": "Length of the bottom's tongues; shorter than the pockets are deep."
+        },
+        {
+          "id": "drawer_vertical_clearance",
+          "group": "Drawers / Clearances",
+          "type": "number",
+          "default": 20,
+          "unit": "mm",
+          "range": {
+            "min": 4.0,
+            "max": 100.0,
+            "step": 0.5
+          },
+          "description": "Space left above and below each drawer box inside its share of the module.",
+          "step": 0.01
+        },
+        {
+          "id": "drawer_bottom_inset",
+          "group": "Drawers / Clearances",
+          "type": "number",
+          "default": 8,
+          "unit": "mm",
+          "range": {
+            "min": 0.0,
+            "max": 60.0,
+            "step": 0.5
+          },
+          "description": "Drawer bottoms sit this far above the lower edge of the box.",
+          "step": 0.01
         },
         {
           "id": "hinge_cup_diameter",
           "group": "Hardware / Hinges",
           "type": "number",
           "default": 35,
+          "unit": "mm",
           "range": {
             "min": 10.0,
             "max": 60.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Concealed hinge cup diameter.",
+          "step": 0.01
         },
         {
           "id": "hinge_cup_depth",
           "group": "Hardware / Hinges",
           "type": "number",
           "default": 12,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 30.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Concealed hinge cup depth.",
+          "step": 0.01
         },
         {
           "id": "hinge_cup_center_from_door_edge",
@@ -20020,131 +20158,178 @@
             "max": 60.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Hinge cup centre from the hinge edge of the door."
         },
         {
           "id": "hinge_end_offset",
           "group": "Hardware / Hinges",
           "type": "number",
           "default": 87.5,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 300.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Hinge cup centre from the top and bottom of the door.",
+          "step": 0.01
+        },
+        {
+          "id": "hinge_plate_setback",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 37,
+          "unit": "mm",
+          "range": {
+            "min": 10.0,
+            "max": 100.0,
+            "step": 0.1
+          },
+          "description": "Front edge of the module side to the hinge mounting-plate screws.",
+          "step": 0.01
+        },
+        {
+          "id": "hinge_plate_screw_spacing",
+          "group": "Hardware / Hinges",
+          "type": "number",
+          "default": 32,
+          "unit": "mm",
+          "range": {
+            "min": 10.0,
+            "max": 80.0,
+            "step": 0.1
+          },
+          "description": "Spacing of the two mounting-plate screws, centred on the hinge.",
+          "step": 0.01
         },
         {
           "id": "metal_slide_clearance_per_side",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slides",
           "type": "number",
           "default": 12.7,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 40.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Side-mount ball-bearing slides: space between the drawer box and each module side.",
+          "step": 0.01
         },
         {
           "id": "metal_slide_length",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slides",
           "type": "number",
           "default": 0,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 1000.0,
             "step": 10.0
           },
-          "step": 10.0
+          "description": "Slide length; 0 picks the longest standard length (250 to 700 mm in 50 mm steps) that fits the module.",
+          "step": 0.01
         },
         {
           "id": "metal_slide_front_setback",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slides",
           "type": "number",
           "default": 3,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 50.0,
             "step": 0.5
           },
-          "step": 0.5
+          "description": "Slides start this far behind the front edge of the module sides.",
+          "step": 0.01
         },
         {
           "id": "metal_slide_envelope_height",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slides",
           "type": "number",
           "default": 45,
+          "unit": "mm",
           "range": {
             "min": 10.0,
             "max": 100.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Height of the slide profile; a drawer box must be taller.",
+          "step": 0.01
         },
         {
           "id": "include_metal_slide_holes",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Drill the slide screw holes in the module sides and drawer boxes."
         },
         {
           "id": "metal_slide_cabinet_holes_x",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "array",
           "default": [
             37,
             133,
             229,
             325
-          ]
+          ],
+          "description": "Screw holes of the cabinet member, from the front of the slide (holes past the slide's end are left out)."
         },
         {
           "id": "metal_slide_drawer_holes_x",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "array",
           "default": [
             37,
             133,
             229,
             325
-          ]
+          ],
+          "description": "Screw holes of the drawer member, from the front of the slide."
         },
         {
           "id": "metal_slide_cabinet_hole_diameter",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "number",
           "default": 5,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 10.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Cabinet member screw hole diameter.",
+          "step": 0.01
         },
         {
           "id": "metal_slide_drawer_hole_diameter",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "number",
           "default": 5,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 10.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Drawer member screw hole diameter (drilled through the box side).",
+          "step": 0.01
         },
         {
           "id": "slide_drill_depth",
-          "group": "Hardware / Drawer Slides",
+          "group": "Hardware / Slide Drilling",
           "type": "number",
           "default": 8,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 30.0,
             "step": 0.5
           },
-          "step": 0.5
+          "description": "Depth of the pilot holes in the module sides.",
+          "step": 0.01
         },
         {
           "id": "handle_style",
@@ -20158,55 +20343,99 @@
             "chamfered",
             "straight_bar",
             "traditional"
-          ]
+          ],
+          "description": "Plywood pulls cut from handle stock; none leaves the doors undrilled."
         },
         {
           "id": "handle_hole_diameter",
           "group": "Hardware / Handles",
           "type": "number",
           "default": 4.5,
+          "unit": "mm",
           "range": {
             "min": 2.0,
             "max": 10.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Screw clearance holes for the pulls (140 mm centres).",
+          "step": 0.01
+        },
+        {
+          "id": "handle_pilot_diameter",
+          "group": "Hardware / Handles",
+          "type": "number",
+          "default": 3.5,
+          "unit": "mm",
+          "range": {
+            "min": 1.0,
+            "max": 8.0,
+            "step": 0.1
+          },
+          "description": "Pilot holes drilled 15 mm into the ends of the pull's legs.",
+          "step": 0.01
+        },
+        {
+          "id": "include_handle_jig",
+          "group": "Hardware / Handles",
+          "type": "boolean",
+          "default": false,
+          "description": "Add the drilling jig (block, plate and fence) for the pulls' pilot holes to the cut files."
+        },
+        {
+          "id": "jig_dowel_diameter",
+          "group": "Hardware / Handles",
+          "type": "number",
+          "default": 8,
+          "unit": "mm",
+          "range": {
+            "min": 3.0,
+            "max": 12.0,
+            "step": 0.1
+          },
+          "description": "Dowels that locate the drilling block on the jig plate.",
+          "step": 0.01
         },
         {
           "id": "handle_edge_offset",
           "group": "Hardware / Handles",
           "type": "number",
           "default": 117.5,
+          "unit": "mm",
           "range": {
             "min": 20.0,
             "max": 600.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Latch edge of the door to the handle centre.",
+          "step": 0.01
         },
         {
           "id": "handle_top_offset",
           "group": "Hardware / Handles",
           "type": "number",
           "default": 72.5,
+          "unit": "mm",
           "range": {
             "min": 10.0,
             "max": 600.0,
             "step": 0.1
           },
-          "step": 0.1
+          "description": "Top of the door to the handle centre line.",
+          "step": 0.01
         },
         {
           "id": "caster_height",
           "group": "Hardware / Base",
           "type": "number",
           "default": 75,
+          "unit": "mm",
           "range": {
             "min": 0.0,
             "max": 300.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Floor to the underside of the frame (caster mounting plate and wheel).",
+          "step": 0.01
         },
         {
           "id": "caster_plate_size",
@@ -20218,7 +20447,7 @@
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Square caster mounting plate under each outer frame crossing."
         },
         {
           "id": "output_mode",
@@ -20235,50 +20464,87 @@
             "pocket_drawer_dados",
             "pocket_hinge_cups",
             "pocket_shelf_pins",
-            "pocket_slide_holes"
-          ]
+            "pocket_slide_holes",
+            "pocket_screw_marks"
+          ],
+          "description": "What the engine renders: the assembly, flat parts, or a cut, pocket, engrave or BOM output."
         },
         {
           "id": "show_hardware",
           "group": "Output / Visibility",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Show the casters."
         },
         {
           "id": "show_worksurface",
           "group": "Output / Visibility",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Show the worksurface in the assembly."
         },
         {
           "id": "show_doors",
           "group": "Output / Visibility",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Show doors, drawer faces, face panels and pulls in the assembly."
         },
         {
           "id": "show_drawer_slides",
           "group": "Output / Visibility",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Show the drawer slides in the assembly."
+        },
+        {
+          "id": "stock_width",
+          "group": "Output / Flat Layout",
+          "type": "number",
+          "default": 2440,
+          "unit": "mm",
+          "range": {
+            "min": 300.0,
+            "max": 5000.0,
+            "step": 1.0
+          },
+          "description": "Stock sheet the cut files are nested onto.",
+          "step": 0.01
+        },
+        {
+          "id": "stock_height",
+          "group": "Output / Flat Layout",
+          "type": "number",
+          "default": 1220,
+          "unit": "mm",
+          "range": {
+            "min": 300.0,
+            "max": 5000.0,
+            "step": 1.0
+          },
+          "description": "Short side of the stock sheet.",
+          "step": 0.01
         },
         {
           "id": "layout_gap",
           "group": "Output / Flat Layout",
           "type": "number",
           "default": 25,
+          "unit": "mm",
           "range": {
             "min": 1.0,
             "max": 200.0,
             "step": 1.0
           },
-          "step": 1.0
+          "description": "Gap between parts in the flat cut layout.",
+          "step": 0.01
         },
         {
           "id": "label_parts",
           "group": "Output / Labels",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "description": "Engrave part labels in the engrave layout."
         },
         {
           "id": "validation_report",
@@ -20322,7 +20588,7 @@
       "capabilities": {
         "carcass_joinery": true,
         "drawer_joinery": false,
-        "screw_guides": false,
+        "screw_guides": true,
         "decimal_stock": true,
         "flat_3d": true,
         "rear_construction": false,
@@ -20331,27 +20597,29 @@
         "cabinet_stack_interface": false,
         "equipment_stack_interface": false,
         "drawer_organizers": false,
-        "modular_grid": true,
-        "common_joinery_parameter": "joinery_style"
+        "common_joinery_parameter": "joinery_style",
+        "modular_grid": true
       },
       "groups": [
-        "Materials / Stock",
         "Materials / Measured Thickness",
         "Machining / Tool and Kerf",
         "Machining / Shared Slot Relief",
+        "Machining / Screw Marks",
         "Machining / Frame Joints",
         "Sizing / Modular Grid",
-        "Structure / Base",
         "Structure / Layout",
         "Structure / Stacking",
         "Structure / Faces",
         "Structure / Top",
+        "Structure / Base",
         "Structure / Worktop",
-        "Doors / Layout",
-        "Drawers / Layout",
+        "Fronts / Layout and Reveals",
         "Shelves / Layout",
+        "Drawers / Layout",
+        "Drawers / Clearances",
         "Hardware / Hinges",
-        "Hardware / Drawer Slides",
+        "Hardware / Slides",
+        "Hardware / Slide Drilling",
         "Hardware / Handles",
         "Hardware / Base",
         "Output / View",
@@ -20370,6 +20638,7 @@
       "Machining / Tool and Kerf",
       "Machining / Shared Slot Relief",
       "Machining / Side Panels",
+      "Machining / Screw Marks",
       "Machining / Frame Joints",
       "Machining / Drawer Joints",
       "Machining / Divider Grooves",
@@ -20378,6 +20647,8 @@
       "Sizing / Fit Targets",
       "Sizing / Modular Grid",
       "Structure / Layout",
+      "Structure / Stacking",
+      "Structure / Faces",
       "Structure / Top",
       "Structure / Back and Braces",
       "Structure / Base",
@@ -20414,10 +20685,7 @@
       "Output / Calibration",
       "Output / Export Registration",
       "System / Reports",
-      "System / Interface Validation",
-      "Structure / Stacking",
-      "Structure / Faces",
-      "Hardware / Drawer Slides"
+      "System / Interface Validation"
     ],
     "rules": {
       "empty_groups": "omit",
