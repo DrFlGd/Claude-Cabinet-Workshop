@@ -17,6 +17,10 @@
 // Which organizer to build. Choosing one in the editor loads its starting sizes.
 module_type = "simple_shelves"; // [single_cube_shelf, double_cube_shelf, narrow_shelves, sandpaper_shelf, single_door_cabinet, double_door_cabinet, sliding_door_cabinet, three_drawer_cabinet, four_drawer_cabinet, simple_shelves, jar_shelves, spray_paint_display, chisel_rack, clamp_rack, hammer_rack, screwdriver_rack, plier_stand, router_bit_stand, circular_saw_stand, simple_drill_station, double_drill_station, single_shelf_drill_stand, double_shelf_drill_stand, closed_lid_box, screw_box, shallow_storage_box, glove_box, hook_panel, material_storage_stand, paper_towel_holder, wrench_holder, fit_coupon]
 
+// Fit coupon: the module whose stocks it tests (blank: the carcass stock only). The
+// export page fills it in with the design's module.
+coupon_for = "";
+
 /* [Size] */
 // Outside width.
 width = 508; // [80:0.01:1500]
@@ -110,6 +114,30 @@ material_thickness = 18.00; // [1:0.01:50]
 // Stock for the hanger, spacer and wall rail.
 cleat_stock = "match_carcass"; // [match_carcass, custom_mm, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
 custom_cleat_thickness = 19.05; // [6:0.01:50]
+// Back panel. by_mount: 1/2" (or the carcass, if thinner) where the side hooks carry the
+// module or it stands free, the carcass where it hangs on screws through the back.
+back_stock = "by_mount"; // [by_mount, match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_back_thickness = 12.0; // [1:0.01:50]
+// Drawer box sides and backs.
+drawer_box_stock = "1/2_nominal"; // [match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_drawer_box_thickness = 12.0; // [1:0.01:50]
+// Drawer fronts: one piece, flush with the carcass, with the finger pull.
+drawer_front_stock = "match_carcass"; // [match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_drawer_front_thickness = 18.0; // [1:0.01:50]
+drawer_bottom_stock = "1/4_nominal"; // [match_carcass, custom_mm, 1/8_nominal, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_drawer_bottom_thickness = 6.0; // [1:0.01:50]
+// Hinged doors and box lids.
+door_stock = "1/2_nominal"; // [match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_door_thickness = 12.0; // [1:0.01:50]
+// Sliding door leaves; the guide channels follow their thickness.
+sliding_door_stock = "1/4_nominal"; // [match_carcass, custom_mm, 1/8_nominal, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_sliding_door_thickness = 6.0; // [1:0.01:50]
+// Bin dividers of divided boxes.
+divider_stock = "1/2_nominal"; // [match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_divider_thickness = 12.0; // [1:0.01:50]
+// Shelf and deck lips, and the sliding-door guide strips.
+trim_stock = "1/2_nominal"; // [match_carcass, custom_mm, 1/4_nominal, 3/8_nominal, 1/2_nominal, 5/8_nominal, 3/4_nominal, 1_nominal]
+custom_trim_thickness = 12.0; // [1:0.01:50]
 
 /* [Joinery] */
 // Tab and slot (with screws beside the tabs) or butt joints held by screws.
@@ -156,6 +184,9 @@ output_mode = "assembly"; // [assembly, flat_3d, bom, cut_layout, drill_layout, 
 /* [Hidden] */
 // Test hook: render one part (ID) or DOWEL in assembly position.
 render_part = "";
+// Preview hook: assembly with the drawers pulled out and the doors, sliding leaves and
+// lid (with their pulls) left off, to show the drawer boxes and the inside.
+preview_open = false;
 // Accepted for compatibility with the shared export worker.
 dimension_report = "summary";
 validation_report = "summary";
@@ -185,8 +216,8 @@ function stock_mm(stock, measured) =
     stock == "1_nominal" ? 25.4 : -1;
 t = stock_mm(carcass_stock, material_thickness);
 ct = cleat_stock == "match_carcass" ? t : stock_mm(cleat_stock, custom_cleat_thickness);
+function role_mm(stock, measured) = stock == "match_carcass" ? t : stock_mm(stock, measured);
 W = width; D = depth; H = height;
-F = D - t;          // depth in front of the back
 I = W - 2*t;        // inside width
 g = fit_gap;
 fit = joint_fit_clearance;
@@ -218,6 +249,26 @@ rise = wm_rise(ct, bevel_angle);
 lift = wm_hang_lift(ct, bevel_angle, cleat_vertical_gap);
 wall_y = cleat_mount ? -ct : 0;
 
+// Stock of each part role (docs/SHOP_WALL.md). The back carries the module where it hangs
+// on screws through it (beveled hanger, direct screws, the hook panel's board); with CNC
+// side hooks the side panels carry it and the back only squares the case.
+back_carries = beveled || mount == "direct_screws" || FAMILY == "hooks";
+bt = back_stock == "by_mount" ? (back_carries ? t : min(t, 25.4/2)) : role_mm(back_stock, custom_back_thickness);
+tdw = role_mm(drawer_box_stock, custom_drawer_box_thickness);         // drawer sides and backs
+tdf = role_mm(drawer_front_stock, custom_drawer_front_thickness);     // drawer fronts
+tdb = role_mm(drawer_bottom_stock, custom_drawer_bottom_thickness);   // drawer bottoms
+tdr = role_mm(door_stock, custom_door_thickness);                     // hinged doors and lids
+tsl = role_mm(sliding_door_stock, custom_sliding_door_thickness);     // sliding leaves
+tdv = role_mm(divider_stock, custom_divider_thickness);               // bin dividers
+ttr = role_mm(trim_stock, custom_trim_thickness);                     // lips and guide strips
+// Parts of the carcass thickness share its sheets; every other thickness gets its own.
+function mat(th) = abs(th - t) < 0.001 ? "CARCASS" : "SHEET";
+F = D - bt;         // depth in front of the back
+// Parts thinner than twice the screw clearance hole take no countersunk screw through
+// them, and an edge needs the pilot plus 2 mm each side: those joints are glued.
+function screwable_face(th) = th >= 2*screw_clearance_diameter - 0.001;
+function pilot_edge(th) = screw_pilot_diameter <= th - 4;
+
 // Tool rows: centre of opening i of n across a usable width u.
 function tool_center(i, n, u) = tool_pitch == 0 ? u*(i + 0.5)/n : u/2 + (i - (n - 1)/2)*tool_pitch;
 min_web_open = max(t/3, 3);
@@ -239,7 +290,7 @@ function vrect(w, v0, v1) = [[0, v0], [w, v0], [w, v1], [0, v1]];
 function pts_box(pts) = [min([for (p=pts) p[0]]), max([for (p=pts) p[0]]), min([for (p=pts) p[1]]), max([for (p=pts) p[1]])];
 
 // Horizontal panel between the sides, in front of the back.
-function HZ(id, kind, z, dep=F, cuts=[], step=2, move=[0, -1]) = PT(id, kind, "XY", [t, t, z], rect(I, dep), t, "CARCASS", cuts, "", step, move);
+function HZ(id, kind, z, dep=F, cuts=[], step=2, move=[0, -1]) = PT(id, kind, "XY", [t, bt, z], rect(I, dep), t, "CARCASS", cuts, "", step, move);
 
 // Rib: a vertical panel in front of the back (YZ). prof is its outline with u from the
 // back's front face (u = 0) and its rear edge closing from [0, rear_top] to [0, 0].
@@ -255,24 +306,24 @@ function shift_cut(c, du) =
     c[0] == "poly" ? ["poly", [for (p=c[1]) p + [du, 0]]] :
     c[0] == "relief" ? ["relief", [for (p=c[1]) p + [du, 0]]] :
     concat([c[0], c[1] + du], [for (k=[2:len(c)-1]) c[k]]);
-function hook_outline(prof) = let(s = t + ct, top = rear_top(prof))
+function hook_outline(prof) = let(s = bt + ct, top = rear_top(prof))
     concat([for (p=prof) [p[0] + s, p[1]]],
            top < H ? [[s, H]] : [],
            wm_hook_points(ct, bevel_angle, tip_v, H, hook_tip_radius),
            [[ct, notch_z], [s, notch_z]]);
 function hook_cuts() = concat(
     tool > 0 ? [["relief", wm_hook_relief(ct, bevel_angle, tip_v, tool)]] : [],
-    relief_on ? [["relief", wm_corner_relief([t + ct, notch_z], [-1, 0], [0, -1], tool)]] : []);
-function RIB(id, kind, x, prof, role="inner", cuts=[], step=2, move=[1, -1]) =
-    hooked(role) ? PT(id, kind, "YZ", [x, -ct, 0], hook_outline(prof), t, "CARCASS",
-                      concat([for (c=cuts) shift_cut(c, t + ct)], hook_cuts()), role, step, move, prof)
-                 : PT(id, kind, "YZ", [x, t, 0], prof, t, "CARCASS", cuts, role, step, move);
+    relief_on ? [["relief", wm_corner_relief([bt + ct, notch_z], [-1, 0], [0, -1], tool)]] : []);
+function RIB(id, kind, x, prof, role="inner", cuts=[], step=2, move=[1, -1], th=t) =
+    hooked(role) ? PT(id, kind, "YZ", [x, -ct, 0], hook_outline(prof), th, mat(th),
+                      concat([for (c=cuts) shift_cut(c, bt + ct)], hook_cuts()), role, step, move, prof)
+                 : PT(id, kind, "YZ", [x, bt, 0], prof, th, mat(th), cuts, role, step, move);
 // Rib outline in front of the back (u from the back's front face).
 function rib_prof(p) = p[11];
 
 // Back: full width and height behind everything; CNC hanger ribs pass through notches.
 // Its slots, holes and notches come from the joints and the mount below.
-function BACK(step=9) = PT("BACK", "back", "XZ", [0, 0, 0], rect(W, H), t, "CARCASS", [], "", step, [1, 1]);
+function BACK(step=9) = PT("BACK", "back", "XZ", [0, 0, 0], rect(W, H), bt, mat(bt), [], "", step, [1, 1]);
 
 // Assembly steps: 1 is the first part laid down (static); every later part moves along
 // `move` into the parts already placed. The fit check verifies every joint against them.
@@ -285,14 +336,16 @@ n_shelves = FAMILY == "cubby" && !cube || FAMILY == "doors" ? interior_shelves :
 n_bays = cube ? bay_count : 1;
 sliding = MT == "sliding_door_cabinet";
 double_door = MT == "double_door_cabinet";
-// Sliding doors: bottom strips half a board high, top strips deep enough to lift a
-// leaf out of the bottom channel and still keep it in the top one.
-strip_bottom = max(t/2, joint_screws || joinery_style == "screw" ? screw_pilot_depth + 2 : 0);
+// Sliding doors: guide strips of trim stock, the bottom ones half a strip high (or deep
+// enough for the screw pilot), the top ones deep enough to lift a leaf out of the bottom
+// channel and still keep it in the top one. Each channel is one leaf plus a gap each side.
+strip_screws = (joint_screws || joinery_style == "screw") && pilot_edge(ttr) && screwable_face(t);
+strip_bottom = max(ttr/2, strip_screws ? screw_pilot_depth + 2 : 0);
 strip_lift = strip_bottom + 2*g;
 strip_top = strip_lift + strip_bottom;
-channel = t + 2*g;
-track = 3*t + 2*channel;
-shelf_depth = FAMILY == "doors" ? (sliding ? F - track - g : F - t - 2*g) : F;
+channel = tsl + 2*g;
+track = 3*ttr + 2*channel;
+shelf_depth = FAMILY == "doors" ? (sliding ? F - track - g : F - tdr - 2*g) : F;
 clear_h = (H - 2*t - n_shelves*t)/(n_shelves + 1);     // equal openings
 function shelf_z(k) = t + k*clear_h + (k - 1)*t;
 bay_w = (I - (n_bays - 1)*t)/n_bays;
@@ -301,25 +354,29 @@ leaf = double_door ? (I - 3*g)/2 : I - 2*g;
 door_h = H - 2*t - 2*g;
 slide_w = (I + t)/2 - g;
 slide_h = H - 2*t - strip_lift;
-function slide_y(j) = D - track + t + j*(2*t + 2*g) + g;   // leaf j (0 rear, 1 front)
+function strip_y(j) = D - track + j*(ttr + channel);
+function slide_y(j) = strip_y(j) + ttr + g;              // leaf j (0 rear, 1 front)
 pull_span = min(101.6, 0.62*leaf);
 function finger_d(w) = min(25.4, w/6);
+// Drawer boxes: sides and back of drawer box stock, a one-piece front flush with the
+// carcass, and a bottom the walls stand on (their tabs in its slots).
 drawer_pitch = (H - t)/max(1, drawer_count);
-dbh = drawer_pitch - t - g;           // drawer box height
+dbh = drawer_pitch - t - g;           // drawer box height, bottom included
 dbw = I - 2*g;
 dbd = F - g;
+dwh = dbh - tdb;                      // wall height above the bottom
 function drawer_z(i) = i*drawer_pitch + t;
-function drawer_parts(i) = let(x0 = t + g, y0 = t + g, z = drawer_z(i), s = 20 + 4*i, id = str("DRAWER_", i + 1),
-        fd = min(34.29, dbh - t))
-    [PT(str(id, "_SIDE_L"), "drawer_side", "YZ", [x0, y0 + t, z + t], rect(dbd - 2*t, dbh - t), t, "CARCASS", [], "", s, [-1, 0]),
-     PT(str(id, "_SIDE_R"), "drawer_side", "YZ", [x0 + dbw - t, y0 + t, z + t], rect(dbd - 2*t, dbh - t), t, "CARCASS", [], "", s, [-1, 0]),
-     PT(str(id, "_FRONT"), "drawer_front", "XZ", [x0, y0 + dbd - t, z + t], rect(dbw, dbh - t), t, "CARCASS", [["circle", dbw/2, dbh - t, fd]], "", s + 1, [1, -1]),
-     PT(str(id, "_BACK"), "drawer_back", "XZ", [x0, y0, z + t], rect(dbw, dbh - t), t, "CARCASS", [], "", s + 2, [1, 1]),
-     PT(str(id, "_BOTTOM"), "drawer_bottom", "XY", [x0, y0, z], rect(dbw, dbd), t, "CARCASS", [], "", s + 3, [2, 1])];
+function drawer_parts(i) = let(x0 = t + g, y0 = bt + g, z = drawer_z(i), s = 20 + 4*i, id = str("DRAWER_", i + 1),
+        fd = min(34.29, dwh))
+    [PT(str(id, "_SIDE_L"), "drawer_side", "YZ", [x0, y0 + tdw, z + tdb], rect(dbd - tdw - tdf, dwh), tdw, mat(tdw), [], "", s, [-1, 0]),
+     PT(str(id, "_SIDE_R"), "drawer_side", "YZ", [x0 + dbw - tdw, y0 + tdw, z + tdb], rect(dbd - tdw - tdf, dwh), tdw, mat(tdw), [], "", s, [-1, 0]),
+     PT(str(id, "_FRONT"), "drawer_front", "XZ", [x0, y0 + dbd - tdf, z + tdb], rect(dbw, dwh), tdf, mat(tdf), [["circle", dbw/2, dwh, fd]], "", s + 1, [1, -1]),
+     PT(str(id, "_BACK"), "drawer_back", "XZ", [x0, y0, z + tdb], rect(dbw, dwh), tdw, mat(tdw), [], "", s + 2, [1, 1]),
+     PT(str(id, "_BOTTOM"), "drawer_bottom", "XY", [x0, y0, z], rect(dbw, dbd), tdb, mat(tdb), [], "", s + 3, [2, 1])];
 function shell_parts() = concat(
     side_pair(rect(F, H)),
-    cube ? [PT("BOTTOM", "bottom", "XY", [t, t, 0], rect(I, F), t, "CARCASS", [], "", 0, [-1, 0]),
-            PT("TOP", "top", "XY", [t, t, H - t], rect(I, F), t, "CARCASS", [], "", 0, [2, -1])]
+    cube ? [PT("BOTTOM", "bottom", "XY", [t, bt, 0], rect(I, F), t, "CARCASS", [], "", 0, [-1, 0]),
+            PT("TOP", "top", "XY", [t, bt, H - t], rect(I, F), t, "CARCASS", [], "", 0, [2, -1])]
          : [HZ("BOTTOM", "bottom", 0), HZ("TOP", "top", H - t)],
     [for (k=[1:1:n_shelves]) HZ(str("SHELF_", k), "shelf", shelf_z(k), shelf_depth)],
     [for (k=[1:1:n_bays - 1]) RIB(str("DIVIDER_", k), "divider", bay_x(k), vrect(F, t, H - t), "inner", [], 0, [2, -1])]);
@@ -329,25 +386,25 @@ function cube_steps(p) = p[0] == "BOTTOM" ? [1, [-1, 0]] : p[1] == "divider" ? [
     p[0] == "SIDE_L" ? [4, [0, 1]] : p[0] == "SIDE_R" ? [5, [0, -1]] : [p[9], p[10]];
 function restep(list, f) = [for (p=list) let(s = f(p)) [for (k=[0:len(p) - 1]) k == 9 ? s[0] : k == 10 ? s[1] : p[k]]];
 function door_parts() = sliding ? concat(
-        [for (j=[0:2]) let(y = D - track + j*(t + channel)) each [
-            PT(str("STRIP_B", j + 1), "guide_strip", "XZ", [t, y, t], rect(I, strip_bottom), t, "CARCASS", [], "", 3, [2, -1]),
-            PT(str("STRIP_T", j + 1), "guide_strip", "XZ", [t, y, H - t - strip_top], rect(I, strip_top), t, "CARCASS", [], "", 3, [2, 1])]],
+        [for (j=[0:2]) let(y = strip_y(j)) each [
+            PT(str("STRIP_B", j + 1), "guide_strip", "XZ", [t, y, t], rect(I, strip_bottom), ttr, mat(ttr), [], "", 3, [2, -1]),
+            PT(str("STRIP_T", j + 1), "guide_strip", "XZ", [t, y, H - t - strip_top], rect(I, strip_top), ttr, mat(ttr), [], "", 3, [2, 1])]],
         [for (j=[0:1]) PT(str("SLIDING_DOOR_", j + 1), "sliding_door", "XZ",
-            [j == 0 ? t + g : W - t - g - slide_w, slide_y(j), t], rect(slide_w, slide_h), t, "CARCASS",
+            [j == 0 ? t + g : W - t - g - slide_w, slide_y(j), t], rect(slide_w, slide_h), tsl, mat(tsl),
             [["circle", j == 0 ? 0.17*slide_w : 0.83*slide_w, 0.25*slide_h, finger_d(I)]], "", 30, [-1, 0])])
     : [for (j=[0:double_door ? 1 : 0]) let(x = j == 0 ? t + g : W - t - g - leaf, hx = j == 0 ? leaf - min(33, leaf/3) : min(33, leaf/3),
             fd = finger_d(I), px = x + min(max(hx - pull_span/2, t/3), leaf - pull_span - t/3), pz = t + g + 38.1 + fd/2 + tool + fit + 3) each [
-        PT(str("DOOR_", j + 1), "door", "XZ", [x, D - t, t + g], rect(leaf, door_h), t, "CARCASS", [["circle", hx, 38.1, fd]], "", 30, [-1, 0]),
+        PT(str("DOOR_", j + 1), "door", "XZ", [x, D - tdr, t + g], rect(leaf, door_h), tdr, mat(tdr), [["circle", hx, 38.1, fd]], "", 30, [-1, 0]),
         PT(str("DOOR_", j + 1, "_PULL"), "pull", "XY", [px, D, pz], rect(pull_span, t), t, "CARCASS", [], "", 31, [1, -1])]];
 
 // --- open display shelves
 display_lips = MT != "simple_shelves";
 disp_step = (H - t)/display_shelves;
-function display_prof() = [[0, 0], [F, 0], [F, min(H, t + lip_height + 7.62)], [0.72*D - t, H], [0, H]];
+function display_prof() = [[0, 0], [F, 0], [F, min(H, t + lip_height + 7.62)], [0.72*D - bt, H], [0, H]];
 function display_parts() = concat(
     side_pair(display_prof()),
     [for (i=[0:display_shelves - 1]) HZ(str("SHELF_", i + 1), "shelf", i*disp_step)],
-    display_lips ? [for (i=[0:display_shelves - 1]) PT(str("LIP_", i + 1), "lip", "XZ", [t, D - t, i*disp_step + t], rect(I, lip_height), t, "CARCASS", [], "", 2.5, [2, -1])] : []);
+    display_lips ? [for (i=[0:display_shelves - 1]) PT(str("LIP_", i + 1), "lip", "XZ", [t, D - ttr, i*disp_step + t], rect(I, lip_height), ttr, mat(ttr), [], "", 2.5, [2, -1])] : []);
 
 // --- racks and stands
 rack_prof = [[0, 0], [F, H - 1.5*t], [F, H], [0, H]];
@@ -373,7 +430,7 @@ gusset_d = 0.4*F;
 function drill_parts() = FAMILY == "drill_simple" ? concat(
         [RIB("GUSSET_L", "gusset", 0, [[0, 0], [gusset_d, H - t], [0, H - t]], "hanger", [], 2, [2, 1]),
          RIB("GUSSET_R", "gusset", W - t, [[0, 0], [gusset_d, H - t], [0, H - t]], "hanger", [], 2, [2, 1])],
-        [PT("CRADLE", "drill_cradle", "XY", [0, t, H - t], rect(W, F), t, "CARCASS",
+        [PT("CRADLE", "drill_cradle", "XY", [0, bt, H - t], rect(W, F), t, "CARCASS",
             [for (i=[0:tool_count - 1]) ["front", tool_center(i, tool_count, W), F, tool_width, drill_l]], "", 1, [-1, 0])])
     : concat(side_pair(rect(F, H)),
         [HZ("CRADLE", "drill_cradle", 0, F, [for (i=[0:tool_count - 1]) ["front", tool_center(i, tool_count, I), F, tool_width, drill_l]])],
@@ -383,23 +440,23 @@ function drill_parts() = FAMILY == "drill_simple" ? concat(
 // --- boxes
 box_lid = MT == "closed_lid_box";
 box_div = MT != "shallow_storage_box";
-box_top = box_lid ? H - t : H;
+box_top = box_lid ? H - tdr : H;
 box_fh = box_lid ? box_top : max(2*t, box_top*front_height_fraction);
 box_cy = F - t;
-box_cell = (I - (box_columns - 1)*t)/box_columns;
+box_cell = (I - (box_columns - 1)*tdv)/box_columns;
 box_dh = box_fh - 1.3*t;
-function box_prof() = box_lid ? rect(F, box_top) : [[0, 0], [F, 0], [F, box_fh], [0.54*D - t, box_top], [0, box_top]];
-function box_xdiv_y(j) = t + j*(box_cy + t)/box_rows - t;
+function box_prof() = box_lid ? rect(F, box_top) : [[0, 0], [F, 0], [F, box_fh], [0.54*D - bt, box_top], [0, box_top]];
+function box_xdiv_y(j) = bt + j*(box_cy + tdv)/box_rows - tdv;
 lid_pull = min(101.6, 0.62*W);
 function box_parts() = concat(
-    [PT("BOTTOM", "bottom", "XY", [t, t, 0], rect(I, F), t, "CARCASS", [], "", 1, [-1, 0])],
+    [PT("BOTTOM", "bottom", "XY", [t, bt, 0], rect(I, F), t, "CARCASS", [], "", 1, [-1, 0])],
     restep(side_pair(box_prof(), "box_side"), function(p) p[0] == "SIDE_L" ? [4, [0, 1]] : [5, [0, -1]]),
     [PT("FRONT", "box_front", "XZ", [t, D - t, t], rect(I, box_fh - t), t, "CARCASS", [], "", 3, [2, -1])],
     box_div ? concat(
-        [for (i=[1:1:box_columns - 1]) RIB(str("LONG_DIV_", i), "long_divider", i*(box_cell + t), vrect(box_cy, t, t + box_dh), "inner", [], 2, [2, -1])],
+        [for (i=[1:1:box_columns - 1]) RIB(str("LONG_DIV_", i), "long_divider", t + i*box_cell + (i - 1)*tdv, vrect(box_cy, t, t + box_dh), "inner", [], 2, [2, -1], tdv)],
         [for (i=[0:box_columns - 1]) for (j=[1:1:box_rows - 1])
-            PT(str("CROSS_DIV_", i + 1, "_", j), "cross_divider", "XZ", [t + i*(box_cell + t), box_xdiv_y(j), t], rect(box_cell, box_dh), t, "CARCASS", [], "", 2, [2, -1])]) : [],
-    box_lid ? [PT("LID", "lid", "XY", [0, t + g, H - t], rect(W, F - g), t, "CARCASS", [], "", 30, [-1, 0]),
+            PT(str("CROSS_DIV_", i + 1, "_", j), "cross_divider", "XZ", [t + i*(box_cell + tdv), box_xdiv_y(j), t], rect(box_cell, box_dh), tdv, mat(tdv), [], "", 2, [2, -1])]) : [],
+    box_lid ? [PT("LID", "lid", "XY", [0, bt + g, H - tdr], rect(W, F - g), tdr, mat(tdr), [], "", 30, [-1, 0]),
                PT("LID_PULL", "pull", "XZ", [(W - lid_pull)/2, D - 1.5*t, H], rect(lid_pull, t), t, "CARCASS", [], "", 31, [2, -1])] : []);
 // Lid box: the lid rests on the sides and front; the sides stop one board below the top.
 function box_shift() = box_lid;
@@ -408,7 +465,7 @@ function box_shift() = box_lid;
 glove_w = aperture_height > 0 ? aperture_height : 0.42*H;
 glove_l = aperture_length > 0 ? aperture_length : 0.78*I;
 function glove_parts() = concat(
-    [PT("BOTTOM", "bottom", "XY", [t, t, 0], rect(I, F), t, "CARCASS", [], "", 1, [-1, 0])],
+    [PT("BOTTOM", "bottom", "XY", [t, bt, 0], rect(I, F), t, "CARCASS", [], "", 1, [-1, 0])],
     restep(side_pair(rect(F, H)), function(p) p[0] == "SIDE_L" ? [3, [0, 1]] : [4, [0, -1]]),
     [PT("FRONT", "glove_front", "XZ", [t, D - t, t], rect(I, H - t), t, "CARCASS", [["oblong", I/2, (H - t)/2, glove_w, glove_l, 0]], "", 2, [2, -1])]);
 hook_prof = [[0, 0], [F, 0.28*H], [F, 0.64*H], [F - t/2, 0.64*H], [F - t, 0.37*H], [0, 0.50*H]];
@@ -416,8 +473,8 @@ function hook_parts() = [for (i=[0:hook_count - 1]) RIB(str("HOOK_", i + 1), "ho
 function bracket_x(i) = (W - t)*i/(bracket_count - 1);
 function bracket_parts() = concat(
     [for (i=[0:bracket_count - 1]) RIB(str("BRACKET_", i + 1), "bracket", bracket_x(i), [[0, 0], [F, H - t], [0, H - t]], "hanger", [], 2, [2, 1])],
-    [PT("DECK", "deck", "XY", [0, t, H - t], rect(W, F), t, "CARCASS", [], "", 1, [-1, 0]),
-     PT("LIP", "lip", "XZ", [0, D - t, H], rect(W, lip_height), t, "CARCASS", [], "", 3, [2, -1])]);
+    [PT("DECK", "deck", "XY", [0, bt, H - t], rect(W, F), t, "CARCASS", [], "", 1, [-1, 0]),
+     PT("LIP", "lip", "XZ", [0, D - ttr, H], rect(W, lip_height), ttr, mat(ttr), [], "", 3, [2, -1])]);
 towel_y = F - max(t, dowel_diameter);   // dowel centre, from the back's front face
 function towel_prof() = let(z = H/2, d = dowel_diameter) [[0, 0], [F, z - d], [F, z + d], [0, H]];
 function towel_parts() = [for (s=[0:1]) RIB(s == 0 ? "CHEEK_L" : "CHEEK_R", "dowel_cheek", s == 0 ? 0 : W - t, towel_prof(), "hanger",
@@ -429,7 +486,19 @@ function wrench_slots() = [for (i=[0:wrench_levels - 1]) let(z = t + (i + 0.5)*w
 function wrench_parts() = [for (s=[0:1]) RIB(s == 0 ? "CHEEK_L" : "CHEEK_R", "wrench_cheek", s == 0 ? 0 : W - t, rect(F, H), "hanger", wrench_slots(), 1, [-1, 0])];
 
 // --- fit test coupon: one tab in its slot (with screws), and a short hook or hanger on
-// a short rail, cut from the same stock with the same clearances, cutter and bevel.
+// a short rail, cut from the same stock with the same clearances, cutter and bevel. A
+// module whose tabs come from other stocks too (drawer boxes, lips, strips, bin dividers)
+// adds one tab plate per stock in the same slot plate.
+function tab_stocks(m) =
+    m == "three_drawer_cabinet" || m == "four_drawer_cabinet" ? [tdw, tdf] :
+    m == "jar_shelves" || m == "spray_paint_display" || m == "material_storage_stand" || m == "sliding_door_cabinet" ? [ttr] :
+    m == "closed_lid_box" || m == "screw_box" ? [tdv] : [];
+function uniq(l, i=0, acc=[]) = i >= len(l) ? acc :
+    uniq(l, i + 1, len([for (x=acc) if (abs(x - l[i]) < 0.001) 1]) ? acc : concat(acc, [l[i]]));
+cp_th = uniq(concat([t], tab_stocks(coupon_for)));
+function cp_y(k) = k == 0 ? 30 : cp_y(k - 1) + cp_th[k - 1] + 30;
+function cp_tab_id(k) = k == 0 ? "COUPON_TAB" : str("COUPON_TAB_", k + 1);
+cp_depth = cp_y(len(cp_th) - 1) + cp_th[len(cp_th) - 1] + 30;
 cp_w = min(joint_tab_width, 60);
 cp_plate = max(cp_w + 4*sj_screw_gap(screw_clearance_diameter, tool) , 100);
 cp_top = 2*ch + 20;
@@ -438,8 +507,8 @@ cp_x = cp_plate + 40;
 function coupon_hook_outline() = concat([[ct, cp_rail], [ct + 60, cp_rail], [ct + 60, cp_top]],
     wm_hook_points(ct, bevel_angle, cp_top - ch, cp_top, hook_tip_radius));
 function coupon_parts() = concat(
-    [PT("COUPON_SLOT", "coupon_slot", "XY", [0, 0, 0], rect(cp_plate, t + 60), t, "CARCASS", [], "", 1, [-1, 0]),
-     PT("COUPON_TAB", "coupon_tab", "XZ", [0, 30, t], rect(cp_plate, 50), t, "CARCASS", [], "", 2, [2, -1])],
+    [PT("COUPON_SLOT", "coupon_slot", "XY", [0, 0, 0], rect(cp_plate, cp_depth), t, "CARCASS", [], "", 1, [-1, 0])],
+    [for (k=[0:len(cp_th) - 1]) PT(cp_tab_id(k), "coupon_tab", "XZ", [0, cp_y(k), t], rect(cp_plate, 50), cp_th[k], mat(cp_th[k]), [], "", 2, [2, -1])],
     cleat_strategy == "cnc_hooks" ?
         [PT("COUPON_HOOK", "coupon_hook", "YZ", [cp_x, -ct, 0], coupon_hook_outline(), t, "CARCASS",
             tool > 0 ? [["relief", wm_hook_relief(ct, bevel_angle, cp_top - ch, tool)]] : [], "", 40, [-1, 0])] :
@@ -478,7 +547,7 @@ MOUNT_PARTS = coupon ? [] : concat(
             [for (u=wm_screw_stations(rail_len, wall_screw_spacing, 2*wall_screw_diameter + 10)) ["circle", u, (ch - rise)/2, wall_screw_diameter]], "", 60, [-1, 0])] : []);
 
 // Screws through the back (hanger, spacer, direct wall screws), kept off the rib bands.
-rib_bands = [for (p=RIBS) [p[3][0] - 6 - screw_clearance_diameter, p[3][0] + t + 6 + screw_clearance_diameter]];
+rib_bands = [for (p=RIBS) [p[3][0] - 6 - screw_clearance_diameter, p[3][0] + p[5] + 6 + screw_clearance_diameter]];
 function in_band(x) = len([for (b=rib_bands) if (x > b[0] && x < b[1]) 1]) > 0;
 function free_x(x) = !in_band(x) ? x :
     let(b = [for (q=rib_bands) if (x > q[0] && x < q[1]) q][0],
@@ -492,7 +561,7 @@ BACK_SCREWS = coupon ? [] : concat(
     mount == "direct_screws" ? [for (z=[0.2*H, 0.8*H]) for (x=back_screw_xs(W, 0, wall_screw_diameter)) [x, z, wall_screw_diameter, "wall"]] : []);
 function back_part() = let(b = BACK(FAMILY == "hooks" ? 1 : 9))
     [for (k=[0:len(b) - 1]) k == 7 ? concat(
-        [for (p=RIBS) if (hooked(p[8])) let(x0 = p[3][0] - fit/2, w = t + fit, v0 = notch_z - fit/2)
+        [for (p=RIBS) if (hooked(p[8])) let(x0 = p[3][0] - fit/2, w = p[5] + fit, v0 = notch_z - fit/2)
             ["pocket", x0, v0, w, H - v0 + 1, [x0 < eps, x0 + w > W - eps, false, true]]],
         [for (s=BACK_SCREWS) ["circle", s[0], s[1], s[2]]]) : b[k]];
 
@@ -506,7 +575,7 @@ function world_box(p) = let(o = p[3], b = pts_box(p[4]), th = p[5])
     p[2] == "XZ" ? [[o[0] + b[0], o[0] + b[1]], [o[1], o[1] + th], [o[2] + b[2], o[2] + b[3]]] :
                    [[o[0], o[0] + th], [o[1] + b[0], o[1] + b[1]], [o[2] + b[2], o[2] + b[3]]];
 // The same for the body of a part in front of the back (a hooked side panel without its hook).
-function body_box(p) = hooked(p[8]) ? let(b = pts_box(p[11])) [[p[3][0], p[3][0] + p[5]], [t + b[0], t + b[1]], [b[2], b[3]]] : world_box(p);
+function body_box(p) = hooked(p[8]) ? let(b = pts_box(p[11])) [[p[3][0], p[3][0] + p[5]], [bt + b[0], bt + b[1]], [b[2], b[3]]] : world_box(p);
 // World -> local (u, v) of a point on part p.
 function to_local(p, q) = let(o = p[3])
     p[2] == "XY" ? [q[0] - o[0], q[1] - o[1]] : p[2] == "XZ" ? [q[0] - o[0], q[2] - o[2]] : [q[1] - o[1], q[2] - o[2]];
@@ -529,21 +598,21 @@ function rear_from(prof, v, end, dv) = (dv > 0 ? v >= end : v <= end) ? end :
 function rib_back_joint(p) = let(x = p[3][0], prof = rib_prof(p), b0 = rear_bottom(prof),
         t0 = hooked(p[8]) ? notch_z - fit/2 - max(tool, t/2) : rear_top(prof),
         b = rear_from(prof, b0 + 0.01, t0, 0.5), top = rear_from(prof, t0 - 0.01, b, -0.5))
-    J("BACK", p[0], 2, b, top - b, 0, x, x + t, 1, t, -1, top > b ? [[0, top - b]] : []);
+    J("BACK", p[0], 2, b, top - b, 0, x, x + p[5], 1, bt, -1, top > b ? [[0, top - b]] : []);
 // Horizontal panel (XY) along its rear edge into the back, clear of the ribs' seams and
 // the notches the hooked ribs pass through.
 function hz_back_joint(h) = let(x0 = h[3][0], w = pts_box(h[4])[1], z = h[3][2],
-        keep = [for (r=RIBS) let(a = r[3][0] - x0) [a - fit/2 - tool, a + t + fit/2 + tool]])
-    J("BACK", h[0], 0, x0, w, 2, z, z + t, 1, t, -1, sj_cut_all([[0, w]], keep));
-function back_horizontals() = [for (p=BODY) if (p[2] == "XY" && abs(p[3][1] - t) < eps && p[1] != "drawer_bottom" && p[1] != "pull") p];
+        keep = [for (r=RIBS) let(a = r[3][0] - x0) [a - fit/2 - tool, a + r[5] + fit/2 + tool]])
+    J("BACK", h[0], 0, x0, w, 2, z, z + h[5], 1, bt, -1, sj_cut_all([[0, w]], keep));
+function back_horizontals() = [for (p=BODY) if (p[2] == "XY" && abs(p[3][1] - bt) < eps && p[1] != "drawer_bottom" && p[1] != "pull") p];
 // A joint has room for at least one tab (or screw with screw joinery).
 function has_room(j) = joinery_style == "tab_slot" ? len(sj_tabs(j[11], tool, fit)) > 0 : len(sj_screw_only(j[11], tool)) > 0;
 // Horizontal panel (XY) into a rib: seam along Y on the rib's face, where the rib's
 // outline covers the panel's thickness band.
 function hz_rib_joint(h, r, left) = let(z = h[3][2], y0 = h[3][1], dep = pts_box(h[4])[3],
-        prof = rib_prof(r), band = sj_band(prof, z - (hooked(r[8]) ? 0 : 0), z + t),
-        lo = len(band) ? max(0, band[0] - (y0 - t)) : 0, hi = len(band) ? min(dep, band[1] - (y0 - t)) : 0)
-    J(r[0], h[0], 1, y0, dep, 2, z, z + t, 0, left ? r[3][0] + t : r[3][0], left ? -1 : 1, hi > lo ? [[lo, hi]] : []);
+        prof = rib_prof(r), band = sj_band(prof, z, z + h[5]),
+        lo = len(band) ? max(0, band[0] - (y0 - bt)) : 0, hi = len(band) ? min(dep, band[1] - (y0 - bt)) : 0)
+    J(r[0], h[0], 1, y0, dep, 2, z, z + h[5], 0, left ? r[3][0] + r[5] : r[3][0], left ? -1 : 1, hi > lo ? [[lo, hi]] : []);
 // Panel standing on a horizontal panel (its bottom edge on the host's top face) or
 // hanging from one (its top edge on the host's underside).
 function on_joint(host, m, below) = let(hb = world_box(part(host)), mb = world_box(m),
@@ -551,13 +620,13 @@ function on_joint(host, m, below) = let(hb = world_box(part(host)), mb = world_b
     J(host, m[0], a, s0, L, c, mb[c][0], mb[c][1], 2, below ? hb[2][1] : hb[2][0], below ? -1 : 1, [[0, L]]);
 // Panel end (XZ part's X edge) into a rib's face.
 function end_joint(r, m, left, z0, z1) =
-    J(r[0], m[0], 2, z0, z1 - z0, 1, m[3][1], m[3][1] + m[5], 0, left ? r[3][0] + t : r[3][0], left ? -1 : 1, [[0, z1 - z0]]);
+    J(r[0], m[0], 2, z0, z1 - z0, 1, m[3][1], m[3][1] + m[5], 0, left ? r[3][0] + r[5] : r[3][0], left ? -1 : 1, [[0, z1 - z0]]);
 function horizontals() = [for (p=BODY) if (p[2] == "XY" && (p[3][0] == t) && p[1] != "drawer_bottom" && p[1] != "pull") p];
 function side_joints(L, R) = concat(
     [for (h=horizontals()) hz_rib_joint(h, L, true)],
     [for (h=horizontals()) hz_rib_joint(h, R, false)]);
 
-JOINTS = coupon ? [J("COUPON_SLOT", "COUPON_TAB", 0, 0, cp_plate, 1, 30, 30 + t, 2, t, -1, [[0, cp_plate]], [[cp_plate/2 - cp_w/2, cp_plate/2 + cp_w/2]])] :
+JOINTS = coupon ? [for (k=[0:len(cp_th) - 1]) J("COUPON_SLOT", cp_tab_id(k), 0, 0, cp_plate, 1, cp_y(k), cp_y(k) + cp_th[k], 2, t, -1, [[0, cp_plate]], [[cp_plate/2 - cp_w/2, cp_plate/2 + cp_w/2]])] :
     concat(
     // Ribs and horizontal panels into the back (hook panels: the hooks are pushed onto
     // the back). A rib whose rear edge below its hook has no room for a tab is held by the
@@ -569,16 +638,16 @@ JOINTS = coupon ? [J("COUPON_SLOT", "COUPON_TAB", 0, 0, cp_plate, 1, 30, 30 + t,
     cube ? [for (p=BODY) if (p[1] == "divider") each [on_joint("BOTTOM", p, true), on_joint("TOP", p, false)]] : [],
     FAMILY == "doors" && sliding ? [for (p=BODY) if (p[1] == "guide_strip") on_joint(p[3][2] < H/2 ? "BOTTOM" : "TOP", p, p[3][2] < H/2)] : [],
     FAMILY == "doors" && !sliding ? [for (p=BODY) if (p[1] == "pull") let(d = part(str(p[0] == "DOOR_1_PULL" ? "DOOR_1" : "DOOR_2")))
-        J(d[0], p[0], 0, p[3][0], pull_span, 2, p[3][2], p[3][2] + t, 1, D, -1, [[0, pull_span]])] : [],
-    FAMILY == "drawers" ? [for (i=[0:drawer_count - 1]) let(id = str("DRAWER_", i + 1), z = drawer_z(i), x0 = t + g, y0 = t + g) each [
+        J(d[0], p[0], 0, p[3][0], pull_span, 2, p[3][2], p[3][2] + p[5], 1, D, -1, [[0, pull_span]])] : [],
+    FAMILY == "drawers" ? [for (i=[0:drawer_count - 1]) let(id = str("DRAWER_", i + 1), z = drawer_z(i), x0 = t + g, y0 = bt + g) each [
         on_joint(str(id, "_BOTTOM"), part(str(id, "_SIDE_L")), true), on_joint(str(id, "_BOTTOM"), part(str(id, "_SIDE_R")), true),
         on_joint(str(id, "_BOTTOM"), part(str(id, "_FRONT")), true), on_joint(str(id, "_BOTTOM"), part(str(id, "_BACK")), true),
-        for (s=[0:1]) let(x = s == 0 ? x0 : x0 + dbw - t) each [
-            J(str(id, "_FRONT"), str(id, s == 0 ? "_SIDE_L" : "_SIDE_R"), 2, z + t, dbh - t, 0, x, x + t, 1, y0 + dbd - t, 1, [[0, dbh - t]]),
-            J(str(id, "_BACK"), str(id, s == 0 ? "_SIDE_L" : "_SIDE_R"), 2, z + t, dbh - t, 0, x, x + t, 1, y0 + t, -1, [[0, dbh - t]])]]] : [],
+        for (s=[0:1]) let(x = s == 0 ? x0 : x0 + dbw - tdw) each [
+            J(str(id, "_FRONT"), str(id, s == 0 ? "_SIDE_L" : "_SIDE_R"), 2, z + tdb, dwh, 0, x, x + tdw, 1, y0 + dbd - tdf, 1, [[0, dwh]]),
+            J(str(id, "_BACK"), str(id, s == 0 ? "_SIDE_L" : "_SIDE_R"), 2, z + tdb, dwh, 0, x, x + tdw, 1, y0 + tdw, -1, [[0, dwh]])]]] : [],
     FAMILY == "display" && display_lips ? [for (i=[0:display_shelves - 1]) on_joint(str("SHELF_", i + 1), part(str("LIP_", i + 1)), true)] : [],
     FAMILY == "drill_simple" ? [for (s=["GUSSET_L", "GUSSET_R"]) let(r = part(s))
-        J("CRADLE", s, 1, t, gusset_d, 0, r[3][0], r[3][0] + t, 2, H - t, 1, [[0, gusset_d]])] : [],
+        J("CRADLE", s, 1, bt, gusset_d, 0, r[3][0], r[3][0] + r[5], 2, H - t, 1, [[0, gusset_d]])] : [],
     FAMILY == "box" ? concat(
         [on_joint("BOTTOM", part("FRONT"), true),
          end_joint(part("SIDE_L"), part("FRONT"), true, t, box_fh), end_joint(part("SIDE_R"), part("FRONT"), false, t, box_fh)],
@@ -587,7 +656,7 @@ JOINTS = coupon ? [J("COUPON_SLOT", "COUPON_TAB", 0, 0, cp_plate, 1, 30, 30 + t,
     FAMILY == "glove" ? [on_joint("BOTTOM", part("FRONT"), true),
          end_joint(part("SIDE_L"), part("FRONT"), true, t, H), end_joint(part("SIDE_R"), part("FRONT"), false, t, H)] : [],
     FAMILY == "brackets" ? concat(
-        [for (p=BODY) if (p[1] == "bracket") J("DECK", p[0], 1, t, F, 0, p[3][0], p[3][0] + t, 2, H - t, 1, [[0, F]])],
+        [for (p=BODY) if (p[1] == "bracket") J("DECK", p[0], 1, bt, F, 0, p[3][0], p[3][0] + p[5], 2, H - t, 1, [[0, F]])],
         [on_joint("DECK", part("LIP"), true)]) : []);
 
 // Joint style and planned tabs and screws (positions along the seam, from s0).
@@ -595,11 +664,16 @@ function tab_joint(j) = joinery_style == "tab_slot";
 function jtabs(j) = !tab_joint(j) ? [] : len(j[12]) ? j[12] : sj_tabs(j[11], tool, fit);
 // Edge depth of the member behind a joint, for the screw pilot.
 function edge_depth(j) = let(mb = world_box(part(j[1]))) mb[j[8]][1] - mb[j[8]][0];
-function pilot_fits(j) = screw_pilot_diameter <= part(j[1])[5] - 4 && edge_depth(j) >= screw_pilot_depth + 2 - 0.001;
-// Tab joints whose member is too shallow for the pilot are glued without screws.
-function jscrews(j) = tab_joint(j) ? (joint_screws && pilot_fits(j) ? sj_screws(j[11], jtabs(j), screw_clearance_diameter, tool) : [])
-                                   : sj_screw_only(j[11], tool);
+function pilot_fits(j) = pilot_edge(part(j[1])[5]) && edge_depth(j) >= screw_pilot_depth + 2 - 0.001;
 function host_t(j) = part(j[0])[5];
+// A screw needs the pilot in the member's edge and a countersink in the host: joints
+// with a part too thin or too shallow for either are glued (tabs) or glued and
+// brad-nailed (butt joints) instead.
+function screw_ok(j) = pilot_fits(j) && screwable_face(host_t(j));
+function wants_screws(j) = !tab_joint(j) || joint_screws;
+function jscrews(j) = !screw_ok(j) ? [] : tab_joint(j) ? (joint_screws ? sj_screws(j[11], jtabs(j), screw_clearance_diameter, tool) : [])
+                                                       : sj_screw_only(j[11], tool);
+GLUED = [for (j=JOINTS) if (wants_screws(j) && !screw_ok(j)) j];
 // Slot cross range, opened past the host's edge when the member is flush with it.
 function slot_cross(j) = let(hb = world_box(part(j[0]))[j[5]], lo = j[6] - fit/2, hi = j[7] + fit/2)
     [lo < hb[0] + 0.5 ? hb[0] - 1 : lo, hi > hb[1] - 0.5 ? hb[1] + 1 : hi];
@@ -703,10 +777,13 @@ COLORS = [["back", [0.72, 0.56, 0.37]], ["side", [0.82, 0.68, 0.47]], ["box_side
           ["hanger", [0.60, 0.46, 0.30]], ["spacer", [0.60, 0.46, 0.30]], ["pull", [0.50, 0.38, 0.25]], ["lid", [0.88, 0.74, 0.52]]];
 function color_of(kind) = let(c = [for (x=COLORS) if (x[0] == kind) x[1]]) len(c) ? c[0] : [0.91, 0.79, 0.59];
 module dowel() {
-    color([0.62, 0.45, 0.27]) translate([-t/3, t + towel_y, H/2]) rotate([0, 90, 0]) cylinder(h=W + 2*t/3, d=dowel_diameter);
+    color([0.62, 0.45, 0.27]) translate([-t/3, bt + towel_y, H/2]) rotate([0, 90, 0]) cylinder(h=W + 2*t/3, d=dowel_diameter);
 }
+function open_hidden(p) = preview_open && (p[1] == "door" || p[1] == "sliding_door" || p[1] == "lid" || p[1] == "pull");
+function open_pull(p) = preview_open && (p[1] == "drawer_side" || p[1] == "drawer_front" || p[1] == "drawer_back" || p[1] == "drawer_bottom") ?
+    [0, dbd*(0.35 + 0.2*(floor((p[3][2] - t + 0.01)/drawer_pitch) % 3)), 0] : [0, 0, 0];
 module assembly() {
-    for (p=PARTS) if (render_part == "" || render_part == p[0]) color(color_of(p[1])) part_3d(p);
+    for (p=PARTS) if ((render_part == "" || render_part == p[0]) && !open_hidden(p)) translate(open_pull(p)) color(color_of(p[1])) part_3d(p);
     if (FAMILY == "towel" && (render_part == "" || render_part == "DOWEL")) dowel();
 }
 
@@ -786,12 +863,13 @@ module fit_checks() {
                       "FIT_CLEARANCE", str(j[1], " to ", j[0], ": slot is not tab + ", fit, " mm on both axes."));
                 check(min(q[1] - q[0] + fit, m[5] + fit) >= tool, "SLOT_CUTTER", str(j[1], " to ", j[0], ": a ", q[1] - q[0] + fit, " x ", m[5] + fit, " mm slot is narrower than the ", tool, " mm cutter."));
                 check(tab_setback >= 0 && tab_setback < ht/2, "TAB_LENGTH", str(j[1], " to ", j[0], ": tabs must be shorter than the ", ht, " mm panel they pass through, by less than half its thickness."));
+                check(ht - tab_setback >= 3, "TAB_DEPTH", str(j[1], " to ", j[0], ": the ", ht, " mm ", j[0], " leaves the tabs only ", ht - tab_setback, " mm of engagement: make it at least ", 3 + tab_setback, " mm thick, or use screw joinery."));
                 if (q[0] < q[1]) let(w = q[1] - q[0] + fit, hh = sc[1] - sc[0], open = [false, false, sc[0] < j[6] - fit/2 - 0.5, sc[1] > j[7] + fit/2 + 0.5],
                         cc = corner_clear(w, hh, open))
                     if (relief_on) check(len([for (c=cc) if (!c) 1]) == 0, "SLOT_RELIEF", str(j[1], " to ", j[0], ": a slot corner relief does not clear the tab corner."));
             }
             check(len([for (x=sj_webs(ts)) if (x < 2*tool + 1) 1]) == 0, "TAB_WEB", str(j[1], " to ", j[0], ": less than two cutter widths of wood between slots."));
-        } else check(len(jscrews(j)) > 0, "NO_ROOM_FOR_SCREWS", str(j[1], " to ", j[0], ": no room for a screw."));
+        } else if (screw_ok(j)) check(len(jscrews(j)) > 0, "NO_ROOM_FOR_SCREWS", str(j[1], " to ", j[0], ": no room for a screw."));
         // Screws land in the host's wood, clear of its slots and cuts, and in the member's edge.
         for (s=jscrews(j)) let(a = j[3] + s, c = (j[6] + j[7])/2, wp = [for (ax=[0:2]) ax == j[2] ? a : ax == j[5] ? c : j[9]],
                 lc = to_local(h, wp), d = screw_clearance_diameter, hb = [lc[0] - d/2, lc[0] + d/2, lc[1] - d/2, lc[1] + d/2],
@@ -802,6 +880,13 @@ module fit_checks() {
             check(pilot_fits(j), "SCREW_PILOT",
                   str(j[1], " to ", j[0], ": the ", screw_pilot_diameter, " x ", screw_pilot_depth, " mm pilot does not fit the edge of ", j[1], "."));
         }
+    }
+    // Thin or shallow parts: glued in their tabs, or glued and brad-nailed butt joints.
+    let(gt = [for (j=GLUED) if (tab_joint(j)) j], gb = [for (j=GLUED) if (!tab_joint(j)) j]) {
+        if (len(gt)) info(false, "GLUED_TABS", str(len(gt), " tab joint(s) take no screws, glue only: a part is under ", 2*screw_clearance_diameter,
+             " mm for the countersink or its edge is too thin or shallow for the ", screw_pilot_diameter, " x ", screw_pilot_depth, " mm pilot (", gt[0][1], " to ", gt[0][0], len(gt) > 1 ? ", ..." : "", ")."));
+        if (len(gb)) warn(false, "GLUED_BUTT", str(len(gb), " butt joint(s) are too thin for screws and are held by glue and brads only (", gb[0][1], " to ", gb[0][0],
+             len(gb) > 1 ? ", ..." : "", "): use tab and slot joinery, or thicker stock for those parts."));
     }
     if (!relief_on && len([for (j=JOINTS) each jtabs(j)]) > 0)
         warn(fit/2*sqrt(2) >= (sqrt(2) - 1)*tool/2, "SLOT_RELIEF", str("Slots are cut with square inside corners: the ", tool, " mm cutter leaves rounded corners that stop the tabs seating unless CAM adds dog-bone or T-bone relief."));
@@ -817,7 +902,8 @@ module fit_checks() {
         check(m[9] != h[9] && later[10] == need, "ASSEMBLY_ORDER",
               str(j[1], " to ", j[0], ": in the assembly order ", later[0], " cannot be fitted along its tabs."));
     }
-    if (!coupon) check(len([for (j=JOINTS) if (j[0] == "BACK") each concat(jtabs(j), jscrews(j))]) >= 2, "BACK_HELD", "The back has fewer than two tabs or screws holding it: turn on screws beside the tabs, use a fixed count of two tabs, or make the module larger.");
+    if (!coupon) check(len([for (j=JOINTS) if (j[0] == "BACK") each concat(jtabs(j), jscrews(j))]) >= 2, "BACK_HELD", str("The back has fewer than two tabs or screws holding it: turn on screws beside the tabs, use a fixed count of two tabs, ",
+        screwable_face(bt) ? "" : str("a back at least ", 2*screw_clearance_diameter, " mm thick so it takes screws, "), "or make the module larger."));
     // 4. No two parts share space (base outlines, by their boxes). Beveled boards interlock
     // with the rail, and hooked side panels reach through the back, so those pairs are
     // left to the exact 3D sweep of the test suite.
@@ -849,16 +935,26 @@ module fit_checks() {
                       str(p[0], " runs into the wall rail at ", z, " mm: change the rail pitch or the module height."));
     }
     // 6. Functional fits.
-    if (FAMILY == "doors" && !sliding) check(g >= 0.5 && leaf > 20 && t + shelf_depth <= D - t - g + 0.01, "DOOR_FIT", "Doors need at least 0.5 mm all round and shelves set back behind them.");
+    if (FAMILY == "doors" && !sliding) check(g >= 0.5 && leaf > 20 && bt + shelf_depth <= D - tdr - g + 0.01, "DOOR_FIT", "Doors need at least 0.5 mm all round and shelves set back behind them.");
+    // Hinge screws go into the edge of an inset door (and the lid's rear edge), and thin
+    // panels bow over their height.
+    if (FAMILY == "doors" && !sliding || box_lid && FAMILY == "box")
+        warn(tdr >= 9 && (box_lid || door_h <= 60*tdr), "DOOR_STOCK", str("The ", tdr, " mm ", box_lid ? "lid" : "doors",
+             tdr < 9 ? " are too thin for screws into their edges: use surface-mount hinges." : str(" may bow over ", door_h, " mm: use stock at least ", door_h/60, " mm thick.")));
+    if (!coupon && back_carries) {
+        check(screwable_face(bt), "BACK_STOCK", str("The module hangs on screws through the ", bt, " mm back: it needs at least ", 2*screw_clearance_diameter, " mm for countersunk screws."));
+        warn(bt >= 12, "BACK_STOCK", str("The module hangs on screws through the ", bt, " mm back: 1/2 inch (12 mm) or thicker is recommended."));
+    }
     if (sliding) {
         check(strip_top - strip_lift >= strip_bottom - 0.01 && slide_h + strip_lift + 2*t <= H + 0.01, "SLIDING_FIT",
               "A sliding leaf must lift out of the bottom channel and stay in the top one.");
         check(slide_w > 2*finger_d(I), "SLIDING_WIDTH", "Sliding leaves are too narrow for their finger bores.");
         check(shelf_depth > 2*t, "SLIDING_DEPTH", "The sliding-door track leaves no room for shelves: make the cabinet deeper.");
+        warn(slide_h <= 100*tsl, "SLIDING_STOCK", str("The ", tsl, " mm sliding leaves may bow over ", slide_h, " mm: use stock at least ", slide_h/100, " mm thick."));
     }
-    if (FAMILY == "drawers") check(dbh > 2*t + 10 && dbw > 2*t + 20 && dbd > 2*t + 20 && g >= 0.5, "DRAWER_FIT",
+    if (FAMILY == "drawers") check(dwh > tdb + 10 && dbw > 2*tdw + 20 && dbd > tdw + tdf + 20 && g >= 0.5, "DRAWER_FIT",
         str("Each drawer box needs room inside its opening: ", dbw, " x ", dbh, " x ", dbd, " mm with ", g, " mm clearance."));
-    if (FAMILY == "box") check(box_cell >= 20 && box_cy/box_rows - t >= 20 && box_dh > t, "BIN_FIT", "Each bin needs at least 20 mm clear and dividers taller than a board.");
+    if (FAMILY == "box") check(box_cell >= 20 && (box_cy - (box_rows - 1)*tdv)/box_rows >= 20 && box_dh > t, "BIN_FIT", "Each bin needs at least 20 mm clear and dividers taller than a board.");
 }
 module info(ok, code, msg) { if (!ok) echo(str("CHECK|INFO|", code, "|", msg)); }
 
@@ -869,6 +965,8 @@ function row_ok(n, w, u) = let(c = [for (i=[0:n-1]) tool_center(i, n, u)])
 module validate() {
     check(t > 0 && t <= 50, "STOCK", "Carcass stock must be a listed preset or a measured thickness from 1 to 50 mm.");
     check(ct > 0 && ct <= 50, "CLEAT_STOCK", "Cleat stock must be a listed preset or a measured thickness from 6 to 50 mm.");
+    for (r=[["back", bt], ["drawer box", tdw], ["drawer front", tdf], ["drawer bottom", tdb], ["door and lid", tdr], ["sliding door", tsl], ["bin divider", tdv], ["lip and strip", ttr]])
+        check(r[1] >= 1 && r[1] <= 50, "STOCK", str("The ", r[0], " stock must be a listed preset or a measured thickness from 1 to 50 mm."));
     check(FAMILY != "unknown", "MODULE_TYPE", str("Unknown module ", MT, "."));
     check(coupon || (W >= 3*t + 20 && D >= 2*t + 20 && H >= 3*t + 20), "SIZE", "The module is too small for its stock.");
     check(fit >= 0 && fit < t/4, "FIT_CLEARANCE", "Joint fit clearance must be at least 0 and less than a quarter of the stock.");
@@ -926,20 +1024,34 @@ function bom_note(p) =
     p[1] == "wall_rail" ? str("SECONDARY BEVEL ", bevel_angle, " deg along the top edge, high side to the room; blank; screw into studs") :
     p[1] == "hanger" ? str("SECONDARY BEVEL ", bevel_angle, " deg along the bottom edge, low side to the wall; blank; screwed through the back") :
     p[1] == "spacer" ? "screwed through the back; keeps the bottom of the module off the wall" :
-    hooked(p[8]) || p[1] == "coupon_hook" ? "CNC side hook on the rear edge" : "as drawn";
+    hooked(p[8]) || p[1] == "coupon_hook" ? "CNC side hook on the rear edge" :
+    p[1] == "drawer_bottom" ? "drawer bottom stock; the walls' tabs drop into its slots, glued" :
+    p[1] == "drawer_side" || p[1] == "drawer_back" ? "drawer box stock" :
+    p[1] == "drawer_front" ? "drawer front stock, flush with the carcass" :
+    p[1] == "door" || p[1] == "lid" ? "door and lid stock" :
+    p[1] == "sliding_door" ? str("sliding door stock; runs in a ", channel, " mm channel") :
+    p[1] == "long_divider" || p[1] == "cross_divider" ? "bin divider stock" :
+    p[1] == "lip" || p[1] == "guide_strip" ? "lip and strip stock" :
+    p[1] == "back" ? (back_carries ? "back stock; carries the module" : "back stock") :
+    p[1] == "coupon_tab" && p[5] != t ? str("tab plate of the ", p[5], " mm stock, into the carcass slot plate") : "as drawn";
 module reports() {
     validate();
     total_d = D + (cleat_mount ? ct : 0);
     echo(str("DIM|CABINET|OUTSIDE|W=", W, "|H=", H, "|D=", total_d));
     echo(str("DIM|SHOP_WALL|MODULE|TYPE=", MT, "|FAMILY=", FAMILY, "|W=", W, "|H=", H, "|D=", D, "|WALL_D=", total_d, "|STOCK=", t));
+    stocks = uniq([for (p=PARTS) if (p[6] != "CLEAT") p[5]]);
+    echo(str("DIM|SHOP_WALL|STOCKS|CARCASS=", t, coupon ? "" : str("|BACK=", bt), "|SHEETS=", len(stocks),
+             FAMILY == "drawers" ? str("|DRAWER_BOX=", tdw, "|DRAWER_FRONT=", tdf, "|DRAWER_BOTTOM=", tdb) : "",
+             FAMILY == "doors" && !sliding || box_lid && FAMILY == "box" ? str("|DOOR=", tdr) : "", sliding ? str("|SLIDING_DOOR=", tsl) : "",
+             FAMILY == "box" && box_div ? str("|DIVIDER=", tdv) : "", display_lips && FAMILY == "display" || FAMILY == "brackets" || sliding ? str("|TRIM=", ttr) : ""));
     echo(str("DIM|SHOP_WALL|MOUNT|MOUNT=", mount, "|STRATEGY=", cleat_mount ? (cnc ? "cnc_hooks" : "beveled_board") : "none",
              "|CLEAT_H=", ch, "|BEVEL=", bevel_angle, "|RISE=", rise, "|RAIL_Z=", rail_z, "|RAIL_L=", rail_len, "|HANG_LIFT=", lift));
     echo(str("DIM|SHOP_WALL|JOINERY|STYLE=", joinery_style, "|FIT=", fit, "|SETBACK=", tab_setback, "|RELIEF=", relief_on ? slot_corner_relief : "none", "|CUTTER=", tool,
              "|JOINTS=", len(JOINTS), "|TABS=", len([for (j=JOINTS) each jtabs(j)]), "|SCREWS=", len([for (j=JOINTS) each jscrews(j)])));
     if (n_shelves > 0) echo(str("DIM|SHOP_WALL|SHELVES|COUNT=", n_shelves, "|OPENING_H=", clear_h));
     if (cube) echo(str("DIM|SHOP_WALL|BAYS|COUNT=", n_bays, "|CLEAR_W=", bay_w, "|CLEAR_H=", H - 2*t));
-    if (FAMILY == "drawers") echo(str("DIM|SHOP_WALL|DRAWERS|COUNT=", drawer_count, "|BOX_W=", dbw, "|BOX_H=", dbh, "|BOX_D=", dbd, "|GAP=", g));
-    if (FAMILY == "doors") echo(sliding ? str("DIM|SHOP_WALL|SLIDING|LEAF_W=", slide_w, "|LEAF_H=", slide_h, "|LIFT=", strip_lift, "|CHANNEL=", channel) :
+    if (FAMILY == "drawers") echo(str("DIM|SHOP_WALL|DRAWERS|COUNT=", drawer_count, "|BOX_W=", dbw, "|BOX_H=", dbh, "|BOX_D=", dbd, "|GAP=", g, "|INSIDE_W=", dbw - 2*tdw, "|INSIDE_D=", dbd - tdw - tdf));
+    if (FAMILY == "doors") echo(sliding ? str("DIM|SHOP_WALL|SLIDING|LEAF_W=", slide_w, "|LEAF_H=", slide_h, "|LEAF_T=", tsl, "|LIFT=", strip_lift, "|CHANNEL=", channel, "|TRACK=", track) :
                                           str("DIM|SHOP_WALL|DOORS|COUNT=", double_door ? 2 : 1, "|LEAF_W=", leaf, "|LEAF_H=", door_h, "|GAP=", g));
     if (FAMILY == "box") echo(str("DIM|SHOP_WALL|BINS|COLUMNS=", box_div ? box_columns : 1, "|ROWS=", box_div ? box_rows : 1, "|CELL_W=", box_div ? box_cell : I, "|FRONT_H=", box_fh));
     if (FAMILY == "rack" || FAMILY == "stand" || FAMILY == "drill_simple" || FAMILY == "drill_cabinet")
@@ -954,13 +1066,14 @@ module reports() {
         screws = len([for (j=JOINTS) each jscrews(j)]);
         if (screws > 0) echo(str("HARDWARE|ID=joint_screws|QTY=", screws, "|UNIT=each|NOTE=countersunk wood screws through ", screw_clearance_diameter, " mm holes; pilot ", screw_pilot_diameter, " x ", screw_pilot_depth, " mm into the panel edge, drilled at assembly"));
         bs = [for (s=BACK_SCREWS) if (s[3] != "wall") s];
-        if (len(bs)) echo(str("HARDWARE|ID=hanger_screws|QTY=", len(bs), "|UNIT=each|NOTE=countersunk from inside the back into the hanger and spacer; length at most ", floor(t + ct - 3), " mm"));
+        if (len(bs)) echo(str("HARDWARE|ID=hanger_screws|QTY=", len(bs), "|UNIT=each|NOTE=countersunk from inside the back into the hanger and spacer; length at most ", floor(bt + ct - 3), " mm"));
         ws = len([for (s=BACK_SCREWS) if (s[3] == "wall") s]) + (cleat_mount && include_wall_rail && !coupon ? len(wm_screw_stations(rail_len, wall_screw_spacing, 2*wall_screw_diameter + 10)) : 0);
         if (ws > 0) echo(str("HARDWARE|ID=wall_screws|QTY=", ws, "|UNIT=each|NOTE=", wall_screw_diameter, " mm screws into studs (or rated anchors), countersunk flush"));
         hinges = FAMILY == "doors" && !sliding ? (double_door ? 4 : 2) : box_lid && FAMILY == "box" ? 2 : 0;
-        if (hinges > 0) echo(str("HARDWARE|ID=hinges|QTY=", hinges, "|UNIT=each|NOTE=surface-mount or butt hinges for ", t, " mm stock; ", FAMILY == "box" ? "lid hinged at the top of the back" : "inset doors hinged on the outer edges"));
+        if (hinges > 0) echo(str("HARDWARE|ID=hinges|QTY=", hinges, "|UNIT=each|NOTE=", tdr < 9 ? "surface-mount" : "surface-mount or butt", " hinges for ", tdr, " mm stock; ", FAMILY == "box" ? "lid hinged at the top of the back" : "inset doors hinged on the outer edges"));
         if (FAMILY == "towel") echo(str("HARDWARE|ID=dowel|QTY=1|UNIT=each|NOTE=", dowel_diameter, " mm dowel, ", W + 2*t/3, " mm long"));
         echo("HARDWARE|ID=glue|QTY=1|UNIT=bottle|NOTE=wood glue for every tab joint");
+        if (len(GLUED)) echo(str("HARDWARE|ID=brads|QTY=", len(GLUED), "|UNIT=joint|NOTE=18 ga brads to hold the ", len(GLUED), " glued thin-stock joint(s) that take no screws (drawer bottoms and thin parts) while the glue sets"));
     }
 }
 

@@ -51,6 +51,23 @@ assert.match(swControl('drawer_count').when(swV),/Not used/);
 assert.equal(swControl('tool_width').labelFor(P.productStarterValues(sw,'router_bit_stand')),'Bit shank diameter');
 assert(sw.validate({...swV,height:100,cleat_height:63.5}).some(e=>/too short|below/.test(e)),'short module with CNC hooks is refused');
 assert.match(P.productTarget(sw).coupon.source(swV),/^module_type = "fit_coupon";/m);
+// Part-role stocks: shown only for the modules that have the role, defaults from the SCAD
+// file (docs/SHOP_WALL.md), the back by mount, and the coupon told which module it tests.
+const drV=P.productStarterValues(sw,'three_drawer_cabinet');
+for(const k of ['drawer_box_stock','drawer_front_stock','drawer_bottom_stock']){assert.equal(swControl(k).when(drV),null,k);assert.match(swControl(k).when(swV),/Not used/)}
+assert.match(swControl('custom_drawer_bottom_thickness').when(drV),/measured/);
+assert.equal(swControl('custom_drawer_bottom_thickness').when({...drV,drawer_bottom_stock:'custom_mm'}),null);
+assert.equal(swControl('sliding_door_stock').when(P.productStarterValues(sw,'sliding_door_cabinet')),null);
+assert.equal(swControl('trim_stock').when(P.productStarterValues(sw,'jar_shelves')),null);
+assert.match(swControl('divider_stock').when(P.productStarterValues(sw,'shallow_storage_box')),/Not used/);
+assert.equal(swControl('back_stock').when(swV),null);
+assert.deepEqual([drV.drawer_box_stock,drV.drawer_front_stock,drV.drawer_bottom_stock,drV.door_stock,drV.sliding_door_stock,drV.divider_stock,drV.trim_stock,drV.back_stock],
+ ['1/2_nominal','match_carcass','1/4_nominal','1/2_nominal','1/4_nominal','1/2_nominal','1/2_nominal','by_mount']);
+assert.equal(sw.sections.find(x=>x.id==='materials').summary(drV,'mm'),'19.05 mm carcass · 12.7 mm back · 12.7 mm drawer boxes · 6.35 mm drawer bottoms');
+assert.equal(sw.sections.find(x=>x.id==='materials').summary({...drV,cleat_strategy:'beveled_board'},'mm'),'19.05 mm carcass · 12.7 mm drawer boxes · 6.35 mm drawer bottoms');
+assert(sw.validate({...drV,drawer_box_stock:'custom_mm',custom_drawer_box_thickness:0.5}).some(e=>/Drawer box stock/.test(e)));
+assert.deepEqual(sw.validate({...swV,drawer_box_stock:'custom_mm',custom_drawer_box_thickness:0.5}),[],'an unused role is not checked');
+assert.match(P.productTarget(sw).coupon.source(drV),/^coupon_for = "three_drawer_cabinet";/m);
 const mc=P.productById('media_cart');
 assert.deepEqual(mc.params.find(x=>x.key==='rows'),{key:'rows',value:3,section:'Body and grid',help:'',min:1,max:12,step:1});
 assert.deepEqual(mc.params.find(x=>x.key==='joinery_style').options,['butt','screw','dado','tab_slot']);

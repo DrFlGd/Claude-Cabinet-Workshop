@@ -97,6 +97,18 @@ const CASES=[
  ['shop_wall','wrench_holder',{wrench_levels:12,height:600,cleat_strategy:'beveled_board'}],
  ['shop_wall','simple_shelves',{depth:304.8,joint_tab_width:9.525,target_tab_spacing:40}],
  ['shop_wall','fit_coupon',{cleat_strategy:'beveled_board'}],
+ // Part-role stocks: thin and thick backs on hooks and hangers, 3/8 and 1/4 drawer boxes on
+ // 1/8 or 1/2 bottoms, thick sliding leaves, thin lips, strips, doors and bin dividers.
+ ['shop_wall','four_drawer_cabinet',{drawer_box_stock:'3/8_nominal',drawer_front_stock:'1/2_nominal',drawer_bottom_stock:'1/2_nominal',back_stock:'1/4_nominal'}],
+ ['shop_wall','three_drawer_cabinet',{drawer_box_stock:'1/4_nominal',drawer_bottom_stock:'1/8_nominal',joinery_style:'screw',cleat_strategy:'beveled_board'}],
+ ['shop_wall','sliding_door_cabinet',{sliding_door_stock:'1/2_nominal',trim_stock:'1/4_nominal',back_stock:'3/4_nominal'}],
+ ['shop_wall','single_door_cabinet',{door_stock:'match_carcass',back_stock:'1/4_nominal',mount:'none'}],
+ ['shop_wall','closed_lid_box',{door_stock:'1/4_nominal',divider_stock:'1/4_nominal',box_columns:4}],
+ ['shop_wall','screw_box',{divider_stock:'custom_mm',custom_divider_thickness:9,back_stock:'match_carcass'}],
+ ['shop_wall','jar_shelves',{trim_stock:'1/4_nominal',back_stock:'5/8_nominal'}],
+ ['shop_wall','material_storage_stand',{trim_stock:'3/4_nominal',back_stock:'custom_mm',custom_back_thickness:11.5}],
+ ['shop_wall','hook_panel',{back_stock:'1_nominal'}],
+ ['shop_wall','fit_coupon',{coupon_for:'four_drawer_cabinet',drawer_front_stock:'5/8_nominal'}],
 ];
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)/4294967296}}
 // What the random sweep varies, per product.
@@ -108,7 +120,7 @@ const RANDOM={
   SIZES:{width:[500,1400],depth:[350,800],rear_height:[600,1300],front_height:[150,450],cubby_height:[90,220],tower_width:[120,280]},
  },
  shop_wall:{
-  CHOICES:['mount','cleat_strategy','carcass_stock','cleat_stock','joinery_style','slot_corner_relief','tab_count_mode'],
+  CHOICES:['mount','cleat_strategy','carcass_stock','cleat_stock','joinery_style','slot_corner_relief','tab_count_mode','back_stock','drawer_box_stock','drawer_front_stock','drawer_bottom_stock','door_stock','sliding_door_stock','divider_stock','trim_stock'],
   TOGGLES:['joint_screws','include_wall_rail','second_row'],
   COUNTS:{interior_shelves:[0,4],bay_count:[1,4],drawer_count:[1,5],display_shelves:[1,4],tool_count:[1,10],box_columns:[1,4],box_rows:[1,3],hook_count:[2,8],bracket_count:[2,5],wrench_levels:[2,10],upper_shelf_count:[1,3]},
   SIZES:{width:[200,900],depth:[100,400],height:[120,700]},

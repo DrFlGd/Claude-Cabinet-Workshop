@@ -53,7 +53,7 @@ export function productTarget(p:Product):EngineTarget{
    {name:'design.cabinet.json',data:productDesignFile(p,v,name,units)},
    {name:'START-HERE.txt',data:p.startHere??`${p.name}: open ${p.file} in OpenSCAD 2021.01 or later. All selected settings are applied.\n\nKeep the products/ and engine/ folders together: the product includes shared joinery modules from engine/.\n\nSet output_mode to assembly for the 3D model, cut_layout for through cuts, drill_layout for holes smaller than the cutter (drill at the circle centers), pocket_dados for dados on the face that is up, pocket_dados_flip for dados on the other face, engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. All layouts share one registration frame. pocket_dados_flip is drawn for the whole layout turned over left to right about its vertical center line (the registration frame lands on itself): machine the up-face pockets, turn the stock over that way, machine the flip pockets, turn it back, then drill and cut. The app's per-sheet files add registration-pin holes on that line.\n`},
   ],
-  coupon:p.coupon?{label:p.coupon.label,note:p.coupon.note,source:v=>productSource(p,{...v,module_type:p.coupon!.module})}:undefined,
+  coupon:p.coupon?{label:p.coupon.label,note:p.coupon.note,source:v=>productSource(p,{...v,...(p.coupon!.forKey?{[p.coupon!.forKey]:v.module_type}:{}),module_type:p.coupon!.module})}:undefined,
   packet:(name,v,text,units)=>productPacket(p,name,v,text,units),
  };
 }
