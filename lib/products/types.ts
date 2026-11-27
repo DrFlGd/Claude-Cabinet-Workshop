@@ -55,8 +55,9 @@ export type Product={
  area?:string;
  // START-HERE.txt of the OpenSCAD project download.
  startHere?:string;
- // A fit test coupon: the module_type value that builds it, and what it is for.
- coupon?:{module:string;label:string;note:string};
+ // A fit test coupon: the module_type value that builds it, and what it is for. forKey
+ // names the setting that receives the design's module, so the coupon can test its stocks.
+ coupon?:{module:string;label:string;note:string;forKey?:string};
  sections:ProductSection[];
  starters:ProductStarter[];defaultStarter:string;
  renderModes:{id:string;label:string}[];exportModes:string[];

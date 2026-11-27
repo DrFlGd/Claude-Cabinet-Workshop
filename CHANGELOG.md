@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.26.0**) are separate from the bundled
+Application versions (currently **0.27.0**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,102 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.27.0 — 2026-11-27
+
+Shop wall: each part role has its own stock thickness, instead of every part being
+cut from ¾″ carcass stock.
+
+- **Part-role stocks.** Materials now has one stock setting per part role: back,
+  drawer box (sides and backs), drawer front, drawer bottom, door and lid, sliding
+  door, bin divider, and lip and guide strip. Each takes a nominal preset, a measured
+  thickness or *Same as carcass*. A setting appears only for modules that have the
+  role, and is listed under "settings not in use" with the reason elsewhere. The
+  defaults follow shop practice:
+  - Carcass ¾″: sides, top, bottom, shelves, decks, cradles, dividers that carry
+    load, hooks, cheeks and pulls.
+  - Back *by mount*: ½″ where the CNC side hooks carry the module or it stands free,
+    the carcass where it hangs on screws through the back (beveled hanger, direct
+    screws, hook panel).
+  - Drawer sides and backs ½″, drawer bottoms ¼″, drawer fronts carcass. The front
+    is the one-piece face, flush with the carcass.
+  - Doors and the box lid ½″, sliding leaves ¼″, bin dividers ½″, lips and guide
+    strips ½″.
+
+  docs/SHOP_WALL.md has the per-module table of parts, roles, default thicknesses
+  and reasons. The Materials summary lists the stocks in use.
+- **Geometry follows each part's thickness.** These now come from the thickness of
+  the parts involved:
+  - Tab length (the part entered, less the setback).
+  - Slot width (the part received, plus the fit clearance).
+  - The hook notches in the back.
+  - The depth in front of the back, and the hooked sides' step through it.
+  - Drawer box parts and their joints. The opening and its gaps are unchanged.
+  - Sliding channels and track. With ¼″ leaves and ½″ strips the channel is 9.5 mm
+    instead of 22.2 mm and the track 57 mm instead of 102 mm, so the shelves get the
+    difference back.
+  - Bin cells, door and lid setbacks, the door-fit check, hinge notes and the
+    hanger screw length.
+- **Thin parts and screws.** A screw now needs both a countersink in the part it
+  passes through (at least twice the clearance hole, 8 mm by default) and the pilot
+  in the other part's edge.
+  - Tab joints that fail either are glued only. This covers the drawer walls in a
+    ¼″ bottom's slots, and any part under 8 mm. An info note `GLUED_TABS` lists
+    them.
+  - Butt joints (screw joinery) that fail either are glued and brad-nailed, with a
+    `GLUED_BUTT` warning.
+  - Brads are added to the hardware list.
+
+  Dados and rabbets are not used, because the shop wall output is through cuts
+  only.
+- **New checks.**
+  - `TAB_DEPTH` (error): a tab needs at least 3 mm of engagement, for example in a
+    ⅛″ drawer bottom.
+  - `BACK_STOCK`: a back that carries the module on screws must take a countersunk
+    screw (error) and should be ½″ (warning).
+  - `DOOR_STOCK` (warning): doors and lids too thin for hinge screws in their edge,
+    or for their height.
+  - `SLIDING_STOCK` (warning): sliding leaves too thin for their height.
+  - `STOCK` (error): checked for every role.
+  - `BACK_HELD` now suggests a thicker back when a thin back takes no screws.
+  - A `STOCKS` DIM record lists each role's thickness.
+  - The editor's quick check covers each role in use.
+- **Cut list and sheets.** Parts at the carcass thickness nest on the carcass
+  sheets. Every other thickness is *Sheet stock* in the cut list and gets its own
+  sheets, shared by the roles of that thickness (for example, the default
+  three-drawer cabinet nests on carcass ¾″, sheet ½″, sheet ¼″ and cleat ¾″). Per-sheet
+  SVG and DXF follow.
+- **Fit coupon.** From the Export view, the coupon adds a tab plate in the same slot
+  plate for each other stock the design's tabs come from: drawer boxes and fronts,
+  lips and strips, bin dividers. The new `coupon_for` setting carries the design's
+  module, set through the product's coupon `forKey`.
+- A hidden `preview_open` setting draws the assembly with the drawers pulled out and
+  the doors, leaves and lid left off, for previews.
+
+Validation run:
+- `node tests/products.mjs`: every starter of both products. Snapshots were updated
+  for the shop wall only, and the media cart's are unchanged. There are new unit
+  checks of role defaults, visibility, the Materials summary, role validation and
+  the coupon's `coupon_for`.
+- `node tests/product-interference.mjs --all` in four local shards, with exact 3D
+  intersection of every part pair:
+  - all starters;
+  - 26 shop wall cases, 10 of them new ones with other role stocks (¼″ to 1″ backs,
+    ⅜″ and ¼″ drawer boxes on ½″ and ⅛″ bottoms, ½″ sliding leaves on ¼″ strips, ¾″
+    and ¼″ doors and lids, ¼″ and measured bin dividers, ¼″ and ¾″ lips, and a
+    coupon with extra tab plates);
+  - 24 random designs per product, which now also vary every role stock.
+
+  No overlapping parts were found. Six random designs were skipped as rejected by
+  the engine. The two shop wall ones fail on a fixed tab count and a ¼″ carcass hook
+  tip, both rejected on main too.
+- The ten modules sent for review were rendered front, back and side with OpenSCAD
+  2021.01, plus a view with the drawers pulled out or the doors, leaves and lid off.
+  The engine's checks are geometric. Nothing has been cut.
+
+Limitations: the defaults are shop practice, not a load calculation. Two roles of
+the same thickness share sheets unless one is given a measured thickness. Thin
+drawer bottoms and backs are held by glued tabs, not grooves.
 
 ## 0.26.0 — 2026-11-26
 

@@ -77,11 +77,80 @@ settings; mount, stock, joinery, machining and sheet settings are kept. Labels f
 the module (the opening width reads *Chisel slot width*, *Bit shank diameter*, *Drill
 neck slot width* and so on).
 
+## Part stocks
+
+Not every part is cut from the carcass sheet. Each part has a role, and each role
+has its own stock setting under **Materials** (a nominal preset, a measured
+thickness, or *Same as carcass*), shown only for the modules that have that role and
+listed under "settings not in use" with the reason elsewhere. The defaults follow
+normal practice for sheet-goods wall organizers:
+
+| Role (setting) | Default | Parts | Why |
+|---|---|---|---|
+| Carcass (`carcass_stock`) | ¾″ | Sides, top, bottom, shelves, tool decks, drill cradles, cube dividers, drawer dividers, box sides, bottoms and fronts, glove-box front, gussets, brackets, towel and wrench cheeks, hook-panel hooks, door and lid pulls | These carry the load: the CNC hooks are cut in the sides, every other part hangs on their tab joints, and the screws beside the tabs need a ¾″ edge for the pilot. Hooks and cheeks work as cantilevers. Drawer dividers are the runners the drawers slide on. Tool decks are weakened by their holes, so they stay full thickness |
+| Back (`back_stock`) | *By mount*: ½″ with CNC side hooks or free standing; carcass with a beveled hanger, screws through the back, or on the hook panel | Back | With CNC hooks the side panels carry the module, and the back only squares the case and takes the horizontals' tabs. ½″ still gives 12.4 mm tabs and takes countersunk screws. Where the module hangs on screws through the back (hanger, direct screws), the back carries everything, so it stays at the carcass. The hook panel's back is the panel the hooks are on |
+| Drawer box (`drawer_box_stock`) | ½″ | Drawer sides and backs | Usual drawer-box stock: lighter, more room inside, and a ½″ edge still takes the screw pilot |
+| Drawer front (`drawer_front_stock`) | Same as carcass | Drawer fronts (one piece, no applied face) | The front is the face, flush with the carcass. It takes the finger pull and the sides' tabs (18.75 mm long). An applied face would need a second part and screws from inside |
+| Drawer bottom (`drawer_bottom_stock`) | ¼″ | Drawer bottoms | Usual bottom stock. The walls stand on it with their tabs in its slots, glued. It is too thin to countersink a screw, so no screws go through it, and brads hold it while the glue sets |
+| Door and lid (`door_stock`) | ½″ | Inset hinged doors, box lid | These leaves are under 600 mm tall. ½″ halves the weight on the hinges and the cleat, takes butt-hinge screws in its edge, and still takes the pull's 12.4 mm tabs |
+| Sliding door (`sliding_door_stock`) | ¼″ | Sliding leaves | Bypass leaves are usually ¼″ panels. Each channel is the leaf plus the door gap on each side (9.5 mm, was 22.2 mm), so the track is 57 mm instead of 102 mm and the shelves get that depth back |
+| Bin divider (`divider_stock`) | ½″ | Long and cross bin dividers | Non-structural partitions. ¼″ would give a 6.65 mm slot, only 0.3 mm over a ¼″ cutter, and no edge for a screw pilot. ½″ keeps both, and the cut layout checks either |
+| Lip and guide strip (`trim_stock`) | ½″ | Shelf and deck lips, sliding-door guide strips | Retainers, not load-bearing panels. ½″ is stiff over a long lip, keeps the pilot in the lip's edge, and keeps the guide strips thin |
+| Cleat (`cleat_stock`) | Same as carcass | Hanger, spacer, wall rail | Unchanged |
+
+Per module, with every setting at its default (CNC side hooks unless noted):
+
+| Module | Parts and their stock (role) |
+|---|---|
+| Simple shelves | Sides, shelf: ¾″ (carcass) · back ½″ (back) |
+| Jar shelves, spray paint display | Sides, shelves: ¾″ · lips ½″ (lip) · back ½″ |
+| Single and double cube shelf | Sides, top, bottom, dividers: ¾″ · back ½″ |
+| Narrow shelves, sandpaper shelf | Sides, top, bottom, shelves: ¾″ · back ½″ |
+| Single and double door cabinet | Sides, top, bottom, shelves, pulls: ¾″ · doors ½″ (door) · back ½″ |
+| Sliding door cabinet | Sides, top, bottom, shelves: ¾″ · leaves ¼″ (sliding door) · guide strips ½″ (strip) · back ½″ |
+| 3- and 4-drawer cabinet | Sides, top, bottom, drawer dividers: ¾″ · drawer fronts ¾″ (drawer front) · drawer sides and backs ½″ (drawer box) · drawer bottoms ¼″ (drawer bottom) · back ½″ |
+| Chisel, clamp, hammer, screwdriver racks, circular saw stand | Sides, deck: ¾″ · back ½″ |
+| Plier stand, router bit stand | Sides, bottom, deck: ¾″ · back ½″ |
+| Simple and double drill station | Gussets, cradle: ¾″ · back ½″ |
+| Single and double shelf drill stand | Sides, cradle, top, shelves: ¾″ · back ½″ |
+| Closed lid box | Sides, bottom, front, lid pull: ¾″ · lid ½″ (lid) · bin dividers ½″ (divider) · back ½″ |
+| Screw box | Sides, bottom, front: ¾″ · bin dividers ½″ · back ½″ |
+| Shallow storage box, glove box | Sides, bottom, front: ¾″ · back ½″ |
+| Hook panel | Hooks ¾″ · back ¾″ (it is the panel, hung on a beveled hanger) |
+| Material storage stand | Brackets, deck: ¾″ · lip ½″ · back ½″ |
+| Paper towel holder, wrench holder | Cheeks ¾″ · back ½″ |
+| Fit test coupon | Slot plate and tab ¾″, plus one tab plate per other stock the module's tabs come from (drawer boxes and fronts, lips and strips, bin dividers) |
+
+With a beveled hanger board or screws through the back, the back of every module is
+¾″ by default.
+
+**Geometry follows each part's thickness**: a tab is as long as the part it enters
+(less the setback); a slot is as wide as the part it takes (plus the fit clearance);
+the hook notches in the back are as wide as the side panel; the depth in front of
+the back, the hooked sides' step through it and the shelf and box depths come from
+the back thickness; the sliding channels and track come from the leaf and strip
+stocks; the drawer box comes from its wall, front and bottom stocks (the opening and
+its gaps are unchanged); bin cells come from the divider stock; the door and lid
+setbacks come from the door stock. **Screws**: a screw needs a countersink in the
+part it passes through (at least twice the clearance hole, 8 mm by default) and the
+pilot in the other part's edge (pilot + 4 mm thick, and pilot depth + 2 mm deep).
+Tab joints that fail either are glued only. Butt joints (screw joinery) that fail
+either are glued and brad-nailed, with a warning. Dados and rabbets would need
+pocketing, which this product's through-cut output does not do, so thin parts are
+held by tabs and glue.
+
+**Sheets**: every part of the carcass thickness nests on the carcass sheets; every
+other thickness (*Sheet stock* in the cut list) gets its own sheets, shared by the
+roles of that thickness (for example, a ½″ back and ½″ drawer boxes share sheets).
+Cleat stock keeps its own sheets as before. To keep two roles of the same thickness
+apart (say, a hardboard back and plywood drawer bottoms), give one of them a
+measured thickness.
+
 ## How the modules use the core
 
 | Concern | Core used | In the shop wall engine |
 |---|---|---|
-| Stock and cleat thickness | Nominal presets and measured thickness, as the cabinets | `carcass_stock`, `material_thickness`, `cleat_stock` |
+| Stock and cleat thickness | Nominal presets and measured thickness, as the cabinets | `carcass_stock`, `material_thickness`, `cleat_stock`, and one stock per part role (see Part stocks) |
 | Tabs along a joint | `joinery.scad` tab planner (`effective_tab_count`, `tab_width_for`, `tab_center`; settings `joint_tab_width`, `target_tab_spacing`, `joint_tab_edge_margin`, `minimum_joint_web`, `tab_count_mode`, `joint_tab_count`, `max_auto_tab_count`) | Every seam is one record; `seam_joinery.scad` splits it into segments, keeps a cutter radius clear at each end and asks the planner for the tabs |
 | Slots and their corner relief | `tab_pocket.scad` `tp_pocket_2d` (dog-bone or T-bone, open walls left square) | Every slot, open-edge notch and hook notch |
 | Tab shoulder relief | `tab_pocket.scad` `tp_tab_root_reliefs_2d` | Beside every tab |
@@ -147,11 +216,20 @@ thickness behave. Measure the stock, cut the coupon, adjust, then cut the module
   thickness it passes through and the tab setback (`TAB_LENGTH`), the slot corner
   relief covers the tab corner (`SLOT_RELIEF`; one warning when relief is left to
   CAM), at least two cutter widths of wood between slots (`TAB_WEB`), room for a tab
-  or screw on every joint (`NO_ROOM_FOR_TABS`, `NO_ROOM_FOR_SCREWS`).
+  or screw on every joint (`NO_ROOM_FOR_TABS`, `NO_ROOM_FOR_SCREWS`), at least 3 mm
+  of tab engagement in the part it enters (`TAB_DEPTH`, for thin bottoms and backs).
 - **Screws**: each clearance hole lies in the host's wood (`SCREW_LANDING`), clear
   of slots, notches and openings with their reliefs (`SCREW_CLASH`), and the pilot
-  fits the member's edge (`SCREW_PILOT`). Within each part, no slot, hole, notch or
-  opening runs into another (`CUT_CLASH`).
+  fits the member's edge (`SCREW_PILOT`). Joints with a part too thin to countersink
+  or too thin or shallow for the pilot take no screws: an info note for glued tab
+  joints (`GLUED_TABS`), a warning for glued and brad-nailed butt joints
+  (`GLUED_BUTT`), and brads in the hardware list. Within each part, no slot, hole,
+  notch or opening runs into another (`CUT_CLASH`).
+- **Stocks**: every role stock a preset or 1 to 50 mm (`STOCK`); a back that carries
+  the module on screws at least twice the clearance hole thick (`BACK_STOCK` error)
+  and ½″ recommended (`BACK_STOCK` warning); doors and lids thick enough for hinge
+  screws in their edge and not too thin for their height (`DOOR_STOCK`); sliding
+  leaves not too thin for their height (`SLIDING_STOCK`).
 - **Assembly**: every part has an assembly step and a direction; each joint must go
   together along its tabs from the parts already placed (`ASSEMBLY_ORDER`), so no
   part needs to enter two joints from different directions at once. The back must be
@@ -181,12 +259,16 @@ thickness behave. Measure the stock, cut the coupon, adjust, then cut the module
   errors, the cut SVG has exactly one outline per part matching its placement, sheet
   nesting with one outline per part per sheet, labels inside their parts, golden
   snapshots (`tests/golden/products/shop_wall.json`), and unit checks of the editor
-  definition (starters, module switching, disabled-with-reason settings, coupon).
+  definition (starters, module switching, disabled-with-reason settings, role stock
+  defaults and visibility, coupon).
 - `tests/product-interference.mjs`: every part rendered in assembly position and every
-  pair intersected (exact 3D, Manifold): all starters, 16 hand-picked shop wall
+  pair intersected (exact 3D, Manifold): all starters, 26 hand-picked shop wall
   cases (both cleats, screws through the back, free standing, screw joinery, ½″ and
   measured stock, no relief and dog-bones, many shelves, drawers and bins, other
-  rails on the wall), and in the CI sweep 24 random designs per product.
+  rails on the wall; and ten with other role stocks: ¼″ to 1″ backs, ¼″ and ⅜″ drawer
+  boxes on ⅛″ and ½″ bottoms, ½″ sliding leaves on ¼″ strips, ¾″ and ¼″ doors and lids,
+  ¼″ and measured bin dividers, ¼″ and ¾″ lips, and a coupon with extra tab plates),
+  and in the CI sweep 24 random designs per product, which also vary every role stock.
 
 ### Results per module
 
@@ -206,7 +288,7 @@ intersecting parts for any starter. "Fixed" refers to the table above.
 | Clamp rack | Pass, fixed 1, 2, 3, 8 | |
 | Plier stand, router bit stand | Pass, fixed 1, 2, 3, 8 | Router stand with a beveled board: tilt to hang (6) |
 | Circular saw stand | Pass, fixed 1, 2, 3, 8 | |
-| Simple and double drill station | Pass, fixed 1, 2, 3 | Known issue: with CNC hooks the gussets are not tabbed to the back (too little rear edge below the hook); the back is held by the cradle's tab and its screws, so turning off joint screws is refused (`BACK_HELD`). Beveled board: tilt to hang (6) |
+| Simple and double drill station | Pass, fixed 1, 2, 3 | Known issue: with CNC hooks the gussets are not tabbed to the back (too little rear edge below the hook); the back is held by the cradle's tab and its screws, so turning off joint screws, or a back under 8 mm (no screws through it), is refused (`BACK_HELD`). Beveled board: tilt to hang (6) |
 | Single and double shelf drill stand | Pass, fixed 1, 2 | |
 | Closed lid box | Pass, fixed 1, 2, 17 | Lid hinges listed as hardware |
 | Screw box, shallow storage box | Pass, fixed 1, 2 | Beveled board: tilt to hang (6) |
@@ -220,7 +302,10 @@ intersecting parts for any starter. "Fixed" refers to the table above.
 
 The Export view of a shop wall design has a **Fit test coupon** card. It builds the
 coupon with the design's own stock, clearances, tab setback, cutter, relief and
-bevel: a slot plate and a tab plate (one tab with its screws), and a short CNC hook
+bevel: a slot plate and a tab plate (one tab with its screws), one more tab plate in
+the same slot plate for each other stock the design's tabs come from (drawer boxes
+and fronts, lips and guide strips, bin dividers; a ¼″ plate shows the slot is still
+wider than the cutter, and takes no screws), and a short CNC hook
 (or a beveled hanger) with a short wall rail. It goes through the same engine checks
 and sheet nesting as a module and downloads as SVG and DXF per stock. Cut it first:
 the tab should slide in by hand and sit flush, and the hook should drop over the
@@ -230,7 +315,8 @@ so it can be inspected in 3D.
 
 ## Not covered
 
-No load rating, racking or wall-anchoring analysis, no stud finding, no grain
+No load rating, racking or wall-anchoring analysis (the role stock defaults are
+shop practice, not a calculation), no stud finding, no grain
 direction or edge banding, and no CAM verification of the exported contours. Hinges
 are counted, not modelled. The bevels of the hanger and wall rail are cut on a saw
 after the blanks are cut.

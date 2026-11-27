@@ -20,6 +20,8 @@ const NOMINAL:Record<string,number>={'1/8_nominal':3.175,'1/4_nominal':6.35,'3/8
 const nominalLabel=(k:string)=>k.replace('_nominal','″ nominal')+` (${NOMINAL[k]} mm)`;
 const stockLabels:Record<string,string>={custom_mm:'Measured thickness (enter mm)',...Object.fromEntries(Object.keys(NOMINAL).map(k=>[k,nominalLabel(k)]))};
 const cleatLabels:Record<string,string>={match_carcass:'Same as carcass',custom_mm:'Measured thickness (enter mm)',...Object.fromEntries(['1/2_nominal','5/8_nominal','3/4_nominal','1_nominal'].map(k=>[k,nominalLabel(k)]))};
+// Role stocks: the options each role's SCAD setting lists, labeled.
+const roleLabels=(key:string):Record<string,string>=>Object.fromEntries((params.find(p=>p.key===key)?.options??[]).map(o=>[o,o==='by_mount'?'By mount (½″ on side hooks or free standing, carcass on screws)':o==='match_carcass'?'Same as carcass':stockLabels[o]??o]));
 
 // Modules, grouped as the picker shows them, with the family the engine builds them as.
 type Module={id:string;name:string;family:string;group:string;description:string};
@@ -101,6 +103,21 @@ const PRESETS:Record<string,Values>={
 const MODULE_KEYS=['width','depth','height','interior_shelves','bay_count','drawer_count','display_shelves','lip_height','upper_shelf_count','tool_count','tool_width','slot_length','tool_pitch','tool_rows','bit_fit_allowance','second_row','box_columns','box_rows','front_height_fraction','aperture_height','aperture_length','hook_count','bracket_count','dowel_diameter','rod_clearance','wrench_levels','wrench_rise','saw_guard_width','saw_guard_offset'];
 const moduleValues=(id:string):Values=>({...Object.fromEntries(MODULE_KEYS.map(k=>[k,param(k)?.value])),module_type:id,...PRESETS[id]});
 
+// Part roles with their own stock, the modules that have them, and their labels.
+type Role='back'|'drawer_box'|'drawer_front'|'drawer_bottom'|'door'|'sliding_door'|'divider'|'trim';
+const DRAWERS=['three_drawer_cabinet','four_drawer_cabinet'];
+const ROLES:{role:Role;key:string;custom:string;label:string;short:string;help:string;modules?:string[]}[]=[
+ {role:'back',key:'back_stock',custom:'custom_back_thickness',label:'Back stock',short:'back',help:'By mount: ½″ (or the carcass, if thinner) where the CNC side hooks carry the module or it stands free; the carcass where it hangs on screws through the back (beveled hanger, screws through the back, hook panel).'},
+ {role:'drawer_box',key:'drawer_box_stock',custom:'custom_drawer_box_thickness',label:'Drawer box stock',short:'drawer boxes',help:'Drawer sides and backs.',modules:DRAWERS},
+ {role:'drawer_front',key:'drawer_front_stock',custom:'custom_drawer_front_thickness',label:'Drawer front stock',short:'drawer fronts',help:'One-piece fronts, flush with the carcass, with the finger pull; the sides tab into them.',modules:DRAWERS},
+ {role:'drawer_bottom',key:'drawer_bottom_stock',custom:'custom_drawer_bottom_thickness',label:'Drawer bottom stock',short:'drawer bottoms',help:'The drawer walls stand on the bottom with their tabs in its slots, glued: a bottom under twice the screw hole takes no screws.',modules:DRAWERS},
+ {role:'door',key:'door_stock',custom:'custom_door_thickness',label:'Door and lid stock',short:'doors and lids',help:'Inset hinged doors and the box lid.',modules:['single_door_cabinet','double_door_cabinet','closed_lid_box']},
+ {role:'sliding_door',key:'sliding_door_stock',custom:'custom_sliding_door_thickness',label:'Sliding door stock',short:'sliding leaves',help:'The guide channels are the leaf thickness plus the gap each side.',modules:['sliding_door_cabinet']},
+ {role:'divider',key:'divider_stock',custom:'custom_divider_thickness',label:'Bin divider stock',short:'bin dividers',help:'Long and cross dividers of divided boxes.',modules:['closed_lid_box','screw_box']},
+ {role:'trim',key:'trim_stock',custom:'custom_trim_thickness',label:'Lip and guide strip stock',short:'lips and strips',help:'Retaining lips on display shelves and the material stand, and the sliding-door guide strips.',modules:['jar_shelves','spray_paint_display','material_storage_stand','sliding_door_cabinet']},
+];
+const roleUsed=(r:typeof ROLES[number])=>(v:Values)=>v.module_type==='fit_coupon'?'The fit coupon tests the stocks of the module it is cut for':r.modules&&!r.modules.includes(String(v.module_type))?'Not used by the '+shopWallModule(v.module_type).name.toLowerCase():null;
+
 // Resolved construction, mirroring the SCAD file.
 export function wallModel(v:Values){
  const n=(k:string,d=0)=>{const x=Number(v[k]);return Number.isFinite(x)?x:d};
@@ -110,9 +127,16 @@ export function wallModel(v:Values){
  const ct=v.cleat_stock==='match_carcass'?t:stock('cleat_stock',n('custom_cleat_thickness',19.05));
  const W=n('width'),D=n('depth'),H=n('height'),ch=n('cleat_height',63.5),angle=n('bevel_angle',45);
  const cleat=v.mount==='french_cleat'||coupon,cnc=cleat&&v.cleat_strategy==='cnc_hooks'&&family!=='hooks';
+ // Stock of each part role, as the SCAD file resolves it (docs/SHOP_WALL.md).
+ const role=(key:string,measured:string,d:number)=>v[key]==='match_carcass'?t:stock(key,n(measured,d));
+ const backCarries=(cleat&&!cnc)||v.mount==='direct_screws'||family==='hooks';
+ const bt=v.back_stock==='by_mount'?(backCarries?t:Math.min(t,12.7)):role('back_stock','custom_back_thickness',12);
+ const roles:Record<Role,number>={back:bt,drawer_box:role('drawer_box_stock','custom_drawer_box_thickness',12),drawer_front:role('drawer_front_stock','custom_drawer_front_thickness',18),
+  drawer_bottom:role('drawer_bottom_stock','custom_drawer_bottom_thickness',6),door:role('door_stock','custom_door_thickness',12),sliding_door:role('sliding_door_stock','custom_sliding_door_thickness',6),
+  divider:role('divider_stock','custom_divider_thickness',12),trim:role('trim_stock','custom_trim_thickness',12)};
  const rise=ct*Math.tan(angle*Math.PI/180),gap=n('cleat_vertical_gap');
  return {mod,family,coupon,t,ct,W,D,H,ch,angle,cleat,cnc,beveled:cleat&&!cnc,rise,railZ:H-2*ch+rise-gap,wallDepth:D+(cleat?ct:0),
-  I:W-2*t,F:D-t,tool:n('cnc_tool_diameter',6.35),fit:n('joint_fit_clearance',0.3)};
+  I:W-2*t,F:D-bt,bt,roles,tool:n('cnc_tool_diameter',6.35),fit:n('joint_fit_clearance',0.3)};
 }
 
 const family=(...f:string[])=>(v:Values)=>f.includes(wallModel(v).family)?null:'Not used by the '+wallModel(v).mod.name.toLowerCase();
@@ -192,12 +216,17 @@ export const shopWall:Product={
    L('wall_screw_spacing','Stud spacing',undefined,{when:v=>v.mount==='direct_screws'?null:railOnly(v)}),
    L('wall_screw_diameter','Wall screw diameter',undefined,{when:v=>v.mount==='direct_screws'?null:railOnly(v)}),
   ],summary:v=>{const m=wallModel(v);return !m.cleat?(v.mount==='direct_screws'?'Screws through the back':'None'):`${m.cnc?'CNC side hooks':'Beveled hanger'} · ${m.angle}°`}},
-  {id:'materials',title:'Materials',shop:true,blurb:'Measure your sheets: nominal plywood is rarely its nominal thickness. Tabs, slots and hooks follow the thickness here.',controls:[
+  {id:'materials',title:'Materials',shop:true,blurb:'Measure your sheets: nominal plywood is rarely its nominal thickness. Each part role has its own stock: tabs, slots, channels, drawer boxes, hooks and screws follow the thickness of each part, and the cut layout nests every thickness on its own sheets. Settings for parts the chosen module does not have are listed under Not in use.',controls:[
    {key:'carcass_stock',label:'Carcass stock',kind:'choice',options:stockLabels},
    L('material_thickness','Measured carcass thickness',undefined,{when:v=>v.carcass_stock==='custom_mm'?null:'Choose measured thickness'}),
    {key:'cleat_stock',label:'Cleat and rail stock',kind:'choice',options:cleatLabels,when:cleatOnly},
    L('custom_cleat_thickness','Measured cleat thickness',undefined,{when:v=>cleatOnly(v)??(v.cleat_stock==='custom_mm'?null:'Choose measured thickness for the cleat')}),
-  ],summary:(v,u)=>{const m=wallModel(v);return `${len(m.t,u)} carcass${m.cleat&&m.ct!==m.t?` · ${len(m.ct,u)} cleat`:''}`}},
+   ...ROLES.flatMap(r=>[
+    {key:r.key,label:r.label,help:r.help,kind:'choice',options:roleLabels(r.key),when:roleUsed(r)} as ProductControl,
+    L(r.custom,`Measured ${r.short} thickness`,undefined,{when:v=>roleUsed(r)(v)??(v[r.key]==='custom_mm'?null:`Choose measured thickness for the ${r.short}`)}),
+   ]),
+  ],summary:(v,u)=>{const m=wallModel(v),other=ROLES.filter(r=>!roleUsed(r)(v)&&Math.abs(m.roles[r.role]-m.t)>0.001).map(r=>`${len(m.roles[r.role],u)} ${r.short}`);
+   return [`${len(m.t,u)} carcass`,...other,...(m.cleat&&m.ct!==m.t?[`${len(m.ct,u)} cleat`]:[])].join(' · ')}},
   {id:'joinery',title:'Joinery',shop:true,blurb:'Tabs are planned along every joint by the workshop\'s tab planner, the same as the cabinets. Slots get corner reliefs, tabs get shoulder reliefs, and screws go in the wood beside the tabs.',controls:[
    {key:'joinery_style',label:'Joints',kind:'choice',options:{tab_slot:'Tab and slot',screw:'Butt joints with screws'}},
    L('joint_fit_clearance','Slot fit clearance','Total extra width and length of every slot over its tab.',{when:tabs}),
@@ -230,7 +259,7 @@ export const shopWall:Product={
  renderModes:[{id:'assembly',label:'Module and wall rail'},{id:'flat_3d',label:'Flat parts · exact 3D'}],
  exportModes:['cut_layout','drill_layout','engrave_layout'],
  startHere:'Shop wall: open products/shop_wall/shop_wall.scad in OpenSCAD 2021.01 or later (keep the engine folder beside the products folder; it holds the shared joinery, cleat and layout files). All selected settings are applied.\n\nSet output_mode to assembly for the module on its wall rail, cut_layout for through cuts, drill_layout for holes smaller than the cutter (drill at the circle centers), engrave_layout for part labels, or bom for the parts list. Export SVG or DXF from OpenSCAD. Bevel the hanger and wall rail blanks on a saw after cutting. Set module_type to fit_coupon to cut a fit test coupon with the same stock, clearances, cutter and bevel.\n',
- coupon:{module:'fit_coupon',label:'Fit test coupon',note:'One tab in its slot with screws, and a short CNC hook (or beveled hanger) on a short wall rail, cut from the same stock with the same clearances, cutter, relief and bevel as this design. Cut it before the module: the tab should slide in by hand, and the hook should drop over the rail and sit flat against it.'},
+ coupon:{module:'fit_coupon',forKey:'coupon_for',label:'Fit test coupon',note:'One tab in its slot with screws (and one tab plate per other stock the module\'s tabs come from), and a short CNC hook (or beveled hanger) on a short wall rail, cut from the same stock with the same clearances, cutter, relief and bevel as this design. Cut it before the module: the tab should slide in by hand, and the hook should drop over the rail and sit flat against it.'},
  linked(key,value){
   // Choosing a module loads its starting sizes and module settings; shop settings stay.
   if(key==='module_type'&&PRESETS[String(value)])return {...moduleValues(String(value)),_starter:String(value)};
@@ -240,6 +269,7 @@ export const shopWall:Product={
   const m=wallModel(v),e:string[]=[];
   if(!(m.t>0&&m.t<=50))e.push('Carcass thickness must be more than 0 and at most 50 mm.');
   if(m.cleat&&!(m.ct>0&&m.ct<=50))e.push('Cleat thickness must be more than 0 and at most 50 mm.');
+  for(const r of ROLES)if(!roleUsed(r)(v)&&!(m.roles[r.role]>=1&&m.roles[r.role]<=50))e.push(`${r.label} must be a listed preset or a measured thickness from 1 to 50 mm.`);
   for(const k of ['width','depth','height']){const p=param(k)!,x=Number(v[k]);if(!(x>=p.min!&&x<=p.max!))e.push(`${k[0].toUpperCase()+k.slice(1)} must be between ${p.min} and ${p.max} mm.`)}
   if(!m.coupon&&!(m.W>=3*m.t+20&&m.D>=2*m.t+20&&m.H>=3*m.t+20))e.push('The module is too small for its stock: make it at least three boards plus 20 mm wide and high.');
   for(const s of shopWall.sections)for(const c of s.controls)if(c.kind==='count'&&!c.when?.(v)){const x=Number(v[c.key]);if(!Number.isInteger(x)||x<(c.min??1)||x>(c.max??12))e.push(`${c.label} must be a whole number from ${c.min??1} to ${c.max??12}.`)}
@@ -273,14 +303,14 @@ export const shopWall:Product={
    if(f==='display'&&v.module_type!=='simple_shelves')steps.push('Drop the lips into the slots along the front of each shelf.');
    if(f==='doors'&&v.module_type==='sliding_door_cabinet')steps.push('Fit the guide strips into the top and bottom, then lift each leaf into its top channel and drop it into the bottom one.');
    else if(f==='doors')steps.push('Glue each pull into its door, then hinge the doors on their outer edges.');
-   if(f==='drawers')steps.push('Build each drawer: sides into the front, then the back, then drop the box onto its bottom. Slide the drawers in.');
+   if(f==='drawers')steps.push('Build each drawer: sides into the front, then the back, then drop the box onto its bottom, the walls\' tabs into its slots. Glue the bottom (brads hold a thin bottom while the glue sets). Slide the drawers in.');
   }
   if(m.cleat)steps.push(m.cnc?'Screw the wall rail into studs, bevel up and toward the wall; lift the module over it and let the side hooks drop onto it.':'Screw the hanger (and spacer) to the back from inside. Screw the wall rail into studs, bevel up; lift the module over it and let the hanger drop onto it.');
   else if(v.mount==='direct_screws')steps.push('Screw the back to the wall through its holes, into studs or rated anchors.');
   return steps;
  },
  coverage:{
-  checked:['Every tab against its slot: clearance on both axes, tab length against the panel it passes through, cutter reach and corner reliefs','Shoulder reliefs beside every tab and at the hooks\' inside corners','Screw holes in solid wood, clear of slots, notches and openings, with room for the pilot in the edge','Assembly order: each part goes on along its tabs','French cleat: rail position, hook depth and tip, notch height, nothing behind the wall, other rails on the wall','Doors, drawers, sliding leaves and bins clear their openings with the gap setting','Flat cut layout and sheet nesting: every part placed once, no overlapping outlines','Parts intersecting in 3D for this exact design, on demand: Check for intersecting parts above (every starter and a seeded set of random designs are also swept in the test suite)'],
+  checked:['Every tab against its slot: clearance on both axes, tab length against the panel it passes through, cutter reach and corner reliefs','Shoulder reliefs beside every tab and at the hooks\' inside corners','Screw holes in solid wood, clear of slots, notches and openings, with room for the pilot in the edge','Each part at its own role stock: tabs as long as the part they enter, slots as wide as the part they take, channels, drawer boxes and the back depth from those thicknesses; parts too thin for a countersink or an edge pilot are glued instead of screwed, and tabs need 3 mm of engagement','Assembly order: each part goes on along its tabs','French cleat: rail position, hook depth and tip, notch height, nothing behind the wall, other rails on the wall','Doors, drawers, sliding leaves and bins clear their openings with the gap setting','Flat cut layout and sheet nesting: every part placed once, no overlapping outlines','Parts intersecting in 3D for this exact design, on demand: Check for intersecting parts above (every starter and a seeded set of random designs are also swept in the test suite)'],
   notChecked:['A physical cut: these are geometric checks. Cut the fit test coupon (Export) before a full module','Load rating, wall anchoring and stud location'],
  },
  sheetSection:'sheets',
