@@ -97,7 +97,7 @@ export default function MediaCartDiagram({values,units,change,focus,records=[],s
  const shelves=(top:number)=>Array.from({length:Math.max(0,m.openings-1)},(_,k)=>m.t+(k+1)*(top-m.t)/m.openings-m.t);
  const wheel=(x:number)=>casters&&<g className='pw-caster' key={x}><rect x={x-28} y={0} width={56} height={10}/><circle cx={x} cy={lift-lift*0.32} r={lift*0.32}/></g>;
  const inset=Number(values.caster_inset)||70;
- const [show,setShow]=useState({joinery:true,cg:true});
+ const [show,setShow]=useState({joinery:false,cg:true});
  const report=useMemo(()=>cartReport(records),[records]);
  const partTop=(part:string)=>{const k=part.match(/^CROSS_(\d+)$/);return k?m.rowZ(Number(k[1])-1):Math.max(m.body,m.binTop)};
  const features=show.joinery?report.features:[];
@@ -125,15 +125,16 @@ export default function MediaCartDiagram({values,units,change,focus,records=[],s
  // Front elevation.
  const wallH=(side:'L'|'R')=>((side==='L'?m.left:m.right)?m.rear:m.binTop)-m.t;
  const cubbyX=(k:number)=>m.x0+m.t+k*(m.cubbyW+m.t)-m.t;
- const tower=(x:number)=><g key={x} onClick={()=>focus('towers')} className='pw-click'>
+ // x is the tower's outer wall; its top and shelves run inward, toward the bins.
+ const tower=(x:number,side:'L'|'R')=>{const inner=side==='L'?x+m.t:x-m.towerW;return <g key={side} onClick={()=>focus('towers')} className='pw-click'>
   <R x={x} z={m.t} w={m.t} h={m.rear-m.t} cls='pw-panel' label='Tower outer wall'/>
-  <R x={Math.min(x+m.t,x-m.towerW)} z={m.rear-m.t} w={m.towerW} h={m.t} cls='pw-panel' label='Tower top'/>
-  {shelves(m.rear).filter(z=>z>m.t+1).map(z=><R key={z} x={Math.min(x+m.t,x-m.towerW)} z={z} w={m.towerW} h={m.t} cls='pw-shelf' label='Tower shelf'/>)}
- </g>;
+  <R x={inner} z={m.rear-m.t} w={m.towerW} h={m.t} cls='pw-panel' label='Tower top'/>
+  {shelves(m.rear).filter(z=>z>m.t+1).map(z=><R key={z} x={inner} z={z} w={m.towerW} h={m.t} cls='pw-shelf' label='Tower shelf'/>)}
+ </g>;};
  const front=<Frame w={m.width} h={m.body} lift={lift} fs={fs} title='Front elevation'>
   <line x1={-fs*2} x2={m.width+fs*2} y1={lift} y2={lift} className='pw-floor'/>
   <R x={0} z={0} w={m.width} h={m.t} cls='pw-panel' label='Bottom panel'/>
-  {m.left&&tower(0)}{m.right&&tower(m.width-m.t)}
+  {m.left&&tower(0,'L')}{m.right&&tower(m.width-m.t,'R')}
   <R x={m.x0} z={m.t} w={m.t} h={wallH('L')} cls='pw-wall' onClick={()=>focus('size')} label='Left bin wall'/>
   <R x={m.x1-m.t} z={m.t} w={m.t} h={wallH('R')} cls='pw-wall' onClick={()=>focus('size')} label='Right bin wall'/>
   {Array.from({length:Math.max(0,m.columns-1)},(_,c)=><R key={c} x={m.finX(c+1)} z={m.deck} w={m.ft} h={m.binTop-m.deck} cls='pw-fin' onClick={()=>focus('bins')} label={`Fin ${c+1}`}/>)}
