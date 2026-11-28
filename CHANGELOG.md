@@ -5,7 +5,7 @@ project. It covers application changes, engine integrations, documented engine
 package changes, desktop fixes and repository/hosting work. It replaces the
 short release summary previously kept here.
 
-Application versions (currently **0.27.0**) are separate from the bundled
+Application versions (currently **0.27.1**) are separate from the bundled
 **Modular Organization 5.3.0** package, engine family **v5**, and **MOI-4** interface
 contract. Older engine labels such as v25, v29 and v34 are not application release
 numbers. Historical work without a recorded application version is listed by
@@ -16,6 +16,23 @@ source repository; those commit objects were not imported into GitHub. GitHub
 history starts with repository setup and the source import. This document records
 verified changes and historical package notes, not every experiment or every
 possible configuration. Imported package capabilities are identified as such.
+
+## 0.27.1 — 2026-11-28
+
+Media cart drawing fixes.
+
+- **Left tower drawn in place.** In the front elevation, the left shelf tower's top and
+  shelves were drawn outward from the cart's left edge, past the bottom panel, so the
+  tower's outer wall looked missing. They now run inward from the outer wall to the bin
+  wall, as the right tower always did. Only the drawing was wrong; the 3D model, cut
+  files and engine joinery were already correct.
+- **Simpler drawings by default.** The joinery overlay (tabs, slots, dados, holes) now
+  starts off, so the front elevation and side profile show only the parts, the
+  dimensions and the center of gravity. *Show → Joinery* turns the overlay back on.
+
+Validation: tsc; the default media cart with both towers was checked in Chromium at
+1440 × 900 with the overlay off and on, with no page errors. No engine or SCAD file
+changed.
 
 ## 0.27.0 — 2026-11-27
 
